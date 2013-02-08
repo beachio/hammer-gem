@@ -58,7 +58,7 @@ class Hammer
         tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
         tags.map do |tag|
           @hammer_project.find_file(tag, self).to_html
-        end
+        end.join("\n")
       end
     end
 
@@ -113,7 +113,7 @@ class Hammer
         tags.map do |tag|
           file = @hammer_project.find_file(tag, self)
           Hammer.parser_for_hammer_file(file).to_css()
-        end
+        end.join("\n")
       end
     end
 

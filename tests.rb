@@ -1,8 +1,7 @@
-#!/usr/bin/ruby
-
-require "hammer2"
-require "parsers"
-require "hammer_file"
+#!/usr/bin/env /usr/bin/ruby
+require "./hammer2"
+require "./parsers"
+require "./hammer_file"
 require "test/unit"
 require "mocha/setup"
 require "shoulda-context"
