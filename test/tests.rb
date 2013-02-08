@@ -1,8 +1,10 @@
 #!/usr/bin/ruby
 
-require "./hammer"
-require "./parsers"
-require "./hammer_file"
+require File.expand_path('../../lib/include', __FILE__)
+require File.expand_path('../../hammer', __FILE__)
+require File.expand_path('../../hammer_file', __FILE__)
+require File.expand_path('../../parsers', __FILE__)
+
 require "rubygems"
 require "test/unit"
 require "mocha/setup"
@@ -87,41 +89,40 @@ class HammerTest < Test::Unit::TestCase
 end
 
 class TestingHammerProjectFindingFiles < Test::Unit::TestCase
-  def setup
-    @header = Hammer::HammerFile.new
-    @header.filename = "_header.html"
-    @header.text = "header"
-    @hammer_project = Hammer::Project.new
-    @hammer_project << @header
-    @parser = Hammer::HTMLParser.new
-  end
+  context "A Hammer project with files" do
+    setup do
+      @header = Hammer::HammerFile.new
+      @header.filename = "_header.html"
+      @header.text = "header"
+      @hammer_project = Hammer::Project.new
+      @hammer_project << @header
+      @parser = Hammer::HTMLParser.new
+    end
 
-  def test_finding_files_finds_the_right_file
-    
-    html_file = Hammer::HammerFile.new
-    html_file.filename = "_not_header.html"
-    @hammer_project << html_file
-    
-    new_file = Hammer::HammerFile.new
-    new_file.filename = "_not_header.js"
-    @hammer_project << new_file
-    
-    assert_equal @hammer_project.find_files('_not_header', @parser), [html_file]
-    assert_equal @hammer_project.find_files('_not_header_1', @parser), []
-    assert_equal @hammer_project.find_files('_not_header_1', @parser), []
-    assert_equal @hammer_project.find_files('_not_header', new_file.parser.new), [new_file]
-  end
+    should "test_finding_files_finds_the_right_file" do
+      
+      html_file = Hammer::HammerFile.new
+      html_file.filename = "_not_header.html"
+      @hammer_project << html_file
+      
+      new_file = Hammer::HammerFile.new
+      new_file.filename = "_not_header.js"
+      @hammer_project << new_file
+      
+      assert_equal @hammer_project.find_files('_not_header', @parser), [html_file]
+      assert_equal @hammer_project.find_files('_not_header_1', @parser), []
+      assert_equal @hammer_project.find_files('_not_header_1', @parser), []
+      assert_equal @hammer_project.find_files('_not_header', new_file.parser.new), [new_file]
+    end
 
-  def test_finding_files_finds_an_array_of_files
-    assert_equal @hammer_project.find_files('_header', @parser), [@header]
-  end
+    should "Find an array of files" do
+      assert_equal @hammer_project.find_files('_header', @parser), [@header]
+    end
 
-  def test_finding_file_finds_a_file
-    assert_equal @hammer_project.find_file('_header', @parser), @header
-  end
-  
-  def test_finding_file_finds_a_file
-    assert_equal @hammer_project.find_file('_header', @parser), @header
+    should "Find a file" do
+      assert_equal @hammer_project.find_file('_header', @parser), @header
+    end
+
   end
 end
 

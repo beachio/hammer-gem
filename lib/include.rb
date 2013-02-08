@@ -1,24 +1,21 @@
 class Object
-  ##
-  #   @person ? @person.name : nil
-  # vs
-  #   @person.try(:name)
   def try(method)
     send method if respond_to? method
   end
 end
 
-
-$FILE_PATH = File.expand_path(File.dirname(__FILE__))
+$FILE_PATH = File.expand_path(File.dirname(File.dirname(__FILE__)))
 $LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "lib")
 
 ## Let's start by $LOAD_PATHing all the directories inside vendor/gems/*/lib
-["vendor/gems/*"].each do |directory|
+["../vendor/gems/*"].each do |directory|
   Dir.glob(File.join(File.dirname(File.expand_path(__FILE__)), directory)).each do |dir|
     d = File.directory?(lib = "#{dir}/lib") ? lib : dir
     $LOAD_PATH << d
   end
 end
+
+$LOAD_PATH << File.dirname(__FILE__)
 
 ## Now require all the gems we need
 require 'json'

@@ -1,5 +1,3 @@
-require "./include"
-
 class Hammer
 
   @@parsers = {}
