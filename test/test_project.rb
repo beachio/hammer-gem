@@ -1,6 +1,6 @@
 require "./tests"
 
-class HammerProjectTest < Test::Unit::TestCase
+class TestHammerProject < Test::Unit::TestCase
   context "a hammer project" do
     setup do
       @hammer_project = Hammer::Project.new

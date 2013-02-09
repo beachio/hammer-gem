@@ -1,3 +1,5 @@
+require "amp"
+
 class Hammer
 
   @@parsers = {}

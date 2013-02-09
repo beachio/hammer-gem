@@ -1,5 +1,6 @@
 require "./tests.rb"
-class SCSSParserTest < Test::Unit::TestCase
+
+class TestSCSS < Test::Unit::TestCase
   context "A SCSS Parser" do
     setup do
       @hammer_project = Hammer::Project.new

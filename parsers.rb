@@ -15,13 +15,17 @@ class Hammer
     end
     
     def text
-      @text ? @text : @hammer_file.raw_text
+      @text != "" ? @text : @hammer_file.raw_text
     end
     
     def filename
-      @filename ? @filename : @hammer_file.filename
+      if @filename 
+        return @filename
+      elsif @hammer_file 
+        return @hammer_file.filename
+      end
     end
-
+    
     def hammer_file=(hammer_file)
       @hammer_file = hammer_file
     end
@@ -57,6 +61,7 @@ class Hammer
       includes()
       stylesheet_tags()
       javascript_tags()
+      current_tags()
       return @text
     end
 
@@ -138,6 +143,14 @@ class Hammer
         tags.join("\n")
       end
     end
+    
+    def current_tags
+      # If we don't have any links to the current page, let's get outta here real fast.
+      return if !filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
+      # Otherwise, let's Amp it.
+      @text = Amp.parse(@text, filename, 'current')
+    end
+    
   end
   register HTMLParser, "html"
 

@@ -102,6 +102,38 @@ class TestHtmlParser < Test::Unit::TestCase
         end
       end
     end
+    
+    context "with links" do
+      setup do
+        @file.filename = "index.html"
+        @parser.hammer_file = @file
+      end
+      
+      should "add a current class to a link to the same page" do
+        @file.raw_text = "<a href='index.html'></a>"
+        @parser.text = @file.raw_text
+        assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
+      end
+      
+      should "not add a current class to a link to a different page" do
+        @file.raw_text = "<a href='_header.html'></a>"
+        @parser.text = @file.raw_text
+        assert_equal "<a href='_header.html'></a>", @parser.parse()
+      end
+      
+      should "add a class to the surrounding li" do
+        @file.raw_text = "<li><a href='index.html'></a></li>"
+        @parser.text = @file.raw_text
+        assert_equal "<li class='current'><a class='current' href='index.html'></a></li>", @parser.parse()
+      end
+      
+      should "not add a class to the surrounding li if the URL is wrong" do
+        @file.raw_text = "<li><a href='_header.html'></a></li>"
+        @parser.text = @file.raw_text
+        assert_equal "<li><a href='_header.html'></a></li>", @parser.parse()
+      end
+      
+    end
 
   end
 end
