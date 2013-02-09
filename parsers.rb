@@ -89,15 +89,12 @@ class Hammer
     def output_variables
       replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
-
         if variable_declaration.include? "|"
           variable_name = variable_declaration.split("|")[0].strip
-
           default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
         else
           variable_name = variable_declaration.split(" ")[0]
         end
-        
         if @hammer_file.variables[variable_name] || default
           @hammer_file.variables[variable_name] || default
         else
