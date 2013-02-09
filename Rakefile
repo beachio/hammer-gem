@@ -1,5 +1,5 @@
 task :default => [:test]
 
 task :test do
-  ruby "-I . test/*.rb"
+  ruby "-I . test/tests.rb"
 end
