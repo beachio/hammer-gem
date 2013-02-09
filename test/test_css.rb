@@ -32,15 +32,16 @@ class CSSParserTest < Test::Unit::TestCase
       context "with other files" do
         
         setup do
-          new_file = Hammer::HammerFile.new
-          new_file.text = "I'm included."
-          new_file.filename = "_include.css"
-          @hammer_project << new_file
+          @new_file = Hammer::HammerFile.new
+          @new_file.raw_text = "I'm included."
+          @new_file.filename = "_include.css"
+          @hammer_project << @new_file 
         end
         
         should "do include" do
           @parser.text =  "/* @include _include */"
           output = @parser.parse()
+          assert_equal @hammer_project.find_file("_include", 'css'), @new_file
           assert output
           assert_equal "I'm included.", output
         end

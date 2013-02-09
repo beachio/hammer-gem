@@ -99,10 +99,10 @@ class TestHammerProject < Test::Unit::TestCase
       new_file.filename = "_not_header.js"
       @hammer_project << new_file
       
-      assert_equal @hammer_project.find_files('_not_header', @parser), [html_file]
-      assert_equal @hammer_project.find_files('_not_header_1', @parser), []
-      assert_equal @hammer_project.find_files('_not_header_1', @parser), []
-      assert_equal @hammer_project.find_files('_not_header', new_file.parser.new), [new_file]
+      assert_equal [html_file], @hammer_project.find_files('_not_header', 'html')
+      assert_equal @hammer_project.find_files('_not_header_1', 'html'), []
+      assert_equal @hammer_project.find_files('_not_header_1', 'html'), []
+      assert_equal @hammer_project.find_files('_not_header', 'js'), [new_file]
     end
 
     should "Find an array of files" do

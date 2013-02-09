@@ -6,21 +6,52 @@ class Hammer
   def self.register(parser_class, extension)
     @@parsers[extension] = parser_class
   end
+  
+  def self.register_parser_for_extensions(parser_class, extensions)
+    @@extensions_for ||= {}
+    @@parsers_for ||= {}
+    extensions.each do |extension|
+      @@parsers_for[extension] ||= []
+      @@parsers_for[extension] << parser_class
+      @@extensions_for[parser_class] ||= []
+      @@extensions_for[parser_class] << extension
+    end
+  end
+  
+  def self.extensions_for; @@extensions_for; end
+  def self.default_parser_for; @@default_parser_for; end
+  
+  def self.register_parser_as_default_for_extensions(parser_class, extensions)
+    @@default_parser_for ||= {}
+    extensions.each do |extension|
+      @@default_parser_for[extension] = parser_class
+    end
+  end
 
   def self.parsers; @@parsers; end
   
   def self.parser_for(extension)
-    @@parsers[extension]
+    @@default_parser_for[extension]
   end
   
   def self.parser_for_hammer_file(hammer_file)
-    parser = @@parsers[hammer_file.extension].new(hammer_file.hammer_project)
+    parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
     parser.text = hammer_file.raw_text
     parser.hammer_file = hammer_file
     parser
   end
   
-  def self.regex_for(filename, extensions=[])
+  def self.regex_for(filename, extension=nil)
+    
+    parsers = @@parsers_for[extension] || []
+    
+    # Cross-extensions. Means we can use any of these.
+    extensions = []
+    parsers.each do |parser|
+      @@extensions_for[parser].each do |extension|
+        extensions << extension
+      end
+    end
     
     # /index.html becomes ^index.html  
     filename = filename.split("")[1..-1].join("") if filename.split("")[0] == "/"
@@ -43,21 +74,15 @@ class Hammer
       @hammer_files << file
     end
 
-    def find_files_of_type(filename, final_extension)
+    def find_files_of_type(filename, extension)
       files ||= []
-      
-      # TODO: SCSS for CSS, etc
-      extensions = [final_extension]
-      
-      regex = Hammer.regex_for(filename, extensions)
+      regex = Hammer.regex_for(filename, extension)
       files = @hammer_files.select { |file| file.filename.match regex }
       return files
     end
 
-    def find_files(filename, parser)
-      extensions = [Hammer.parsers.invert[parser.class]]
-      files = self.find_files_of_type(filename, extensions)
-      return files
+    def find_files(filename, extension)
+      self.find_files_of_type(filename, extension)
     end
     
     # TODO: Create root_directory, output_directory and temporary_directory

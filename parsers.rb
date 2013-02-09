@@ -120,7 +120,7 @@ class Hammer
             raise "Variable #{tag} was not set!" if !variable_value
             tag = variable_value
           end
-          file = @hammer_project.find_file(tag, self)
+          file = @hammer_project.find_file(tag, 'html')
           Hammer.parser_for_hammer_file(file).to_html()
         end.compact.join("\n")
       end
@@ -172,7 +172,7 @@ class Hammer
         results = []
         tags = []
         files.each do |filename|
-          matches = @hammer_project.find_files(filename, self)
+          matches = @hammer_project.find_files(filename, 'css')
           raise "Stylesheet file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
           matches.each do |file|
             them = Pathname.new(file.filename)
@@ -222,13 +222,15 @@ class Hammer
     end
     
   end
-  register HTMLParser, "html"
+  register_parser_for_extensions HTMLParser, ['html']
+  register_parser_as_default_for_extensions HTMLParser, ['html']
 
 
   class CSSParser < HammerParser
 
     def to_css
-      @text
+      # puts "Raw text: #{@raw_text}"
+      @hammer_file.raw_text
     end
 
     def parse
@@ -244,7 +246,7 @@ class Hammer
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
-          file = @hammer_project.find_file(tag, self)
+          file = @hammer_project.find_file(tag, 'css')
           Hammer.parser_for_hammer_file(file).to_css()
         end
         a.compact.join("\n")
@@ -255,7 +257,8 @@ class Hammer
     end
 
   end
-  register CSSParser, "css"
+  register_parser_for_extensions CSSParser, ['css']
+  register_parser_as_default_for_extensions CSSParser, ['css']
 
   require "sass"
   class SASSParser < HammerParser
@@ -309,8 +312,8 @@ class Hammer
     end
 
   end
-  register SASSParser, "sass"
-  register SASSParser, "scss"
+  register_parser_for_extensions SASSParser, ['sass', 'scss', 'css']
+  register_parser_as_default_for_extensions SASSParser, ['sass', 'scss']
 
   class JSParser < HammerParser
 
@@ -321,7 +324,8 @@ class Hammer
     end
 
   end
-  register JSParser, "js"
+  register_parser_for_extensions JSParser, ['js']
+  register_parser_as_default_for_extensions JSParser, ['js']
 
   class CoffeeParser < HammerParser
 
@@ -335,6 +339,7 @@ class Hammer
     end
 
   end
-  register CoffeeParser, "coffee"
+  register_parser_for_extensions CoffeeParser, ['js', 'coffee']
+  register_parser_as_default_for_extensions CoffeeParser, ['coffee']
 
 end
