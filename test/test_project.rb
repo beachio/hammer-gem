@@ -65,6 +65,18 @@ class TestHammerProject < Test::Unit::TestCase
       assert_equal [@header], @hammer_project.find_files_of_type("/*", "html")
     end
     
+    context "with an image" do
+      setup do
+        @image = Hammer::HammerFile.new
+        @image.filename = "logo.png"
+        @hammer_project << @image
+      end
+      
+      should "find that image" do
+        assert_equal [@image], @hammer_project.find_files("logo", "png")
+      end
+    end
+    
   end
 
   context "A Hammer project with a file" do

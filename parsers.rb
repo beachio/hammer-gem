@@ -62,6 +62,7 @@ class Hammer
       stylesheet_tags()
       javascript_tags()
       current_tags()
+      path_tags()
       return @text
     end
 
@@ -107,8 +108,41 @@ class Hammer
       "
       @text = @text.gsub(/<!-- @reload -->/, reloader_script)
     end
+    
+    def path_tags
+      replace(/<!-- @path (\S*) -->/) do |tag, line_number|
+        tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
+        file = @hammer_project.find_file(File.basename(tag, ".*"), File.extname(tag))
+        them = Pathname.new(file.filename)
+        me = Pathname.new(File.dirname(filename))
+        them.relative_path_from(me)
+      end
+    end
 
     def stylesheet_tags
+      @included_stylesheets ||= []
+      imported_results = []
+      self.replace(/<!-- @stylesheet (.*) -->/) do |tagged_path, line_number|
+        tagged_path = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip
+        files = tagged_path.split(" ")
+        results = []
+        tags = []
+        files.each do |filename|
+          matches = @hammer_project.find_files(filename, self)
+          raise "Stylesheet file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
+          matches.each do |file|
+            them = Pathname.new(file.filename)
+            me = Pathname.new(File.dirname(self.filename))
+            path = them.relative_path_from(me)
+            if !@included_stylesheets.include? path
+              @included_stylesheets << path
+              tags << "<link rel='stylesheet' href='#{path}'>"
+            end
+          end
+        end
+        tags.join("\n")
+      end
+
     end
     
     def javascript_tags
@@ -117,23 +151,15 @@ class Hammer
       self.replace(/<!-- @javascript (.*) -->/) do |tagged_path, line_number|
         tagged_path = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip
         files = tagged_path.split(" ")
-        
         results = []
         tags = []
-        
         files.each do |filename|
-          
           matches = @hammer_project.find_files(filename, self)
-          
           raise "Javascript file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
-          
           matches.each do |file|
-            
             them = Pathname.new(file.filename)
             me = Pathname.new(File.dirname(self.filename))
-            
             path = them.relative_path_from(me)
-            
             if !@included_javascripts.include? path
               @included_javascripts << path
               tags << "<script src='#{path}'></script>"
@@ -146,8 +172,8 @@ class Hammer
     
     def current_tags
       # If we don't have any links to the current page, let's get outta here real fast.
-      return if !filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
       # Otherwise, let's Amp it.
+      return if !filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
       @text = Amp.parse(@text, filename, 'current')
     end
     
