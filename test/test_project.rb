@@ -37,8 +37,35 @@ class HammerProjectTest < Test::Unit::TestCase
       
     end
   end
+  
+  context "A Hammer project with multiple files" do
+    
+    setup do
+      @header = Hammer::HammerFile.new
+      @header.filename = "_header.html"
+      
+      @style = Hammer::HammerFile.new
+      @style.filename = "style.css"
+      
+      @hammer_project = Hammer::Project.new
+      
+      @hammer_project << @header
+      @hammer_project << @style
+      
+      @parser = Hammer::HTMLParser.new
+    end
+    
+    should "find the right files with an extension" do
+      assert_equal [@header], @hammer_project.find_files_of_type("_header", "html")
+    end
+    
+    should "find the right wildcard files with an extension" do
+      assert_equal [@header], @hammer_project.find_files_of_type("/*", "html")
+    end
+    
+  end
 
-  context "A Hammer project with files" do
+  context "A Hammer project with a file" do
     setup do
       @header = Hammer::HammerFile.new
       @header.filename = "_header.html"
@@ -48,7 +75,7 @@ class HammerProjectTest < Test::Unit::TestCase
       @parser = Hammer::HTMLParser.new
     end
 
-    should "test_finding_files_finds_the_right_file" do
+    should "find the right file" do
       
       html_file = Hammer::HammerFile.new
       html_file.filename = "_not_header.html"

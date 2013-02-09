@@ -13,6 +13,14 @@ class Hammer
     def text=(text)
       @text = text
     end
+    
+    def text
+      @text ? @text : @hammer_file.raw_text
+    end
+    
+    def filename
+      @filename ? @filename : @hammer_file.filename
+    end
 
     def hammer_file=(hammer_file)
       @hammer_file = hammer_file
@@ -47,10 +55,16 @@ class Hammer
     def parse
       reload_tags()
       includes()
+      stylesheet_tags()
+      javascript_tags()
       return @text
     end
 
     private
+    
+    def variables
+      @file.variables
+    end
 
     def includes
       lines = []
@@ -76,7 +90,7 @@ class Hammer
                     for (var i = 0; i < links.length;i++) { 
                     var link = links[i]; 
                     if (link.rel === 'stylesheet' && !link.href.match(/typekit/)) { 
-                      href = link.href.replace(/((&|\\?)hammer=)[^\\&]+/,''); 
+                      href = link.href.replace(/((&|\\?)hammer=)[^\&]+/,''); 
                       link.href = href + (href.indexOf('?')>=0?'&':'?') + 'hammer='+(new Date().valueOf());
                     }
                   }
@@ -87,6 +101,42 @@ class Hammer
         <!-- /Hammer reload -->
       "
       @text = @text.gsub(/<!-- @reload -->/, reloader_script)
+    end
+
+    def stylesheet_tags
+    end
+    
+    def javascript_tags
+      @included_javascripts ||= []
+      imported_results = []
+      self.replace(/<!-- @javascript (.*) -->/) do |tagged_path, line_number|
+        tagged_path = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip
+        files = tagged_path.split(" ")
+        
+        results = []
+        tags = []
+        
+        files.each do |filename|
+          
+          matches = @hammer_project.find_files(filename, self)
+          
+          raise "Javascript file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
+          
+          matches.each do |file|
+            
+            them = Pathname.new(file.filename)
+            me = Pathname.new(File.dirname(self.filename))
+            
+            path = them.relative_path_from(me)
+            
+            if !@included_javascripts.include? path
+              @included_javascripts << path
+              tags << "<script src='#{path}'></script>"
+            end
+          end
+        end
+        tags.join("\n")
+      end
     end
   end
   register HTMLParser, "html"
@@ -104,7 +154,7 @@ class Hammer
       return @text
     end
 
-    private
+  private
 
     def includes
       lines = []

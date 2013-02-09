@@ -26,21 +26,23 @@ class Hammer
     def << (file)
       @hammer_files << file
     end
+    
+    def find_files_of_type(filename, final_extension)
+      files ||= []
+      
+      # TODO: SCSS for CSS, etc
+      extensions = [final_extension]
+      
+      filename = filename[1..-1] if filename.split("")[0] == "/" 
+      
+      regex = /^#{filename}\.[#{extensions.join("|")}]/
+      files = @hammer_files.select { |file| file.filename.match regex }
+      return files
+    end
 
     def find_files(filename, parser)
-      
-      # warn "find_files is still unclever and needs sorting and caching"
-      
-      files ||= []
       extensions = [Hammer.parsers.invert[parser.class]]
-      
-      extensions.each do |extension|
-        @hammer_files.each do |hammer_file|
-          if hammer_file.filename == [filename, extension].join('.')
-            files << hammer_file
-          end
-        end
-      end
+      files = self.find_files_of_type(filename, extensions)
       return files
     end
     
