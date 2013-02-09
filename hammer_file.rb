@@ -59,6 +59,7 @@ class Hammer
     end
 
     def variables
+      @variables ||= {}
     end
 
     def error(message, line=nil)

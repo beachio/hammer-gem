@@ -206,7 +206,6 @@ class TestHtmlParser < Test::Unit::TestCase
         @parser.text = @file.raw_text
         assert_equal "<li><a href='_header.html'></a></li>", @parser.parse()
       end
-      
     end
     
     context "when parsing path tags" do
@@ -224,7 +223,41 @@ class TestHtmlParser < Test::Unit::TestCase
         text = @parser.parse()
         assert_equal "../images/logo.png", text
       end
-      
     end
+    
+    context "when just parsing variables" do
+      setup do
+        @file.raw_text = "<!-- $title A -->"
+        @parser.text = @file.raw_text
+      end
+      
+      should "work" do
+        assert_equal "", @parser.parse()
+      end
+    end
+
+    context "when retrieving variables" do
+      setup do
+        @file.raw_text = "<!-- $title Here's the title --><!-- $title -->"
+        @parser.text = @file.raw_text
+      end
+      
+      should "work" do
+        assert_equal "Here's the title", @parser.parse()
+      end
+    end
+    
+    
+    context "when retrieving variables" do
+      setup do
+        @file.raw_text = "<!-- $title | Here's the title -->"
+        @parser.text = @file.raw_text
+      end
+      
+      should "work" do
+        assert_equal "Here's the title", @parser.parse()
+      end
+    end
+    
   end
 end

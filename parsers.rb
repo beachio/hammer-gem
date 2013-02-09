@@ -57,19 +57,57 @@ class Hammer
     end
 
     def parse
+      get_variables()
       reload_tags()
       includes()
       stylesheet_tags()
       javascript_tags()
       current_tags()
       path_tags()
+      output_variables()
       return @text
     end
 
     private
     
+    def get_variables
+      replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
+        variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
+        variable_name = variable_declaration[0]
+        variable_value = variable_declaration[1..-1].join(' ')
+        # If there's a |, this is a getter with a default!
+        # TODO: Update the regex to disallow | characters.
+        if variable_value.split("")[0] == "|" || variable_value == ""
+          tag
+        else
+          @hammer_file.variables[variable_name] = variable_value
+          ""
+        end
+      end
+    end
+    
+    def output_variables
+      replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
+        variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
+
+        if variable_declaration.include? "|"
+          variable_name = variable_declaration.split("|")[0].strip
+
+          default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
+        else
+          variable_name = variable_declaration.split(" ")[0]
+        end
+        
+        if @hammer_file.variables[variable_name] || default
+          @hammer_file.variables[variable_name] || default
+        else
+          raise "Variable <strong>#{CGI.escapeHTML variable_name}</strong> wasn't set!"
+        end
+      end
+    end
+    
     def variables
-      @file.variables
+      @hammer_file.variables ||= []
     end
 
     def includes
