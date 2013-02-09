@@ -247,7 +247,6 @@ class TestHtmlParser < Test::Unit::TestCase
       end
     end
     
-    
     context "when retrieving variables" do
       setup do
         @file.raw_text = "<!-- $title | Here's the title -->"
