@@ -283,6 +283,35 @@ class TestHtmlParser < Test::Unit::TestCase
         assert_equal Hammer::HTMLParser, Hammer.parser_for_hammer_file(@file).class
         assert_equal "Header", Hammer.parser_for_hammer_file(@file).parse()
       end
+      
+      should "carry over variables from included files" do
+        @file.raw_text = "<!-- @include _header --><!-- $title -->"
+        @new_file.raw_text = "<!-- $title A -->"
+        parser = Hammer.parser_for_hammer_file(@file)
+        assert_equal "A", parser.parse()
+        assert_equal({'title' => "A"}, parser.send(:variables))
+      end
+      
+      should "set variables for included files" do
+        @file.raw_text = "<!-- $title A --><!-- @include _header -->"
+        @new_file.raw_text = "<!-- $title -->"
+        parser = Hammer.parser_for_hammer_file(@file)
+        assert_equal "A", parser.parse()
+        assert_equal({'title' => "A"}, parser.send(:variables))        
+      end
+      
+      context "with variables set" do
+        setup do
+        end
+        
+        should "use variables in include tags" do
+          @file.raw_text = "<!-- $name _header --><!-- @include $name -->"
+          parser = Hammer.parser_for_hammer_file(@file)
+          assert_equal "Header", parser.parse()
+          assert_equal({'name' => "_header"}, parser.send(:variables))     
+        end
+      end
+      
     end
     
   end

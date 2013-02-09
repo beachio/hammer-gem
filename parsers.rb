@@ -1,3 +1,4 @@
+require "cgi"
 class Hammer
 
   class HammerParser
@@ -58,14 +59,19 @@ class Hammer
 
     def parse
       get_variables()
-      reload_tags()
       includes()
+      get_variables()
+      reload_tags()
       stylesheet_tags()
       javascript_tags()
       current_tags()
       path_tags()
       output_variables()
       return @text
+    end
+    
+    def variables
+      @variables ||= {}
     end
 
     private
@@ -77,10 +83,11 @@ class Hammer
         variable_value = variable_declaration[1..-1].join(' ')
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
+        
         if variable_value.split("")[0] == "|" || variable_value == ""
           tag
         else
-          @hammer_file.variables[variable_name] = variable_value
+          self.variables[variable_name] = variable_value
           ""
         end
       end
@@ -95,26 +102,27 @@ class Hammer
         else
           variable_name = variable_declaration.split(" ")[0]
         end
-        if @hammer_file.variables[variable_name] || default
-          @hammer_file.variables[variable_name] || default
+        if self.variables[variable_name] || default
+          self.variables[variable_name] || default
         else
           raise "Variable <strong>#{CGI.escapeHTML variable_name}</strong> wasn't set!"
         end
       end
     end
     
-    def variables
-      @hammer_file.variables ||= []
-    end
-
     def includes
       lines = []
       replace(/<!-- @include (\S*) -->/) do |tag, line_number|
         tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
         tags.map do |tag|
+          if (tag.split("")[0] == "$")
+            variable_value = variables[tag[1..-1]]
+            raise "Variable #{tag} was not set!" if !variable_value
+            tag = variable_value
+          end
           file = @hammer_project.find_file(tag, self)
           Hammer.parser_for_hammer_file(file).to_html()
-        end.join("\n")
+        end.compact.join("\n")
       end
     end
 
@@ -176,7 +184,7 @@ class Hammer
             end
           end
         end
-        tags.join("\n")
+        tags.compact.join("\n")
       end
 
     end
@@ -202,7 +210,7 @@ class Hammer
             end
           end
         end
-        tags.join("\n")
+        tags.compact.join("\n")
       end
     end
     
@@ -235,10 +243,11 @@ class Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
-        tags.map do |tag|
+        a = tags.map do |tag|
           file = @hammer_project.find_file(tag, self)
           Hammer.parser_for_hammer_file(file).to_css()
-        end.join("\n")
+        end
+        a.compact.join("\n")
       end
     end
 

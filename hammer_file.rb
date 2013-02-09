@@ -55,13 +55,6 @@ class Hammer
       @subdirectory
     end
 
-    def set_variable(name, value)
-    end
-
-    def variables
-      @variables ||= {}
-    end
-
     def error(message, line=nil)
       puts "TODO: add_error"
     end
