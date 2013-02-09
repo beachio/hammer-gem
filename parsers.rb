@@ -53,7 +53,7 @@ class Hammer
   class HTMLParser < HammerParser
     
     def to_html
-      @raw_text
+      @hammer_file.raw_text
     end
 
     def parse
@@ -112,7 +112,8 @@ class Hammer
       replace(/<!-- @include (\S*) -->/) do |tag, line_number|
         tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
         tags.map do |tag|
-          @hammer_project.find_file(tag, self).to_html
+          file = @hammer_project.find_file(tag, self)
+          Hammer.parser_for_hammer_file(file).to_html()
         end.join("\n")
       end
     end

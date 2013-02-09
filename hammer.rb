@@ -16,6 +16,7 @@ class Hammer
   def self.parser_for_hammer_file(hammer_file)
     parser = @@parsers[hammer_file.extension].new(hammer_file.hammer_project)
     parser.text = hammer_file.raw_text
+    parser.hammer_file = hammer_file
     parser
   end
   

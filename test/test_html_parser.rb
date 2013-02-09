@@ -19,8 +19,7 @@ class TestHtmlParser < Test::Unit::TestCase
     should "include files" do
       header = Hammer::HammerFile.new
       header.filename = "_header.html"
-      header.text = "header"
-      header.expects(:to_html).returns("header")
+      header.raw_text = "header"
       @hammer_project << header
 
       @parser.text = "<html><!-- @include _header --></html>"
@@ -259,4 +258,33 @@ class TestHtmlParser < Test::Unit::TestCase
     end
     
   end
+  
+  context "when including files" do
+    setup do
+      @hammer_project = Hammer::Project.new
+      @file = Hammer::HammerFile.new
+      @file.raw_text = "<!-- @include _header -->"
+      @file.filename = "index.html"
+      @file.hammer_project = @hammer_project
+      @hammer_project << @file
+    end
+    
+    context "including a file" do
+      setup do
+        @new_file = Hammer::HammerFile.new
+        @new_file.raw_text = "Header"
+        @new_file.filename = "_header.html"
+        @new_file.hammer_project = @hammer_project
+        @hammer_project << @new_file
+      end
+      
+      should "include the file" do
+        assert @new_file.extension
+        assert_equal Hammer::HTMLParser, Hammer.parser_for_hammer_file(@file).class
+        assert_equal "Header", Hammer.parser_for_hammer_file(@file).parse()
+      end
+    end
+    
+  end
+  
 end
