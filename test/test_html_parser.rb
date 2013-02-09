@@ -31,13 +31,13 @@ class TestHtmlParser < Test::Unit::TestCase
     context "with script tags" do
       setup do
         @new_file = Hammer::HammerFile.new
-        @new_file.text = "I'm an include"
+        @new_file.raw_text = "I'm an include"
         @new_file.filename = "app.js"
         @hammer_project << @new_file
       
         @file = Hammer::HammerFile.new
         @file.filename = "index.html"
-        @file.text = "<!-- @javascript app -->"
+        @file.raw_text = "<!-- @javascript app -->"
         @hammer_project << @file
         
         @parser = @file.parser.new(@hammer_project)
@@ -80,7 +80,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with wildcard script tags" do
           setup do
-            @file.text = "<!-- @javascript assets/* -->"
+            @file.raw_text = "<!-- @javascript assets/* -->"
             @parser.hammer_file = @file
           end
           
@@ -91,7 +91,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with multiple script tag invocation" do
           setup do
-            @file.text = "<!-- @javascript app x -->"
+            @file.raw_text = "<!-- @javascript app x -->"
             # @parser.hammer_file = @file
           end
           
@@ -105,13 +105,13 @@ class TestHtmlParser < Test::Unit::TestCase
     context "with stylesheet tags" do
       setup do
         @new_file = Hammer::HammerFile.new
-        @new_file.text = "body {display: none}"
+        @new_file.raw_text = "body {display: none}"
         @new_file.filename = "app.css"
         @hammer_project << @new_file
       
         @file = Hammer::HammerFile.new
         @file.filename = "index.html"
-        @file.text = "<!-- @stylesheet app -->"
+        @file.raw_text = "<!-- @stylesheet app -->"
         @hammer_project << @file
         
         @parser = @file.parser.new(@hammer_project)
@@ -154,7 +154,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with wildcard script tags" do
           setup do
-            @file.text = "<!-- @stylesheet assets/* -->"
+            @file.raw_text = "<!-- @stylesheet assets/* -->"
             @parser.hammer_file = @file
           end
           
@@ -165,7 +165,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with multiple stylesheet tag invocation" do
           setup do
-            @file.text = "<!-- @stylesheet app x -->"
+            @file.raw_text = "<!-- @stylesheet app x -->"
             # @parser.hammer_file = @file
           end
           
@@ -226,8 +226,9 @@ class TestHtmlParser < Test::Unit::TestCase
     
     context "when just parsing variables" do
       setup do
-        @file.raw_text = "<!-- $title A -->"
-        @parser.text = @file.raw_text
+        @file.raw_text = "<!-- $title B -->"
+        @parser = Hammer::HTMLParser.new(@hammer_project)
+        @parser.hammer_file = @file
       end
       
       should "work" do

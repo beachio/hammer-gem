@@ -1,11 +1,6 @@
 require "amp"
 
 class Hammer
-
-  @@parsers = {}
-  def self.register(parser_class, extension)
-    @@parsers[extension] = parser_class
-  end
   
   def self.register_parser_for_extensions(parser_class, extensions)
     @@extensions_for ||= {}
@@ -96,7 +91,7 @@ class Hammer
       @hammer_files.each do |hammer_file|
         parser = hammer_file.parser.new
         parser.text = hammer_file.text
-        hammer_file.text = parser.parse()
+        # hammer_file.text = parser.parse()
       end
       
       return @hammer_files

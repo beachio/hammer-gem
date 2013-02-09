@@ -18,7 +18,7 @@ class TestHammerProject < Test::Unit::TestCase
       setup do
         @header = Hammer::HammerFile.new
         @header.filename = "_header.html"
-        @header.text = "header"
+        @header.raw_text = "header"
         @hammer_project = Hammer::Project.new
         @hammer_project << @header
         Hammer::HammerParser.any_instance.stubs(:parse).returns(@header.text)
@@ -83,7 +83,7 @@ class TestHammerProject < Test::Unit::TestCase
     setup do
       @header = Hammer::HammerFile.new
       @header.filename = "_header.html"
-      @header.text = "header"
+      @header.raw_text = "header"
       @hammer_project = Hammer::Project.new
       @hammer_project << @header
       @parser = Hammer::HTMLParser.new

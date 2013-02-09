@@ -16,7 +16,16 @@ class Hammer
     end
     
     def text
-      @text != "" ? @text : @hammer_file.raw_text
+      if @text.to_s == ""
+        if @hammer_file
+          @hammer_file.raw_text
+        else
+          ""
+        end
+      else
+        @text
+      end
+      # @text.to_s != "" ? @text : @hammer_file.raw_text
     end
     
     def filename
@@ -33,9 +42,9 @@ class Hammer
 
     def replace(regex, &block)
       lines = []
-      if @text.scan(regex).length > 0
+      if self.text.scan(regex).length > 0
         line_number = 0
-        @text.split("\n").each { |line| 
+        text.split("\n").each { |line| 
           line_number += 1
           lines << line.gsub(regex) { |match| 
             block.call(match, line_number)
@@ -84,6 +93,7 @@ class Hammer
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
         
+        
         if variable_value.split("")[0] == "|" || variable_value == ""
           tag
         else
@@ -95,14 +105,22 @@ class Hammer
     
     def output_variables
       replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
+        
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
+        
         if variable_declaration.include? "|"
           variable_name = variable_declaration.split("|")[0].strip
           default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
         else
+          
           variable_name = variable_declaration.split(" ")[0]
         end
-        if self.variables[variable_name] || default
+        
+        if variable_declaration.include?(' ') && !(variable_declaration.include? "|")
+          # Oh god it's a setter why are you still here
+          self.variables[variable_name] = variable_declaration.split(" ")[1]
+          ""
+        elsif self.variables[variable_name] || default
           self.variables[variable_name] || default
         else
           raise "Variable <strong>#{CGI.escapeHTML variable_name}</strong> wasn't set!"
@@ -150,7 +168,7 @@ class Hammer
           </script>
         <!-- /Hammer reload -->
       "
-      @text = @text.gsub(/<!-- @reload -->/, reloader_script)
+      @text = text.gsub(/<!-- @reload -->/, reloader_script)
     end
     
     def path_tags

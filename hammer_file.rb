@@ -2,53 +2,23 @@ class Hammer
 
   class HammerFile
     
-    def hammer_project=(project)
-      @hammer_project = project
-    end
-    def hammer_project
-      @hammer_project
-    end
+    attr_accessor :filename, :hammer_project
 
     def parser
-      Hammer.parser_for_extension(@extension)
+      Hammer.parser_for_extension(extension)
     end
 
-    def text=(text)
-      @raw_text ||= text
-      @text = text
-    end
+    # def text=(text)
+      # @raw_text ||= text
+      # @text = text
+    # end
 
-    def text
-      @text
-    end
-
-    def raw_text
-      @raw_text
-    end
-
-    def raw_text=(text)
-      @raw_text = text
-    end
-
-    def raw_text
-      @raw_text
-    end
-
-    def filename=(filename)
-      @filename = filename
-      @extension = File.extname(filename)[1..-1]
-    end
-
-    def filename
-      @filename
-    end
+    def text; @text; end
+    attr_accessor :raw_text
+  
 
     def extension
-      @extension
-    end
-
-    def extension=(new_extension)
-      @extension = new_extension
+      File.extname(@filename)[1..-1]
     end
 
     def subdirectory
