@@ -31,9 +31,7 @@ class Hammer
       end
     end
     
-    def hammer_file=(hammer_file)
-      @hammer_file = hammer_file
-    end
+    attr_accessor :hammer_file
 
     def replace(regex, &block)
       lines = []
