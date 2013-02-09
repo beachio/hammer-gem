@@ -18,6 +18,19 @@ class Hammer
     parser.text = hammer_file.raw_text
     parser
   end
+  
+  def self.regex_for(filename, extensions=[])
+    
+    # /index.html becomes ^index.html  
+    filename = filename.split("")[1..-1].join("") if filename.split("")[0] == "/"
+    
+    filename = Regexp.escape(filename).gsub('\*','.*?')
+    if extensions != []
+      /#{filename}\.(#{extensions.join("|")})/
+    else
+      /#{filename}/
+    end
+  end
 
   class Project
 
@@ -28,16 +41,14 @@ class Hammer
     def << (file)
       @hammer_files << file
     end
-    
+
     def find_files_of_type(filename, final_extension)
       files ||= []
       
       # TODO: SCSS for CSS, etc
       extensions = [final_extension]
       
-      filename = filename[1..-1] if filename.split("")[0] == "/" 
-      
-      regex = /^#{filename}\.[#{extensions.join("|")}]/
+      regex = Hammer.regex_for(filename, extensions)
       files = @hammer_files.select { |file| file.filename.match regex }
       return files
     end

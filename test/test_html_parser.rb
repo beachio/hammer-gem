@@ -61,7 +61,7 @@ class TestHtmlParser < Test::Unit::TestCase
           assert_equal "<script src='assets/app.js'></script>", @parser.parse()
         end
         
-        should "replace @javascript tags with correct paths" do
+        should "replace @javascript tags with correct paths in another directory" do
           @file.filename = "blog/index.html"
           @new_file.filename = "assets/app.js"
           @parser.hammer_file = @file

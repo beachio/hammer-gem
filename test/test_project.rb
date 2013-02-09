@@ -59,7 +59,9 @@ class TestHammerProject < Test::Unit::TestCase
       assert_equal [@header], @hammer_project.find_files_of_type("_header", "html")
     end
     
-    should "find the right wildcard files with an extension" do
+    should "find the right wildcard paths starting with a / (/*.html)" do
+      assert_equal [@header], @hammer_project.find_files_of_type("/_header", "html")
+      assert_equal [], @hammer_project.find_files_of_type("assets/*", "html")
       assert_equal [@header], @hammer_project.find_files_of_type("/*", "html")
     end
     
