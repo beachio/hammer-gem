@@ -123,7 +123,7 @@ class Hammer
   end
   register CSSParser, "css"
 
-
+  require "sass"
   class SASSParser < HammerParser
     
     def format=(format)
@@ -156,7 +156,7 @@ class Hammer
     def load_paths
       [
         (@root_directory rescue nil),
-        "#{$FILE_PATH}/vendor/gems/bourbon-*/app/assets/stylesheets",
+        File.expand_path("./vendor/gems/bourbon-*/app/assets/stylesheets"),
       ].compact
     end
 

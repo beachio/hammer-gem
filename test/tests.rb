@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 ## Let's start by $LOAD_PATHing all the directories inside vendor/gems/*/lib
-["./vendor/gems/*"].each do |directory|
+["./vendor/gems/*", "../vendor/gems"].each do |directory|
   Dir.glob(File.join(File.dirname(File.expand_path(__FILE__)), directory)).each do |dir|
     d = File.directory?(lib = "#{dir}/lib") ? lib : dir
     $LOAD_PATH << d
