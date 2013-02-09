@@ -16,16 +16,11 @@ class Hammer
     end
     
     def text
-      if @text.to_s == ""
-        if @hammer_file
-          @hammer_file.raw_text
-        else
-          ""
-        end
+      if @hammer_file && @text.to_s == ""
+        @hammer_file.raw_text.to_s
       else
         @text
       end
-      # @text.to_s != "" ? @text : @hammer_file.raw_text
     end
     
     def filename
