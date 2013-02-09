@@ -18,9 +18,6 @@ class Hammer
     end
   end
   
-  def self.extensions_for; @@extensions_for; end
-  def self.default_parser_for; @@default_parser_for; end
-  
   def self.register_parser_as_default_for_extensions(parser_class, extensions)
     @@default_parser_for ||= {}
     extensions.each do |extension|
@@ -28,9 +25,7 @@ class Hammer
     end
   end
 
-  def self.parsers; @@parsers; end
-  
-  def self.parser_for(extension)
+  def self.parser_for_extension(extension)
     @@default_parser_for[extension]
   end
   

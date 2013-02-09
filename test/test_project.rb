@@ -32,7 +32,7 @@ class TestHammerProject < Test::Unit::TestCase
       end
       
       should "find the right parser for a file" do
-        assert_equal Hammer.parser_for(@header.extension), Hammer::HTMLParser
+        assert_equal Hammer.parser_for_extension(@header.extension), Hammer::HTMLParser
       end
       
     end

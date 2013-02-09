@@ -10,7 +10,7 @@ class Hammer
     end
 
     def parser
-      Hammer.parser_for(@extension)
+      Hammer.parser_for_extension(@extension)
     end
 
     def text=(text)
