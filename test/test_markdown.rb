@@ -16,11 +16,11 @@ class TestMarkdown < Test::Unit::TestCase
       assert_equal "<!-- This is markdown -->\n", @parser.parse()
     end
     
-    context "with a hammer file" do
-      should "set variables" do
+    # context "with a hammer file" do
+    #   should "set variables" do
       
-      end
-    end
+    #   end
+    # end
     
   end
 end

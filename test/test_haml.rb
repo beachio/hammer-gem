@@ -3,7 +3,7 @@ require "./tests.rb"
 class TestHaml < Test::Unit::TestCase
   context "A HAML file parser" do
     setup do
-      @parser               = Hammer::HAMLParser.new
+      @parser = Hammer::HAMLParser.new
     end
     
     should "parse haml" do
@@ -12,8 +12,8 @@ class TestHaml < Test::Unit::TestCase
     end
     
     should "preserve comments" do
-      @parser.text = "/ This is haml"
-      assert_equal "<!-- This is haml -->\n", @parser.parse()
+      @parser.text = "/ @include _header"
+      assert_equal "<!-- @include _header -->\n", @parser.parse()
     end
 
   end

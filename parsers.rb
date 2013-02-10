@@ -1,7 +1,7 @@
 require "include"
 
 class Hammer
-
+  
   class HammerParser
 
     def initialize(hammer_project = nil)
@@ -57,10 +57,17 @@ class Hammer
   class HTMLParser < HammerParser
     
     def to_html
-      @hammer_file.raw_text
+      text = @hammer_file.raw_text
+      
+      # Strip todos - they're for this file only
+      text.gsub(/<!-- @todo (.*) -->/, "")
+      
+      text
     end
 
     def parse
+      todos()
+      
       get_variables()
       includes()
       get_variables()
@@ -83,6 +90,14 @@ class Hammer
 
     private
     
+    def todos
+      replace(/<!-- @todo (.*) -->/) do |tag, line_number|
+        @todos ||= []
+        @todos << {:line => line_number, :tag => tag}
+        ""
+      end
+    end
+    
     def get_variables
       replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
@@ -90,8 +105,6 @@ class Hammer
         variable_value = variable_declaration[1..-1].join(' ')
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
-        
-        
         if variable_value.split("")[0] == "|" || variable_value == ""
           tag
         else

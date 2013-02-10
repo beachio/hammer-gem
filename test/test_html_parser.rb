@@ -1,6 +1,8 @@
 require "./tests.rb"
 class TestHtmlParser < Test::Unit::TestCase
+  
   context "An HTML file parser" do
+    
     setup do
       @hammer_project       = Hammer::Project.new
       @file                 = Hammer::HammerFile.new
@@ -14,6 +16,12 @@ class TestHtmlParser < Test::Unit::TestCase
       @parser.text = "<html><!-- @reload --></html>"
       text = @parser.parse()
       assert !text.include?("@reload"), "It still includes @reload: #{text}"
+    end
+    
+    should "remove todos" do
+      @parser.text = "<html><!-- @todo Do this --></html>"
+      text = @parser.parse()
+      assert_equal "<html></html>", text
     end
 
     should "include files" do
