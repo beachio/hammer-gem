@@ -1,5 +1,4 @@
-require "cgi"
-require "sass"
+require "include"
 
 class Hammer
 
@@ -240,6 +239,51 @@ class Hammer
   end
   register_parser_for_extensions HTMLParser, ['html']
   register_parser_as_default_for_extensions HTMLParser, ['html']
+
+  class MarkdownParser < HammerParser
+    def to_html
+      parse()
+    end
+    
+    def to_markdown
+      @raw_text
+    end
+    
+    def parse
+      convert(text)
+    end
+    
+    private
+    
+    def convert(markdown)
+      Kramdown::Document.new(markdown).to_html
+    end
+    
+  end
+  register_parser_for_extensions MarkdownParser, ['md']
+  register_parser_as_default_for_extensions MarkdownParser, ['md']
+  
+  class HAMLParser < HammerParser
+    def to_html
+    end
+    
+    def to_haml
+      @raw_text
+    end
+    
+    def parse
+      convert(text)
+    end
+    
+    private
+    
+    def convert(text)
+      Haml::Engine.new(text).to_html  
+    end
+  end
+  register_parser_for_extensions HAMLParser, ['haml']
+  register_parser_as_default_for_extensions HAMLParser, ['haml']
+
 
   class CSSParser < HammerParser
 
