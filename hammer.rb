@@ -31,9 +31,6 @@ class Hammer
     parser
   end
 
-  # def self.extension_for_parser(parser_class)
-  # end
-  
   def self.parsers_for_extension(extension)
     parsers = []
     new_extension = nil
@@ -109,9 +106,16 @@ class Hammer
       @compiled_hammer_files = []
       
       @hammer_files.each do |hammer_file|
-        parser = hammer_file.parser.new
-        parser.text = hammer_file.text
-        # hammer_file.text = parser.parse()
+        parsers = Hammer.parsers_for_extension(hammer_file.extension)
+        text = hammer_file.raw_text
+        
+        parsers.each do |parser|
+          parser = parser.new
+          parser.text = text
+          text = parser.parse()
+        end
+        
+        hammer_file.compiled_text = text
       end
       
       return @hammer_files

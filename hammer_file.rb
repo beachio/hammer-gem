@@ -2,7 +2,7 @@ class Hammer
 
   class HammerFile
     
-    attr_accessor :filename, :hammer_project
+    attr_accessor :filename, :hammer_project, :compiled_text
 
     def parser
       Hammer.parser_for_extension(extension)
