@@ -2,7 +2,13 @@ require "./tests.rb"
 
 class TestTodos < Test::Unit::TestCase
   formats = {
-    'html' => '<!-- @todo eat -->'
+    'html' => '<!-- @todo eat -->',
+    'js' => '/* @todo eat */',
+    'js' => '// @todo eat',
+    'css' => '/* @todo eat */',
+    'scss' => '/* @todo eat */',
+    'sass' => '/* @todo eat */',
+    'coffee' => '# @todo eat'
   }
   
   parser = Hammer::TodoParser
@@ -13,10 +19,10 @@ class TestTodos < Test::Unit::TestCase
         @parser = parser.new(comment, format)
       end
       should "replace todos with empty string" do
-        assert_equal @parser.text, ""
+        assert_equal "", @parser.text
       end
-      should "set todos" do
-        assert_equal @parser.todos, {1 => 'eat'}
+      should "set todos for #{comment}" do
+        assert_equal({1 => ['eat']}, @parser.todos)
       end
     end
   end

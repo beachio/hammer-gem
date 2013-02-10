@@ -10,10 +10,14 @@ class Hammer
       regex = case extension
         when "css"
           /\/\* @todo (.*) \*\//
+        when "scss"
+          /\/\* @todo (.*) \*\/|\/\/ @todo (.*)/
+        when "sass"
+          /\/\* @todo (.*) \*\/|\/\/ @todo (.*)/
         when "html"
           /<!-- @todo (.*) -->/
         when "js"
-          /\/* @todo (.*) \*\/|\/\/ @todo (.*)/
+          /\/\* @todo (.*) \*\/|\/\/ @todo (.*)/
         when "coffee"
           /# @todo (.*)/
         end
@@ -22,11 +26,9 @@ class Hammer
       if text.scan(regex).length > 0
         line_number = 0
         text.split("\n").each { |line| 
-          line.scan(regex).each do |messages|
-            messages.each do |message|
-              line_number += 1
-              @todos[line_number] = message
-            end
+          line_number += 1
+          if tags = line.scan(regex).flatten.compact
+            @todos[line_number] = tags
           end
           lines << line.gsub(regex, '')
         }
