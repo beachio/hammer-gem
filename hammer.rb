@@ -30,6 +30,26 @@ class Hammer
     parser.hammer_file = hammer_file
     parser
   end
+
+  # def self.extension_for_parser(parser_class)
+  # end
+  
+  def self.parsers_for_extension(extension)
+    parsers = []
+    new_extension = nil
+    parser = Hammer.parser_for_extension(extension)
+    parsers << parser
+    
+    while new_extension != parser.finished_extension
+      new_extension = parser.finished_extension
+      if new_extension != extension
+        parser = Hammer.parser_for_extension(new_extension)
+        parsers << parser
+      end
+    end
+    
+    parsers
+  end
   
   def self.regex_for(filename, extension=nil)
     

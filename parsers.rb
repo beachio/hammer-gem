@@ -1,4 +1,6 @@
 require "cgi"
+require "sass"
+
 class Hammer
 
   class HammerParser
@@ -74,6 +76,10 @@ class Hammer
     
     def variables
       @variables ||= {}
+    end
+    
+    def self.finished_extension
+      'html'
     end
 
     private
@@ -231,11 +237,9 @@ class Hammer
       return if !filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
       @text = Amp.parse(@text, filename, 'current')
     end
-    
   end
   register_parser_for_extensions HTMLParser, ['html']
   register_parser_as_default_for_extensions HTMLParser, ['html']
-
 
   class CSSParser < HammerParser
 
@@ -249,7 +253,11 @@ class Hammer
       clever_paths
       return @text
     end
-
+    
+    def self.finished_extension
+      "css"
+    end
+    
   private
 
     def includes
@@ -266,12 +274,10 @@ class Hammer
 
     def clever_paths
     end
-
   end
   register_parser_for_extensions CSSParser, ['css']
   register_parser_as_default_for_extensions CSSParser, ['css']
 
-  require "sass"
   class SASSParser < HammerParser
     
     def format=(format)
@@ -299,6 +305,10 @@ class Hammer
       @text
     end
     
+    def self.finished_extension
+      "css"
+    end
+    
     private
     
     def load_paths
@@ -321,7 +331,6 @@ class Hammer
     def sass_options
       { :quiet => true, :logger => nil }
     end
-
   end
   register_parser_for_extensions SASSParser, ['sass', 'scss', 'css']
   register_parser_as_default_for_extensions SASSParser, ['sass', 'scss']
@@ -333,13 +342,15 @@ class Hammer
 
     def parse
     end
-
+    
+    def self.finished_extension
+      "js"
+    end
   end
   register_parser_for_extensions JSParser, ['js']
   register_parser_as_default_for_extensions JSParser, ['js']
 
   class CoffeeParser < HammerParser
-
     def to_javascript
     end
 
@@ -348,7 +359,10 @@ class Hammer
 
     def parse
     end
-
+    
+    def self.finished_extension
+      "js"
+    end
   end
   register_parser_for_extensions CoffeeParser, ['js', 'coffee']
   register_parser_as_default_for_extensions CoffeeParser, ['coffee']

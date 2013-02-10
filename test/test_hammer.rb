@@ -38,4 +38,15 @@ class TestHammer < Test::Unit::TestCase
     end
   end
   
+  context "Hammer's parser chaing system" do
+    should "find a chain of parsers for a file type" do
+      assert_equal Hammer::JSParser,                          Hammer.parser_for_extension("js")
+      assert_equal [Hammer::JSParser],                        Hammer.parsers_for_extension("js")
+      assert_equal [Hammer::CoffeeParser, Hammer::JSParser],  Hammer.parsers_for_extension("coffee")
+      assert_equal [Hammer::HTMLParser],                      Hammer.parsers_for_extension("html")
+      assert_equal [Hammer::CSSParser],                       Hammer.parsers_for_extension("css")
+      assert_equal [Hammer::SASSParser, Hammer::CSSParser],   Hammer.parsers_for_extension("scss")
+    end
+  end
+  
 end
