@@ -40,7 +40,7 @@ class Hammer
     private
     
     def todos
-      replace(/<!-- @todo (.*) -->/) do |tag, line_number|
+      replace(/<!-- @todo (.*?) -->/) do |tag, line_number|
         @todos ||= []
         @todos << {:line => line_number, :tag => tag}
         ""
@@ -48,7 +48,7 @@ class Hammer
     end
     
     def get_variables
-      replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
+      replace(/<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
         variable_name = variable_declaration[0]
         variable_value = variable_declaration[1..-1].join(' ')
@@ -64,7 +64,7 @@ class Hammer
     end
     
     def output_variables
-      replace(/<!-- \$([^>]*) -->/) do |tag, line_number|
+      replace(/<!-- \$(.*?) -->/) do |tag, line_number|
         
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
         
@@ -90,7 +90,7 @@ class Hammer
     
     def includes
       lines = []
-      replace(/<!-- @include (\S*) -->/) do |tag, line_number|
+      replace(/<!-- @include (.*?) -->/) do |tag, line_number|
         tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
         tags.map do |tag|
           if (tag.split("")[0] == "$")
@@ -136,7 +136,7 @@ class Hammer
     end
     
     def path_tags
-      replace(/<!-- @path (\S*) -->/) do |tag, line_number|
+      replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
         file = find_file(File.basename(tag, ".*"), File.extname(tag)[1..-1])
         them = Pathname.new(file.finished_filename)
@@ -148,7 +148,7 @@ class Hammer
     def stylesheet_tags
       @included_stylesheets ||= []
       imported_results = []
-      self.replace(/<!-- @stylesheet (.*) -->/) do |tagged_path, line_number|
+      self.replace(/<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
         tagged_path = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip
         files = tagged_path.split(" ")
         results = []
@@ -173,7 +173,7 @@ class Hammer
     def javascript_tags
       @included_javascripts ||= []
       imported_results = []
-      self.replace(/<!-- @javascript (.*) -->/) do |tagged_path, line_number|
+      self.replace(/<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
         tagged_path = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip
         files = tagged_path.split(" ")
         results = []

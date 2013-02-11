@@ -236,14 +236,23 @@ class TestHtmlParser < Test::Unit::TestCase
     
     context "when just parsing variables" do
       setup do
-        @file.raw_text = "<!-- $title B -->"
         @parser = Hammer::HTMLParser.new(@hammer_project)
-        @parser.hammer_file = @file
       end
       
-      should "work" do
+      should "work with normal variables" do
+        @file.raw_text = "<!-- $title B -->"
+        @parser.hammer_file = @file
+
         assert_equal "", @parser.parse()
       end
+      
+      should "work with a variable with > in its name" do
+        @file.raw_text = "<!-- $title B> -->"
+        @parser.hammer_file = @file
+
+        assert_equal "", @parser.parse()
+      end
+
     end
 
     context "when retrieving variables" do

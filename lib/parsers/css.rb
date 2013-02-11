@@ -17,6 +17,8 @@ class Hammer
       "css"
     end
     
+  private
+
     def url_paths
       replace(/url\((\S*)\)/) do |url_tag, line_number|
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
@@ -36,8 +38,6 @@ class Hammer
       end
     end
     
-  private
-
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
@@ -72,6 +72,7 @@ class Hammer
     end
     
     def to_css
+      parse
     end
     
     def to_format(new_format)
@@ -86,15 +87,6 @@ class Hammer
         warn "SASS to SCSS isn't done"
         ""
       end
-    end
-
-    def to_css
-    end
-
-    def to_scss
-    end
-    
-    def to_sass
     end
 
     def parse

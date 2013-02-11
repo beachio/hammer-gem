@@ -53,7 +53,9 @@ class Hammer
         line_number = 0
         @text = text.split("\n").map { |line| 
           line_number += 1
-          line.gsub(regex) { |match| block.call(match, line_number) }
+          line.gsub(regex) { 
+            |match| block.call(match, line_number) 
+          }
         }.join("\n")
       end
       return
