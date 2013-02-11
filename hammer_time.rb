@@ -5,24 +5,32 @@ Dir['./lib/parsers/*'].each do |file|
   require file
 end
 
+project_directory = ARGV[0]
+temporary_directory = ARGV[1]
+output_directory = ARGV[2] || File.join(project_directory, "Build")
+
+# Clear the final product out
+FileUtils.rm_rf(output_directory)
+
 project = Hammer::Project.new()
-
-FileUtils.rm_rf("/Users/elliott/Desktop/a/Build")
-
-project.create_hammer_files_from_directory("/Users/elliott/Desktop/a")
+project.create_hammer_files_from_directory(project_directory)
 
 hammer_files = project.compile()
 
-output_directory = "/Users/elliott/Desktop/a/Build"
-
 hammer_files.each do |hammer_file|
-  FileUtils.mkdir_p(File.join(output_directory, File.dirname(hammer_file.filename)))
   
   if File.basename(hammer_file.filename).split("")[0] != "_"
+    
+    sub_directory   = File.dirname(hammer_file.output_filename)
+    final_location  = File.join output_directory, sub_directory
+    FileUtils.mkdir_p(final_location)
+    
     output_path = File.join(output_directory, hammer_file.output_filename)
+    
     f = File.new(output_path, "w")
     f.write(hammer_file.compiled_text)
     f.close
+    
   end
 end
 
