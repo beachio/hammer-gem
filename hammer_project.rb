@@ -26,6 +26,12 @@ class Hammer
     end
 
     def find_files(filename, extension=nil)
+      
+      # If they're finding (index.html, html) we need to remove the .html from the tag.
+      if extension && filename[-extension.length-1..-1] == ".#{extension}" 
+        filename = filename[0..-extension.length-2]
+      end
+      
       regex = Hammer.regex_for(filename, extension)
       files = @hammer_files.select { |file|
         file.filename.to_s.match regex
