@@ -29,7 +29,7 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << header
 
       @parser.text = "<html><!-- @include _header --></html>"
-      @hammer_project.expects(:find_files).returns([header])
+      @parser.expects(:find_files).returns([header])
       
       assert_equal "<html>header</html>", @parser.parse()
     end
@@ -53,7 +53,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
       context "single tag" do
         setup do
-          @hammer_project.expects(:find_files).returns([@new_file])
+          @parser.expects(:find_files).returns([@new_file])
         end
         
         should "replace @javascript tags" do
@@ -77,20 +77,20 @@ class TestHtmlParser < Test::Unit::TestCase
       context "when referring to multiple script tags" do
       
         setup do
-          @file.filename = "blog/index.html"
+          @file.filename = "blog/indessx.html"
           @new_file.filename = "assets/app.js"
           @other_file = @new_file.dup
           @other_file.filename = "assets/x.js"
-          @hammer_project.expects(:find_files).returns([@new_file, @other_file])
         end
       
         context "with wildcard script tags" do
           setup do
             @file.raw_text = "<!-- @javascript assets/* -->"
             @parser.hammer_file = @file
+            @parser.expects(:find_files).returns([@new_file, @other_file])
           end
           
-          should "write this test" do
+          should "create multiple <script> tags" do
             assert_equal @parser.parse(), "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>"
           end
         end
@@ -98,11 +98,13 @@ class TestHtmlParser < Test::Unit::TestCase
         context "with multiple script tag invocation" do
           setup do
             @file.raw_text = "<!-- @javascript app x -->"
-            # @parser.hammer_file = @file
+            @parser.hammer_file = @file
+            @parser.expects(:find_files).twice.returns([@new_file, @other_file])
           end
           
           should "create multiple script tags" do
-            assert_equal @parser.parse(), "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>"
+            text = @parser.parse()
+            assert_equal "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>", text
           end
         end
       end
@@ -127,7 +129,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
       context "single tag" do
         setup do
-          @hammer_project.expects(:find_files).returns([@new_file])
+          @parser.expects(:find_files).returns([@new_file])
         end
         
         should "replace @stylesheet tags" do
@@ -155,13 +157,13 @@ class TestHtmlParser < Test::Unit::TestCase
           @new_file.filename = "assets/app.css"
           @other_file = @new_file.dup
           @other_file.filename = "assets/x.css"
-          @hammer_project.expects(:find_files).returns([@new_file, @other_file])
         end
       
         context "with wildcard script tags" do
           setup do
             @file.raw_text = "<!-- @stylesheet assets/* -->"
             @parser.hammer_file = @file
+            @parser.expects(:find_files).returns([@new_file, @other_file])
           end
           
           should "write this test" do
@@ -171,8 +173,9 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with multiple stylesheet tag invocation" do
           setup do
+            @parser.expects(:find_files).twice.returns([@new_file, @other_file])
             @file.raw_text = "<!-- @stylesheet app x -->"
-            # @parser.hammer_file = @file
+            @parser.hammer_file = @file
           end
           
           should "create multiple script tags" do
@@ -220,11 +223,12 @@ class TestHtmlParser < Test::Unit::TestCase
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
-        @hammer_project.expects(:find_files).returns([logo])
+        @parser.expects(:find_files).returns([logo])
       end
       
       should "replace path tags" do
-        @parser.text = @file.raw_text
+        # @parser.text = @file.raw_text
+        @parser.hammer_file = @file
         text = @parser.parse()
         assert_equal "../images/logo.png", text
       end

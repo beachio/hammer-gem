@@ -163,7 +163,6 @@ class Hammer
         end
         tags.compact.join("\n")
       end
-
     end
     
     def javascript_tags

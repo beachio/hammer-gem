@@ -1,8 +1,8 @@
-require "include"
-
 class Hammer
   
   class HammerParser
+
+    attr_accessor :hammer_project
 
     def initialize(hammer_project = nil)
       @text = ""
@@ -12,21 +12,21 @@ class Hammer
     def text=(text)
       @text = text
     end
+
+    attr_reader :hammer_file
+    def hammer_file=(hammer_file)
+      @hammer_file = hammer_file
+
+      @text = @hammer_file.raw_text
+      @filename = hammer_file.filename
+    end
     
     def text
-      if @hammer_file && @text.to_s == ""
-        @hammer_file.raw_text.to_s
-      else
-        @text
-      end
+      @text ||= ""
     end
     
     def filename
-      if @filename
-        return @filename
-      elsif @hammer_file 
-        return @hammer_file.filename
-      end
+      @filename ||= @hammer_file.filename
     end
     
     def find_files(filename, extension=nil)
@@ -37,19 +37,14 @@ class Hammer
       find_files(filename, extension)[0]
     end
     
-    attr_accessor :hammer_file, :hammer_project
-
     def replace(regex, &block)
       lines = []
-      if self.text.scan(regex).length > 0
+      if text.scan(regex).length > 0
         line_number = 0
-        text.split("\n").each { |line| 
+        @text = text.split("\n").map { |line| 
           line_number += 1
-          lines << line.gsub(regex) { |match| 
-            block.call(match, line_number)
-          }
-        }
-        @text = lines.join("\n")
+          line.gsub(regex) { |match| block.call(match, line_number) }
+        }.join("\n")
       end
       return
     end
