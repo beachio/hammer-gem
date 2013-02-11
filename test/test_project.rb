@@ -36,6 +36,17 @@ class TestHammerProject < Test::Unit::TestCase
       end
       
     end
+
+    context "with markdown files" do
+      setup do
+        @hammer_project = Hammer::Project.new
+        @file = Hammer::HammerFile.new(:filename => "index.md", :hammer_project => @hammer_project)
+      end
+      should "find the markdown file given index.md and html" do
+        assert_equal @file, @hammer_project.find_file("index.md", "html")
+      end
+    end
+
   end
   
   context "A Hammer project with multiple files" do

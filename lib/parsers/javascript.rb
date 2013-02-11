@@ -24,7 +24,7 @@ class Hammer
     end
 
     def parse
-      @text
+      @text = CoffeeScript.compile @text
     end
     
     def self.finished_extension

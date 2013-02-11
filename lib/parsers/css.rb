@@ -119,11 +119,19 @@ class Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
-        a = tags.map do |tag|
+        replacement = []
+        tags.each do |tag|
           file = find_file(tag, 'scss')
-          Hammer.parser_for_hammer_file(file).to_format(format)
+          parser = Hammer.parser_for_hammer_file(file)
+          if parser.respond_to?(:to_format)
+            replacement << parser.to_format(format)
+          else
+            replacement << file.raw_text
+            # TODO: Check whether the file is compatible
+            # raise "File #{file.filename} couldn't be included in #{filename}"
+          end
         end
-        a.compact.join("\n")
+        replacement.compact.join("\n")
       end
     end
     

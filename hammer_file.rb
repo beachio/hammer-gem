@@ -8,7 +8,7 @@ class Hammer
 
     def initialize(options={})
       super()
-      @filename = options.delete(:filename) if options[:filename]
+      self.filename = options.delete(:filename) if options[:filename]
       @raw_text = options.delete(:text) if options[:text]
 
       if options[:hammer_project]
@@ -20,6 +20,29 @@ class Hammer
     def filename=(filename)
       @filename = filename
       @extension = File.extname(@filename)[1..-1]
+    end
+
+
+    # style.scss -> style.css    
+    # blog/app.coffee -> blog/app.js
+    def finished_filename
+      new_extension = extension
+      
+      last_parser = Hammer.parsers_for_extension(@extension).last
+      
+      if last_parser
+        new_extension = last_parser.finished_extension
+        
+        dirname = File.dirname(@filename)
+        dirname = nil if dirname == "."
+        
+        path_components = [dirname, File.basename(@filename, ".*")]
+        path = File.join(path_components.compact)
+        
+        "#{path}.#{new_extension}"
+      else
+        filename
+      end
     end
 
   end

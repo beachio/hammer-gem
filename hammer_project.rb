@@ -5,6 +5,8 @@ class Hammer
       @hammer_files = [] 
     end
     
+    attr_accessor :hammer_files
+    
     def create_hammer_files_from_directory(input_directory)
       Dir.glob(File.join(input_directory, "**/*")).each do |filename|
         
@@ -13,7 +15,7 @@ class Hammer
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
         hammer_file.raw_text = File.read(filename)
-        hammer_file.filename = filename.gsub(input_directory, "")
+        hammer_file.filename = filename.gsub(input_directory+"/", "")
         
         @hammer_files << hammer_file
       end
@@ -26,15 +28,11 @@ class Hammer
     end
 
     def find_files(filename, extension=nil)
-      
-      # If they're finding (index.html, html) we need to remove the .html from the tag.
-      if extension && filename[-extension.length-1..-1] == ".#{extension}" 
-        filename = filename[0..-extension.length-2]
-      end
-      
+
       regex = Hammer.regex_for(filename, extension)
+
       files = @hammer_files.select { |file|
-        file.filename.to_s.match regex
+        file.filename =~ regex || File.basename(file.filename) == filename
       }.sort_by { |file|
         file.filename.split(filename).join().length
       }

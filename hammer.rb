@@ -6,6 +6,8 @@ require "amp"
 class Hammer
   
   def self.register_parser_for_extensions(parser_class, extensions)
+    @@parsers ||= []
+    @@parsers << parser_class
     @@extensions_for ||= {}
     @@parsers_for ||= {}
     extensions.each do |extension|
@@ -28,10 +30,26 @@ class Hammer
   end
   
   def self.parser_for_hammer_file(hammer_file)
+    raise "Oh no" unless hammer_file
     parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
     parser.text = hammer_file.raw_text
     parser.hammer_file = hammer_file
     parser
+  end
+  
+  def self.possible_other_extensions_for(extension)
+    extensions = []
+    parsers = Hammer.parsers_for_extension(extension)
+    parsers.each do |parser|
+      @@extensions_for[parser].each do |extension|
+        extensions << extension
+      end
+    end
+    extensions << @@parsers.select {|parser|
+      parser.finished_extension == extension
+    }.map {|parser|
+      @@extensions_for[parser]
+    }.flatten.compact
   end
 
   def self.parsers_for_extension(extension)
@@ -46,8 +64,7 @@ class Hammer
     while new_extension != parser.finished_extension
       new_extension = parser.finished_extension
       if new_extension != extension
-        parser = Hammer.parser_for_extension(new_extension)
-        parsers << parser
+        parsers << Hammer.parser_for_extension(new_extension)
       end
     end
     
@@ -59,18 +76,18 @@ class Hammer
     require "uri"
     filename = URI.parse(filename).path
     
-    parsers = @@parsers_for[extension] || []
-    
-    # Cross-extensions. Means we can use any of these.
-    extensions = []
-    parsers.each do |parser|
-      @@extensions_for[parser].each do |extension|
-        extensions << extension
-      end
+    # If they're finding (index.html, html) we need to remove the .html from the tag.
+    if extension && filename[-extension.length-1..-1] == ".#{extension}" 
+      filename = filename[0..-extension.length-2]
     end
+    
+    extensions = [*extension].compact
+    extensions = extensions + possible_other_extensions_for(extension)
+    extensions = extensions.flatten
     
     # /index.html becomes ^index.html  
     filename = filename.split("")[1..-1].join("") if filename.split("")[0] == "/"
+    
     
     filename = Regexp.escape(filename).gsub('\*','.*?')
     if extensions != []

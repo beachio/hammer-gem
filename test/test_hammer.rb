@@ -14,7 +14,7 @@ class TestHammer < Test::Unit::TestCase
       assert "assets/app.js".match  Hammer.regex_for("assets/*", "js")
 
       assert !("index.html".match(Hammer.regex_for("*", "js")))
-      assert ("logo.png".match(Hammer.regex_for("logo.png")))
+      assert ("logo.png".match(Hammer.regex_for("logo.png"))), "logo.png wasn't found = #{Hammer.regex_for("logo.png")}"
       
       # Test all the combinations! 
       # Remember, match x against y with extension z.

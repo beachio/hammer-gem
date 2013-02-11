@@ -1,5 +1,10 @@
 class Hammer
   class MarkdownParser < HammerParser
+
+    def self.finished_extension
+      "html"
+    end
+
     def to_html
       parse()
     end

@@ -1,6 +1,11 @@
 class Hammer
     
   class HAMLParser < HammerParser
+
+    def self.finished_extension
+      "html"
+    end
+
     def to_html
     end
     
