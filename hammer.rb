@@ -1,3 +1,6 @@
+require "./lib/include"
+require "./hammer_file"
+require "./hammer_project"
 require "amp"
 
 class Hammer
@@ -35,6 +38,9 @@ class Hammer
     parsers = []
     new_extension = nil
     parser = Hammer.parser_for_extension(extension)
+    
+    return [] unless parser
+    
     parsers << parser
     
     while new_extension != parser.finished_extension
@@ -49,6 +55,9 @@ class Hammer
   end
   
   def self.regex_for(filename, extension=nil)
+    
+    require "uri"
+    filename = URI.parse(filename).path
     
     parsers = @@parsers_for[extension] || []
     
@@ -66,61 +75,12 @@ class Hammer
     filename = Regexp.escape(filename).gsub('\*','.*?')
     if extensions != []
       /#{filename}\.(#{extensions.join("|")})/
+    elsif extension
+      /#{filename}.#{extension}/
     else
       /#{filename}/
     end
   end
 
-  class Project
-
-    def initialize()
-      @hammer_files = [] 
-    end
-
-    def << (file)
-      @hammer_files << file
-    end
-
-    def find_files_of_type(filename, extension)
-      files ||= []
-      regex = Hammer.regex_for(filename, extension)
-      files = @hammer_files.select { |file| file.filename.match regex }
-      return files
-    end
-
-    def find_files(filename, extension)
-      self.find_files_of_type(filename, extension)
-    end
-    
-    # TODO: Create root_directory, output_directory and temporary_directory
-    # could be while creating
-    def root_directory
-      nil
-    end
-
-    def find_file(filename, parser_class)
-      find_files(filename, parser_class)[0]
-    end
-    
-    def compile()
-      @compiled_hammer_files = []
-      
-      @hammer_files.each do |hammer_file|
-        parsers = Hammer.parsers_for_extension(hammer_file.extension)
-        text = hammer_file.raw_text
-        
-        parsers.each do |parser|
-          parser = parser.new
-          parser.text = text
-          text = parser.parse()
-        end
-        
-        hammer_file.compiled_text = text
-      end
-      
-      return @hammer_files
-    end
-    
-  end
 
 end

@@ -21,7 +21,6 @@ class CSSParserTest < Test::Unit::TestCase
       should "parse CSS" do
         @file.raw_text = "a {background: red}"
         
-        assert_equal @file.parser, @parser.class
         @parser.hammer_file = @file
         @parser.text = @file.text
         

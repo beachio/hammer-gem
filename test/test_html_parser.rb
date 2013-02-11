@@ -5,9 +5,7 @@ class TestHtmlParser < Test::Unit::TestCase
     
     setup do
       @hammer_project       = Hammer::Project.new
-      @file                 = Hammer::HammerFile.new
-      @hammer_project << @file
-      @file.hammer_project  = @hammer_project
+      @file                 = Hammer::HammerFile.new(:hammer_project => @hammer_project, :filename => "index.html")
       @parser               = Hammer::HTMLParser.new(@hammer_project)
       @parser.hammer_file   = @file
     end
@@ -31,7 +29,7 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << header
 
       @parser.text = "<html><!-- @include _header --></html>"
-      @hammer_project.expects(:find_file).returns(header)
+      @hammer_project.expects(:find_files).returns([header])
       
       assert_equal "<html>header</html>", @parser.parse()
     end
@@ -48,7 +46,7 @@ class TestHtmlParser < Test::Unit::TestCase
         @file.raw_text = "<!-- @javascript app -->"
         @hammer_project << @file
         
-        @parser = @file.parser.new(@hammer_project)
+        @parser = Hammer::HTMLParser.new(@hammer_project)
         @parser.hammer_file = @file
         @parser.text = @file.raw_text
       end   
@@ -122,7 +120,7 @@ class TestHtmlParser < Test::Unit::TestCase
         @file.raw_text = "<!-- @stylesheet app -->"
         @hammer_project << @file
         
-        @parser = @file.parser.new(@hammer_project)
+        @parser = Hammer::HTMLParser.new(@hammer_project)
         @parser.hammer_file = @file
         @parser.text = @file.raw_text
       end   
@@ -222,7 +220,7 @@ class TestHtmlParser < Test::Unit::TestCase
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
-        @hammer_project.expects(:find_file).returns(logo)
+        @hammer_project.expects(:find_files).returns([logo])
       end
       
       should "replace path tags" do

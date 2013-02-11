@@ -56,13 +56,13 @@ class TestHammerProject < Test::Unit::TestCase
     end
     
     should "find the right files with an extension" do
-      assert_equal [@header], @hammer_project.find_files_of_type("_header", "html")
+      assert_equal [@header], @hammer_project.find_files("_header", "html")
     end
     
     should "find the right wildcard paths starting with a / (/*.html)" do
-      assert_equal [@header], @hammer_project.find_files_of_type("/_header", "html")
-      assert_equal [], @hammer_project.find_files_of_type("assets/*", "html")
-      assert_equal [@header], @hammer_project.find_files_of_type("/*", "html")
+      assert_equal [@header], @hammer_project.find_files("/_header", "html")
+      assert_equal [], @hammer_project.find_files("assets/*", "html")
+      assert_equal [@header], @hammer_project.find_files("/*", "html")
     end
     
     context "with an image" do
@@ -106,11 +106,11 @@ class TestHammerProject < Test::Unit::TestCase
     end
 
     should "Find an array of files" do
-      assert_equal @hammer_project.find_files('_header', @parser), [@header]
+      assert_equal @hammer_project.find_files('_header', "html"), [@header]
     end
 
     should "Find a file" do
-      assert_equal @hammer_project.find_file('_header', @parser), @header
+      assert_equal @hammer_project.find_file('_header', "html"), @header
     end
 
   end

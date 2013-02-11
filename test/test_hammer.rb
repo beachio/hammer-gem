@@ -35,6 +35,14 @@ class TestHammer < Test::Unit::TestCase
       assert match "assets/style.scss", "style", 'scss'
       assert !match("index.html", "*", "js")
       assert !match("/assets/index.html", "*", "css")
+      assert !match("/assets/images/optimus-gun.png", "optimus", "png")
+      assert !match("/assets/images/optimus-gun.png", "optimus", "png#a")
+      
+      assert match("/assets/images/optimus.png", "optimus.png#a?a")
+  
+      # Not 100% sure about this one.      
+      assert match("assets/mobile-preregister.png", "preregister.png")
+      
     end
   end
   
