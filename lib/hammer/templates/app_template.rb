@@ -26,7 +26,17 @@ class Hammer
     end
     
     def header
-      "10 files compiled"
+      
+      line = []
+      
+      ['html', 'js', 'css'].each do |extension|
+        files = files_of_type(".#{extension}").length
+        if files > 0
+          line << "#{files} #{extension.upcase} file#{"s" if files != 1}"
+        end
+      end
+      
+      line.join(", ")
     end
     
     def body
@@ -34,27 +44,20 @@ class Hammer
       body = []
       
       html_files = files_of_type('.html')
+
       if html_files.any?
         body << "<h3>HTML files</h3>"
-        html_files.each do |file|
-          body << line_for_file(file)
-        end
+        body << html_files.map {|file| TemplateLine.new(file)}
       end
-      
+
       assets = files - html_files
       
       if assets.any?
         body << "<h3>Assets</h3>"
-        assets.each do |file|
-          body << line_for_file(file)
-        end
+        body << assets.map {|file| TemplateLine.new(file)}
       end
       
       body.join("\n")
-    end
-    
-    def line_for_file(file)
-      TemplateLine.new(file).to_s
     end
     
     def files_of_type(extension)
@@ -106,37 +109,54 @@ class Hammer
       
       def messages
         @messages.map {|message|
-          %Q{
-            <span class="error message">
-              #{h message[:message]}
-            </span>
-          }
+          %Q{<span class="error message">#{h message[:message]}</span>}
         }.join("")
       end
       
       def span_class
-        
-        if @error_file
-          return "could_not_compile"
-        end
+        return "could_not_compile" if @error_file
         
         classes = []
         
-        # Not the right way to do this.
+        classes << "error" if @file.error
+        classes << "include" if @include
+
         if @extension == "html"
-          classes << "html"
+          classes << "html"          
         else
           classes << "success" if @file.compiled
           classes << "copied"
         end
         
-        classes << "error" if @file.error
-        classes << "include" if @include
-        
         classes.join(" ")
-        
       end
             
+      def link
+        %Q{<a target="_blank" href="#{h output_path}" title="#{h input_path}">#{filename}</a>}
+      end
+      
+      def line
+        if @include && !@error
+          ""
+        elsif @error
+          "Error in #{link} on line #{error_line}: #{error_message}"
+        elsif @error_file
+          "Couldn't compile #{link} due to an error in #{error_file}: #{related_file_error_message}"
+        elsif !@file.compiled
+          "Copied #{link}"
+        elsif @extension == "html"
+          "Built #{link}"
+        else
+          "Compiled #{link}"
+        end
+      end
+      
+      def to_s
+        %Q{<span class="file #{extension} #{span_class}">#{line}</span>#{messages}}
+      end
+      
+      private
+      
       def input_path
         @file.full_path
       end
@@ -149,46 +169,6 @@ class Hammer
         @file.filename
       end
       
-      def link
-        %Q{
-          <a target="_blank" href="#{h output_path}" title="#{h input_path}">#{filename}</a>
-        }
-      end
-      
-      def line
-        
-        # TODO: is_include
-        if @include && !@error
-          return ""
-        end
-        
-        if @error
-          line = %Q{
-            Error in #{link} on line #{error_line}: #{error_message}
-          }
-        elsif @error_file
-          line = %Q{
-            Couldn't compile #{link} due to an error in #{error_file}: #{related_file_error_message}
-          }
-        else
-          if @file.compiled
-            if @extension == "html"
-              "Built #{link}"
-            else
-              "Compiled #{link}"
-            end
-          else
-            "Copied #{link}"
-          end
-        end
-      end
-      
-      def to_s
-        %Q{
-            <span class="file #{extension} #{span_class}">#{line}</span>
-            #{messages}
-        }
-      end
     end
     
   end
