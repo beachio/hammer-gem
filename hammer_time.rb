@@ -1,10 +1,12 @@
-require "./hammer"
-require "./parsers"
-require "./hammer_file"
+require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 
-Dir['./lib/parsers/*', './lib/templates/*'].each do |file|
-  require file
-end
+# ["hammer", "parsers", "hammer_file"].each do |file|
+#   require File.join(File.dirname(__FILE__), file)
+# end
+
+# ['lib/parsers/*', 'lib/templates/*'].each do |path|
+#   Dir[path].each {|file| require file}
+# end
 
 temporary_directory = ARGV[0]
 project_directory = ARGV[1]
@@ -27,6 +29,7 @@ hammer_files.each do |hammer_file|
     FileUtils.mkdir_p(final_location)
     
     output_path = File.join(output_directory, hammer_file.output_filename)
+    hammer_file.output_path = output_path
     
     f = File.new(output_path, "w")
     f.write(hammer_file.compiled_text)
@@ -37,4 +40,3 @@ end
 
 template = Hammer::AppTemplate.new(hammer_files)
 puts template
-

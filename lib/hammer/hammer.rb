@@ -1,7 +1,6 @@
-require "./lib/include"
-require "./hammer_file"
-require "./hammer_project"
-require "amp"
+# ["lib/include", "hammer_file", "hammer_project"].each do |file|
+#   require File.join(File.dirname(__FILE__), file)
+# end
 
 class Hammer
   
@@ -101,3 +100,5 @@ class Hammer
 
 
 end
+
+require File.join(File.dirname(__FILE__), "include")

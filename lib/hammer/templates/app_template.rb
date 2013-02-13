@@ -17,7 +17,12 @@ class Hammer
   class AppTemplate < Template
 
     def to_s
-      [header, body].join("\n")
+      [header, stylesheet, body].join("\n")
+    end
+    
+    def stylesheet
+      css = File.open(File.join(File.dirname(__FILE__), "output.css")).read
+      %Q{<style type="text/css">#{css}</style>}
     end
     
     def header
@@ -85,6 +90,7 @@ class Hammer
       include Templatey
       
       attr_reader :error, :error_file, :related_file_error_message, :error_message, :error_line
+      attr_reader :extension
       
       def initialize(file)
         @file = file
@@ -94,6 +100,8 @@ class Hammer
         @error_file = file.error_file
         @filename = file.finished_filename
         @messages = file.messages
+        @extension = File.extname(@file.finished_filename)[1..-1]
+        @include = File.basename(file.filename).split("")[0] == "_"
       end
       
       def messages
@@ -107,7 +115,26 @@ class Hammer
       end
       
       def span_class
-        "compiled"
+        
+        if @error_file
+          return "could_not_compile"
+        end
+        
+        classes = []
+        
+        # Not the right way to do this.
+        if @extension == "html"
+          classes << "html"
+        else
+          classes << "success" if @file.compiled
+          classes << "copied"
+        end
+        
+        classes << "error" if @file.error
+        classes << "include" if @include
+        
+        classes.join(" ")
+        
       end
             
       def input_path
@@ -115,7 +142,7 @@ class Hammer
       end
       
       def output_path
-        @file.full_path
+        @file.output_path
       end
       
       def filename
@@ -124,31 +151,42 @@ class Hammer
       
       def link
         %Q{
-          <a target="_blank" href="#{h output_path} title="#{h input_path}">#{filename}</a>
+          <a target="_blank" href="#{h output_path}" title="#{h input_path}">#{filename}</a>
         }
       end
       
       def line
-        if error
+        
+        # TODO: is_include
+        if @include && !@error
+          return ""
+        end
+        
+        if @error
           line = %Q{
             Error in #{link} on line #{error_line}: #{error_message}
           }
-        elsif error_file
-          puts "a"
+        elsif @error_file
           line = %Q{
             Couldn't compile #{link} due to an error in #{error_file}: #{related_file_error_message}
           }
         else
-          "Compiled #{link}"
+          if @file.compiled
+            if @extension == "html"
+              "Built #{link}"
+            else
+              "Compiled #{link}"
+            end
+          else
+            "Copied #{link}"
+          end
         end
       end
       
       def to_s
         %Q{
-          <div class="file #{span_class}">
-            <span class="#{span_class}">#{line}</span>
+            <span class="file #{extension} #{span_class}">#{line}</span>
             #{messages}
-          </div>
         }
       end
     end

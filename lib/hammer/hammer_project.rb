@@ -15,7 +15,8 @@ class Hammer
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
         hammer_file.raw_text = File.read(filename)
-        hammer_file.filename = filename.gsub(input_directory+"/", "")
+        hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
+        hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.split("")[0] == "/"
         
         @hammer_files << hammer_file
       end
@@ -52,6 +53,7 @@ class Hammer
     end
     
     def compile()
+      
       @compiled_hammer_files = []
       
       @hammer_files.each do |hammer_file|
@@ -67,6 +69,8 @@ class Hammer
           parser.hammer_file = hammer_file
           parser.text = text
           text = parser.parse()
+          
+          hammer_file.compiled = true
           
           hammer_file.output_filename = "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.class.finished_extension}"
         end

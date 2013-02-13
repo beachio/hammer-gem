@@ -130,7 +130,7 @@ class Hammer
     def load_paths
       [
         (File.dirname(@hammer_file.full_path) rescue nil),
-        File.expand_path("./vendor/gems/bourbon-*/app/assets/stylesheets")
+        File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
       ].compact
     end
 
