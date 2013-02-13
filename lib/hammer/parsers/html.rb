@@ -98,7 +98,9 @@ class Hammer
             raise "Variable #{tag} was not set!" if !variable_value
             tag = variable_value
           end
+          
           file = find_file(tag, 'html')
+          
           if file
             @hammer_project.parser_for_hammer_file(file).to_html()
           else

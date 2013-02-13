@@ -23,9 +23,10 @@ class Hammer
       replace(/url\((\S*)\)/) do |url_tag, line_number|
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
 
-        if file_path[0..3] == "http" || file_path[0..1] == "//"
+        if file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
           url_tag
         else
+          
           file = find_file(file_path)
           
           if file

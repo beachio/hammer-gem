@@ -32,8 +32,6 @@ class Hammer
     def find_files(filename, extension=nil)
       # TODO: Better filename checking than this.
       
-      
-      
       if filename[0..1] == "./"
         filename = filename[2..-1]
         dirname = File.dirname(self.filename)
