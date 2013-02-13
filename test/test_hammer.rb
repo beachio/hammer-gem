@@ -1,4 +1,4 @@
-require "./tests"
+require "tests"
 
 class TestHammer < Test::Unit::TestCase
   context "Hammer"  do

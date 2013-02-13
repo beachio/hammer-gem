@@ -1,4 +1,4 @@
-require "./tests.rb"
+require "tests"
 
 class TestSCSS < Test::Unit::TestCase
   context "A SCSS Parser" do

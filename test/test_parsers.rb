@@ -1,4 +1,4 @@
-require "./tests.rb"
+require "tests"
 
 class TestParsers < Test::Unit::TestCase
   

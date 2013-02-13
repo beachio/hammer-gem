@@ -1,4 +1,4 @@
-require "./tests.rb"
+require "tests"
 
 class TestMarkdown < Test::Unit::TestCase
   context "An HTML file parser" do

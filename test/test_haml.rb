@@ -1,4 +1,4 @@
-require "./tests.rb"
+require "tests"
 
 class TestHaml < Test::Unit::TestCase
   context "A HAML file parser" do

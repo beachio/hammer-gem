@@ -1,4 +1,4 @@
-require "./tests"
+require "tests"
 
 class HammerAppTemplateTest < Test::Unit::TestCase
   

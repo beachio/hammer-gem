@@ -1,4 +1,4 @@
-require "./tests.rb"
+require "tests"
 
 class TestTodos < Test::Unit::TestCase
   

@@ -1,4 +1,4 @@
-require "./tests"
+require "tests"
 
 class CSSParserTest < Test::Unit::TestCase
   context "A CSS Parser" do
