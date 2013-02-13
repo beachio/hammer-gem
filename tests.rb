@@ -7,7 +7,7 @@
 #   require file
 # end
 
-require "./lib/hammer/include"
+require File.join(File.dirname(__FILE__), "lib/hammer/include")
 
 require "rubygems"
 require "test/unit"
