@@ -1,7 +1,8 @@
 require "./hammer"
 require "./parsers"
 require "./hammer_file"
-Dir['./lib/parsers/*'].each do |file|
+
+Dir['./lib/parsers/*', './lib/templates/*'].each do |file|
   require file
 end
 
@@ -25,4 +26,7 @@ hammer_files.each do |hammer_file|
     f.close
   end
 end
+
+template = Hammer::AppTemplate.new(hammer_files)
+puts template
 

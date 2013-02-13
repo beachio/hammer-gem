@@ -15,6 +15,10 @@ $LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "lib")
   end
 end
 
+Dir["./lib/templates/*.rb"].each {|file| 
+  require file 
+}
+
 $LOAD_PATH << File.dirname(__FILE__)
 
 ## Now require all the gems we need

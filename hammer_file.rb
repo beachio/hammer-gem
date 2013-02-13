@@ -5,8 +5,15 @@ class Hammer
     attr_accessor :hammer_project
     attr_accessor :filename, :full_path, :output_filename, :extension
     attr_accessor :raw_text, :text, :compiled_text
+    attr_accessor :error_line, :error_message, :error_file
+    attr_accessor :messages
+
+    def error
+      error_line || error_message
+    end
 
     def initialize(options={})
+      @messages = []
       super()
       self.filename = options.delete(:filename) if options[:filename]
       @raw_text = options.delete(:text) if options[:text]
