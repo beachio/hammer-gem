@@ -155,6 +155,7 @@ class Hammer
         files = tagged_path.split(" ")
         results = []
         tags = []
+        
         files.each do |filename|
           matches = find_files(filename, 'css')
           raise "Stylesheet file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0

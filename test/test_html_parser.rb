@@ -137,10 +137,17 @@ class TestHtmlParser < Test::Unit::TestCase
           assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
         end      
         
-        should "replace @javascript tags with correct paths" do
+        should "replace @stylesheet tags with correct paths" do
           @new_file.filename = "assets/app.css"
           @parser.hammer_file = @file
           assert_equal "<link rel='stylesheet' href='assets/app.css'>", @parser.parse()
+        end
+        
+        should "replace @stylesheet tags with correct paths" do
+          @new_file.filename = "assets/three/app.scss"
+          @new_file.raw_text = "<!-- @stylesheet app.scss -->"
+          @parser.hammer_file = @file
+          assert_equal "<link rel='stylesheet' href='assets/three/app.css'>", @parser.parse()
         end
         
         should "replace @javascript tags with correct paths in another directory" do

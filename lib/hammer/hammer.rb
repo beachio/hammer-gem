@@ -75,14 +75,16 @@ class Hammer
     require "uri"
     filename = URI.parse(filename).path
     
-    # If they're finding (index.html, html) we need to remove the .html from the tag.
-    if extension && filename[-extension.length-1..-1] == ".#{extension}" 
-      filename = filename[0..-extension.length-2]
-    end
-    
     extensions = [*extension].compact
     extensions = extensions + possible_other_extensions_for(extension)
     extensions = extensions.flatten
+    
+    extensions.each do |extension|
+      # If they're finding (index.html, html) we need to remove the .html from the tag.
+      if extension && filename[-extension.length-1..-1] == ".#{extension}" 
+        filename = filename[0..-extension.length-2]
+      end
+    end
     
     # /index.html becomes ^index.html  
     filename = filename.split("")[1..-1].join("") if filename.split("")[0] == "/"

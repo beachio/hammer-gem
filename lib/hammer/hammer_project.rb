@@ -29,7 +29,7 @@ class Hammer
     end
 
     def find_files(filename, extension=nil)
-
+      
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|

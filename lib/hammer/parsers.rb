@@ -30,6 +30,7 @@ class Hammer
     end
     
     def find_files(filename, extension=nil)
+      
       # TODO: Better filename checking than this.
       
       if filename[0..1] == "./"
@@ -38,6 +39,7 @@ class Hammer
         dirname = nil if dirname == "."
         filename = File.join([dirname, filename].compact)
       end
+      
       @hammer_project.find_files(filename, extension)
     end
     

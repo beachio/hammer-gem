@@ -76,6 +76,17 @@ class TestHammerProject < Test::Unit::TestCase
       assert_equal [@header], @hammer_project.find_files("/*", "html")
     end
     
+    context "when the path is an extension" do
+      setup do
+        @f = Hammer::HammerFile.new(:filename => "assets/stylesheets/extension_included.scss", :hammer_project => @hammer_project)
+        @parser.text = "<!-- @stylesheet assets/stylesheets/extension_included.scss -->"
+      end
+      
+      should "find the right files when the path is given with an extension, as a CSS file" do
+        assert_equal [@f], @hammer_project.find_files("assets/stylesheets/extension_included.scss", 'css')
+      end
+    end
+    
     context "with an image" do
       setup do
         @image = Hammer::HammerFile.new
