@@ -5,8 +5,8 @@ Dir['./lib/parsers/*'].each do |file|
   require file
 end
 
-project_directory = ARGV[0]
-temporary_directory = ARGV[1]
+temporary_directory = ARGV[0]
+project_directory = ARGV[1]
 output_directory = ARGV[2] || File.join(project_directory, "Build")
 
 # Clear the final product out
