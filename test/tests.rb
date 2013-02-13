@@ -1,11 +1,16 @@
 #!/usr/bin/ruby
 
+require "rubygems"
+require "test/unit"
+require "mocha/setup"
+require "shoulda-context"
 
-['rubygems', 'test/unit', 'mocha/setup', 'shoulda-context'].each{|gem| require gem}
-require File.join(File.dirname(__FILE__), "../lib/hammer/include")
-
-Dir.glob(File.dirname(__FILE__)+"/*.rb").each { |file|
-  require file unless file == __FILE__
-}
 include Test::Unit
 
+require File.join(File.dirname(__FILE__), "../lib/hammer/include")
+
+tests = Dir.glob(File.join(File.dirname(__FILE__), "*.rb")) - [__FILE__]
+
+tests.each { |file|
+  require file
+}
