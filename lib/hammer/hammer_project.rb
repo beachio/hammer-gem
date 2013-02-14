@@ -100,18 +100,20 @@ class Hammer
         hammer_file.compiled = true
         hammer_file.output_filename = "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.class.finished_extension}"
       end
-      
+      hammer_file.output_filename ||= hammer_file.filename
       hammer_file.compiled_text = text
     end
     
     def after_compile(hammer_file)
+      
+      return unless @production
+      
       filename = hammer_file.output_filename || hammer_file.filename
       extension = File.extname(filename)[1..-1]
       compilers = Hammer.after_compilers[extension] || []
       compilers.each do |precompiler|
         hammer_file.compiled_text = precompiler.new(hammer_file.compiled_text).parse()
       end
-      hammer_file.output_filename ||= hammer_file.filename
     end
     
   end
