@@ -1,9 +1,10 @@
-# ["lib/include", "hammer_file", "hammer_project"].each do |file|
-#   require File.join(File.dirname(__FILE__), file)
-# end
-
 class Hammer
-  
+
+  @@after_compilers = {}
+  def self.after_compilers
+    @@after_compilers
+  end
+
   def self.register_parser_for_extensions(parser_class, extensions)
     @@parsers ||= []
     @@parsers << parser_class

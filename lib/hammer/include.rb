@@ -25,11 +25,11 @@ end
 
 require File.join(File.dirname(__FILE__), "hammer")
 
-["hammer", "parsers", "hammer_file", "hammer_project", "hammer_error"].each do |file|
+["hammer", "parsers", "compressor", "hammer_file", "hammer_project", "hammer_error"].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
 
-["templates/*.rb", "parsers/*.rb"].each do |path|
+["templates/*.rb", "parsers/*.rb", "compressors/*"].each do |path|
   Dir[File.join(File.dirname(__FILE__), path)].each do |file| 
     require file 
   end
