@@ -26,6 +26,10 @@ class Hammer
       @filename = filename
       @extension = File.extname(@filename)[1..-1]
     end
+    
+    def output_filename
+      @output_filename || @filename
+    end
 
     # style.scss -> style.css    
     # blog/app.coffee -> blog/app.js
