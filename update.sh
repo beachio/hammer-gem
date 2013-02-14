@@ -15,6 +15,7 @@ gem update thor
 gem update ejs
 gem update eco
 gem update eco-source --pre
+gem update uglifier
 
 gem unpack bourbon --target=vendor/gems
 gem unpack coffee-script-source --target=vendor/gems
@@ -31,3 +32,4 @@ gem unpack thor --target=vendor/gems
 gem unpack ejs --target=vendor/gems
 gem unpack eco --target=vendor/gems
 gem unpack eco-source --target=vendor/gems
+gem unpack uglifier --target=vendor/gems
