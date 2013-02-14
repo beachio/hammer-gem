@@ -21,7 +21,7 @@ class Hammer
         @hammer_project << self
       end
     end
-
+    
     def filename=(filename)
       @filename = filename
       @extension = File.extname(@filename)[1..-1]

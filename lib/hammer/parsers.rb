@@ -1,5 +1,5 @@
 class Hammer
-  
+
   class HammerParser
     
     include Templatey
@@ -26,6 +26,10 @@ class Hammer
     
     def text
       @text ||= ""
+    end
+    
+    def production?
+      @hammer_project.production
     end
     
     def filename

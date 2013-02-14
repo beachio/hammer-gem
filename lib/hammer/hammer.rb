@@ -5,6 +5,11 @@ class Hammer
     @@after_compilers
   end
 
+  @@pre_compilers = {}
+  def self.pre_compilers
+    @@pre_compilers
+  end
+  
   def self.register_parser_for_extensions(parser_class, extensions)
     @@parsers ||= []
     @@parsers << parser_class
@@ -99,8 +104,8 @@ class Hammer
       /#{filename}/
     end
   end
-
-
+  
+  
 end
 
 require File.join(File.dirname(__FILE__), "include")

@@ -37,7 +37,7 @@ class Hammer
       'html'
     end
 
-    private
+  private
     
     def todos
       replace(/<!-- @todo (.*?) -->/) do |tag, line_number|
@@ -201,6 +201,12 @@ class Hammer
           if matches == nil || matches.length == 0
             raise "Javascript tags: <strong>#{h tagged_path}</strong> couldn't be found."
           end
+  
+          # TODO: Production-mode file creation.
+          # Needs: @hammer_project.add_file(hammer_file)          
+          # if production?
+          # else
+          # end
           
           matches.each do |file|
             them = Pathname.new(file.finished_filename)
