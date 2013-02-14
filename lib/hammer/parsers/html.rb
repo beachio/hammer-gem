@@ -54,7 +54,7 @@ class Hammer
         variable_value = variable_declaration[1..-1].join(' ')
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
-        if variable_value.split("")[0] == "|" || variable_value == ""
+        if variable_value.start_with?("|") || variable_value == ""
           tag
         else
           self.variables[variable_name] = variable_value
@@ -83,7 +83,7 @@ class Hammer
         elsif self.variables[variable_name] || default
           self.variables[variable_name] || default
         else
-          raise "Variable <strong>#{CGI.escapeHTML variable_name}</strong> wasn't set!"
+          raise "Variable <strong>#{h variable_name}</strong> wasn't set!"
         end
       end
     end
@@ -93,9 +93,14 @@ class Hammer
       replace(/<!-- @include (.*?) -->/) do |tag, line_number|
         tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
         tags.map do |tag|
-          if (tag.split("")[0] == "$")
+          
+          if (tag.start_with? "$")
             variable_value = variables[tag[1..-1]]
-            raise "Variable #{tag} was not set!" if !variable_value
+            
+            if !variable_value
+              raise "Includes: Can't include <strong>#{h tag}</strong> because <strong>#{h tag}</strong> isn't set."
+            end
+            
             tag = variable_value
           end
           
@@ -104,7 +109,7 @@ class Hammer
           if file
             @hammer_project.parser_for_hammer_file(file).to_html()
           else
-            raise "Couldn't find #{tag} to include on line #{line_number} of #{filename}"
+            raise "Includes: File <strong>#{h tag}</strong> couldn't be found."
           end
         end.compact.join("\n")
       end
@@ -141,6 +146,11 @@ class Hammer
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
         file = find_file(File.basename(tag, ".*"), File.extname(tag)[1..-1])
+        
+        if !file
+          raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
+        end
+        
         them = Pathname.new(file.finished_filename)
         me = Pathname.new(File.dirname(filename))
         them.relative_path_from(me)
@@ -158,12 +168,16 @@ class Hammer
         
         files.each do |filename|
           matches = find_files(filename, 'css')
-          raise "Stylesheet file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
+          
+          if matches == nil || matches.length == 0
+            raise "Stylesheet tags: <strong>#{h tagged_path}</strong> couldn't be found."
+          end
+          
           matches.each do |file|
             them = Pathname.new(file.finished_filename)
             me = Pathname.new(File.dirname(self.filename))
             path = them.relative_path_from(me)
-            if !@included_stylesheets.include?(path) && File.basename(path).split("")[0] != "_"
+            if !@included_stylesheets.include?(path) && !File.basename(path).start_with?("_")
               @included_stylesheets << path
               tags << "<link rel='stylesheet' href='#{path}'>"
             end
@@ -183,12 +197,16 @@ class Hammer
         tags = []
         files.each do |filename|
           matches = find_files(filename, 'js')
-          raise "Javascript file <strong>\"#{tagged_path}\"</strong> couldn't be found." if matches == nil || matches.length == 0
+          
+          if matches == nil || matches.length == 0
+            raise "Javascript tags: <strong>#{h tagged_path}</strong> couldn't be found."
+          end
+          
           matches.each do |file|
             them = Pathname.new(file.finished_filename)
             me = Pathname.new(File.dirname(self.filename))
             path = them.relative_path_from(me)
-            if !@included_javascripts.include?(path) && File.basename(path).split("")[0] != "_"
+            if !@included_javascripts.include?(path) && !File.basename(path).start_with?("_")
               @included_javascripts << path
               tags << "<script src='#{path}'></script>"
             end

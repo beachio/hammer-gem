@@ -1,12 +1,15 @@
 class Hammer
   
   class HammerParser
+    
+    include Templatey
 
     attr_accessor :hammer_project
 
-    def initialize(hammer_project = nil)
+    def initialize(hammer_project = nil, hammer_file = nil)
       @text = ""
       @hammer_project = hammer_project if hammer_project
+      hammer_file = hammer_file if hammer_file
     end
 
     def text=(text)
@@ -41,10 +44,16 @@ class Hammer
       end
       
       @hammer_project.find_files(filename, extension)
+    rescue
+      nil
     end
     
     def find_file(filename, extension=nil)
       find_files(filename, extension)[0]
+    end
+    
+    def error(text, line_number)
+      raise Hammer::Error.new(text, line_number)
     end
     
     def replace(regex, &block)
@@ -53,8 +62,12 @@ class Hammer
         line_number = 0
         @text = text.split("\n").map { |line| 
           line_number += 1
-          line.gsub(regex) { 
-            |match| block.call(match, line_number) 
+          line.gsub(regex) { |match|
+            begin 
+              block.call(match, line_number) 
+            rescue => error_message
+              error(error_message, line_number)
+            end
           }
         }.join("\n")
       end

@@ -43,7 +43,18 @@ class Hammer
       
       body = []
       
-      html_files = files_of_type('.html')
+      files = sorted_files
+      
+      error_files = files.select {|file| file.error }
+      
+      if error_files.any?
+        body << "<h3>Errors</h3>"
+        body << error_files.map {|file| TemplateLine.new(file)}
+      end
+      
+      files = files - [*error_files]
+      
+      html_files = files.select {|file| File.extname(file.finished_filename) == ".html"}
 
       if html_files.any?
         body << "<h3>HTML files</h3>"
@@ -61,19 +72,19 @@ class Hammer
     end
     
     def files_of_type(extension)
-      files.select {|file| File.extname(file.finished_filename) == extension}
+      sorted_files.select {|file| File.extname(file.finished_filename) == extension}
     end
     
-    def files
+    def sorted_files
       
       # This sorts the files into the correct order for display
-      @files.sort_by { |file|
+      @sorted_files ||= @files.sort_by { |file|
         extension = File.extname(file.finished_filename).downcase
         length = file.finished_filename.length
 
         if file.error # (file.result == :error) || file.error != nil
           0 + length
-        elsif file.error
+        elsif file.filename == "index.html"
           1000 + length
         elsif extension == ".html"
           10000 + length
@@ -97,19 +108,24 @@ class Hammer
       
       def initialize(file)
         @file = file
+        
         @error = file.error
-        @error_message = file.error_message
-        @error_line = file.error_line
+        
+        if file.error
+          @error_message = file.error.text
+          @error_line = file.error.line_number
+        end
+        
         @error_file = file.error_file
         @filename = file.finished_filename
         @messages = file.messages
         @extension = File.extname(@file.finished_filename)[1..-1]
-        @include = File.basename(file.filename).split("")[0] == "_"
+        @include = File.basename(file.filename).start_with?("_")
       end
       
       def messages
         @messages.map {|message|
-          %Q{<span class="error message">#{h message[:message]}</span>}
+          %Q{<span class="error message">#{message[:message]}</span>}
         }.join("")
       end
       
@@ -139,7 +155,8 @@ class Hammer
         if @include && !@error
           ""
         elsif @error
-          "Error in #{link} on line #{error_line}: #{error_message}"
+          "Error in #{link} on <strong>line #{error_line}</strong>:
+          <span class=\"error message\">#{error_message}</span>"
         elsif @error_file
           "Couldn't compile #{link} due to an error in #{error_file}: #{related_file_error_message}"
         elsif !@file.compiled

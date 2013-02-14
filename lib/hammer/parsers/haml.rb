@@ -7,6 +7,7 @@ class Hammer
     end
 
     def to_html
+      parse
     end
     
     def to_haml

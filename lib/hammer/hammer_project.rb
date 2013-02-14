@@ -7,8 +7,13 @@ class Hammer
     
     attr_accessor :hammer_files
     
-    def create_hammer_files_from_directory(input_directory)
-      Dir.glob(File.join(input_directory, "**/*")).each do |filename|
+    def create_hammer_files_from_directory(input_directory, output_directory)
+      
+      
+      files = Dir.glob(File.join(input_directory, "**/*"))
+      files.reject! {|file| file.match(output_directory)}
+      
+      files.each do |filename|
         
         next if File.directory?(filename)
         
@@ -16,7 +21,7 @@ class Hammer
         hammer_file.full_path = filename
         hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
-        hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.split("")[0] == "/"
+        hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
         
         @hammer_files << hammer_file
       end
@@ -58,26 +63,28 @@ class Hammer
       
       @hammer_files.each do |hammer_file|
         
-        next if File.basename(hammer_file.filename).split("")[0] == "_"
+        next if File.basename(hammer_file.filename).start_with? "_"
         
         text = hammer_file.raw_text
         extension = ""
         
-        Hammer.parsers_for_extension(hammer_file.extension).each do |parser|
-          parser = parser.new
-          parser.hammer_project = self
-          parser.hammer_file = hammer_file
-          parser.text = text
-          text = parser.parse()
+        begin
+          Hammer.parsers_for_extension(hammer_file.extension).each do |parser|
+            parser = parser.new(self)
+            parser.hammer_file = hammer_file
+            parser.text = text
+            text = parser.parse()
+            hammer_file.compiled = true
+            hammer_file.output_filename = "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.class.finished_extension}"
+          end
           
-          hammer_file.compiled = true
-          
-          hammer_file.output_filename = "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.class.finished_extension}"
+          hammer_file.compiled_text = text
+        rescue Hammer::Error => error
+          hammer_file.error = error
         end
         
         hammer_file.output_filename ||= hammer_file.filename
         
-        hammer_file.compiled_text = text
       end
       
       return @hammer_files

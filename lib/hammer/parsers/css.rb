@@ -96,9 +96,28 @@ class Hammer
       
       includes()
       
-      # Dir.chdir(@directory) # will be required
-      
-      @text = Sass::Engine.new(@text, options).render()
+      engine = Sass::Engine.new(@text, options)
+      begin
+        @text = engine.render()
+      rescue => e
+        # @error = e
+
+        if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
+          # TODO: Make this nicer.
+          # @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
+          # file = @hammer_project.hammer_file_for_filename(@error_file, ['.css', '.scss', '.sass'])
+          # if file
+            # file.error = e 
+            # file.error_line = e.sass_line
+          # end
+        else
+          if e.respond_to?(:sass_line) && e.sass_line
+            error e.message, e.sass_line
+          end
+        end
+        
+        send engine
+      end
       @text
     end
     
@@ -116,12 +135,17 @@ class Hammer
         tags.each do |tag|
           file = find_file(tag, 'scss')
           parser = Hammer.parser_for_hammer_file(file)
+          
           if parser.respond_to?(:to_format)
             replacement << parser.to_format(format)
           else
-            replacement << file.raw_text
+            # raise "File #{file.filename} couldn't be included."
+            
+            # Let's assume it's a CSS file.
             # TODO: Check whether the file is compatible
-            # raise "File #{file.filename} couldn't be included in #{filename}"
+            require "sass/css"
+            text = Sass::CSS.new(file.raw_text).render(format) 
+            replacement << text
           end
         end
         replacement.compact.join("\n")

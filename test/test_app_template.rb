@@ -35,8 +35,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
     
     context "with errors" do
       setup do
-        @file.error_message = "Error message"
-        @file.error_line = 123
+        @file.expects(:error).at_least_once.returns(Hammer::Error.new("Error message", 123))
         @text = @template.to_s
       end
       

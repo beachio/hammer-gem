@@ -8,10 +8,12 @@ class Hammer
     attr_accessor :error_line, :error_message, :error_file
     attr_accessor :messages
     attr_accessor :compiled
+    
+    attr_accessor :error
 
-    def error
-      error_line || error_message
-    end
+    # def error
+    #   error_line || error_message
+    # end
 
     def initialize(options={})
       @messages = []

@@ -33,6 +33,9 @@ span.html {
   padding-left: 18px;
   background: url(FileDoc.png) 0px 1px no-repeat;
 }
+span.html .message {
+  margin-left: 0;
+}
 span.include {
   padding-left: 18px;
   background: url(include.png) 0px 1px no-repeat;

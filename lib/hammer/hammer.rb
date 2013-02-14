@@ -87,7 +87,7 @@ class Hammer
     end
     
     # /index.html becomes ^index.html  
-    filename = filename.split("")[1..-1].join("") if filename.split("")[0] == "/"
+    filename = filename.split("")[1..-1].join("") if filename.start_with? "/"
     
     filename = Regexp.escape(filename).gsub('\*','.*?')
     if extensions != []

@@ -23,6 +23,9 @@ class Hammer
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           file = find_file(tag, 'js')
+          
+          raise "Includes: file <strong>#{h tag}</strong> not found." unless file
+          
           Hammer.parser_for_hammer_file(file).to_javascript()
         end
         a.compact.join("\n")
@@ -66,7 +69,9 @@ class Hammer
         tags = invocation.gsub("# @include ", "").strip.split(" ")
         a = tags.map do |tag|
           file = find_file(tag, 'coffee')
-          raise "File not found: #{tag} on line #{line_number} of #{filename}" unless file
+          
+          raise "File not found: <strong>#{h tag}</strong>" unless file
+          
           parser = Hammer.parser_for_hammer_file(file)
           if parser.respond_to? :to_coffeescript
             parser.to_coffeescript()

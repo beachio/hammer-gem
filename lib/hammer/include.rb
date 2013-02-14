@@ -1,3 +1,9 @@
+module Templatey
+  def h(text)
+    CGI.escapeHTML(text.to_s)
+  end
+end
+
 class Object
   def try(method)
     send method if respond_to? method
@@ -19,7 +25,7 @@ end
 
 require File.join(File.dirname(__FILE__), "hammer")
 
-["hammer", "parsers", "hammer_file", "hammer_project"].each do |file|
+["hammer", "parsers", "hammer_file", "hammer_project", "hammer_error"].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
 

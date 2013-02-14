@@ -10,6 +10,26 @@ class TestHtmlParser < Test::Unit::TestCase
       @parser               = Hammer::HTMLParser.new(@hammer_project)
       @parser.hammer_file   = @file
     end
+    
+    context "with an error" do
+      setup do
+        @parser.text = "<!-- @path nothing -->"
+      end
+      
+      should "raise an error" do
+        assert_raise Hammer::Error do
+          @parser.parse
+        end
+      end
+      
+      should "have an error with the right line number" do
+        begin
+          @parser.parse
+        rescue Hammer::Error => e 
+          assert_equal e.line_number, 1
+        end
+      end
+    end
 
     should "replace reload tags" do
       @parser.text = "<html><!-- @reload --></html>"
@@ -260,7 +280,6 @@ class TestHtmlParser < Test::Unit::TestCase
 
         assert_equal "", @parser.parse()
       end
-
     end
 
     context "when retrieving variables" do
@@ -308,6 +327,22 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << @file
     end
     
+    context "including a HAML file" do
+      setup do
+        @new_file = Hammer::HammerFile.new
+        @new_file.raw_text = "haml file"
+        @new_file.filename = "_header.haml"
+        @new_file.hammer_project = @hammer_project
+        @hammer_project << @new_file
+      end
+      
+      should "include the file" do
+        parser = Hammer.parser_for_hammer_file(@file)
+        assert_equal [@new_file], parser.find_files("_header.haml", 'html')
+        assert_includes parser.parse(), "haml file"
+      end
+    end
+    
     context "including a file" do
       setup do
         @new_file = Hammer::HammerFile.new
@@ -350,7 +385,6 @@ class TestHtmlParser < Test::Unit::TestCase
           assert_equal({'name' => "_header"}, parser.send(:variables))     
         end
       end
-      
     end
     
   end
