@@ -161,6 +161,7 @@ class Hammer
 
     def options
       {
+        :disable_warnings => true,
         :syntax => format, 
         :load_paths => load_paths,
         :relative_assets => true,

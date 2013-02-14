@@ -11,14 +11,20 @@ class Hammer
       @files = files
     end
     
+    def success?
+      @files != nil and @files.length > 0 and @files.select {|file| file.error} == []
+    end
+    
     def to_s; raise "No such method"; end
   end
   
   class AppTemplate < Template
-
+    
     def to_s
       [header, stylesheet, body].join("\n")
     end
+    
+    private
     
     def stylesheet
       css = File.open(File.join(File.dirname(__FILE__), "output.css")).read
@@ -39,10 +45,20 @@ class Hammer
       line.join(", ")
     end
     
+    def not_found
+      "<div class='build-error not-found'><span>Folder not found</span></div>"
+    end
+    
+    def no_files
+      "<div class='build-error no-files'><span>No files to build</span></div>"
+    end
+    
     def body
       
-      body = []
+      return not_found if @files == nil
+      return no_files if @files == []
       
+      body = []
       files = sorted_files
       
       error_files = files.select {|file| file.error }
@@ -73,6 +89,8 @@ class Hammer
     
     def files_of_type(extension)
       sorted_files.select {|file| File.extname(file.finished_filename) == extension}
+    rescue
+      []
     end
     
     def sorted_files
@@ -96,7 +114,6 @@ class Hammer
           1000000 + length
         end
       }
-
     end
 
     class TemplateLine
@@ -185,7 +202,6 @@ class Hammer
       def filename
         @file.filename
       end
-      
     end
     
   end
