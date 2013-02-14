@@ -339,7 +339,7 @@ class TestHtmlParser < Test::Unit::TestCase
       should "include the file" do
         parser = Hammer.parser_for_hammer_file(@file)
         assert_equal [@new_file], parser.find_files("_header.haml", 'html')
-        assert_includes parser.parse(), "haml file"
+        assert parser.parse().include? "haml file"
       end
     end
     
