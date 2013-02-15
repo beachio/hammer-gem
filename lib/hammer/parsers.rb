@@ -4,7 +4,7 @@ class Hammer
     
     include Templatey
 
-    attr_accessor :hammer_project
+    attr_accessor :hammer_project, :variables
 
     def initialize(hammer_project = nil, hammer_file = nil)
       @text = ""
@@ -22,6 +22,15 @@ class Hammer
 
       @text = @hammer_file.raw_text
       @filename = hammer_file.filename
+    end
+    
+    def add_file(filename, text)
+      file = @hammer_project.hammer_files.select{|file| file.filename == filename}[0]
+      if file == nil
+        file = HammerFile.new({:filename => filename, :text => text, :hammer_project => @hammer_project})
+        file.is_a_compiled_file = true
+      end
+      return file
     end
     
     def text
@@ -56,8 +65,9 @@ class Hammer
       find_files(filename, extension)[0]
     end
     
-    def error(text, line_number)
-      raise Hammer::Error.new(text, line_number)
+    def error(text, line_number, hammer_file=nil)
+      @hammer_file.error = Hammer::Error.new(text, line_number, hammer_file)
+      raise @hammer_file.error
     end
     
     def replace(regex, &block)

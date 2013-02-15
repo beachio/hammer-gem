@@ -5,6 +5,12 @@ class Hammer
     def to_javascript
       parse
     end
+    
+    def to_format(format)
+      if format == :js
+        @text
+      end
+    end
 
     def parse
       includes()
@@ -39,6 +45,14 @@ class Hammer
   class CoffeeParser < HammerParser
     def to_javascript
       parse()
+    end
+    
+    def to_format(format)
+      if format == :js
+        to_javascript
+      elsif format == :coffee
+        to_coffeescript
+      end
     end
 
     def to_coffeescript

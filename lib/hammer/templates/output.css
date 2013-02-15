@@ -24,6 +24,9 @@ span.success {
 span.error a, span.success a, span.html a, span.include a, span.could_not_compile a {
   font-weight: bold;
 }
+span.file.error {
+  background: url(FileError.png) 0px 1px no-repeat;
+}
 span.could_not_compile {
   color: #aaa;
   padding-left: 18px;
@@ -150,6 +153,7 @@ a:hover {
   text-decoration: underline;
 }
 @media all and (-webkit-min-device-pixel-ratio: 2) {
+
   .not-found span {
     background: url(MissingFolder@2x.png) top center no-repeat;
     background-size: 65px 50px;
@@ -172,6 +176,10 @@ a:hover {
   }
   span.todo {
     background: url(FileNote@2x.png) 0px 1px no-repeat;
+    background-size: 16px 16px;
+  }
+  span.file.error {
+    background: url(FileError@2x.png) 0px 1px no-repeat;
     background-size: 16px 16px;
   }
 }

@@ -2,6 +2,12 @@ class Hammer
 
   class CSSParser < HammerParser
     
+    def to_format(format)
+      if format == :css
+        to_css
+      end
+    end
+    
     def to_css
       @hammer_file.raw_text
     end

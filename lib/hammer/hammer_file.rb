@@ -5,10 +5,9 @@ class Hammer
     attr_accessor :hammer_project
     attr_accessor :filename, :full_path, :output_filename, :output_path, :extension
     attr_accessor :raw_text, :text, :compiled_text
-    attr_accessor :error_line, :error_message, :error_file
+    attr_accessor :error_line, :error_message, :error_file, :error
     attr_accessor :messages
-    attr_accessor :compiled
-    attr_accessor :error
+    attr_accessor :compiled, :is_a_compiled_file
 
     def initialize(options={})
       @messages = []

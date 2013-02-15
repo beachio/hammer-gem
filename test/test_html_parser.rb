@@ -224,6 +224,14 @@ class TestHtmlParser < Test::Unit::TestCase
         @parser.text = @file.raw_text
         assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
       end
+      
+      should "add a current class to a link to the same page when in a folder and with a path tag" do
+        @file.filename = "blog/index.html"
+        @file.raw_text = "<a href='<!-- @path index -->'></a>"
+        @parser.hammer_file = @file
+        @parser.text = @file.raw_text
+        assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
+      end
             
       should "not add a current class to a link to a different page" do
         @file.raw_text = "<a href='_header.html'></a>"

@@ -41,6 +41,6 @@ end
 
 template = Hammer::AppTemplate.new(hammer_files)
 
-puts template
+puts template unless ARGV.include? "DEBUG"
 
 exit template.success? ? 0 : 1

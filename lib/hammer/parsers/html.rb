@@ -65,7 +65,6 @@ class Hammer
     
     def output_variables
       replace(/<!-- \$(.*?) -->/) do |tag, line_number|
-        
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
         
         if variable_declaration.include? "|"
@@ -75,7 +74,6 @@ class Hammer
           
           variable_name = variable_declaration.split(" ")[0]
         end
-        
         if variable_declaration.include?(' ') && !(variable_declaration.include? "|")
           # Oh god it's a setter why are you still here
           self.variables[variable_name] = variable_declaration.split(" ")[1]
@@ -105,8 +103,17 @@ class Hammer
           end
           
           file = find_file(tag, 'html')
-          
           if file
+            
+            parser = @hammer_project.parser_for_hammer_file(file)
+            parser.variables = self.variables
+            begin
+              parser.parse()
+            rescue Hammer::Error => e
+              e.hammer_file = file
+              raise e
+            end
+          
             @hammer_project.parser_for_hammer_file(file).to_html()
           else
             raise "Includes: File <strong>#{h tag}</strong> couldn't be found."
@@ -159,74 +166,103 @@ class Hammer
 
     def stylesheet_tags
       @included_stylesheets ||= []
-      imported_results = []
+      
       self.replace(/<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
-        tagged_path = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip
-        files = tagged_path.split(" ")
-        results = []
-        tags = []
+        results, tags, hammer_files, paths = [], [], [], [], []
         
-        files.each do |filename|
-          matches = find_files(filename, 'css')
-          
-          if matches == nil || matches.length == 0
-            raise "Stylesheet tags: <strong>#{h tagged_path}</strong> couldn't be found."
-          end
-          
-          matches.each do |file|
-            them = Pathname.new(file.finished_filename)
-            me = Pathname.new(File.dirname(self.filename))
-            path = them.relative_path_from(me)
-            if !@included_stylesheets.include?(path) && !File.basename(path).start_with?("_")
-              @included_stylesheets << path
-              tags << "<link rel='stylesheet' href='#{path}'>"
-            end
-          end
+        filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
+        
+        filenames.each do |filename| 
+          matching_files = find_files(filename, 'css')
+          raise "Stylesheet tags: <strong>#{h filename}</strong> couldn't be found." if matching_files.empty?
+          hammer_files += matching_files
         end
-        tags.compact.join("\n")
+        
+        hammer_files_to_tag = []
+        hammer_files.each do |file|
+          
+          next if file.is_a_compiled_file
+          next if File.basename(file.filename).start_with?("_")
+          
+          path = path_to(file)
+          
+          next if @included_stylesheets.include?(path) 
+          @included_stylesheets << path
+          hammer_files_to_tag << file
+          paths << path
+        end
+        
+        if production?
+          file = add_file_from_files(hammer_files, "#{filename}.css", :css)
+          "<link rel='stylesheet' href='#{path_to(file)}'>"
+        else
+          paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
+        end
       end
+    end
+    
+    def add_file_from_files(files, filename, format)
+      contents = []
+      files.each do |file|
+        contents << Hammer.parser_for_hammer_file(file).to_format(format)
+      end
+      contents = contents.join("\n\n\n\n")
+      filename = Digest::MD5.hexdigest(files.collect(&:filename).join(","))
+      file = add_file("#{filename}.#{format}", contents)
+      file
+    end
+    
+    def path_to(hammer_file)
+      them = Pathname.new(hammer_file.finished_filename)
+      me =  Pathname.new(File.dirname(self.filename))
+      path = them.relative_path_from(me)
+      path
     end
     
     def javascript_tags
       @included_javascripts ||= []
-      imported_results = []
+      
       self.replace(/<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
-        tagged_path = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip
-        files = tagged_path.split(" ")
-        results = []
-        tags = []
-        files.each do |filename|
-          matches = find_files(filename, 'js')
-          
-          if matches == nil || matches.length == 0
-            raise "Javascript tags: <strong>#{h tagged_path}</strong> couldn't be found."
-          end
-  
-          # TODO: Production-mode file creation.
-          # Needs: @hammer_project.add_file(hammer_file)          
-          # if production?
-          # else
-          # end
-          
-          matches.each do |file|
-            them = Pathname.new(file.finished_filename)
-            me = Pathname.new(File.dirname(self.filename))
-            path = them.relative_path_from(me)
-            if !@included_javascripts.include?(path) && !File.basename(path).start_with?("_")
-              @included_javascripts << path
-              tags << "<script src='#{path}'></script>"
-            end
-          end
+        results, tags, hammer_files, paths = [], [], [], [], []
+        
+        filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")
+        
+        filenames.each do |filename| 
+          matching_files = find_files(filename, 'js')
+          raise "Javascript tags: <strong>#{h filename}</strong> couldn't be found." if matching_files.empty?
+          hammer_files += matching_files
         end
-        tags.compact.join("\n")
+                
+        hammer_files_to_tag = []
+        hammer_files.each do |file|
+          
+          next if file.is_a_compiled_file
+          next if File.basename(file.filename).start_with?("_")
+          
+          path = path_to(file)
+          
+          next if @included_javascripts.include?(path) 
+          @included_javascripts << path
+          hammer_files_to_tag << file
+          paths << path
+        end        
+        if production?
+          file = add_file_from_files(hammer_files_to_tag, "#{filename}.js", :js)
+          "<script src='#{path_to(file)}'></script>"
+        else
+          paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
+        end
       end
     end
     
     def current_tags
       # If we don't have any links to the current page, let's get outta here real fast.
       # Otherwise, let's Amp it.
-      return if !@hammer_file.finished_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
-      @text = Amp.parse(@text, @hammer_file.finished_filename, 'current')
+      filename = File.basename(@hammer_file.finished_filename)
+      if !@hammer_file.finished_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
+        return 
+      end
+      @text = Amp.parse(@text, filename, 'current')
     end
   end
   register_parser_for_extensions HTMLParser, ['html']

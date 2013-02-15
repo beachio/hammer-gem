@@ -62,15 +62,10 @@ class Hammer
     ## The compile method. This does all the files.
     
     def compile()
-      
       @compiled_hammer_files = []
-      
       @hammer_files.each do |hammer_file|
-        
+        @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
-        
-        extension = ""
-        
         begin
           pre_compile(hammer_file)
           compile_hammer_file(hammer_file)
@@ -78,7 +73,6 @@ class Hammer
         rescue Hammer::Error => error
           hammer_file.error = error
         end
-        
       end
       
       return @hammer_files

@@ -62,6 +62,13 @@ class Hammer
       files = sorted_files
       
       error_files = files.select {|file| file.error }
+      error_files = error_files.sort_by{|file|
+        if file.error.hammer_file != file
+          100
+        else
+          10
+        end
+      }
       
       if error_files.any?
         body << "<h3>Errors</h3>"
@@ -70,8 +77,8 @@ class Hammer
       
       files = files - [*error_files]
       
-      html_files = files.select {|file| File.extname(file.finished_filename) == ".html"}
-
+      html_files = files.select {|file| File.extname(file.finished_filename) == ".html" && !File.basename(file.finished_filename).start_with?("_") }.compact
+      
       if html_files.any?
         body << "<h3>HTML files</h3>"
         body << html_files.map {|file| TemplateLine.new(file)}
@@ -94,7 +101,6 @@ class Hammer
     end
     
     def sorted_files
-      
       # This sorts the files into the correct order for display
       @sorted_files ||= @files.sort_by { |file|
         extension = File.extname(file.finished_filename).downcase
@@ -131,9 +137,11 @@ class Hammer
         if file.error
           @error_message = file.error.text
           @error_line = file.error.line_number
+          if file.error.hammer_file != @file
+            @error_file = file.error.hammer_file
+          end
         end
         
-        @error_file = file.error_file
         @filename = file.finished_filename
         @messages = file.messages
         @extension = File.extname(@file.finished_filename)[1..-1]
@@ -151,7 +159,7 @@ class Hammer
         
         classes = []
         
-        classes << "error" if @file.error
+        classes << "error" if @error
         classes << "include" if @include
 
         if @extension == "html"
@@ -169,13 +177,11 @@ class Hammer
       end
       
       def line
-        if @include && !@error
-          ""
+        if @error_file
+          "Couldn't compile #{link} due to an error in #{@error_file.filename}"
         elsif @error
           "Error in #{link} on <strong>line #{error_line}</strong>:
           <span class=\"error message\">#{error_message}</span>"
-        elsif @error_file
-          "Couldn't compile #{link} due to an error in #{error_file}: #{related_file_error_message}"
         elsif !@file.compiled
           "Copied #{link}"
         elsif @extension == "html"
@@ -186,10 +192,18 @@ class Hammer
       end
       
       def to_s
-        %Q{<span class="file #{extension} #{span_class}">#{line}</span>#{messages}}
+        if @include && !@error
+          return ""
+        else
+          %Q{<span class="file #{extension} #{span_class}">#{line}</span>#{messages}}
+        end
       end
       
       private
+      
+      def error_file
+        
+      end
       
       def input_path
         @file.full_path
