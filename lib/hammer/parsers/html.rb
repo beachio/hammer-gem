@@ -158,9 +158,7 @@ class Hammer
           raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
         end
         
-        them = Pathname.new(file.finished_filename)
-        me = Pathname.new(File.dirname(filename))
-        them.relative_path_from(me)
+        path_to(file)
       end
     end
 
@@ -194,7 +192,7 @@ class Hammer
         
         if production?
           file = add_file_from_files(hammer_files, "#{filename}.css", :css)
-          "<link rel='stylesheet' href='#{path_to(file)}'>"
+          "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
         end
@@ -202,6 +200,7 @@ class Hammer
     end
     
     def add_file_from_files(files, filename, format)
+      return false if files == []
       contents = []
       files.each do |file|
         contents << Hammer.parser_for_hammer_file(file).to_format(format)
@@ -248,7 +247,7 @@ class Hammer
         end        
         if production?
           file = add_file_from_files(hammer_files_to_tag, "#{filename}.js", :js)
-          "<script src='#{path_to(file)}'></script>"
+          "<script src='#{path_to(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
         end

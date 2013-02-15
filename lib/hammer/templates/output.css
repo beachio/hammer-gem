@@ -21,6 +21,9 @@ span {
 span.success {
   color: #67b700;
 }
+span.compilation {
+  color: #1a99f1;
+}
 span.error a, span.success a, span.html a, span.include a, span.could_not_compile a {
   font-weight: bold;
 }

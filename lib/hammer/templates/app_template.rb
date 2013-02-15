@@ -83,8 +83,15 @@ class Hammer
         body << "<h3>HTML files</h3>"
         body << html_files.map {|file| TemplateLine.new(file)}
       end
-
-      assets = files - html_files
+      
+      compilation_files = files.select {|file| file.is_a_compiled_file }.compact
+      
+      if compilation_files.any?
+        body << "<h3>Compiled files</h3>"
+        body << compilation_files.map {|file| TemplateLine.new(file)}
+      end
+      
+      assets = files - html_files - compilation_files
       
       if assets.any?
         body << "<h3>Assets</h3>"
@@ -159,6 +166,7 @@ class Hammer
         
         classes = []
         
+        classes << "compilation" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
 
