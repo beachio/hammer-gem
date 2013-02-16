@@ -38,6 +38,12 @@ class Hammer
 
     def find_files(filename, extension=nil)
       
+      @cached_files ||= {}
+      if @cached_files["#{filename}:#{extension}"]
+        return @cached_files["#{filename}:#{extension}"]
+      end
+      
+      t = Time.now
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|
@@ -45,6 +51,8 @@ class Hammer
       }.sort_by { |file|
         file.filename.split(filename).join().length
       }
+      
+      @cached_files["#{filename}:#{extension}"] = files
       return files
     end
     
