@@ -113,22 +113,18 @@ class Hammer
       begin
         @text = engine.render()
       rescue => e
-        # @error = e
-
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
           # TODO: Make this nicer.
-          # @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
-          # file = @hammer_project.hammer_file_for_filename(@error_file, ['.css', '.scss', '.sass'])
-          # if file
-            # file.error = e 
-            # file.error_line = e.sass_line
-          # end
+          @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
+          file = @hammer_project.hammer_file_for_filename(@error_file, ['.css', '.scss', '.sass'])
+          if file
+            error e.message, e.sass_line - 1, file
+          end
         else
           if e.respond_to?(:sass_line) && e.sass_line
-            error e.message, e.sass_line
+            error e.message, e.sass_line - 1
           end
         end
-        
       end
       @text
     end
