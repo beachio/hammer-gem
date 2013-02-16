@@ -139,7 +139,11 @@ class Hammer
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         replacement = []
         tags.each do |tag|
+          
           file = find_file(tag, 'scss')
+          
+          raise "Includes: File not found: <strong>#{tag}</strong>" unless file
+          
           parser = Hammer.parser_for_hammer_file(file)
           
           if parser.respond_to?(:to_format)

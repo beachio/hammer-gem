@@ -57,12 +57,14 @@ class Hammer
       end
       
       @hammer_project.find_files(filename, extension)
-    rescue
+    rescue => e
       nil
     end
     
     def find_file(filename, extension=nil)
       find_files(filename, extension)[0]
+    rescue => e
+      nil
     end
     
     def error(text, line_number, hammer_file=nil)

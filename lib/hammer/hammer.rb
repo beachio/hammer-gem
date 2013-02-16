@@ -35,7 +35,7 @@ class Hammer
   end
   
   def self.parser_for_hammer_file(hammer_file)
-    raise "Oh no" unless hammer_file
+    raise "Hammer File was nil" unless hammer_file
     parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
     parser.text = hammer_file.raw_text
     parser.hammer_file = hammer_file

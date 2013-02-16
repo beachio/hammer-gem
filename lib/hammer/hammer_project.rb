@@ -24,6 +24,7 @@ class Hammer
         hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
+        hammer_file.hammer_project = self
         
         @hammer_files << hammer_file
       end
@@ -67,6 +68,7 @@ class Hammer
         @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
         begin
+          hammer_file.hammer_project ||= self
           pre_compile(hammer_file)
           compile_hammer_file(hammer_file)
           after_compile(hammer_file)
@@ -100,10 +102,13 @@ class Hammer
     def after_compile(hammer_file)
       
       return unless @production
+      return unless hammer_file.is_a_compiled_file
       
       filename = hammer_file.output_filename
       extension = File.extname(filename)[1..-1]
       compilers = Hammer.after_compilers[extension] || []
+      
+      puts "Compiling #{filename}"
       
       compilers.each do |precompiler|
         hammer_file.compiled_text = precompiler.new(hammer_file.compiled_text).parse()
