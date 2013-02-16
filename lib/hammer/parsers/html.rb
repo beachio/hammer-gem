@@ -191,7 +191,6 @@ class Hammer
         
         if production?
           file = add_file_from_files(hammer_files_to_tag, :css)
-          puts "Created #{file.filename} from #{hammer_files_to_tag.collect(&:filename).join(",")}"
           "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")

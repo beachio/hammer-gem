@@ -1,16 +1,10 @@
-begin
-  require "rubygems"
-  require "v8"
-rescue
-end
+require "rubygems"
+require "v8"
 
 class Hammer
   class JSCompressor < Compressor
     def parse
-      t = Time.now
-      x = Uglifier.compile(@text)
-      puts "Time for compiling JS = #{Time.now - t}"
-      return x
+      Uglifier.compile(@text)
     end
   end
   register_compressor JSCompressor, 'js'

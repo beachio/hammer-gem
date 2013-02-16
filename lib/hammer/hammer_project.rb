@@ -108,8 +108,6 @@ class Hammer
       extension = File.extname(filename)[1..-1]
       compilers = Hammer.after_compilers[extension] || []
       
-      puts "Compiling #{filename}"
-      
       compilers.each do |precompiler|
         hammer_file.compiled_text = precompiler.new(hammer_file.compiled_text).parse()
       end
