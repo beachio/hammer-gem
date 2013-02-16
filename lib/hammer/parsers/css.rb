@@ -122,7 +122,6 @@ class Hammer
           end
         end
         
-        send engine
       end
       @text
     end

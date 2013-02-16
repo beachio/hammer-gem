@@ -11,8 +11,16 @@ class Hammer
     attr_accessor :hammer_files
     
     def create_hammer_files_from_directory(input_directory, output_directory)
+
+      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"))
       
-      files = Dir.glob(File.join(input_directory, "**/*"))
+      escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+      escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+
+      input_directory          = Pathname.new(input_directory).cleanpath.expand_path.to_s
+      output_directory         = Pathname.new(output_directory).cleanpath.expand_path.to_s
+      
+      # files = Dir.glob(File.join(input_directory, "**/*"))
       files.reject! {|file| file.match(output_directory)}
       
       files.each do |filename|
