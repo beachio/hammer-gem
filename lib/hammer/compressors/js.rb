@@ -1,6 +1,3 @@
-require "rubygems"
-require "v8"
-
 class Hammer
   class JSCompressor < Compressor
     def parse
