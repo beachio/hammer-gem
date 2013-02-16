@@ -65,7 +65,6 @@ class CSSParserTest < Test::Unit::TestCase
           assert_equal "I'm included.", output
         end
       end
-      
     end
   end
   
