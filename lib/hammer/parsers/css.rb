@@ -3,7 +3,7 @@ class Hammer
   class CSSParser < HammerParser
     
     def to_format(format)
-      if format == :css
+      if format == :css || format == :scss
         to_css
       end
     end
@@ -136,6 +136,7 @@ class Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
+        
         replacement = []
         tags.each do |tag|
           
@@ -145,8 +146,12 @@ class Hammer
           
           parser = Hammer.parser_for_hammer_file(file)
           
-          if parser.respond_to?(:to_format)
-            replacement << parser.to_format(format)
+          text = parser.to_format(format)
+          
+          if text
+            # puts format
+            # puts parser.to_format(format)
+            replacement << text
           else
             # raise "File #{file.filename} couldn't be included."
             
