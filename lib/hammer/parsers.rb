@@ -4,6 +4,7 @@ class Hammer
     
     include Templatey
 
+attr_accessor :format
     attr_accessor :hammer_project, :variables
 
     def initialize(hammer_project = nil, hammer_file = nil)

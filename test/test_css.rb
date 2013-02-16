@@ -57,28 +57,4 @@ class CSSParserTest < Test::Unit::TestCase
     end
   end
   
-  context "A SCSS parser" do
-    setup do
-      @hammer_project = Hammer::Project.new
-    end
-    
-    context "with an SCSS file that has an include of a CSS file" do
-      setup do
-        @parser = Hammer::SASSParser.new(@hammer_project)
-        @file = Hammer::HammerFile.new
-        @file.filename = "style.scss"
-        @file.raw_text = "/* @include normalize */"
-        @parser.hammer_file = @file
-        @hammer_project << @file
-        file = Hammer::HammerFile.new
-        file.filename = "normalize.css"
-        file.raw_text = "* {normalize: true}"
-        @hammer_project << file
-      end
-      
-      should "Be able to include the normalize" do
-        assert_equal "* {\n  normalize: true; }\n", @parser.parse()
-      end
-    end
-  end
 end

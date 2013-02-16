@@ -3,9 +3,13 @@ class Hammer
   class CSSParser < HammerParser
     
     def to_format(format)
-      if format == :css || format == :scss
+      if format == :css
         to_css
       end
+    end
+    
+    def format
+      filename.split('.')[1].to_sym
     end
     
     def to_css
@@ -88,11 +92,12 @@ class Hammer
       elsif new_format == format
         @raw_text
       elsif format == :scss and new_format == :sass
-        warn "SCSS to SASS isn't done"
-        ""
+        # warn "SCSS to SASS isn't done"
+        false
       elsif format == :sass and new_format == :scss
-        warn "SASS to SCSS isn't done"
-        ""
+        # warn "SASS to SCSS isn't done"
+        false
+      else
       end
     end
 
@@ -145,20 +150,13 @@ class Hammer
           raise "Includes: File not found: <strong>#{tag}</strong>" unless file
           
           parser = Hammer.parser_for_hammer_file(file)
-          
           text = parser.to_format(format)
           
-          if text
-            # puts format
-            # puts parser.to_format(format)
-            replacement << text
-          else
-            # raise "File #{file.filename} couldn't be included."
-            
-            # Let's assume it's a CSS file.
-            # TODO: Check whether the file is compatible
-            require "sass/css"
-            text = Sass::CSS.new(file.raw_text).render(format) 
+          if !text
+            # Go back to CSS.
+            replacement << "/* @include #{tag} */"
+          elsif text
+            # to_format has taken care of us!
             replacement << text
           end
         end
