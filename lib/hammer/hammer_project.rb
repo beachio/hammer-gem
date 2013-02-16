@@ -51,7 +51,6 @@ class Hammer
         return @cached_files["#{filename}:#{extension}"]
       end
       
-      t = Time.now
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|
