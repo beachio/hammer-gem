@@ -45,39 +45,40 @@ class CSSParserTest < Test::Unit::TestCase
           @new_file.filename = "assets/_include.css"
           @hammer_project << @new_file
         end
+
+        def assert_compilation(pre, post)
+          @parser.text = pre
+          assert_equal @parser.parse(), post
+        end
         
         should "do paths" do
-          @parser.text = "url(_include.css);"
-          assert output = @parser.parse()
-          assert_equal output, "url(assets/_include.css);"
+          assert_compilation "url(_include.css);", "url(assets/_include.css);"
         end
 
         should "do stupid relative paths" do
-          @parser.text = "url(../../_include.css);"
-          assert output = @parser.parse()
-          assert_equal output, "url(assets/_include.css);"          
+          assert_compilation "url(../../_include.css);", "url(assets/_include.css);"          
         end
 
         should "not do http paths" do
-          @parser.text = "url(http://bullshit.png);"
-          assert output = @parser.parse()
-          assert_equal output, "url(http://bullshit.png);"          
+          assert_compilation "url(http://bullshit.png);", "url(http://bullshit.png);"          
+        end
+
+        should "not do https paths" do
+          assert_compilation "url(https://bullshit.png);", "url(https://bullshit.png);"          
+        end        
+
+        should "not change query paths with unknown files" do
+          assert_compilation "url(bullshit.png?a);", "url(bullshit.png?a);"          
         end
         
         should "do data:png paths" do
-          @parser.text = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAooAAAAZCAYAAAC2GQ9IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAF4BJREFUeNrsXQlYFFe2LpoGgQZtVEARjYrigijuW9xIHNQxLsm4PWNERxhw17glE2OIz2U0xnFl1JeYoFGzqdHEMUHFLcaFuCBk3CKIyoAoNFtAoOn5T3sbO"
-          assert output = @parser.parse()
+          assert_compilation "url(data:image/png;base64,123)", "url(data:image/png;base64,123)"
         end
         
         should "do include" do
-          @parser.text =  "/* @include _include */"
-          output = @parser.parse()
-          assert_equal @hammer_project.find_file("_include", 'css'), @new_file
-          assert output
-          assert_equal "I'm included.", output
+          assert_compilation "/* @include _include */", "I'm included."
         end
       end
     end
   end
-  
 end
