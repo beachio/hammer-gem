@@ -4,6 +4,7 @@ class Hammer
     
     include Templatey
 
+attr_accessor :format
     attr_accessor :hammer_project, :variables
 
     def initialize(hammer_project = nil, hammer_file = nil)
@@ -49,12 +50,14 @@ class Hammer
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
       @hammer_project.find_files(filename, extension)
-    rescue
+    rescue => e
       nil
     end
     
     def find_file(filename, extension=nil)
       find_files(filename, extension)[0]
+    rescue => e
+      nil
     end
     
     def error(text, line_number, hammer_file=nil)

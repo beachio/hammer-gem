@@ -11,8 +11,16 @@ class Hammer
     attr_accessor :hammer_files
     
     def create_hammer_files_from_directory(input_directory, output_directory)
+
+      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"))
       
-      files = Dir.glob(File.join(input_directory, "**/*"))
+      escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+      escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+
+      input_directory          = Pathname.new(input_directory).cleanpath.expand_path.to_s
+      output_directory         = Pathname.new(output_directory).cleanpath.expand_path.to_s
+      
+      # files = Dir.glob(File.join(input_directory, "**/*"))
       files.reject! {|file| file.match(output_directory)}
       
       files.each do |filename|
@@ -24,6 +32,7 @@ class Hammer
         hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
+        hammer_file.hammer_project = self
         
         @hammer_files << hammer_file
       end
@@ -37,6 +46,11 @@ class Hammer
 
     def find_files(filename, extension=nil)
       
+      @cached_files ||= {}
+      if @cached_files["#{filename}:#{extension}"]
+        return @cached_files["#{filename}:#{extension}"]
+      end
+      
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|
@@ -44,6 +58,8 @@ class Hammer
       }.sort_by { |file|
         file.filename.split(filename).join().length
       }
+      
+      @cached_files["#{filename}:#{extension}"] = files
       return files
     end
     
@@ -67,6 +83,7 @@ class Hammer
         @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
         begin
+          hammer_file.hammer_project ||= self
           pre_compile(hammer_file)
           compile_hammer_file(hammer_file)
           after_compile(hammer_file)
@@ -100,6 +117,7 @@ class Hammer
     def after_compile(hammer_file)
       
       return unless @production
+      return unless hammer_file.is_a_compiled_file
       
       filename = hammer_file.output_filename
       extension = File.extname(filename)[1..-1]

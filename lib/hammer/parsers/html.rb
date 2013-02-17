@@ -181,7 +181,6 @@ class Hammer
           
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
-          
           path = path_to(file)
           
           next if @included_stylesheets.include?(path) 
@@ -191,7 +190,7 @@ class Hammer
         end
         
         if production?
-          file = add_file_from_files(hammer_files, "#{filename}.css", :css)
+          file = add_file_from_files(hammer_files_to_tag, :css)
           "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
@@ -199,7 +198,7 @@ class Hammer
       end
     end
     
-    def add_file_from_files(files, filename, format)
+    def add_file_from_files(files, format)
       return false if files == []
       contents = []
       files.each do |file|
@@ -246,7 +245,7 @@ class Hammer
           paths << path
         end        
         if production?
-          file = add_file_from_files(hammer_files_to_tag, "#{filename}.js", :js)
+          file = add_file_from_files(hammer_files_to_tag, :js)
           "<script src='#{path_to(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
