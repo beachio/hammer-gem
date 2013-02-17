@@ -11,7 +11,7 @@ class CSSParserTest < Test::Unit::TestCase
       assert @parser
     end
     
-    should "parse url iamges" do
+    should "parse url images even with queries" do
       font = Hammer::HammerFile.new()
       font.filename = "images/proximanova-regular.eot"
       @hammer_project << font
@@ -48,11 +48,33 @@ class CSSParserTest < Test::Unit::TestCase
 
         def assert_compilation(pre, post)
           @parser.text = pre
-          assert_equal @parser.parse(), post
+          assert_equal post, @parser.parse()
         end
         
         should "do paths" do
           assert_compilation "url(_include.css);", "url(assets/_include.css);"
+        end
+
+        should "do stupid relative paths" do
+          assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
+        end
+
+        context "with multiple paths" do
+          setup do
+            new_file = Hammer::HammerFile.new
+            new_file.filename = "something/assets/_include.css"
+          end
+
+          should "match files with matching file paths" do
+            assert_compilation "url(assets/_include.css);", "url(assets/_include.css);"
+            assert_compilation "url(something/assets/_include.css);", "url(something/assets/_include.css);"
+            assert_compilation "url(ing/assets/_include.css);", "url(ing/assets/_include.css);"
+          end
+
+          should "match absolute file paths" do
+            assert_compilation "url(/assets/_include.css);", "url(assets/_include.css);"
+          end
+
         end
 
         should "do stupid relative paths" do
