@@ -52,3 +52,6 @@ require 'haml'
 require 'timeout'
 require 'amp'
 require 'uglifier'
+
+require 'eco'
+require 'ejs'
