@@ -34,7 +34,6 @@ class Hammer
         else
           
           file = find_file(file_path)
-          
           if file
             url = Pathname.new(file.filename).relative_path_from Pathname.new(File.dirname(filename))
             "url(#{url})"

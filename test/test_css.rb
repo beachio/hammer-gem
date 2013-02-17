@@ -39,6 +39,12 @@ class CSSParserTest < Test::Unit::TestCase
           assert output = @parser.parse()
           assert_equal output, "url(assets/_include.css);"
         end
+
+        should "do stupid relative paths" do
+          @parser.text = "url(../../_include.css);"
+          assert output = @parser.parse()
+          assert_equal output, "url(assets/_include.css);"          
+        end
         
         should "do data:png paths" do
           @parser.text = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAooAAAAZCAYAAAC2GQ9IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAF4BJREFUeNrsXQlYFFe2LpoGgQZtVEARjYrigijuW9xIHNQxLsm4PWNERxhw17glE2OIz2U0xnFl1JeYoFGzqdHEMUHFLcaFuCBk3CKIyoAoNFtAoOn5T3sbO"

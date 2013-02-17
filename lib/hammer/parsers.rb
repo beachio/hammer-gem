@@ -46,16 +46,8 @@ class Hammer
     end
     
     def find_files(filename, extension=nil)
-      
-      # TODO: Better filename checking than this.
-      
-      if filename[0..1] == "./"
-        filename = filename[2..-1]
-        dirname = File.dirname(self.filename)
-        dirname = nil if dirname == "."
-        filename = File.join([dirname, filename].compact)
-      end
-      
+      # Convert relative paths to simple directories and filenames.
+      filename = filename.gsub("../", "").gsub("./", "")
       @hammer_project.find_files(filename, extension)
     rescue
       nil
