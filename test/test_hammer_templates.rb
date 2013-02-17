@@ -12,7 +12,6 @@ class TestJavascriptTemplates < Test::Unit::TestCase
 
     should "false" do
       @parser.text = "<h1></h1>"
-      # assert_equal @parser.parse(), "<h1></h1>"
       assert @parser.parse().include? "window.JST[\"header\"]"
     end
   end
