@@ -11,10 +11,10 @@ class Hammer
     end
 
     def self.finished_extension
-      ".js"
+      "js"
     end
   end
-  register_parser_for_extensions JSTParser, ['aaa']
+  register_parser_for_extensions JSTParser, ['jst']
   register_parser_as_default_for_extensions JSTParser, ['jst']
 
   class EcoParser < HammerParser
@@ -25,9 +25,9 @@ class Hammer
     end
 
      def self.finished_extension
-       ".js"
+       "js"
      end
   end
-  register_parser_for_extensions EcoParser, ['eco']
+  register_parser_for_extensions EcoParser, ['eco', 'js']
   register_parser_as_default_for_extensions EcoParser, ['eco']
 end
