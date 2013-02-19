@@ -335,6 +335,26 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << @file
     end
     
+    context "in other directories" do
+      setup do
+        f1 = Hammer::HammerFile.new
+        f1.filename = "blog/index.html"
+        @hammer_project << f1
+        
+        @f2 = Hammer::HammerFile.new
+        @f2.filename = "about/index.html"
+        @hammer_project << @f2
+        
+        @file.raw_text = "<!-- @path about/index.html -->"
+      end
+      
+      should "do path tags right" do
+        parser = Hammer.parser_for_hammer_file(@file)
+        assert_equal [@f2], parser.find_files('about/index.html', 'html')
+        assert_equal "about/index.html", parser.parse()
+      end
+    end
+    
     context "including a HAML file" do
       setup do
         @new_file = Hammer::HammerFile.new
