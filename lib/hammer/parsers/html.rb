@@ -152,7 +152,8 @@ class Hammer
     def path_tags
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
-        file = find_file(File.basename(tag, ".*"), File.extname(tag)[1..-1])
+        
+        file = find_file(tag, 'html')
         
         if !file
           raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
