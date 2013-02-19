@@ -80,6 +80,7 @@ class Hammer
     def compile()
       @compiled_hammer_files = []
       @hammer_files.each do |hammer_file|
+        
         @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
         begin

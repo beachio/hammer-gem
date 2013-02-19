@@ -72,11 +72,11 @@ attr_accessor :format
         @text = text.split("\n").map { |line| 
           line_number += 1
           line.gsub(regex) { |match|
-            begin 
+            # begin 
               block.call(match, line_number) 
-            rescue => error_message
-              error(error_message, line_number)
-            end
+            # rescue => error_message
+              # error(error_message, line_number)
+            # end
           }
         }.join("\n")
       end

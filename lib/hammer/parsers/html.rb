@@ -4,6 +4,7 @@ class Hammer
     def to_html
       @text = @hammer_file.raw_text
       
+      get_variables()
       includes()
       
       # Strip todos - they're for this file only
@@ -107,14 +108,18 @@ class Hammer
             
             parser = @hammer_project.parser_for_hammer_file(file)
             parser.variables = self.variables
+            
             begin
               parser.parse()
             rescue Hammer::Error => e
               e.hammer_file = file
               raise e
             end
-          
-            @hammer_project.parser_for_hammer_file(file).to_html()
+            
+            parser = @hammer_project.parser_for_hammer_file(file)
+            parser.variables = self.variables
+            self.variables = self.variables.merge(parser.variables)
+            parser.to_html()
           else
             raise "Includes: File <strong>#{h tag}</strong> couldn't be found."
           end
