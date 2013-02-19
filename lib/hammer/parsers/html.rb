@@ -206,7 +206,7 @@ class Hammer
         contents << Hammer.parser_for_hammer_file(file).to_format(format)
       end
       contents = contents.join("\n\n\n\n")
-      filename = Digest::MD5.hexdigest(files.collect(&:filename).join(","))
+      filename = Digest::MD5.hexdigest(contents)
       file = add_file("#{filename}.#{format}", contents)
       file
     end
