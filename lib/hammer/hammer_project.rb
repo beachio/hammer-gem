@@ -8,7 +8,7 @@ class Hammer
     
     attr_reader :production
     
-    attr_accessor :hammer_files
+    attr_accessor :hammer_files, :input_directory
     
     def create_hammer_files_from_directory(input_directory, output_directory)
 
@@ -18,6 +18,7 @@ class Hammer
       escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
 
       input_directory          = Pathname.new(input_directory).cleanpath.expand_path.to_s
+      @input_directory = input_directory
       output_directory         = Pathname.new(output_directory).cleanpath.expand_path.to_s
       
       # files = Dir.glob(File.join(input_directory, "**/*"))
