@@ -84,7 +84,6 @@ class Hammer
     extensions = [*extension].compact
     extensions = extensions + possible_other_extensions_for(extension)
     extensions = extensions.flatten
-    puts extensions
     
     extensions.each do |extension|
       # If they're finding (index.html, html) we need to remove the .html from the tag.
