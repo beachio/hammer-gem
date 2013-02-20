@@ -3,6 +3,10 @@ class Hammer
     def to_javascript
       parse
     end
+    
+    def to_do_regex
+      /\/* @todo (.*) \*\/|\/\/ @todo (.*)/
+    end
 
     def parse
       @text = EJS.compile(@text)

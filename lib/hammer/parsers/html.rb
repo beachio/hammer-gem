@@ -37,17 +37,13 @@ class Hammer
     def self.finished_extension
       'html'
     end
+    
+    def to_do_regex
+      /<!-- @todo (.*?) -->/
+    end
 
   private
-    
-    def todos
-      replace(/<!-- @todo (.*?) -->/) do |tag, line_number|
-        @todos ||= []
-        @todos << {:line => line_number, :tag => tag}
-        ""
-      end
-    end
-    
+
     def get_variables
       replace(/<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")

@@ -37,11 +37,11 @@ class TestHtmlParser < Test::Unit::TestCase
       assert !text.include?("@reload"), "It still includes @reload: #{text}"
     end
     
-    should "remove todos" do
-      @parser.text = "<html><!-- @todo Do this --></html>"
-      text = @parser.parse()
-      assert_equal "<html></html>", text
-    end
+    # should "remove todos" do
+    #   @parser.text = "<html><!-- @todo Do this --></html>"
+    #   text = @parser.parse()
+    #   assert_equal "<html></html>", text
+    # end
 
     should "include files" do
       header = Hammer::HammerFile.new

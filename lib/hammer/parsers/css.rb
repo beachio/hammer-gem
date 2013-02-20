@@ -2,6 +2,10 @@ class Hammer
 
   class CSSParser < HammerParser
     
+    def to_do_regex
+      /\/* @todo (.*)\*\//
+    end
+    
     def to_format(format)
       if format == :css
         to_css

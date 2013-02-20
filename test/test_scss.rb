@@ -7,12 +7,10 @@ class TestSCSS < Test::Unit::TestCase
       @parser = Hammer::SASSParser.new
     end
     should "parse SASS" do
-      # @parser.format = :scss
       @hammer_file = Hammer::HammerFile.new
       @hammer_file.filename = "style.scss"
       @parser.hammer_file = @hammer_file
       
-      # @parser.filename = "style.scss"
       @parser.text = "a { b { background: red; } }"
       assert_equal "a b {\n  background: red; }\n", @parser.parse()
     end
