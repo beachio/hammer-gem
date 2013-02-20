@@ -53,7 +53,6 @@ class Hammer
       end
       
       regex = Hammer.regex_for(filename, extension)
-      puts regex
 
       files = @hammer_files.select { |file|
         file.filename =~ regex || File.basename(file.filename) == filename
