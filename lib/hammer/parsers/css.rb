@@ -118,7 +118,7 @@ class Hammer
           @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
           file = @hammer_project.find_file(@error_file, ['css', 'scss', 'sass'])
           if file
-            error e.message, e.sass_line - 1, file
+            error e.message, e.sass_line, file
           else
             error "Error in #{@error_file}: #{e.message}", e.sass_line - 1
           end
