@@ -112,8 +112,8 @@ class Hammer
     end
 
     def parse
-      semicolon = format == :scss ? ";\n" : "\n"
-      @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
+      # semicolon = format == :scss ? ";\n" : "\n"
+      # @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
       
       todos()
       includes()
