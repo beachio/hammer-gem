@@ -4,6 +4,7 @@ class Hammer
     def to_html
       @text = @hammer_file.raw_text
       
+      todos()
       get_variables()
       includes()
       
