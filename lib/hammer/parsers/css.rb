@@ -112,8 +112,8 @@ class Hammer
     end
 
     def parse
-      # semicolon = format == :scss ? ";\n" : "\n"
-      # @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
+      semicolon = format == :scss ? ";\n" : "\n"
+      @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
       
       todos()
       includes()
@@ -129,11 +129,11 @@ class Hammer
           if file
             error e.message, e.sass_line, file
           else
-            error "Error in #{@error_file}: #{e.message}", e.sass_line - 1
+            error "Error in #{@error_file}: #{e.message}", e.sass_line - 2
           end
         else
           if e.respond_to?(:sass_line) && e.sass_line
-            error e.message, e.sass_line - 1
+            error e.message, e.sass_line - 2
           end
         end
       end

@@ -94,7 +94,11 @@ class Hammer
             line.scan(self.to_do_regex).each do |messages|
               messages.each do |message|
                 next if message.nil?
-                @hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+                if self.hammer_file.filename.end_with? ".scss" or self.hammer_file.filename.end_with? ".sass"
+                  @hammer_file.messages.push({:line => line_number-2, :message => message, :html_class => 'todo'})
+                else
+                  @hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+                end
               end
             end
           }
