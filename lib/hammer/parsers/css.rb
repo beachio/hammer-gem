@@ -75,6 +75,10 @@ class Hammer
 
   class SASSParser < HammerParser
     
+    def to_do_regex
+      /\/\/ @todo (.*)/
+    end
+    
     def format=(format)
       @format = format.to_sym
     end
@@ -111,6 +115,7 @@ class Hammer
       semicolon = format == :scss ? ";\n" : "\n"
       @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
       
+      todos()
       includes()
       
       engine = Sass::Engine.new(@text, options)
