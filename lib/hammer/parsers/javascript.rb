@@ -50,7 +50,7 @@ class Hammer
   class CoffeeParser < HammerParser
     
     def to_do_regex
-      /# @todo (.*) /
+      /# @todo (.*)/
     end
     
     def to_javascript
