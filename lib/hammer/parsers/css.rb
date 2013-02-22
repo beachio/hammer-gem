@@ -76,7 +76,7 @@ class Hammer
   class SASSParser < HammerParser
     
     def to_do_regex
-      /\/\/ @todo (.*)/
+      /\/\/ @todo (.*)|\/\* @todo (.*) \*\//
     end
     
     def format=(format)

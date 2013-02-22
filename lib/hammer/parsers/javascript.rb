@@ -3,7 +3,7 @@ class Hammer
   class JSParser < HammerParser
 
     def to_do_regex
-      /(\/\/ @todo (.*)|\/\* @todo (.*) \*\/)/
+      /\/\/ @todo (.*)|\/\* @todo (.*) \*\//
     end
 
     def to_javascript
