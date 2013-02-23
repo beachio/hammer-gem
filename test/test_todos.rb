@@ -12,13 +12,12 @@ class TestTodos < Test::Unit::TestCase
     formats.each do |format, comment|
       context "With #{format}" do
         setup do
-          @parser = parser.new(comment, format)
-        end
-        should "replace todos with empty string" do
-          assert_equal "", @parser.text
+          hammer_file = Hammer::HammerFile.new(:filename => "index.#{format}")
+          hammer_file.raw_text = formats[format]
+          @parser = parser.new(nil, hammer_file)
         end
         should "set todos for #{comment}" do
-          assert_equal({1 => ['eat', 'cake']}, @parser.todos)
+          assert_equal({1 => ['eat', 'cake']}, @parser.parse())
         end
       end
     end
@@ -43,13 +42,12 @@ class TestTodos < Test::Unit::TestCase
     formats.each do |format, comment|
       context "With #{format}" do
         setup do
-          @parser = parser.new(comment, format)
-        end
-        should "replace todos with empty string" do
-          assert_equal "", @parser.text
+          hammer_file = Hammer::HammerFile.new(:filename => "index.#{format}")
+          hammer_file.raw_text = formats[format]
+          @parser = parser.new(nil, hammer_file)
         end
         should "set todos for #{comment}" do
-          assert_equal({1 => ['eat']}, @parser.todos)
+          assert_equal({1 => ['eat']}, @parser.parse())
         end
       end
     end

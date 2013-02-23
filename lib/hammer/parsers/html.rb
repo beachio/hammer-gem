@@ -3,20 +3,12 @@ class Hammer
     
     def to_html
       @text = @hammer_file.raw_text
-      
-      todos()
       get_variables()
       includes()
-      
-      # Strip todos - they're for this file only
-      # text.gsub(/<!-- @todo (.*) -->/, "")
-      
       @text
     end
 
     def parse
-      todos()
-      
       get_variables()
       includes()
       get_variables()
@@ -39,10 +31,6 @@ class Hammer
       'html'
     end
     
-    def to_do_regex
-      /<!-- @todo (.*?) -->/
-    end
-
   private
 
     def get_variables

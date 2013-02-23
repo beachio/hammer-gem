@@ -82,6 +82,11 @@ class Hammer
       @compiled_hammer_files = []
       @hammer_files.each do |hammer_file|
         
+        todos = TodoParser.new(self, hammer_file).parse()
+        todos.each do |line_number, message|
+          hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+        end
+        
         @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
         begin

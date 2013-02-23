@@ -9,7 +9,7 @@ class Hammer
     def initialize(hammer_project = nil, hammer_file = nil)
       @text = ""
       @hammer_project = hammer_project if hammer_project
-      hammer_file = hammer_file if hammer_file
+      @hammer_file = hammer_file if hammer_file
     end
 
     def text=(text)
@@ -82,31 +82,6 @@ class Hammer
       return
     end
     
-    def to_do_regex
-      nil
-    end
-    
-    def todos
-      if self.to_do_regex
-        if @text.scan(self.to_do_regex).length > 0
-          @text.split("\n").each_with_index { |line, line_number|
-            line_number += 1
-            line.scan(self.to_do_regex).each do |messages|
-              messages.each do |message|
-                next if message.nil?
-                if self.hammer_file.filename.end_with? ".scss" or self.hammer_file.filename.end_with? ".sass"
-                  @hammer_file.messages.push({:line => line_number-2, :message => message, :html_class => 'todo'})
-                else
-                  @hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
-                end
-              end
-            end
-          }
-        end
-
-      end
-    end
-
     def parse
       raise "Base HammerParser#parse called"
     end

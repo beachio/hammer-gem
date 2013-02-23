@@ -4,10 +4,6 @@ class Hammer
       parse
     end
     
-    def to_do_regex
-      /\/* @todo (.*) \*\/|\/\/ @todo (.*)/
-    end
-
     def parse
       @text = EJS.compile(@text)
       name = File.basename(@hammer_file.filename, '.*')

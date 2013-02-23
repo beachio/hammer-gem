@@ -2,10 +2,6 @@ class Hammer
   
   class JSParser < HammerParser
 
-    def to_do_regex
-      /\/\/ @todo (.*)|\/\* @todo (.*) \*\//
-    end
-
     def to_javascript
       parse
     end
@@ -17,7 +13,6 @@ class Hammer
     end
 
     def parse
-      todos()
       includes()
       @text
     end
@@ -49,10 +44,6 @@ class Hammer
 
   class CoffeeParser < HammerParser
     
-    def to_do_regex
-      /# @todo (.*)/
-    end
-    
     def to_javascript
       parse()
     end
@@ -70,7 +61,6 @@ class Hammer
     end
 
     def parse
-      todos()
       includes()
       @text = CoffeeScript.compile @text
       replace_includes()
