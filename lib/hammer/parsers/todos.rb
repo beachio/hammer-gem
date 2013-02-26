@@ -6,7 +6,7 @@ class Hammer
       when 'css'
         /\/* @todo (.*?)\*\//
       when 'scss', 'sass'
-        /\/\/ @todo (.*?)|\/\* @todo (.*?) \*\//
+        /\/\/ @todo (.*)|\/\* @todo (.*) \*\//
       when 'html', 'md'
         /<!-- @todo (.*?) -->/
       when 'coffee'

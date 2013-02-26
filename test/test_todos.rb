@@ -28,13 +28,13 @@ class TestTodos < Test::Unit::TestCase
     
     formats = {
       'html' => '<!-- @todo eat -->',
-      'js' => ['/* @todo eat */', '// @todo eat'],
-      'css' => '/* @todo eat */',
-      'scss' => '/* @todo eat */',
+      'js' => ['/* @todo eat */', "// @todo eat\n"],
+      'css' =>'/* @todo eat */',
+      'scss' => ["/* @todo eat */\n", "// @todo eat\n"],
       'sass' => '/* @todo eat */',
-      'coffee' => '# @todo eat',
+      'coffee' => "# @todo eat\n",
       'md' => '<!-- @todo eat -->',
-      'haml' => '/ @todo eat'
+      'haml' => "/ @todo eat\n"
     }
     
     parser = Hammer::TodoParser
