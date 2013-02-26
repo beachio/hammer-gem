@@ -28,26 +28,31 @@ class TestTodos < Test::Unit::TestCase
     
     formats = {
       'html' => '<!-- @todo eat -->',
-      'js' => '/* @todo eat */',
-      'js' => '// @todo eat',
+      'js' => ['/* @todo eat */', '// @todo eat'],
       'css' => '/* @todo eat */',
       'scss' => '/* @todo eat */',
       'sass' => '/* @todo eat */',
-      'sass' => '/* @todo eat */',
-      'coffee' => '# @todo eat'
+      'coffee' => '# @todo eat',
+      'md' => '<!-- @todo eat -->',
+      'haml' => '/ @todo eat'
     }
     
     parser = Hammer::TodoParser
     
-    formats.each do |format, comment|
+    formats.each do |format, comments|
       context "With #{format}" do
-        setup do
-          hammer_file = Hammer::HammerFile.new(:filename => "index.#{format}")
-          hammer_file.raw_text = formats[format]
-          @parser = parser.new(nil, hammer_file)
-        end
-        should "set todos for #{comment}" do
-          assert_equal({1 => ['eat']}, @parser.parse())
+        comments = [*comments]
+        comments.each do |comment|
+          context "with #{comment}" do
+            setup do
+              hammer_file = Hammer::HammerFile.new(:filename => "index.#{format}")
+              hammer_file.raw_text = comment
+              @parser = parser.new(nil, hammer_file)
+            end
+            should "set todos for #{comment}" do
+              assert_equal({1 => ['eat']}, @parser.parse())
+            end
+          end
         end
       end
     end
