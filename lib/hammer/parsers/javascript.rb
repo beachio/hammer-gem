@@ -65,6 +65,10 @@ class Hammer
       @text = CoffeeScript.compile @text
       replace_includes()
       @text
+    rescue ExecJS::ProgramError => error
+      line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
+      @hammer_file.error = Hammer::Error.new(error.message, line)
+      @text
     end
     
     def replace_includes
