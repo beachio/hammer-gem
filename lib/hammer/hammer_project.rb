@@ -91,6 +91,9 @@ class Hammer
           after_compile(hammer_file)
         rescue Hammer::Error => error
           hammer_file.error = error
+        rescue => error
+          # In case there's another error!
+          hammer_file.error = Hammer::Error.new(error.to_s, nil)
         end
       end
       
