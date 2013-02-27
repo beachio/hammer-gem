@@ -67,7 +67,8 @@ class Hammer
       @text
     rescue ExecJS::ProgramError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
-      @hammer_file.error = Hammer::Error.new(error.message, line)
+      message = error.message.split("Error: ")[1]
+      @hammer_file.error = Hammer::Error.new(message, line)
       @text
     end
     
