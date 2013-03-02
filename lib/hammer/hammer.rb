@@ -82,6 +82,10 @@ class Hammer
     filename = URI.parse(filename).path
     
     extensions = [*extension].compact
+    if !extension
+      extension =  File.extname(filename)[1..-1]
+      filename = File.basename(filename, ".*") 
+    end
     extensions = extensions + possible_other_extensions_for(extension)
     extensions = extensions.flatten
     

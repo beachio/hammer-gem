@@ -48,7 +48,8 @@ class Hammer
     def find_files(filename, extension=nil)
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
-      @hammer_project.find_files(filename, extension)
+      files = @hammer_project.find_files(filename, extension)
+      files
     rescue => e
       nil
     end

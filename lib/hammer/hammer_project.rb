@@ -52,6 +52,7 @@ class Hammer
         return @cached_files["#{filename}:#{extension}"]
       end
       
+      filename = filename[1..-1] if filename.start_with? "/"
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|

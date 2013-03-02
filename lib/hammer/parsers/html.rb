@@ -10,6 +10,10 @@ class Hammer
 
     def parse
       get_variables()
+      
+      # TODO: Check whether we want to do this first
+      path_tags()
+      
       includes()
       get_variables()
       reload_tags()
@@ -143,7 +147,7 @@ class Hammer
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
         
-        file = find_file(tag, 'html')
+        file = find_file(tag)
         
         if !file
           raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
