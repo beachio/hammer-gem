@@ -40,7 +40,6 @@ class Hammer
         if @ignored_paths.include? hammer_file.full_path
           @ignored_files << hammer_file
         else
-          hammer_file.raw_text = File.read(filename)
           @hammer_files << hammer_file
         end
       end
@@ -58,6 +57,8 @@ class Hammer
 
       files = @hammer_files.select { |file|
         file.filename =~ regex || File.basename(file.filename) == filename
+      }.sort_by {|file| 
+        file.filename.to_s
       }.sort_by { |file|
         file.filename.split(filename).join().length
       }

@@ -174,7 +174,7 @@ class Hammer
         
         classes = []
         
-        classes << "compilation" if @file.is_a_compiled_file
+        classes << "compiled" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
 
@@ -202,6 +202,14 @@ class Hammer
           "Copied #{link}"
         elsif @extension == "html"
           "Built #{link}"
+        elsif @file.is_a_compiled_file
+          
+          sources = []
+          @file.source_files.each do |hammer_file|
+            sources << "<a href='#{@file.output_path}' title='#{hammer_file.full_path}'>#{File.basename(hammer_file.filename)}</a>"
+          end
+          
+          "Compiled #{link} from #{sources.join(', ')}"
         else
           "Compiled #{link}"
         end

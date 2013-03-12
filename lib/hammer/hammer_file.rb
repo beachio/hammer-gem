@@ -7,9 +7,11 @@ class Hammer
     attr_accessor :raw_text, :text, :compiled_text
     attr_accessor :error_line, :error_message, :error_file, :error
     attr_accessor :messages
-    attr_accessor :compiled, :is_a_compiled_file
+    
+    attr_accessor :compiled, :is_a_compiled_file, :source_files
 
     def initialize(options={})
+      @source_files = []
       @messages = []
       super()
       self.filename = options.delete(:filename) if options[:filename]
