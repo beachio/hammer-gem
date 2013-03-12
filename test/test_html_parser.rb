@@ -37,6 +37,18 @@ class TestHtmlParser < Test::Unit::TestCase
       assert !text.include?("@reload"), "It still includes @reload: #{text}"
     end
     
+    should "replace placeholder tags" do
+      @parser.text = "<html><!-- @placeholder 100x100 --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", text
+    end
+    
+    should "replace kitten tags" do
+      @parser.text = "<html><!-- @kitten 100x100 --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placekitten.com/100/100' width='100px' height='100px' /></html>", text
+    end
+    
     should "remove todos" do
       @parser.text = "<html><!-- @todo Do this --></html>"
       text = @parser.parse()
