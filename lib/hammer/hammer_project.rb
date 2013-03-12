@@ -21,12 +21,7 @@ class Hammer
       if File.exists?(ignore_file)
         lines = File.open(ignore_file).read.split("\n")
         lines.each do |line|
-          line = line.gsub("*", "**/*")
-          @ignored_paths << Dir.glob(File.join(input_directory, line))
-          # matches.each do |match|
-            # @ignored_files << match.gsub(input_directory+"/", "")
-          # end
-          # files -= matches
+          @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}"))
         end
       end
       
