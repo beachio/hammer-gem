@@ -43,6 +43,7 @@ class Hammer
   register_parser_as_default_for_extensions JSParser, ['js']
 
   class CoffeeParser < HammerParser
+    
     def to_javascript
       parse()
     end
@@ -63,6 +64,11 @@ class Hammer
       includes()
       @text = CoffeeScript.compile @text
       replace_includes()
+      @text
+    rescue ExecJS::ProgramError => error
+      line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
+      message = error.message.split("Error: ")[1]
+      @hammer_file.error = Hammer::Error.new(message, line)
       @text
     end
     

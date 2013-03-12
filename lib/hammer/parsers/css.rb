@@ -8,6 +8,10 @@ class Hammer
       end
     end
     
+    def format
+      filename.split('.')[1].to_sym
+    end
+    
     def to_css
       @hammer_file.raw_text
     end
@@ -33,11 +37,13 @@ class Hammer
           url_tag
         else
           
-          file = find_file(file_path)
+          file_name = file_path.split("?")[0]
+          extras = file_path.split("?")[1]
+          file = find_file(file_name)
           
           if file
             url = Pathname.new(file.filename).relative_path_from Pathname.new(File.dirname(filename))
-            "url(#{url})"
+            "url(#{url}#{"?"+extras if extras})"
           else
             url_tag
           end
@@ -88,11 +94,12 @@ class Hammer
       elsif new_format == format
         @raw_text
       elsif format == :scss and new_format == :sass
-        warn "SCSS to SASS isn't done"
-        ""
+        # warn "SCSS to SASS isn't done"
+        false
       elsif format == :sass and new_format == :scss
-        warn "SASS to SCSS isn't done"
-        ""
+        # warn "SASS to SCSS isn't done"
+        false
+      else
       end
     end
 
@@ -106,23 +113,20 @@ class Hammer
       begin
         @text = engine.render()
       rescue => e
-        # @error = e
-
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
           # TODO: Make this nicer.
-          # @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
-          # file = @hammer_project.hammer_file_for_filename(@error_file, ['.css', '.scss', '.sass'])
-          # if file
-            # file.error = e 
-            # file.error_line = e.sass_line
-          # end
+          @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
+          file = @hammer_project.find_file(@error_file, ['css', 'scss', 'sass'])
+          if file
+            error e.message, e.sass_line, file
+          else
+            error "Error in #{@error_file}: #{e.message}", e.sass_line - 2
+          end
         else
           if e.respond_to?(:sass_line) && e.sass_line
-            error e.message, e.sass_line
+            error e.message, e.sass_line - 2
           end
         end
-        
-        send engine
       end
       @text
     end
@@ -137,20 +141,22 @@ class Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
+        
         replacement = []
         tags.each do |tag|
-          file = find_file(tag, 'scss')
-          parser = Hammer.parser_for_hammer_file(file)
           
-          if parser.respond_to?(:to_format)
-            replacement << parser.to_format(format)
-          else
-            # raise "File #{file.filename} couldn't be included."
-            
-            # Let's assume it's a CSS file.
-            # TODO: Check whether the file is compatible
-            require "sass/css"
-            text = Sass::CSS.new(file.raw_text).render(format) 
+          file = find_file(tag, 'scss')
+          
+          raise "Includes: File not found: <strong>#{tag}</strong>" unless file
+          
+          parser = Hammer.parser_for_hammer_file(file)
+          text = parser.to_format(format)
+          
+          if !text
+            # Go back to CSS.
+            replacement << "/* @include #{tag} */"
+          elsif text
+            # to_format has taken care of us!
             replacement << text
           end
         end

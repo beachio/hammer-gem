@@ -35,7 +35,7 @@ class Hammer
   end
   
   def self.parser_for_hammer_file(hammer_file)
-    raise "Oh no" unless hammer_file
+    raise "Hammer File was nil" unless hammer_file
     parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
     parser.text = hammer_file.raw_text
     parser.hammer_file = hammer_file
@@ -82,6 +82,10 @@ class Hammer
     filename = URI.parse(filename).path
     
     extensions = [*extension].compact
+    if !extension
+      extension =  File.extname(filename)[1..-1]
+      filename = File.basename(filename, ".*") 
+    end
     extensions = extensions + possible_other_extensions_for(extension)
     extensions = extensions.flatten
     

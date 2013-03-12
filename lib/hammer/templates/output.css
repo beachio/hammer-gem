@@ -28,6 +28,7 @@ span.error a, span.success a, span.html a, span.include a, span.could_not_compil
   font-weight: bold;
 }
 span.file.error {
+  padding-left: 18px;
   background: url(FileError.png) 0px 1px no-repeat;
 }
 span.could_not_compile {
@@ -39,7 +40,7 @@ span.html, span.compiled {
   padding-left: 18px;
   background: url(FileDoc.png) 0px 1px no-repeat;
 }
-span.html .message {
+span.html .message, span.error .message {
   margin-left: 0;
 }
 span.include {

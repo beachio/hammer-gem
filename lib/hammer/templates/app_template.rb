@@ -164,8 +164,12 @@ class Hammer
       end
       
       def messages
+        return "" if @file.is_a_compiled_file
         @messages.map {|message|
-          %Q{<span class="error message">#{message[:message]}</span>}
+          %Q{<span class="#{message[:html_class] || 'error'} message">
+            #{"<strong>Line #{message[:line]}:</strong>" if message[:line]}
+            #{message[:message]}
+          </span>}
         }.join("")
       end
       

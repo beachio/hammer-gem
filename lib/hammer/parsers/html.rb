@@ -3,19 +3,19 @@ class Hammer
     
     def to_html
       @text = @hammer_file.raw_text
-      
+      get_variables()
       includes()
-      
-      # Strip todos - they're for this file only
-      # text.gsub(/<!-- @todo (.*) -->/, "")
-      
       @text
     end
 
     def parse
-      todos()
+      
       placeholders()
       get_variables()
+      
+      # TODO: Check whether we want to do this first
+      path_tags()
+      
       includes()
       get_variables()
       reload_tags()
@@ -37,15 +37,7 @@ class Hammer
       'html'
     end
 
-  private
-    
-    def todos
-      replace(/<!-- @todo (.*?) -->/) do |tag, line_number|
-        @todos ||= []
-        @todos << {:line => line_number, :tag => tag}
-        ""
-      end
-    end
+    private
     
     def placeholders
       replace(/<!-- @placeholder (\S*) -->/) do |tag, line_number|
@@ -131,14 +123,18 @@ class Hammer
             
             parser = @hammer_project.parser_for_hammer_file(file)
             parser.variables = self.variables
+            
             begin
               parser.parse()
             rescue Hammer::Error => e
               e.hammer_file = file
               raise e
             end
-          
-            @hammer_project.parser_for_hammer_file(file).to_html()
+            
+            parser = @hammer_project.parser_for_hammer_file(file)
+            parser.variables = self.variables
+            self.variables = self.variables.merge(parser.variables)
+            parser.to_html()
           else
             raise "Includes: File <strong>#{h tag}</strong> couldn't be found."
           end
@@ -177,7 +173,8 @@ class Hammer
     def path_tags
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
-        file = find_file(File.basename(tag, ".*"), File.extname(tag)[1..-1])
+        
+        file = find_file(tag)
         
         if !file
           raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
@@ -206,7 +203,6 @@ class Hammer
           
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
-          
           path = path_to(file)
           
           next if @included_stylesheets.include?(path) 
@@ -216,7 +212,7 @@ class Hammer
         end
         
         if production?
-          file = add_file_from_files(hammer_files, "#{filename}.css", :css)
+          file = add_file_from_files(hammer_files_to_tag, :css)
           "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
@@ -224,14 +220,14 @@ class Hammer
       end
     end
     
-    def add_file_from_files(files, filename, format)
+    def add_file_from_files(files, format)
       return false if files == []
       contents = []
       files.each do |file|
         contents << Hammer.parser_for_hammer_file(file).to_format(format)
       end
       contents = contents.join("\n\n\n\n")
-      filename = Digest::MD5.hexdigest(files.collect(&:filename).join(","))
+      filename = Digest::MD5.hexdigest(contents)
       file = add_file("#{filename}.#{format}", contents)
       file.source_files = files
       file
@@ -272,7 +268,7 @@ class Hammer
           paths << path
         end        
         if production?
-          file = add_file_from_files(hammer_files_to_tag, "#{filename}.js", :js)
+          file = add_file_from_files(hammer_files_to_tag, :js)
           "<script src='#{path_to(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")

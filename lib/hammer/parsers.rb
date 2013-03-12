@@ -3,13 +3,13 @@ class Hammer
   class HammerParser
     
     include Templatey
-
+    
     attr_accessor :hammer_project, :variables
 
     def initialize(hammer_project = nil, hammer_file = nil)
       @text = ""
       @hammer_project = hammer_project if hammer_project
-      hammer_file = hammer_file if hammer_file
+      @hammer_file = hammer_file if hammer_file
     end
 
     def text=(text)
@@ -46,23 +46,18 @@ class Hammer
     end
     
     def find_files(filename, extension=nil)
-      
-      # TODO: Better filename checking than this.
-      
-      if filename[0..1] == "./"
-        filename = filename[2..-1]
-        dirname = File.dirname(self.filename)
-        dirname = nil if dirname == "."
-        filename = File.join([dirname, filename].compact)
-      end
-      
-      @hammer_project.find_files(filename, extension)
-    rescue
+      # Convert relative paths to simple directories and filenames.
+      filename = filename.gsub("../", "").gsub("./", "")
+      files = @hammer_project.find_files(filename, extension)
+      files
+    rescue => e
       nil
     end
     
     def find_file(filename, extension=nil)
       find_files(filename, extension)[0]
+    rescue => e
+      nil
     end
     
     def error(text, line_number, hammer_file=nil)
@@ -87,7 +82,7 @@ class Hammer
       end
       return
     end
-
+    
     def parse
       raise "Base HammerParser#parse called"
     end

@@ -49,11 +49,11 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html><img src='http://placekitten.com/100/100' width='100px' height='100px' /></html>", text
     end
     
-    should "remove todos" do
-      @parser.text = "<html><!-- @todo Do this --></html>"
-      text = @parser.parse()
-      assert_equal "<html></html>", text
-    end
+    # should "remove todos" do
+    #   @parser.text = "<html><!-- @todo Do this --></html>"
+    #   text = @parser.parse()
+    #   assert_equal "<html></html>", text
+    # end
 
     should "include files" do
       header = Hammer::HammerFile.new
@@ -345,6 +345,26 @@ class TestHtmlParser < Test::Unit::TestCase
       @file.filename = "index.html"
       @file.hammer_project = @hammer_project
       @hammer_project << @file
+    end
+    
+    context "in other directories" do
+      setup do
+        f1 = Hammer::HammerFile.new
+        f1.filename = "blog/index.html"
+        @hammer_project << f1
+        
+        @f2 = Hammer::HammerFile.new
+        @f2.filename = "about/index.html"
+        @hammer_project << @f2
+        
+        @file.raw_text = "<!-- @path about/index.html -->"
+      end
+      
+      should "do path tags right" do
+        parser = Hammer.parser_for_hammer_file(@file)
+        assert_equal [@f2], parser.find_files('about/index.html', 'html')
+        assert_equal "about/index.html", parser.parse()
+      end
     end
     
     context "including a HAML file" do

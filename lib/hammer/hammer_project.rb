@@ -9,11 +9,20 @@ class Hammer
     
     attr_reader :production
     
-    attr_accessor :hammer_files, :ignored_files
+    attr_accessor :hammer_files, :ignored_files, :input_directory
     
     def create_hammer_files_from_directory(input_directory, output_directory)
+
+      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"))
       
-      files = Dir.glob(File.join(input_directory, "**/*"))
+      escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+      escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+
+      input_directory          = Pathname.new(input_directory).cleanpath.expand_path.to_s
+      @input_directory = input_directory
+      output_directory         = Pathname.new(output_directory).cleanpath.expand_path.to_s
+      
+      # files = Dir.glob(File.join(input_directory, "**/*"))
       files.reject! {|file| file.match(output_directory)}
       
       ignore_file = File.join(input_directory, ".hammer-ignore")
@@ -34,8 +43,10 @@ class Hammer
         
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
+        hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
+        hammer_file.hammer_project = self
         
         if @ignored_paths.include? hammer_file.full_path
           @ignored_files << hammer_file
@@ -53,6 +64,12 @@ class Hammer
 
     def find_files(filename, extension=nil)
       
+      @cached_files ||= {}
+      if @cached_files["#{filename}:#{extension}"]
+        return @cached_files["#{filename}:#{extension}"]
+      end
+      
+      filename = filename[1..-1] if filename.start_with? "/"
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|
@@ -62,6 +79,8 @@ class Hammer
       }.sort_by { |file|
         file.filename.split(filename).join().length
       }
+      
+      @cached_files["#{filename}:#{extension}"] = files
       return files
     end
     
@@ -82,14 +101,19 @@ class Hammer
     def compile()
       @compiled_hammer_files = []
       @hammer_files.each do |hammer_file|
+        
         @compiled_hammer_files << hammer_file
         next if File.basename(hammer_file.filename).start_with? "_"
         begin
+          hammer_file.hammer_project ||= self
           pre_compile(hammer_file)
           compile_hammer_file(hammer_file)
           after_compile(hammer_file)
         rescue Hammer::Error => error
           hammer_file.error = error
+        rescue => error
+          # In case there's another error!
+          hammer_file.error = Hammer::Error.new(error.to_s, nil)
         end
       end
       
@@ -100,6 +124,10 @@ class Hammer
   
     ## Compilation stages: Before, during and after.
     def pre_compile(hammer_file)
+      todos = TodoParser.new(self, hammer_file).parse()
+      todos.each do |line_number, message|
+        hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+      end
     end
     
     def compile_hammer_file(hammer_file)
@@ -118,6 +146,7 @@ class Hammer
     def after_compile(hammer_file)
       
       return unless @production
+      return unless hammer_file.is_a_compiled_file
       
       filename = hammer_file.output_filename
       extension = File.extname(filename)[1..-1]

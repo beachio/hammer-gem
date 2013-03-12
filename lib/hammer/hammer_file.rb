@@ -6,9 +6,9 @@ class Hammer
     attr_accessor :filename, :full_path, :output_filename, :output_path, :extension
     attr_accessor :raw_text, :text, :compiled_text
     attr_accessor :error_line, :error_message, :error_file, :error
-    attr_accessor :messages
-    
     attr_accessor :compiled, :is_a_compiled_file, :source_files
+    attr_accessor :messages, :todos
+    attr_accessor :compiled, :is_a_compiled_file
 
     def initialize(options={})
       @source_files = []

@@ -11,6 +11,18 @@ class CSSParserTest < Test::Unit::TestCase
       assert @parser
     end
     
+    should "parse url images even with queries" do
+      font = Hammer::HammerFile.new()
+      font.filename = "images/proximanova-regular.eot"
+      @hammer_project << font
+      
+      @css_file = Hammer::HammerFile.new()
+      @css_file.filename = "style.css"
+      @parser.hammer_file = @css_file
+      @parser.text = "a { background: url(proximanova-regular.eot?#iefix) }"
+      assert_equal "a { background: url(images/proximanova-regular.eot?#iefix) }", @parser.parse()
+    end
+    
     context "with a CSS file" do
       
       setup do
@@ -33,28 +45,63 @@ class CSSParserTest < Test::Unit::TestCase
           @new_file.filename = "assets/_include.css"
           @hammer_project << @new_file
         end
+
+        def assert_compilation(pre, post)
+          @parser.text = pre
+          assert_equal post, @parser.parse()
+        end
         
         should "do paths" do
-          @parser.text = "url(_include.css);"
-          assert output = @parser.parse()
-          assert_equal output, "url(assets/_include.css);"
+          assert_compilation "url(_include.css);", "url(assets/_include.css);"
+        end
+
+        should "do stupid relative paths" do
+          assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
+        end
+
+        context "with multiple paths" do
+          setup do
+            new_file = Hammer::HammerFile.new
+            new_file.filename = "something/assets/_include.css"
+            @hammer_project << new_file
+          end
+
+          should "match files with matching file paths" do
+            assert_compilation "url(assets/_include.css);", "url(assets/_include.css);"
+            assert_compilation "url(something/assets/_include.css);", "url(something/assets/_include.css);"
+            assert_compilation "url(ing/assets/_include.css);", "url(something/assets/_include.css);"
+          end
+
+          should "match absolute file paths" do
+            assert_compilation "url(/assets/_include.css);", "url(assets/_include.css);"
+          end
+
+        end
+
+        should "do stupid relative paths" do
+          assert_compilation "url(../../_include.css);", "url(assets/_include.css);"          
+        end
+
+        should "not do http paths" do
+          assert_compilation "url(http://bullshit.png);", "url(http://bullshit.png);"          
+        end
+
+        should "not do https paths" do
+          assert_compilation "url(https://bullshit.png);", "url(https://bullshit.png);"          
+        end        
+
+        should "not change query paths with unknown files" do
+          assert_compilation "url(bullshit.png?a);", "url(bullshit.png?a);"          
         end
         
         should "do data:png paths" do
-          @parser.text = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAooAAAAZCAYAAAC2GQ9IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAF4BJREFUeNrsXQlYFFe2LpoGgQZtVEARjYrigijuW9xIHNQxLsm4PWNERxhw17glE2OIz2U0xnFl1JeYoFGzqdHEMUHFLcaFuCBk3CKIyoAoNFtAoOn5T3sbO"
-          assert output = @parser.parse()
+          assert_compilation "url(data:image/png;base64,123)", "url(data:image/png;base64,123)"
         end
         
         should "do include" do
-          @parser.text =  "/* @include _include */"
-          output = @parser.parse()
-          assert_equal @hammer_project.find_file("_include", 'css'), @new_file
-          assert output
-          assert_equal "I'm included.", output
+          assert_compilation "/* @include _include */", "I'm included."
         end
       end
-      
     end
   end
 end
-
