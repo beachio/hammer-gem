@@ -123,6 +123,7 @@ class Hammer
     end
 
     def reload_tags
+      return if @hammer_project.production
       reloader_script = "
         <!-- Hammer reload -->
           <script>
