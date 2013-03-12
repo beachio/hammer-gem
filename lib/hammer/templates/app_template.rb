@@ -99,13 +99,9 @@ class Hammer
         body << assets.map {|file| TemplateLine.new(file)}
       end
       
-      if @project.ignored_files
+      if @project.ignored_files.any?
         body << "<h3 class='ignored'>Ignored files</h3>"
-        body << @project.ignored_files.map {|file| 
-          IgnoredTemplateLine.new(file)}
-        # @project.ignored_files.each do |filename|
-          # body << "Ignored #{filename}<br />"
-        # end
+        body << @project.ignored_files.map {|file| IgnoredTemplateLine.new(file)}
       end
       
       body.join("\n")
