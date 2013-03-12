@@ -3,17 +3,35 @@ class Hammer
 
     def initialize(production=false)
       @production = production
+      @ignored_files = []
       @hammer_files = [] 
     end
     
     attr_reader :production
     
-    attr_accessor :hammer_files
+    attr_accessor :hammer_files, :ignored_files
     
     def create_hammer_files_from_directory(input_directory, output_directory)
       
       files = Dir.glob(File.join(input_directory, "**/*"))
       files.reject! {|file| file.match(output_directory)}
+      
+      ignore_file = File.join(input_directory, ".hammer-ignore")
+      @ignored_paths = []
+      if File.exists?(ignore_file)
+        lines = File.open(ignore_file).read.split("\n")
+        lines.each do |line|
+          line = line.gsub("*", "**/*")
+          @ignored_paths << Dir.glob(File.join(input_directory, line))
+          # matches.each do |match|
+            # @ignored_files << match.gsub(input_directory+"/", "")
+          # end
+          # files -= matches
+        end
+      end
+      
+      @ignored_paths.flatten!
+      @ignored_paths.uniq!
       
       files.each do |filename|
         
@@ -21,11 +39,15 @@ class Hammer
         
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
-        hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
         
-        @hammer_files << hammer_file
+        if @ignored_paths.include? hammer_file.full_path
+          @ignored_files << hammer_file
+        else
+          hammer_file.raw_text = File.read(filename)
+          @hammer_files << hammer_file
+        end
       end
       
       return @hammer_files

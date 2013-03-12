@@ -6,7 +6,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
     setup do
       file = Hammer::HammerFile.new(:filename => "index.html")
       file.full_path = "/Users/elliott/index.html"
-      @template = Hammer::AppTemplate.new([file])
+      @template = Hammer::AppTemplate.new([file], Hammer::Project.new)
     end
     
     should "compile" do
@@ -20,7 +20,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       @file = Hammer::HammerFile.new(:filename => "index.html")
       @file.compiled = true
       @file.full_path = "/Users/elliott/home files\"/index.html"
-      @template = Hammer::AppTemplate.new([@file])
+      @template = Hammer::AppTemplate.new([@file], Hammer::Project.new)
       @text = @template.to_s
     end
     
@@ -57,7 +57,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       @file.full_path = "/Users/elliott/home files\"/_nav.html"
       files << @file
       
-      @template = Hammer::AppTemplate.new(files)
+      @template = Hammer::AppTemplate.new(files, Hammer::Project.new)
     end
     
     should "Not display the partials" do

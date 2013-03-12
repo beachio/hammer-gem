@@ -7,8 +7,9 @@ end
 class Hammer
   
   class Template
-    def initialize(files)
+    def initialize(files, project)
       @files = files
+      @project = project
     end
     
     def success?
@@ -98,6 +99,15 @@ class Hammer
         body << assets.map {|file| TemplateLine.new(file)}
       end
       
+      if @project.ignored_files
+        body << "<h3 class='ignored'>Ignored files</h3>"
+        body << @project.ignored_files.map {|file| 
+          IgnoredTemplateLine.new(file)}
+        # @project.ignored_files.each do |filename|
+          # body << "Ignored #{filename}<br />"
+        # end
+      end
+      
       body.join("\n")
     end
     
@@ -128,6 +138,8 @@ class Hammer
         end
       }
     end
+    
+
 
     class TemplateLine
       
@@ -223,6 +235,12 @@ class Hammer
       
       def filename
         @file.filename
+      end
+    end
+    
+    class IgnoredTemplateLine < TemplateLine
+      def to_s
+        %Q{<span class="ignored file #{extension} #{span_class}">Ignored #{link}</span>#{messages}}
       end
     end
     
