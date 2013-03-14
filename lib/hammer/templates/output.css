@@ -1,6 +1,7 @@
 html {
   margin: 0;
   width: 100%;
+  overflow-x: hidden;
   font: 11px/18px "Lucida Grande", "Helvetica Neue", sans-serif;
 /*      -webkit-font-smoothing: antialiased;*/
 }
