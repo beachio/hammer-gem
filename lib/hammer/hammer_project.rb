@@ -1,3 +1,5 @@
+HAMMER_IGNORE_FILENAME = "ignore.txt"
+
 class Hammer
   class Project
 
@@ -25,7 +27,8 @@ class Hammer
       # files = Dir.glob(File.join(input_directory, "**/*"))
       files.reject! {|file| file.match(output_directory)}
       
-      ignore_file = File.join(input_directory, ".hammer-ignore")
+      ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
+      
       @ignored_paths = []
       if File.exists?(ignore_file)
         lines = File.open(ignore_file).read.split("\n")
