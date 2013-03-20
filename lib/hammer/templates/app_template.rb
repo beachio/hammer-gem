@@ -202,6 +202,9 @@ class Hammer
         elsif @error
           "Error in #{link} on <strong>line #{error_line}</strong>:
           <span class=\"error message\">#{error_message}</span>"
+        elsif @include
+          # Has to-dos
+          "Compiled #{link}"
         elsif !@file.compiled
           "Copied #{link}"
         elsif @extension == "html"
@@ -220,7 +223,7 @@ class Hammer
       end
       
       def to_s
-        if @include && !@error
+        if @include && !@error && @file.messages.length == 0
           return ""
         else
           %Q{<span class="file #{extension} #{span_class}">#{line}</span>#{messages}}

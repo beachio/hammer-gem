@@ -15,6 +15,20 @@ class HammerAppTemplateTest < Test::Unit::TestCase
     end
   end
   
+  ['_header.html', 'index.html'].each do |filename|
+    context "A template called #{filename} with a todo" do
+      setup do
+        file = Hammer::HammerFile.new(:filename => filename)
+        file.messages = [{:line => 1, :message => "Testing", :html_class => "todo"}]
+        @template = Hammer::AppTemplate.new([file], Hammer::Project.new)
+      end
+      
+      should "show the todo" do
+        assert @template.to_s.include? 'Testing'
+      end
+    end
+  end
+  
   context "A template with files" do
     setup do
       @file = Hammer::HammerFile.new(:filename => "index.html")

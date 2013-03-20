@@ -106,10 +106,10 @@ class Hammer
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
-        next if File.basename(hammer_file.filename).start_with? "_"
         begin
           hammer_file.hammer_project ||= self
           pre_compile(hammer_file)
+          next if File.basename(hammer_file.filename).start_with? "_"
           compile_hammer_file(hammer_file)
           after_compile(hammer_file)
         rescue Hammer::Error => error

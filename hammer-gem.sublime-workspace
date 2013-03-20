@@ -1,0 +1,1047 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"zip",
+				"zipfile_filenames"
+			],
+			[
+				"replace_",
+				"replace_same_file_links"
+			],
+			[
+				"fina",
+				"finished_filename"
+			],
+			[
+				"fin",
+				"fina	find_all { |e| .. }"
+			],
+			[
+				"number",
+				"number_of_characters_matching_in_new_file"
+			],
+			[
+				"e",
+				"e"
+			],
+			[
+				"file_",
+				"file_to_be_included"
+			],
+			[
+				"day",
+				"dayParts"
+			],
+			[
+				"cur",
+				"currentlyPlayingDay"
+			],
+			[
+				"curr",
+				"currentlyDisplayedDay"
+			],
+			[
+				"screenshot-",
+				"screenshot-macbook-2"
+			]
+		]
+	},
+	"build_system": "Packages/rbenv/RBenv.sublime-build",
+	"command_palette":
+	{
+		"height": 95.0,
+		"selected_items":
+		[
+			[
+				"ruby",
+				"Set Syntax: Ruby"
+			],
+			[
+				"diff",
+				"Set Syntax: Diff"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"coffee",
+				"Set Syntax: CoffeeScript"
+			],
+			[
+				"javascript",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove package",
+				"Package Control: Remove Package"
+			],
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
+			[
+				"packages",
+				"Preferences: Browse Packages"
+			],
+			[
+				"Package Control: list",
+				"Package Control: List Packages"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"console",
+				"Set Syntax: R Console"
+			],
+			[
+				"install package",
+				"Package Control: Install Package"
+			],
+			[
+				"git status",
+				"Git: Status"
+			],
+			[
+				"remove p",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 435.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_scss.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_app_template.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_css.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_haml.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_hammer.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/hammer-gem.sublime-project",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/sass-3.2.7/lib/sass/script/css_parser.rb",
+		"/Users/elliott/Sites/hammer/Server/app/views/publish/404.html.erb",
+		"/Users/elliott/Sites/hammer/Server/app/views/publish/error.html.erb",
+		"/Users/elliott/Sites/hammer/Server/app/models/upload.rb",
+		"/Users/elliott/Sites/hammer/Server/app/views/publish/show.html.erb",
+		"/Users/elliott/Sites/hammer/Server/app/controllers/publish_controller.rb",
+		"/Users/elliott/Sites/hammer/Server/app/views/publish/no_files.html.erb",
+		"/Users/elliott/Sites/hammer/Server/app/views/layouts/publish_expired.html.erb",
+		"/Users/elliott/Sites/hammer/Server/app/assets/stylesheets/public/_placeholders.scss",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/bourbon-3.1.1/Gemfile",
+		"/Users/elliott/Sites/hammer/App/Hammer/Xibs/HMAppDetailView.xib",
+		"/Users/elliott/Sites/asgard/app/models/site.rb",
+		"/Users/elliott/Sites/asgard/app/views/sites/show.html.erb",
+		"/Users/elliott/Sites/asgard/app/models/version.rb",
+		"/Users/elliott/Sites/asgard/app/views/public/index.html.erb",
+		"/Users/elliott/Sites/asgard/app/views/layouts/application.html.erb",
+		"/Users/elliott/Sites/asgard/app/views/sites/_form.html.erb",
+		"/Users/elliott/Sites/asgard/app/views/sites/new.html.erb",
+		"/Users/elliott/Sites/asgard/app/controllers/sites_controller.rb",
+		"/Users/elliott/Sites/asgard/app/controllers/accounts_controller.rb",
+		"/Users/elliott/Sites/asgard/app/views/accounts/show.html.erb",
+		"/Users/elliott/Sites/asgard/app/views/account/show.html.erb",
+		"/Users/elliott/Sites/asgard/app/views/account/index.html.erb",
+		"/Users/elliott/Sites/asgard/app/assets/javascripts/upload/cors/jquery.postmessage-transport.js",
+		"/Users/elliott/Sites/asgard/config/routes.rb",
+		"/Users/elliott/Sites/asgard/app/controllers/account_controller.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_file.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_uploader.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_deployer.rb",
+		"/Users/elliott/Sites/asgard/Rakefile",
+		"/Users/elliott/Sites/asgard/test/unit/version_deployer_test.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_deployer/version_deployer.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_deployer/version_file.rb",
+		"/Users/elliott/Sites/asgard/app/models/version_deployer/version_uploader.rb",
+		"/Users/elliott/Sites/asgard/test/unit/version_deployer_file_test.rb",
+		"/Users/elliott/Sites/asgard/lib/pathnamer.rb",
+		"/Users/elliott/Sites/asgard/config/environments/development.rb",
+		"/Users/elliott/Sites/asgard/config/environments/test.rb",
+		"/Users/elliott/Desktop/sites/hammer/ser",
+		"/Users/elliott/Desktop/sites/hammer/server",
+		"/Users/elliott/Sites/asgard/test/1.zip",
+		"/Users/elliott/Desktop/My New Project/Archive.zip",
+		"/Users/elliott/Sites/asgard/test/unit/test_version_deployer_file.rb",
+		"/Users/elliott/Sites/asgard/Gemfile",
+		"/Users/elliott/Sites/asgard/test/test_helper.rb",
+		"/Users/elliott/Sites/asgard/config/mocha.rb",
+		"/Users/elliott/Sites/asgard/Gemfile.lock",
+		"/Users/elliott/Sites/asgard/test/unit/user_test.rb",
+		"/Users/elliott/Sites/asgard/test/functional/versions_controller_test.rb",
+		"/Users/elliott/Sites/asgard/test/functional/sites_controller_test.rb",
+		"/Users/elliott/Desktop/versiondeployer_test.rb",
+		"/Users/elliott/Sites/asgard/test/unit/version_deployer_file.rb",
+		"/Users/elliott/Sites/asgard/test/unit/version_deployer.rb",
+		"/Users/elliott/Desktop/version_deployer.rb",
+		"/Users/elliott/Desktop/versiondeployer2.rb",
+		"/Users/elliott/Sites/asgard/test/unit/version_deployer_file",
+		"/Users/elliott/Sites/asgard/app/models/version_deployer/version_deployer_file.rb",
+		"/Users/elliott/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/elliott/Desktop/_squish.js",
+		"/Users/elliott/Sites/hammer/Help/index.html",
+		"/Users/elliott/Sites/hammer/App/Hammer/View Controllers/HMAppDetailViewController.h",
+		"/Users/elliott/Sites/hammer/App/Controllers/HMAppDetailViewController.h",
+		"/Users/elliott/Desktop/fitstar/index.html",
+		"/Users/elliott/Desktop/alex.zip",
+		"/Users/elliott/Desktop/My New Project/.hammerignore",
+		"/Users/elliott/Desktop/My New Project/.hammer-ignore",
+		"/Users/elliott/Desktop/My New Project/assets/css/style.scss",
+		"/Users/elliott/Sites/hammer/hammer-gem/hammer_time.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/templates/output.css",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/hammer_file.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/html.rb",
+		"/Users/elliott/Sites/hammer/App/Help/index.html",
+		"/Users/elliott/Desktop/Help/optimize.html",
+		"/Applications/Mail.app/Contents/Resources/English.lproj/MailHelp",
+		"/tmp/subl stdin 834SWm.txt",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/hammer_project.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/templates/app_template.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-4.0.0/test/template_test.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/update.sh",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/include.rb",
+		"/Users/elliott/Sites/hammer/App/Hammer.xcodeproj/project.pbxproj",
+		"/Users/elliott/Sites/asgard/app/controllers/versions_controller.rb",
+		"/Users/elliott/Sites/asgard/lib/tasks/cron.rake",
+		"/Users/elliott/Sites/asgard/app/models/log_parser.rb",
+		"/Users/elliott/Sites/asgard/lib/squish.js",
+		"/Users/elliott/Sites/asgard/lib/squish.coffee",
+		"/Users/elliott/Sites/asgard/app/assets/stylesheets/application.css",
+		"/Users/elliott/Sites/asgard/app/assets/stylesheets/style.css",
+		"/Users/elliott/Sites/asgard/app/views/sites/index.html.erb",
+		"/Users/elliott/Sites/asgard/app/models/ability.rb",
+		"/Users/elliott/Sites/asgard/config/initializers/devise.rb",
+		"/Users/elliott/Sites/hammer/App/Hammer/Gem/hammer_time.rb",
+		"/Users/elliott/Desktop/a/index.html",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-4.0.0/test/templates/_layout.erb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer_debug.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/hammer_error.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/hammer.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_parsers.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_html_parser.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/test_project.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-4.0.0/lib/haml/parser.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/javascript.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/css.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/compressors/js.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/compressor.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-4.0.0/test/templates/partialize.haml",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-4.0.0/lib/haml/compiler.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/todos.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/haml.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/hammer/parsers/markdown.rb",
+		"/Users/elliott/Sites/hammer/App/Hammer/Old Gem/hammer/types/css.rb",
+		"/Users/elliott/Sites/hammer/Old",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/sass-3.2.5/lib/sass/css.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-3.1.7/lib/haml/parser.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/haml-3.1.7/test/haml/templates/whitespace_handling.haml",
+		"/Users/elliott/Sites/hammer/hammer-gem/tests.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/Rakefile",
+		"/Users/elliott/Sites/hammer/hammer-gem/test/tests.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/tilt-1.3.3/TEMPLATES.md",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/include.rb",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/templates/app_template.rb"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"*",
+			"",
+			"untitled",
+			"",
+			"hammer/*",
+			"hammer/",
+			"",
+			"hammer_file.rb",
+			"",
+			"hammer/*",
+			"hammer",
+			"",
+			"hammer_file.rb",
+			"",
+			"_menu.html",
+			"",
+			"*",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"81460684",
+			"60684",
+			"===",
+			".hammer-",
+			".hammerig",
+			"ignore",
+			"asgard.io",
+			"a/b",
+			"cdn.asgard",
+			"a/b",
+			"output_path",
+			"puts",
+			"assets_location_root",
+			"replacing",
+			"assets_location_root",
+			"versionFile",
+			"cdn",
+			"http:/",
+			"ENv['",
+			"http:/",
+			"replace",
+			"deploy_slug",
+			"VersionDeployer",
+			"VersionDeployter",
+			"VersionDeployer",
+			"uploading",
+			"asset_filenames",
+			"version_url",
+			"zipfile_filenames",
+			"prepare",
+			"public_root",
+			"public_rot",
+			"public_root",
+			"replace_asset_filenames",
+			"deploy_slug",
+			"upload_slug",
+			"deploy_slug => ",
+			"deploy_slug =",
+			"deploy_slug",
+			"CLOUDFRONT_DISTRIBUTION",
+			"mocha",
+			"require \"moch",
+			"./version",
+			"VersionFile",
+			"puts ",
+			"def filenames",
+			"def root_path",
+			"filenames",
+			"root_path",
+			"asset_filenames",
+			"ends_with?",
+			".name",
+			"deploy_slug",
+			"asset_filenames",
+			"come",
+			"replace_asset_filenames",
+			"puts",
+			"cleanpath",
+			"asset_filenames",
+			"aws",
+			"require \"aws",
+			"aws",
+			"\n				",
+			"<<<",
+			"placeholder",
+			"squish",
+			"fitstar.com",
+			"pre_",
+			"TodoParser",
+			"raw_",
+			".read",
+			"webkit-",
+			"selec",
+			"compilation",
+			".html",
+			"basename",
+			"puts ",
+			"find_files",
+			"class TemplateLine",
+			"template",
+			"add_file_from_files",
+			"add_file",
+			"help.hammer",
+			"AppTemplate.new",
+			">>>",
+			"<<<",
+			"===",
+			"<<<",
+			"reload_tags",
+			"Asgard",
+			"asgard",
+			")\n",
+			"asgard",
+			"default",
+			"window.pages",
+			"background-image",
+			"async",
+			"puts",
+			"  ",
+			".error",
+			"sort",
+			"related_file_error_message",
+			"puts ",
+			"get_variables",
+			"variables",
+			"vartiables",
+			"puts ",
+			"set variables for included",
+			"Hammer::Error",
+			"current",
+			"Adding file",
+			"add_file_from_files",
+			"puts ",
+			"add_file_from_files",
+			"to_javascript",
+			"puts ",
+			"extension",
+			"rescue ",
+			"rescue",
+			"TODO",
+			"h ",
+			"def h",
+			"raise ",
+			"error ",
+			"raise",
+			"raise ",
+			"sass",
+			"error"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"|",
+			"/assets/glyph",
+			"@include _header",
+			"output_path",
+			"Hammer.root_directory",
+			"<!-- @include _footer -->",
+			"<!-- @include _menu -->",
+			"<!-- @include _header -->",
+			"  ",
+			"$FILE_PATH",
+			"assets",
+			"/assets/images",
+			"'"
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 286.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"test_hammer.rb",
+				"test/test_hammer.rb"
+			],
+			[
+				"testhaml",
+				"test/test_haml.rb"
+			],
+			[
+				"testapptemplate",
+				"test/test_app_template.rb"
+			],
+			[
+				"cssparser",
+				"vendor/gems/sass-3.2.7/lib/sass/script/css_parser.rb"
+			],
+			[
+				"testcss",
+				"test/test_css.rb"
+			],
+			[
+				"testscss",
+				"test/test_scss.rb"
+			],
+			[
+				"expi",
+				"app/views/layouts/publish_expired.html.erb"
+			],
+			[
+				"publisshow",
+				"app/views/publish/show.html.erb"
+			],
+			[
+				"upload.rb",
+				"app/models/upload.rb"
+			],
+			[
+				"publishcontro",
+				"app/controllers/publish_controller.rb"
+			],
+			[
+				"gemfile",
+				"Gemfile"
+			],
+			[
+				"domain.rb",
+				"app/models/domain.rb"
+			],
+			[
+				"site.rb",
+				"app/models/site.rb"
+			],
+			[
+				"style.css",
+				"app/assets/stylesheets/style.css"
+			],
+			[
+				"version.rb",
+				"app/models/version.rb"
+			],
+			[
+				"upload",
+				"app/assets/javascripts/upload.coffee"
+			],
+			[
+				"showhtmlerb",
+				"app/views/sites/show.html.erb"
+			],
+			[
+				"siteshow",
+				"app/views/sites/show.html.erb"
+			],
+			[
+				"publicindex",
+				"app/views/public/index.html.erb"
+			],
+			[
+				"sitescontro",
+				"app/controllers/sites_controller.rb"
+			],
+			[
+				"apphtmlerb",
+				"app/views/layouts/application.html.erb"
+			],
+			[
+				"formhtmlerb",
+				"app/views/sites/_form.html.erb"
+			],
+			[
+				"sitenewhtml",
+				"app/views/sites/new.html.erb"
+			],
+			[
+				"routes.rb",
+				"config/routes.rb"
+			],
+			[
+				"account",
+				"app/controllers/account_controller.rb"
+			],
+			[
+				"versionfile",
+				"app/models/version_file.rb"
+			],
+			[
+				"",
+				"Rakefile"
+			],
+			[
+				"versionuploader",
+				"app/models/version_deployer/version_uploader.rb"
+			],
+			[
+				"versiondeployertest.rb",
+				"test/unit/version_deployer_test.rb"
+			],
+			[
+				"versiondeployer.rb",
+				"app/models/version_deployer/version_deployer.rb"
+			],
+			[
+				"development.rb",
+				"config/environments/development.rb"
+			],
+			[
+				"envirtest.rb",
+				"config/environments/test.rb"
+			],
+			[
+				"gemfiel",
+				"Gemfile.lock"
+			],
+			[
+				"testhelper",
+				"test/test_helper.rb"
+			],
+			[
+				"sitescontrotest",
+				"test/functional/sites_controller_test.rb"
+			],
+			[
+				"versionscontrollertest",
+				"test/functional/versions_controller_test.rb"
+			],
+			[
+				"versiondeplyer",
+				"app/models/version_deployer.rb"
+			],
+			[
+				"versiondeployer",
+				"app/models/version_deployer.rb"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"output.css",
+				"lib/hammer/templates/output.css"
+			],
+			[
+				"index.html",
+				"index.html"
+			],
+			[
+				"squish.coffee",
+				"lib/squish.coffee"
+			],
+			[
+				"versiondeploy",
+				"app/models/version_deployer.rb"
+			],
+			[
+				"appcontroller",
+				"app/controllers/application_controller.rb"
+			],
+			[
+				"controllers/",
+				"app/controllers/api_controller.rb"
+			],
+			[
+				"schema.rb",
+				"db/schema.rb"
+			],
+			[
+				"parserstodo",
+				"lib/hammer/parsers/todos.rb"
+			],
+			[
+				"hammertime.rb",
+				"hammer_time.rb"
+			],
+			[
+				"hammerfile.rb",
+				"lib/hammer/hammer_file.rb"
+			],
+			[
+				"parsers.rb",
+				"lib/hammer/parsers.rb"
+			],
+			[
+				"project.rb",
+				"lib/hammer/hammer_project.rb"
+			],
+			[
+				"apptemplate",
+				"lib/hammer/templates/app_template.rb"
+			],
+			[
+				"style.",
+				"assets/css/style.scss"
+			],
+			[
+				"hammerproject.rb",
+				"lib/hammer/hammer_project.rb"
+			],
+			[
+				"testtempl",
+				"test/test_app_template.rb"
+			],
+			[
+				"templatetest",
+				"vendor/gems/haml-4.0.0/test/template_test.rb"
+			],
+			[
+				"update.sh",
+				"update.sh"
+			],
+			[
+				"include",
+				"lib/hammer/include.rb"
+			],
+			[
+				"html.rb",
+				"lib/hammer/parsers/html.rb"
+			],
+			[
+				"user.rb",
+				"app/models/user.rb"
+			],
+			[
+				"envirb",
+				"config/environment.rb"
+			],
+			[
+				"gme",
+				"Gemfile"
+			],
+			[
+				"routes",
+				"config/routes.rb"
+			],
+			[
+				"routes.r",
+				"config/routes.rb"
+			],
+			[
+				"squish",
+				"lib/squish.js"
+			],
+			[
+				"logparser",
+				"app/models/log_parser.rb"
+			],
+			[
+				"cron",
+				"lib/tasks/cron.rake"
+			],
+			[
+				"sites.html.erb",
+				"app/views/sites/index.html.erb"
+			],
+			[
+				"ability.rb",
+				"app/models/ability.rb"
+			],
+			[
+				"devise.rb",
+				"config/initializers/devise.rb"
+			],
+			[
+				"gemfil",
+				"Gemfile"
+			],
+			[
+				"tasks/",
+				"lib/tasks/cron.rake"
+			],
+			[
+				"rakefile",
+				"Rakefile"
+			],
+			[
+				"nav",
+				"includes/_nav.html"
+			],
+			[
+				"_header",
+				"includes/_header.html"
+			],
+			[
+				"html.erb",
+				"vendor/gems/haml-4.0.0/test/templates/_layout.erb"
+			],
+			[
+				"debug.rb",
+				"lib/hammer_debug.rb"
+			],
+			[
+				"hammererror",
+				"lib/hammer/hammer_error.rb"
+			],
+			[
+				"hammemf",
+				"lib/hammer/hammer_file.rb"
+			],
+			[
+				"hammer.rb",
+				"lib/hammer/hammer.rb"
+			],
+			[
+				"testproject",
+				"test/test_project.rb"
+			],
+			[
+				"error",
+				"lib/hammer/hammer_error.rb"
+			],
+			[
+				"error.rb",
+				"lib/hammer/hammer_error.rb"
+			],
+			[
+				"parser.rb",
+				"vendor/gems/haml-4.0.0/lib/haml/parser.rb"
+			],
+			[
+				"testparsers",
+				"test/test_parsers.rb"
+			],
+			[
+				"testhtmlpars",
+				"test/test_html_parser.rb"
+			],
+			[
+				"parserscss.rb",
+				"lib/hammer/parsers/css.rb"
+			],
+			[
+				"parsersjs",
+				"lib/hammer/parsers/javascript.rb"
+			],
+			[
+				"parserscss",
+				"lib/hammer/parsers/css.rb"
+			],
+			[
+				"parsersjavascript",
+				"lib/hammer/parsers/javascript.rb"
+			],
+			[
+				"hammertime",
+				"hammer_time.rb"
+			],
+			[
+				"hamertimerb",
+				"hammer_time.rb"
+			],
+			[
+				"hamemrfile",
+				"lib/hammer/hammer_file.rb"
+			],
+			[
+				"parsershtml.rb",
+				"lib/hammer/parsers/html.rb"
+			],
+			[
+				"hammerproject",
+				"lib/hammer/hammer_project.rb"
+			],
+			[
+				"hammerfile",
+				"lib/hammer/hammer_file.rb"
+			],
+			[
+				"compiler",
+				"vendor/gems/haml-4.0.0/lib/haml/compiler.rb"
+			],
+			[
+				"css.rb",
+				"lib/hammer/parsers/css.rb"
+			],
+			[
+				"haml.rb",
+				"lib/hammer/parsers/haml.rb"
+			],
+			[
+				"testparser",
+				"test/test_parsers.rb"
+			],
+			[
+				"testhtmlparser",
+				"test/test_html_parser.rb"
+			],
+			[
+				"hammerparser.r",
+				"lib/hammer/parsers.rb"
+			],
+			[
+				"hammerparser.rb",
+				"lib/hammer/parsers.rb"
+			],
+			[
+				"hammer_file.rb",
+				"lib/hammer/hammer_file.rb"
+			],
+			[
+				"include.rb",
+				"lib/hammer/include.rb"
+			],
+			[
+				"testproject.rb",
+				"test/test_project.rb"
+			],
+			[
+				"hgam",
+				"vendor/gems/haml-3.1.7/test/haml/templates/whitespace_handling.haml"
+			],
+			[
+				"testhtml",
+				"test/test_html_parser.rb"
+			],
+			[
+				"hammerp",
+				"lib/hammer/hammer_project.rb"
+			],
+			[
+				"tests.rb",
+				"tests.rb"
+			],
+			[
+				"testtemplate",
+				"test/test_app_template.rb"
+			],
+			[
+				"hammertemplate",
+				"lib/hammer/templates/app_template.rb"
+			],
+			[
+				"template",
+				"vendor/gems/tilt-1.3.3/TEMPLATES.md"
+			],
+			[
+				"versionscontro",
+				"app/controllers/versions_controller.rb"
+			],
+			[
+				"showhtml",
+				"app/views/sites/show.html.erb"
+			],
+			[
+				"production.rb",
+				"config/environments/production.rb"
+			],
+			[
+				"aws",
+				"config/aws.yml"
+			],
+			[
+				"unzipper.rb",
+				"lib/paperclip_processors/unzipper.rb"
+			],
+			[
+				"js.rb",
+				"hammer/types/js.rb"
+			],
+			[
+				"javascript",
+				"lib/parsers/javascript.rb"
+			],
+			[
+				"testhammer",
+				"test/test_hammer.rb"
+			],
+			[
+				"haml",
+				"lib/parsers/haml.rb"
+			],
+			[
+				"markdown.rb",
+				"lib/parsers/markdown.rb"
+			],
+			[
+				"parsershtml",
+				"lib/parsers/html.rb"
+			],
+			[
+				"tescss",
+				"test/test_scss.rb"
+			],
+			[
+				"sass.rb",
+				"vendor/gems/haml-3.1.7/lib/sass.rb"
+			],
+			[
+				"team.html",
+				"team.html"
+			],
+			[
+				"types/html.rb",
+				"hammer/types/html.rb"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 237.0,
+	"status_bar_visible": true
+}
