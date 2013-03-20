@@ -74,7 +74,7 @@ class Hammer
           tag
         else
           self.variables[variable_name] = variable_value
-          ""
+          tag
         end
       end
     end
@@ -92,7 +92,7 @@ class Hammer
         end
         if variable_declaration.include?(' ') && !(variable_declaration.include? "|")
           # Oh god it's a setter why are you still here
-          self.variables[variable_name] = variable_declaration.split(" ")[1]
+          self.variables[variable_name] = variable_declaration.split(" ")[1..-1].join(' ')
           ""
         elsif self.variables[variable_name] || default
           self.variables[variable_name] || default
