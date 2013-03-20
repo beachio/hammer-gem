@@ -29,7 +29,7 @@ class Hammer
     end
     
     def output_filename
-      @output_filename || @filename
+      @output_filename || Hammer.output_filename_for(self)
     end
 
     # style.scss -> style.css    

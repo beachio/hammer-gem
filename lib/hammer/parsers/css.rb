@@ -42,7 +42,7 @@ class Hammer
           file = find_file(file_name)
           
           if file
-            url = Pathname.new(file.filename).relative_path_from Pathname.new(File.dirname(filename))
+            url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
             "url(#{url}#{"?"+extras if extras})"
           else
             url_tag

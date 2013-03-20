@@ -41,7 +41,7 @@ class CSSParserTest < Test::Unit::TestCase
         
         setup do
           @new_file = Hammer::HammerFile.new
-          @new_file.raw_text = "I'm included."
+          @new_file.raw_text = "a { background: orange; }"
           @new_file.filename = "assets/_include.css"
           @hammer_project << @new_file
         end
@@ -51,6 +51,15 @@ class CSSParserTest < Test::Unit::TestCase
           assert_equal post, @parser.parse()
         end
         
+        should "find scss files when including them" do
+          @new_file = Hammer::HammerFile.new
+          @new_file.raw_text = "a { background: orange; }"
+          @new_file.filename = "assets/_scss_include.scss"
+          @hammer_project << @new_file
+          
+          assert_compilation "url(_scss_include.css)", "url(assets/_scss_include.css)"
+        end
+        
         should "do paths" do
           assert_compilation "url(_include.css);", "url(assets/_include.css);"
         end
@@ -58,7 +67,7 @@ class CSSParserTest < Test::Unit::TestCase
         should "do stupid relative paths" do
           assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
         end
-
+        
         context "with multiple paths" do
           setup do
             new_file = Hammer::HammerFile.new
@@ -78,7 +87,7 @@ class CSSParserTest < Test::Unit::TestCase
 
         end
 
-        should "do stupid relative paths" do
+        should "do stupid relative paths again" do
           assert_compilation "url(../../_include.css);", "url(assets/_include.css);"          
         end
 
@@ -99,7 +108,7 @@ class CSSParserTest < Test::Unit::TestCase
         end
         
         should "do include" do
-          assert_compilation "/* @include _include */", "I'm included."
+          assert_compilation "/* @include _include */", "a { background: orange; }"
         end
       end
     end

@@ -141,8 +141,8 @@ class Hammer
         parser.text = text
         text = parser.parse()
         hammer_file.compiled = true
-        hammer_file.output_filename = "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.class.finished_extension}"
       end
+      hammer_file.output_filename = Hammer.output_filename_for(hammer_file)
       hammer_file.compiled_text = text
     end
     

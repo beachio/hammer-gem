@@ -29,6 +29,15 @@ class Hammer
       @@default_parser_for[extension] = parser_class
     end
   end
+  
+  def self.output_filename_for(hammer_file)
+    parser = Hammer.parsers_for_extension(hammer_file.extension).last
+    if parser
+      "#{File.dirname(hammer_file.filename)}/#{File.basename(hammer_file.filename, ".*")}.#{parser.finished_extension}"
+    else
+      hammer_file.filename
+    end
+  end
 
   def self.parser_for_extension(extension)
     @@default_parser_for[extension]
