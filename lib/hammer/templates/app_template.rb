@@ -22,28 +22,55 @@ class Hammer
   class AppTemplate < Template
     
     def to_s
-      [header, stylesheet, body].join("\n")
+      [header, body, footer].join("\n")
     end
     
     private
     
-    def stylesheet
-      css = File.open(File.join(File.dirname(__FILE__), "output.css")).read
-      %Q{<style type="text/css">#{css}</style>}
-    end
+    # def stylesheet
+    #   css = File.open(File.join(File.dirname(__FILE__), "output.css")).read
+    #   %Q{<style type="text/css">#{css}</style>}
+    # end
     
     def header
       
-      line = []
-      
-      ['html', 'js', 'css'].each do |extension|
-        files = files_of_type(".#{extension}").length
-        if files > 0
-          line << "#{files} #{extension.upcase} file#{"s" if files != 1}"
-        end
-      end
-      
-      line.join(", ")
+      %Q{
+        
+        
+        <html>
+        <head>
+          <link href="output.css" rel="stylesheet" />
+          <script src="jquery.min.js" type="text/javascript"></script>
+          <script src="tabs.js" type="text/javascript"></script>
+        </head>
+        <body>
+          <header>
+            <nav>
+              <ul>
+                <li id="show-all" class="active">All</li>
+                <li id="show-html">HTML</li>
+                <li id="show-cssjs">CSS &amp; JS</li>
+                <li id="show-images">Images</li>
+                #{%Q{<li id="show-other">Other #{other_files.length}</li>} if other_files.length > 0}
+              </ul>
+              <ul>
+                <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
+                <li id="show-ignored">Ignored Files</li>
+              </ul>
+            </nav>
+          </header>
+      }
+    end
+    
+    def total_todos
+      sorted_files.collect(&:messages).flatten.compact.length
+    end
+    
+    def footer
+      %Q{
+          </body>
+        </html>
+      }
     end
     
     def not_found
@@ -54,56 +81,98 @@ class Hammer
       "<div class='build-error no-files'><span>No files to build</span></div>"
     end
     
-    def body
-      
-      return not_found if @files == nil
-      return no_files if @files == []
-      
-      body = []
-      files = sorted_files
-      
-      error_files = files.select {|file| file.error }
-      error_files = error_files.sort_by{|file|
+    def error_files
+      sorted_files.select {|file| 
+        file.error 
+      }.sort_by{|file|
         if file.error.hammer_file != file
           100
         else
           10
         end
       }
+    end
+    
+    def html_files
+      sorted_files.select {|file| File.extname(file.finished_filename) == ".html" }.compact
+    end
+    
+    def compilation_files
+      sorted_files.select {|file| file.is_a_compiled_file }.compact
+    end
+    
+    def css_js_files
+      sorted_files.select {|file| 
+        ['.css', '.js'].include? File.extname(file.finished_filename) 
+      }
+    end
+    
+    def image_files
+      sorted_files.select {|file| File.extname(file.finished_filename) == ".png" }.compact
+    end
+    
+    def other_files
+      sorted_files - image_files - css_js_files - compilation_files - html_files
+    end
+    
+    def body
       
-      if error_files.any?
-        body << "<h3>Errors</h3>"
-        body << error_files.map {|file| TemplateLine.new(file)}
-      end
+      return not_found if @files == nil
+      return no_files if @files == []
       
-      files = files - [*error_files]
+      body = [%Q{<section id="all">}]
+      files = sorted_files
       
-      html_files = files.select {|file| File.extname(file.finished_filename) == ".html" && !File.basename(file.finished_filename).start_with?("_") }.compact
+      # if error_files.any?
+      #   body << "<h3>Errors</h3>"
+      #   body << error_files.map {|file| TemplateLine.new(file)}
+      # end
       
+      # files = files - [*error_files]
+      html_files = files.select {|file| File.extname(file.finished_filename) == ".html" }.compact
+      
+      body << %Q{<div class="html set">}
       if html_files.any?
-        body << "<h3>HTML files</h3>"
+        body << "<strong>HTML pages</strong>"
         body << html_files.map {|file| TemplateLine.new(file)}
       end
-      
-      compilation_files = files.select {|file| file.is_a_compiled_file }.compact
+      body << %Q{</div>}
       
       if compilation_files.any?
-        body << "<h3>Compiled files</h3>"
+        body << %Q{<div class="optimized set">}
+        body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
         body << compilation_files.map {|file| TemplateLine.new(file)}
+        body << %Q{</div>}
       end
       
-      assets = files - html_files - compilation_files
-      
-      if assets.any?
-        body << "<h3>Assets</h3>"
-        body << assets.map {|file| TemplateLine.new(file)}
+      if css_js_files.any?
+        body << %Q{<div class="cssjs set">}
+        body << "<strong>CSS &amp; JS</strong>"
+        body << css_js_files.map {|file| TemplateLine.new(file)}
+        body << %Q{</div>}
       end
       
-      if @project.ignored_files.any?
-        body << "<h3 class='ignored'>Ignored files</h3>"
-        body << @project.ignored_files.map {|file| IgnoredTemplateLine.new(file)}
+      if image_files.any?
+        body << %Q{<div class="images set">}
+        body << %Q{<strong>Image assets</strong>}
+        body << image_files.map {|file| TemplateLine.new(file)}
+        body << %Q{</div>}
       end
       
+      if other_files.any?
+        body << %Q{<div class="images other">}
+        body << %Q{<strong>Other files</strong>}
+        body << other_files.map {|file| TemplateLine.new(file)}
+        body << %Q{</div>}
+      end
+      
+      body << %Q{</section>}
+      
+      body << %Q{<section id="todos">
+        <strong>Todos</strong>
+        <div class="todos set"></div>
+      </section>}
+            
       body.join("\n")
     end
     
@@ -132,10 +201,12 @@ class Hammer
         else
           1000000 + length
         end
+      }.select { |file|
+        underscore = File.basename(file.finished_filename).start_with? "_"
+        any_messages = file.messages.count > 0
+        !underscore || any_messages
       }
     end
-    
-
 
     class TemplateLine
       
@@ -163,16 +234,6 @@ class Hammer
         @include = File.basename(file.filename).start_with?("_")
       end
       
-      def messages
-        return "" if @file.is_a_compiled_file
-        @messages.map {|message|
-          %Q{<span class="#{message[:html_class] || 'error'} message">
-            #{"<strong>Line #{message[:line]}:</strong>" if message[:line]}
-            #{message[:message]}
-          </span>}
-        }.join("")
-      end
-      
       def span_class
         return "could_not_compile" if @error_file
         
@@ -181,7 +242,12 @@ class Hammer
         classes << "compiled" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
-
+        
+        classes << @extension
+        if ['png', 'gif', 'svg', 'jpg'].include? @extension
+          classes << 'image'
+        end
+        
         if @extension == "html"
           classes << "html"          
         else
@@ -193,41 +259,64 @@ class Hammer
       end
             
       def link
-        %Q{<a target="_blank" href="#{h output_path}" title="#{h input_path}">#{filename}</a>}
+        %Q{<a target="_blank" href="#{h output_path}">#{@file.finished_filename}</a>}
+      end
+      
+      def setup_line
+        if @error_file
+          @line = "Couldn't compile #{link} due to an error in #{@error_file.filename}"
+        elsif @error
+          @line = "<span class=\"error\"><b>Line #{error_line}</b> #{error_message}</span>"
+        elsif @include
+          @line = "Compiled to <b>#{link}</b>"
+        elsif !@file.compiled
+          # @line = "Copied to <b>#{link}</b>"
+        elsif @extension == "html"
+          @line = "Compiled to <b>#{link}</b>"
+        elsif @file.is_a_compiled_file
+          sources = @file.source_files.map { |hammer_file| "<a href='#{@file.output_path}' title='#{hammer_file.full_path}'>#{File.basename(hammer_file.filename)}</a>" }
+          @line = "Compiled #{link} from #{sources.join(', ')}"
+        else
+          @line = "Compiled #{link}"
+        end
       end
       
       def line
-        if @error_file
-          "Couldn't compile #{link} due to an error in #{@error_file.filename}"
-        elsif @error
-          "Error in #{link} on <strong>line #{error_line}</strong>:
-          <span class=\"error message\">#{error_message}</span>"
-        elsif @include
-          # Has to-dos
-          "Compiled #{link}"
-        elsif !@file.compiled
-          "Copied #{link}"
-        elsif @extension == "html"
-          "Built #{link}"
-        elsif @file.is_a_compiled_file
-          
-          sources = []
-          @file.source_files.each do |hammer_file|
-            sources << "<a href='#{@file.output_path}' title='#{hammer_file.full_path}'>#{File.basename(hammer_file.filename)}</a>"
-          end
-          
-          "Compiled #{link} from #{sources.join(', ')}"
-        else
-          "Compiled #{link}"
+        @line || setup_line
+        @line
+      end
+      
+      def links
+        links = [
+          %Q{<a href="#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+        ]
+        if @filename.end_with? ".html"
+          links.unshift %Q{<a href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
+        end
+        links
+      end
+      
+      def todos
+        @file.messages.map do |message|
+          %Q{
+            <span class="#{message[:html_class] || 'error'}">
+              #{"<b>Line #{message[:line]}</b>" if message[:line]} 
+              #{message[:message]}
+            </span>
+          }
         end
       end
       
       def to_s
-        if @include && !@error && @file.messages.length == 0
-          return ""
-        else
-          %Q{<span class="file #{extension} #{span_class}">#{line}</span>#{messages}}
-        end
+        text = %Q{
+          <article class="#{span_class}">
+            <span class="filename">#{filename}</span>
+            <small class="#{span_class}">#{line}</small>
+            #{todos}
+            #{links}
+          </article>
+        }
       end
       
       private
@@ -251,7 +340,9 @@ class Hammer
     
     class IgnoredTemplateLine < TemplateLine
       def to_s
-        %Q{<span class="ignored file #{extension} #{span_class}">Ignored #{link}</span>#{messages}}
+        %Q{<article class="ignored #{span_class}">
+          <span class="filename">#{filename}</span>
+        </article>}
       end
     end
     

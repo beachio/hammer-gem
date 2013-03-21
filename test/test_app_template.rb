@@ -38,13 +38,13 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       @text = @template.to_s
     end
     
-    should "have a first line" do
-      assert_equal @text.split("\n")[0], "1 HTML file"
-    end
+    # should "have a first line" do
+      # assert_equal @text.split("\n")[0], "1 HTML file"
+    # end
     
     should "display the right output" do
       assert @text.include? "/Users/elliott/home files&quot;/index.html"
-      assert @text.include? "Built"
+      # assert @text.include? "Built"
     end
     
     context "with errors" do

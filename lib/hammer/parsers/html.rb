@@ -97,7 +97,7 @@ class Hammer
         elsif self.variables[variable_name] || default
           self.variables[variable_name] || default
         else
-          raise "Variable <strong>#{h variable_name}</strong> wasn't set!"
+          raise "Variable <b>#{h variable_name}</b> wasn't set!"
         end
       end
     end
@@ -112,7 +112,7 @@ class Hammer
             variable_value = variables[tag[1..-1]]
             
             if !variable_value
-              raise "Includes: Can't include <strong>#{h tag}</strong> because <strong>#{h tag}</strong> isn't set."
+              raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set."
             end
             
             tag = variable_value
@@ -136,7 +136,7 @@ class Hammer
             self.variables = self.variables.merge(parser.variables)
             parser.to_html()
           else
-            raise "Includes: File <strong>#{h tag}</strong> couldn't be found."
+            raise "Includes: File <b>#{h tag}</b> couldn't be found."
           end
         end.compact.join("\n")
       end
@@ -177,7 +177,7 @@ class Hammer
         file = find_file(tag)
         
         if !file
-          raise "Path tags: <strong>#{h tag}</strong> couldn't be found."
+          raise "Path tags: <b>#{h tag}</b> couldn't be found."
         end
         
         path_to(file)
@@ -194,7 +194,7 @@ class Hammer
         
         filenames.each do |filename| 
           matching_files = find_files(filename, 'css')
-          raise "Stylesheet tags: <strong>#{h filename}</strong> couldn't be found." if matching_files.empty?
+          raise "Stylesheet tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
         
@@ -250,7 +250,7 @@ class Hammer
         
         filenames.each do |filename| 
           matching_files = find_files(filename, 'js')
-          raise "Javascript tags: <strong>#{h filename}</strong> couldn't be found." if matching_files.empty?
+          raise "Javascript tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
                 

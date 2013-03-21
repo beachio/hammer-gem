@@ -57,6 +57,7 @@ class Hammer
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           file = find_file(tag, 'css')
+          raise "Included file <b>#{tag}</b> couldn't be found." unless file
           Hammer.parser_for_hammer_file(file).to_css()
         end
         a.compact.join("\n")
@@ -147,7 +148,7 @@ class Hammer
           
           file = find_file(tag, 'scss')
           
-          raise "Includes: File not found: <strong>#{tag}</strong>" unless file
+          raise "Included file <strong>#{tag}</strong> couldn't be found." unless file
           
           parser = Hammer.parser_for_hammer_file(file)
           text = parser.to_format(format)

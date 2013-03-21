@@ -30,7 +30,7 @@ class Hammer
         a = tags.map do |tag|
           file = find_file(tag, 'js')
           
-          raise "Includes: file <strong>#{h tag}</strong> not found." unless file
+          raise "Included file <strong>#{h tag}</strong> couldn't be found." unless file
           
           Hammer.parser_for_hammer_file(file).to_javascript()
         end

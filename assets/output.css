@@ -1,0 +1,634 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  width: 100%;
+  font: 11px/18px "Lucida Grande", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 1px 0 #ffffff;
+  cursor: default;
+}
+
+::selection {
+  background: Highlight;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+nav {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#ebeceb), to(#fefffe));
+  background-image: -moz-linear-gradient(90deg, #ebeceb 0%, #fefffe 100%);
+  overflow: hidden;
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-bottom-color: #d8d9d8;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+nav ul {
+  margin: 0;
+  padding: 5px 6px;
+  float: left;
+  position: relative;
+  z-index: 1;
+}
+
+nav ul li {
+  display: inline-block;
+  color: #999;
+  font-weight: bold;
+  text-decoration: none;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 20px;
+  margin-right: -2px;
+  cursor: pointer;
+  position: relative;
+}
+
+nav ul:first-child li:first-child {
+  margin-right: 11px;
+}
+
+nav ul:first-child li:first-child::after {
+  content: '';
+  position: absolute;
+  background-color: #d8d9d8;
+  right: -7px;
+  top: -5px;
+  bottom: -5px;
+  width: 1px;
+}
+
+.errors nav ul:first-child li:first-child::after {
+  display: none;
+}
+
+nav ul li.active {
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#d2d3d6), to(#b5b6ba));
+  background-image: -moz-linear-gradient(90deg, #d2d3d6 0%, #b5b6ba 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+nav ul + ul {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 0;
+  opacity: 1;
+  -webkit-transition: opacity ease .1s;
+}
+
+nav ul + ul li {
+  margin-right: 0;
+  margin-left: -2px;
+}
+
+section {
+  padding-top: 38px;
+  padding-bottom: 12px;
+  display: none;
+}
+
+section#all, section#errors {
+  display: block;
+}
+
+section strong {
+  text-transform: uppercase;
+  color: #999;
+  width: 100%;
+  font-weight: bold;
+  font-size: 11px;
+  display: block;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+section#images strong, section#other strong, section#ignored strong {
+  padding-bottom: 5px;
+}
+
+section article {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  line-height: 16px;
+  position: relative;
+  padding-right: 80px;
+  background: url(IconOther.png) no-repeat 15px 7px;
+  padding-left: 35px;
+}
+
+section article.html {
+  background: url(IconHTML.png) no-repeat 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.html.partial {
+  background-image: url(IconHTMLInclude.png);
+  background-position: 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.haml {
+  background: url(IconHAML.png) no-repeat 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.haml.partial {
+  background-image: url(IconHAMLInclude.png);
+  background-position: 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.md {
+  background: url(IconMD.png) no-repeat 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.md.partial {
+  background-image: url(IconMDInclude.png);
+  background-position: 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.css {
+  background: url(IconCSS.png) no-repeat 14px 12px;
+  padding-left: 46px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.css.optimized {
+  background-image: url(IconCSSOptimized.png);
+  padding-left: 54px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.sass {
+  background: url(IconSASS.png) no-repeat 14px 12px;
+  padding-left: 46px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.sass.optimized {
+  background-image: url(IconSASSOptimized.png);
+  padding-left: 54px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.js {
+  background: url(IconJS.png) no-repeat 14px 12px;
+  padding-left: 46px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.js.optimized {
+  background-image: url(IconJSOptimized.png);
+  padding-left: 54px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.coff {
+  background: url(IconCoff.png) no-repeat 14px 12px;
+  padding-left: 46px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.coff.optimized {
+  background-image: url(IconCoffOptimized.png);
+  padding-left: 54px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.image {
+  background: url(IconImage.png) no-repeat 14px 7px;
+  padding-left: 39px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+section article.ignored {
+  background: url(IconIgnored.png) no-repeat 15px 7px;
+  padding-left: 35px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+section article:nth-of-type(even) {
+  background-color: #f8f9f8;
+}
+
+section#todos article {
+  border-bottom: 1px solid #eee;
+  padding-left: 60px;
+}
+
+section#todos article:nth-of-type(even) {
+  background-color: #fff;
+}
+
+section .set {
+  margin-bottom: 10px;
+}
+
+section article span.filename {
+  font-weight: bold;
+  color: #444;
+  display: block;
+}
+
+section article.error span.filename {
+  color: #d95351;
+}
+
+section article span.filename a {
+  border-radius: 20px;
+  padding: 1px 6px 2px 6px;
+  margin-left: -6px;
+  text-decoration: none;
+  color: #444;
+  -webkit-transition: all ease .2s;
+}
+
+section article:hover span.filename a {
+  color: #fff;
+  border-radius: 20px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  background-color: #539ed8;
+  -moz-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+section article.ignored span.filename {
+  color: #a6a9b1;
+}
+
+section article span {
+  display: block;
+}
+
+section article small {
+  font-size: 11px;
+  color: #a6a9b1;
+  display: block;
+  cursor: default;
+}
+
+section article small a {
+  color: #a6a9b1;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+section article small a:hover {
+  color: #539ed8;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+section article small.compiled {
+  background: url(IconCompiled.png) no-repeat left 2px;
+  padding-left: 20px;
+}
+
+section article span.todo {
+  background: url(IconNote.png) no-repeat left 2px;
+  padding-left: 18px;
+  color: #c88c2d;
+  margin-top: 4px;
+}
+
+section article span.error {
+  color: #d95351;
+}
+
+section article span.error::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: url(IconError.png) no-repeat 1px 2px;
+  top: 26px;
+  left: 18px;
+}
+
+article a.edit {
+  background: url(IconEdit.png) no-repeat left 1px;
+  position: absolute;
+  width: 32px;
+  height: 16px;
+  text-indent: -9999px;
+  overflow: hidden;
+  right: 38px;
+  top: 50%;
+  margin-top: -8px;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity ease .2s;
+}
+
+article a.edit:active {
+  background: url(IconEditPushed.png) no-repeat left 1px;
+}
+
+article a.reveal {
+  background: url(IconReveal.png) no-repeat left 1px;
+  position: absolute;
+  width: 14px;
+  height: 16px;
+  text-indent: -9999px;
+  overflow: hidden;
+  right: 14px;
+  top: 50%;
+  margin-top: -8px;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity ease .2s;
+}
+
+article a.reveal:active {
+  background: url(IconRevealPushed.png) no-repeat left 1px;
+}
+
+article a.browser {
+  background: url(IconBrowser.png) no-repeat left 0;
+  position: absolute;
+  width: 14px;
+  height: 16px;
+  text-indent: -9999px;
+  overflow: hidden;
+  right: 80px;
+  top: 50%;
+  margin-top: -8px;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity ease .2s;
+}
+
+article a.browser:active {
+  background: url(IconBrowserPushed.png) no-repeat left 0px;
+}
+
+article:hover a.edit, article:hover a.reveal, article:hover a.browser {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wrap .load {
+  margin-top: 5px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.wrap .load a {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#f5f5f5), to(#ffffff));
+  background-image: -moz-linear-gradient(90deg, #f5f5f5 0%, #ffffff 100%);
+  text-align: center;
+  color: #999;
+  border: 1px solid #dfdfdf;
+  border-radius: 3px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+
+.wrap .load a:active {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#cfcfcf), to(#adadad));
+  background-image: -moz-linear-gradient(90deg, #cfcfcf 0%, #adadad 100%);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border: 1px solid #999;
+}
+
+.build-error {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.build-error span {
+  position: absolute;
+  left: 50%;
+  margin-left: -150px;
+  top: 50%;
+  margin-top: -40px;
+  width: 300px;
+  height: 80px;
+  padding-top: 60px;
+  color: #aaa;
+  text-align: center;
+}
+
+.not-found span {
+  background: url(MissingFolder.png) top center no-repeat;
+}
+
+.no-files span {
+  background: url(NoFiles.png) top center no-repeat;
+}
+
+.too-big span {
+  background: url(WarningStatus.png) top center no-repeat;
+}
+
+@media all and (max-width: 440px) {
+
+  nav ul + ul {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+}
+
+@media all and (-webkit-min-device-pixel-ratio: 2) {
+
+  section article {
+    background-image: url(IconOther@2x.png);
+    background-size: 12px 15px;
+  }
+
+  section article.html {
+    background-image: url(IconHTML@2x.png);
+    background-size: 35px 28px;
+  }
+  
+  section article.html.partial {
+    background-image: url(IconHTMLPartial@2x.png);
+    background-size: 29px 28px;
+  }
+  
+  section article.haml {
+    background-image: url(IconHAML@2x.png);
+    background-size: 35px 28px;
+  }
+  
+  section article.haml.partial {
+    background-image: url(IconHAMLPartial@2x.png);
+    background-size: 29px 28px;
+  }
+  
+  section article.md {
+    background-image: url(IconMD@2x.png);
+    background-size: 35px 28px;
+  }
+  
+  section article.md.partial {
+    background-image: url(IconMDPartial@2x.png);
+    background-size: 29px 28px;
+  }
+  
+  section article.css {
+    background-image: url(IconCSS@2x.png);
+    background-size: 24px 28px;
+  }
+  
+  section article.css.optimized {
+    background-image: url(IconCSSOptimized@2x.png);
+    background-size: 32px 28px;
+  }
+  
+  section article.sass {
+    background-image: url(IconSASS@2x.png);
+    background-size: 24px 28px;
+  }
+  
+  section article.sass.optimized {
+    background-image: url(IconSASSOptimized@2x.png);
+    background-size: 32px 28px;
+  }
+  
+  section article.js {
+    background-image: url(IconJS@2x.png);
+    background-size: 24px 28px;
+  }
+  
+  section article.js.optimized {
+    background-image: url(IconJSOptimized@2x.png);
+    background-size: 32px 28px;
+  }
+  
+  section article.coff {
+    background-image: url(IconCoff@2x.png);
+    background-size: 24px 28px;
+  }
+  
+  section article.coff.optimized {
+    background-image: url(IconCoffOptimized@2x.png);
+    background-size: 32px 28px;
+  }
+  
+  section article.image {
+    background-image: url(IconImage@2x.png);
+    background-size: 18px 16px;
+  }
+  
+  section article.ignored {
+    background-image: url(IconIgnored@2x.png);
+    background-size: 12px 15px;
+  }
+  
+  section article small.compiled {
+    background-image: url(IconCompiled@2x.png);
+    background-size: 15px 13px;
+  }
+  
+  section article span.todo {
+    background-image: url(IconNote@2x.png);
+    background-size: 12px 13px;
+  }
+  
+  section article span.error {
+    background-image: url(IconError@2x.png);
+    background-size: 14px 13px;
+  }
+  
+  article a.edit {
+    background-image: url(IconEdit@2x.png);
+    background-size: 32px 15px;
+  }
+  
+  article a.edit:active {
+    background-image: url(IconEditPushed@2x.png);
+    background-size: 32px 15px;
+  }
+  
+  article a.reveal {
+    background-image: url(IconReveal@2x.png);
+    background-size: 14px 15px;
+  }
+  
+  article a.reveal:active {
+    background-image: url(IconRevealPushed@2x.png);
+    background-size: 14px 15px;
+  }
+  
+  article a.browser {
+    background-image: url(IconBrowser@2x.png);
+    background-size: 14px 15px;
+  }
+  
+  article a.browser:active {
+    background-image: url(IconBrowserPushed@2x.png);
+    background-size: 14px 15px;
+  }
+  
+  section article span.error::after {
+    background-image: url(IconError@2x.png);
+    background-size: 14px 13px;
+  }
+
+  .not-found span {
+    background: url(MissingFolder@2x.png) top center no-repeat;
+    background-size: 65px 50px;
+  }
+  
+  .no-files span {
+    background: url(NoFiles@2x.png) top center no-repeat;
+    background-size: 54px 56px;
+  }
+  
+  .too-big span {
+    background: url(WarningStatus@2x.png) top center no-repeat;
+    background-size: 60px 53px;
+  }
+  
+}
