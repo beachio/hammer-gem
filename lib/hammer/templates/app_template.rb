@@ -58,7 +58,7 @@ class Hammer
                 <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
                 } if total_todos > 0}
                 
-                <li id="show-ignored">Ignored Files</li>
+                #{%Q{<li id="show-ignored">Ignored Files</li>} if ignored_files.length > 0}
               </ul>
             </nav>
           </header>
@@ -96,6 +96,10 @@ class Hammer
       }
     end
     
+    def ignored_files
+      sorted_files.select {|file| file.is}
+    end
+    
     def html_files
       sorted_files.select {|file| File.extname(file.finished_filename) == ".html" }.compact
     end
@@ -111,11 +115,15 @@ class Hammer
     end
     
     def image_files
-      sorted_files.select {|file| File.extname(file.finished_filename) == ".png" }.compact
+      sorted_files.select {|file| ['.png', '.gif', '.svg', '.jpg', '.gif'].include? File.extname(file.finished_filename) }.compact
     end
     
     def other_files
       sorted_files - image_files - css_js_files - compilation_files - html_files
+    end
+    
+    def ignored_files
+      @project.ignored_files
     end
     
     def body
@@ -163,9 +171,16 @@ class Hammer
       end
       
       if other_files.any?
-        body << %Q{<div class="images other">}
+        body << %Q{<div class="other set">}
         body << %Q{<strong>Other files</strong>}
         body << other_files.map {|file| TemplateLine.new(file)}
+        body << %Q{</div>}
+      end
+      
+      if ignored_files.any?
+        body << %Q{<div class="ignored set">}
+        body << %Q{<strong>Ignored files</strong>}
+        body << other_files.map {|file| IgnoredTemplateLine.new(file)}
         body << %Q{</div>}
       end
       
@@ -247,7 +262,7 @@ class Hammer
         classes << "include" if @include
         
         classes << @extension
-        if ['png', 'gif', 'svg', 'jpg'].include? @extension
+        if ['.png', '.gif', '.svg', '.jpg', '.gif'].include? @extension
           classes << 'image'
         end
         
@@ -295,7 +310,7 @@ class Hammer
           %Q{<a target="blank" href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html"
-          links.unshift %Q{<a href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
+          links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
         end
         links
       end

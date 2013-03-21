@@ -135,6 +135,10 @@ section article {
   padding-left: 35px;
 }
 
+section article.selected {
+  background-color: #f0f1f0 !important;
+}
+
 section article.html {
   background: url(IconHTML.png) no-repeat 14px 12px;
   padding-left: 57px;
