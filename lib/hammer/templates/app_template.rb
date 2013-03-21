@@ -97,7 +97,9 @@ class Hammer
     end
     
     def compilation_files
-      sorted_files.select {|file| file.is_a_compiled_file && file.source_files.collect(&:error) == [] }.compact
+      sorted_files.select {|file| 
+        file.is_a_compiled_file # && file.source_files.collect(&:error) == [] 
+        }.compact
     end
     
     def css_js_files
@@ -252,7 +254,7 @@ class Hammer
         classes << "include" if @include
         
         classes << @extension
-        if ['.png', '.gif', '.svg', '.jpg', '.gif'].include? @extension
+        if ['png', 'gif', 'svg', 'jpg', 'gif'].include? @extension
           classes << 'image'
         end
         
