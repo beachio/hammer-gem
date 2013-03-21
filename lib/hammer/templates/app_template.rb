@@ -51,10 +51,13 @@ class Hammer
                 <li id="show-html">HTML</li>
                 <li id="show-cssjs">CSS &amp; JS</li>
                 <li id="show-images">Images</li>
-                #{%Q{<li id="show-other">Other #{other_files.length}</li>} if other_files.length > 0}
+                #{%Q{<li id="show-other">Other</li>} if other_files.length > 0}
               </ul>
               <ul>
+              #{%Q{
                 <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
+                } if total_todos > 0}
+                
                 <li id="show-ignored">Ignored Files</li>
               </ul>
             </nav>
@@ -288,8 +291,8 @@ class Hammer
       
       def links
         links = [
-          %Q{<a href="#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
-          %Q{<a href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+          %Q{<a target="blank" href="#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a target="blank" href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html"
           links.unshift %Q{<a href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
