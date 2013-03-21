@@ -9,6 +9,7 @@ html {
   -webkit-font-smoothing: antialiased;
   text-shadow: 0 1px 0 #ffffff;
   cursor: default;
+  background: white;
 }
 
 ::selection {
