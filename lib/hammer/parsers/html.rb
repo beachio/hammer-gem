@@ -222,6 +222,7 @@ class Hammer
     
     def add_file_from_files(files, format)
       return false if files == []
+      return false if files.collect(&:error) != []
       contents = []
       files.each do |file|
         contents << Hammer.parser_for_hammer_file(file).to_format(format)

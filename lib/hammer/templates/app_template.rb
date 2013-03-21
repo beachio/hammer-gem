@@ -27,11 +27,6 @@ class Hammer
     
     private
     
-    # def stylesheet
-    #   css = File.open(File.join(File.dirname(__FILE__), "output.css")).read
-    #   %Q{<style type="text/css">#{css}</style>}
-    # end
-    
     def header
       
       %Q{
@@ -70,10 +65,7 @@ class Hammer
     end
     
     def footer
-      %Q{
-          </body>
-        </html>
-      }
+      %Q{</body></html>}
     end
     
     def not_found
@@ -88,7 +80,7 @@ class Hammer
       sorted_files.select {|file| 
         file.error 
       }.sort_by{|file|
-        if file.error.hammer_file != file
+        if file.error.hammer_file != file 
           100
         else
           10
@@ -101,16 +93,16 @@ class Hammer
     end
     
     def html_files
-      sorted_files.select {|file| File.extname(file.finished_filename) == ".html" }.compact
+      sorted_files.select {|file| File.extname(file.finished_filename) == ".html" && !file.error }.compact
     end
     
     def compilation_files
-      sorted_files.select {|file| file.is_a_compiled_file }.compact
+      sorted_files.select {|file| file.is_a_compiled_file && file.source_files.collect(&:error) == [] }.compact
     end
     
     def css_js_files
       sorted_files.select {|file| 
-        ['.css', '.js'].include? File.extname(file.finished_filename) 
+        ['.css', '.js'].include?(File.extname(file.finished_filename)) && !file.is_a_compiled_file && !file.error
       }
     end
     
@@ -119,7 +111,7 @@ class Hammer
     end
     
     def other_files
-      sorted_files - image_files - css_js_files - compilation_files - html_files
+      sorted_files - image_files - css_js_files - compilation_files - html_files - error_files
     end
     
     def ignored_files
@@ -134,32 +126,31 @@ class Hammer
       body = [%Q{<section id="all">}]
       files = sorted_files
       
-      # if error_files.any?
-      #   body << "<h3>Errors</h3>"
-      #   body << error_files.map {|file| TemplateLine.new(file)}
-      # end
-      
-      # files = files - [*error_files]
-      html_files = files.select {|file| File.extname(file.finished_filename) == ".html" }.compact
-      
-      body << %Q{<div class="html set">}
-      if html_files.any?
-        body << "<strong>HTML pages</strong>"
-        body << html_files.map {|file| TemplateLine.new(file)}
+      if error_files.any?
+        body << %Q{<div class="error set">}
+        body << "<strong>Erorrs</strong>"
+        body << error_files.map {|file| TemplateLine.new(file) }
+        body << %Q{</div>}
       end
-      body << %Q{</div>}
+      
+      if html_files.any?
+        body << %Q{<div class="html set">}
+        body << "<strong>HTML pages</strong>"
+        body << html_files.map {|file| TemplateLine.new(file) if !file.error }
+        body << %Q{</div>}
+      end
       
       if compilation_files.any?
         body << %Q{<div class="optimized set">}
         body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
-        body << compilation_files.map {|file| TemplateLine.new(file)}
+        body << compilation_files.map {|file| TemplateLine.new(file) if !file.error }
         body << %Q{</div>}
       end
       
       if css_js_files.any?
         body << %Q{<div class="cssjs set">}
         body << "<strong>CSS &amp; JS</strong>"
-        body << css_js_files.map {|file| TemplateLine.new(file)}
+        body << css_js_files.map {|file| TemplateLine.new(file) if !file.error }
         body << %Q{</div>}
       end
       
@@ -221,8 +212,7 @@ class Hammer
         end
       }.select { |file|
         underscore = File.basename(file.finished_filename).start_with? "_"
-        any_messages = file.messages.count > 0
-        !underscore || any_messages
+        !underscore || file.messages.count > 0 || file.error
       }
     end
 
@@ -253,11 +243,11 @@ class Hammer
       end
       
       def span_class
-        return "could_not_compile" if @error_file
+        return "error could_not_compile" if @error_file
         
         classes = []
         
-        classes << "compiled" if @file.is_a_compiled_file
+        classes << "optimized" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
         
@@ -282,7 +272,7 @@ class Hammer
       
       def setup_line
         if @error_file
-          @line = "Couldn't compile #{link} due to an error in #{@error_file.filename}"
+          @line = "Error in #{@error_file.filename}"
         elsif @error
           @line = "<span class=\"error\"><b>Line #{error_line}</b> #{error_message}</span>"
         elsif @include
@@ -293,7 +283,7 @@ class Hammer
           @line = "Compiled to <b>#{link}</b>"
         elsif @file.is_a_compiled_file
           sources = @file.source_files.map { |hammer_file| "<a href='#{@file.output_path}' title='#{hammer_file.full_path}'>#{File.basename(hammer_file.filename)}</a>" }
-          @line = "Compiled #{link} from #{sources.join(', ')}"
+          @line = "Compiled into #{link}"
         else
           @line = "Compiled #{link}"
         end
@@ -352,7 +342,11 @@ class Hammer
       end
       
       def filename
-        @file.filename
+        if @file.is_a_compiled_file
+          @file.source_files.collect(&:filename).join(', ')
+        else
+          @file.filename
+        end
       end
     end
     
