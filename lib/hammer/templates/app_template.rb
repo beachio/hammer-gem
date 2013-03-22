@@ -143,7 +143,7 @@ class Hammer
       end
       
       if compilation_files.any?
-        body << %Q{<div class="optimized set">}
+        body << %Q{<div class="optimized cssjs set">}
         body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
         body << compilation_files.map {|file| TemplateLine.new(file) if !file.error }
         body << %Q{</div>}
