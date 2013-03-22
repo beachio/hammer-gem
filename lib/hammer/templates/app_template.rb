@@ -117,7 +117,7 @@ class Hammer
     end
     
     def ignored_files
-      @project.ignored_files
+      @project.ignored_files rescue []
     end
     
     def body
@@ -194,6 +194,7 @@ class Hammer
     end
     
     def sorted_files
+      return [] if @files.nil?
       # This sorts the files into the correct order for display
       @sorted_files ||= @files.sort_by { |file|
         extension = File.extname(file.finished_filename).downcase
