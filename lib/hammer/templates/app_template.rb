@@ -45,7 +45,7 @@ class Hammer
                 <li id="show-all" class="active">All</li>
                 <li id="show-html">HTML</li>
                 <li id="show-cssjs">CSS &amp; JS</li>
-                <li id="show-images">Images</li>
+                #{%Q{<li id="show-images">Images</li>} if image_files.length > 0}
                 #{%Q{<li id="show-other">Other</li>} if other_files.length > 0}
               </ul>
               <ul>
