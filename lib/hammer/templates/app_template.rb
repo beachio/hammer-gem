@@ -173,7 +173,7 @@ class Hammer
       if ignored_files.any?
         body << %Q{<div class="ignored set">}
         body << %Q{<strong>Ignored files</strong>}
-        body << other_files.map {|file| IgnoredTemplateLine.new(file)}
+        body << ignored_files.map {|file| IgnoredTemplateLine.new(file)}
         body << %Q{</div>}
       end
       

@@ -33,6 +33,7 @@ class Hammer
       if File.exists?(ignore_file)
         lines = File.open(ignore_file).read.split("\n")
         lines.each do |line|
+          line = line.strip
           @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}"))
         end
       end
