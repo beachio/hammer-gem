@@ -298,7 +298,7 @@ class Hammer
       
       def links
         links = [
-          %Q{<a target="blank" href="#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
           %Q{<a target="blank" href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html"
@@ -320,7 +320,7 @@ class Hammer
       
       def to_s
         text = %Q{
-          <article class="#{span_class}">
+          <article class="#{span_class}" hammer-original-filename="#{@file.full_path}" hammer-final-filename="#{@file.output_path}">
             <span class="filename">#{filename}</span>
             <small class="#{span_class}">#{line}</small>
             #{todos}
