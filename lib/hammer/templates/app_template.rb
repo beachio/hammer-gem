@@ -22,16 +22,19 @@ class Hammer
   class AppTemplate < Template
     
     def to_s
-      [header, body, footer].join("\n")
+      if @files == nil
+        return [header, not_found, footer].join("\n")
+      elsif @files == []
+        [header, no_files, footer].join("\n")
+      else
+        [header, nav, body, footer].join("\n")
+      end
     end
     
     private
     
     def header
-      
       %Q{
-        
-        
         <html>
         <head>
           <link href="output.css" rel="stylesheet" />
@@ -39,6 +42,12 @@ class Hammer
           <script src="tabs.js" type="text/javascript"></script>
         </head>
         <body>
+      }
+    end
+    
+    def nav
+      
+      %Q{
           <header>
             <nav>
               <ul>
@@ -300,7 +309,7 @@ class Hammer
       def links
         links = [
           %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
-          %Q{<a target="blank" href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+          %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html"
           links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
