@@ -139,7 +139,7 @@ class Hammer
       
       if error_files.any?
         body << %Q{<div class="error set">}
-        body << "<strong>Erorrs</strong>"
+        body << "<strong>Errors</strong>"
         body << error_files.map {|file| TemplateLine.new(file) }
         body << %Q{</div>}
       end
