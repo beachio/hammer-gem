@@ -103,6 +103,7 @@ class Hammer
     ## The compile method. This does all the files.
     
     def compile()
+      
       @compiled_hammer_files = []
       @hammer_files.each do |hammer_file|
         

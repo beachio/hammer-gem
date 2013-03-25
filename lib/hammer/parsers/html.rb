@@ -1,6 +1,8 @@
 class Hammer
   class HTMLParser < HammerParser
     
+    @@cached_files = {}
+    
     def to_html
       @text = @hammer_file.raw_text
       get_variables()
@@ -224,6 +226,10 @@ class Hammer
       return false if files == []
       # return false if files.collect(&:error) != []
       contents = []
+      
+      key = files.collect(&:to_s).join(':') + ":format"
+      return @@cached_files[key] if @@cached_files[key]
+      
       files.each do |file|
         contents << Hammer.parser_for_hammer_file(file).to_format(format)
       end
@@ -231,6 +237,9 @@ class Hammer
       filename = Digest::MD5.hexdigest(contents)
       file = add_file("#{filename}.#{format}", contents)
       file.source_files = files
+      
+      @@cached_files[key] = file
+      
       file
     end
     
