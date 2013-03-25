@@ -39,8 +39,8 @@ if File.exists? project_directory
   end
 end
 
-template = Hammer::AppTemplate.new(hammer_files, project)
-
-puts template unless ARGV.include? "DEBUG"
-
-exit template.success? ? 0 : 1
+unless ARGV.include? "DEBUG"
+  template = Hammer::AppTemplate.new(hammer_files, project)
+  puts template
+  exit template.success? ? 0 : 1
+end
