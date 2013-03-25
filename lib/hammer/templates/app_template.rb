@@ -311,7 +311,7 @@ class Hammer
           %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
           %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
-        if @filename.end_with? ".html"
+        if @filename.end_with? ".html" && @file.output_path
           links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
         end
         links
