@@ -35,6 +35,7 @@ class Hammer
         lines.each do |line|
           line = line.strip
           @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}"))
+          @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}/*"))
         end
       end
       

@@ -22,16 +22,19 @@ class Hammer
   class AppTemplate < Template
     
     def to_s
-      [header, body, footer].join("\n")
+      if @files == nil
+        return [header, not_found, footer].join("\n")
+      elsif @files == []
+        [header, no_files, footer].join("\n")
+      else
+        [header, nav, body, footer].join("\n")
+      end
     end
     
     private
     
     def header
-      
       %Q{
-        
-        
         <html>
         <head>
           <link href="output.css" rel="stylesheet" />
@@ -39,13 +42,19 @@ class Hammer
           <script src="tabs.js" type="text/javascript"></script>
         </head>
         <body>
+      }
+    end
+    
+    def nav
+      
+      %Q{
           <header>
             <nav>
               <ul>
                 <li id="show-all" class="active">All</li>
                 <li id="show-html">HTML</li>
                 <li id="show-cssjs">CSS &amp; JS</li>
-                <li id="show-images">Images</li>
+                #{%Q{<li id="show-images">Images</li>} if image_files.length > 0}
                 #{%Q{<li id="show-other">Other</li>} if other_files.length > 0}
               </ul>
               <ul>
@@ -117,7 +126,7 @@ class Hammer
     end
     
     def ignored_files
-      @project.ignored_files
+      @project.ignored_files rescue []
     end
     
     def body
@@ -143,7 +152,7 @@ class Hammer
       end
       
       if compilation_files.any?
-        body << %Q{<div class="optimized set">}
+        body << %Q{<div class="optimized cssjs set">}
         body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
         body << compilation_files.map {|file| TemplateLine.new(file) if !file.error }
         body << %Q{</div>}
@@ -194,6 +203,7 @@ class Hammer
     end
     
     def sorted_files
+      return [] if @files.nil?
       # This sorts the files into the correct order for display
       @sorted_files ||= @files.sort_by { |file|
         extension = File.extname(file.finished_filename).downcase
@@ -298,8 +308,8 @@ class Hammer
       
       def links
         links = [
-          %Q{<a target="blank" href="#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
-          %Q{<a target="blank" href="#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+          %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html"
           links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
@@ -320,7 +330,7 @@ class Hammer
       
       def to_s
         text = %Q{
-          <article class="#{span_class}">
+          <article class="#{span_class}" hammer-original-filename="#{@file.full_path}" hammer-final-filename="#{@file.output_path}">
             <span class="filename">#{filename}</span>
             <small class="#{span_class}">#{line}</small>
             #{todos}

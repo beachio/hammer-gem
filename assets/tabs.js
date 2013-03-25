@@ -1,7 +1,7 @@
 $(function(){
   
   $("article").on("contextmenu", function(e){
-      $(this).addClass('selected')
+    $(this).addClass('selected')
   });
   
   $('.todo').parents('article').clone().appendTo($('#todos .set'))
