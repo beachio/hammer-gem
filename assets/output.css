@@ -68,11 +68,12 @@ nav ul:first-child li:first-child {
 nav ul:first-child li:first-child::after {
   content: '';
   position: absolute;
-  background-color: #d8d9d8;
   right: -7px;
   top: -5px;
   bottom: -5px;
   width: 1px;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0)), color-stop(0.5, rgba(0, 0, 0, 0.15)), to(rgba(0, 0, 0, 0)));
+  background-image: -moz-linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 100%);
 }
 
 .errors nav ul:first-child li:first-child::after {
@@ -127,13 +128,10 @@ section#images strong, section#other strong, section#ignored strong {
 }
 
 section article {
-  padding-top: 6px;
-  padding-bottom: 6px;
   line-height: 16px;
   position: relative;
-  padding-right: 80px;
-  background: url(IconOther.png) no-repeat 15px 7px;
-  padding-left: 35px;
+  background: url(IconOther.png) no-repeat 25px 7px;
+  padding: 6px 80px 6px 45px;
 }
 
 section article.selected {
@@ -141,116 +139,116 @@ section article.selected {
 }
 
 section article.html {
-  background: url(IconHTML.png) no-repeat 14px 12px;
-  padding-left: 57px;
+  background: url(IconHTML.png) no-repeat 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.html.partial {
   background-image: url(IconHTMLInclude.png);
-  background-position: 14px 12px;
-  padding-left: 57px;
+  background-position: 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.haml {
-  background: url(IconHAML.png) no-repeat 14px 12px;
-  padding-left: 57px;
+  background: url(IconHAML.png) no-repeat 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.haml.partial {
   background-image: url(IconHAMLInclude.png);
-  background-position: 14px 12px;
-  padding-left: 57px;
+  background-position: 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.md {
-  background: url(IconMD.png) no-repeat 14px 12px;
-  padding-left: 57px;
+  background: url(IconMD.png) no-repeat 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.md.partial {
   background-image: url(IconMDInclude.png);
-  background-position: 14px 12px;
-  padding-left: 57px;
+  background-position: 24px 12px;
+  padding-left: 67px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.css {
-  background: url(IconCSS.png) no-repeat 14px 12px;
-  padding-left: 46px;
+  background: url(IconCSS.png) no-repeat 24px 12px;
+  padding-left: 56px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.css.optimized {
   background-image: url(IconCSSOptimized.png);
-  padding-left: 54px;
+  padding-left: 64px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.sass {
-  background: url(IconSASS.png) no-repeat 14px 12px;
-  padding-left: 46px;
+  background: url(IconSASS.png) no-repeat 24px 12px;
+  padding-left: 56px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.sass.optimized {
   background-image: url(IconSASSOptimized.png);
-  padding-left: 54px;
+  padding-left: 64px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.js {
-  background: url(IconJS.png) no-repeat 14px 12px;
-  padding-left: 46px;
+  background: url(IconJS.png) no-repeat 24px 12px;
+  padding-left: 56px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.js.optimized {
   background-image: url(IconJSOptimized.png);
-  padding-left: 54px;
+  padding-left: 64px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.coff {
-  background: url(IconCoff.png) no-repeat 14px 12px;
-  padding-left: 46px;
+  background: url(IconCoff.png) no-repeat 24px 12px;
+  padding-left: 56px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.coff.optimized {
   background-image: url(IconCoffOptimized.png);
-  padding-left: 54px;
+  padding-left: 64px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.image {
-  background: url(IconImage.png) no-repeat 14px 7px;
-  padding-left: 39px;
+  background: url(IconImage.png) no-repeat 24px 7px;
+  padding-left: 49px;
   padding-top: 6px;
   padding-bottom: 6px;
 }
 
 section article.ignored {
-  background: url(IconIgnored.png) no-repeat 15px 7px;
-  padding-left: 35px;
+  background: url(IconIgnored.png) no-repeat 25px 7px;
+  padding-left: 45px;
   padding-top: 6px;
   padding-bottom: 6px;
 }
