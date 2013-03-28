@@ -27,7 +27,7 @@ nav {
   background-image: -moz-linear-gradient(90deg, #ebeceb 0%, #fefffe 100%);
   overflow: hidden;
   position: fixed;
-  z-index: 99;
+  z-index: 999;
   top: 0;
   right: 0;
   left: 0;
@@ -68,11 +68,12 @@ nav ul:first-child li:first-child {
 nav ul:first-child li:first-child::after {
   content: '';
   position: absolute;
-  background-color: #d8d9d8;
   right: -7px;
   top: -5px;
   bottom: -5px;
   width: 1px;
+  background-image: -moz-linear-gradient(90deg, rgba(215, 217, 215, 0) 0%, #d7d9d7 50.1%, rgba(215, 217, 215, 0) 100%);
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(215, 217, 215, 0)), color-stop(0.501, #d7d9d7), to(rgba(215, 217, 215, 0)));
 }
 
 .errors nav ul:first-child li:first-child::after {
@@ -125,7 +126,7 @@ section strong {
   box-shadow: 0 1px 0 rgba(235, 236, 235, .3);
   margin-bottom: -1px;
   position: relative;
-  z-index: 999;
+  z-index: 99;
 }
 
 section#images strong, section#other strong, section#ignored strong {
