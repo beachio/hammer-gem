@@ -37,13 +37,13 @@ class Hammer
           url_tag
         else
           
-          file_name = file_path.split("?")[0]
-          extras = file_path.split("?")[1]
+          file_name = file_path.split(/\?|#/)[0]
+          extras = file_path.split(file_name)[1]
           file = find_file(file_name)
           
           if file
             url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
-            "url(#{url}#{"?"+extras if extras})"
+            "url(#{url}#{extras if extras})"
           else
             url_tag
           end
