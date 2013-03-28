@@ -120,6 +120,12 @@ section strong {
   display: block;
   padding-left: 14px;
   padding-right: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgb(226, 228, 226);
+  box-shadow: 0 1px 0 rgba(235, 236, 235, .3);
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 999;
 }
 
 section#images strong, section#other strong, section#ignored strong {
@@ -134,10 +140,7 @@ section article {
   padding-right: 80px;
   background: url(IconOther.png) no-repeat 15px 7px;
   padding-left: 35px;
-}
-
-section article.selected {
-  background-color: #f0f1f0 !important;
+  -webkit-transition: background-color ease .2s;
 }
 
 section article.html {
@@ -255,8 +258,13 @@ section article.ignored {
   padding-bottom: 6px;
 }
 
-section article:nth-of-type(even) {
-  background-color: #f8f9f8;
+section article:hover {
+  background-color: #fafafa;
+}
+
+section article.selected {
+  background-color: #fafafa;
+  box-shadow: inset 0 1px 0 #edf0f1, inset 0 -1px 0 #edf0f1;
 }
 
 section#todos article {
