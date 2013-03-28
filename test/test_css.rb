@@ -23,6 +23,18 @@ class CSSParserTest < Test::Unit::TestCase
       assert_equal "a { background: url(images/proximanova-regular.eot?#iefix) }", @parser.parse()
     end
     
+    # should "parse url images even with queries" do
+    #   font = Hammer::HammerFile.new()
+    #   font.filename = "images/proximanova-regular.eot"
+    #   @hammer_project << font
+      
+    #   @css_file = Hammer::HammerFile.new()
+    #   @css_file.filename = "style.css"
+    #   @parser.hammer_file = @css_file
+    #   @parser.text = "a { background: url(proximanova-regular.eot#iefix) }"
+    #   assert_equal "a { background: url(images/proximanova-regular.eot#iefix) }", @parser.parse()
+    # end
+    
     context "with a CSS file" do
       
       setup do
@@ -44,13 +56,12 @@ class CSSParserTest < Test::Unit::TestCase
           @new_file.raw_text = "a { background: orange; }"
           @new_file.filename = "assets/_include.css"
           @hammer_project << @new_file
+          def assert_compilation(pre, post)
+            @parser.text = pre
+            assert_equal post, @parser.parse()
+          end
         end
 
-        def assert_compilation(pre, post)
-          @parser.text = pre
-          assert_equal post, @parser.parse()
-        end
-        
         should "find scss files when including them" do
           @new_file = Hammer::HammerFile.new
           @new_file.raw_text = "a { background: orange; }"
