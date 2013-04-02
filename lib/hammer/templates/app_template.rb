@@ -1,3 +1,7 @@
+
+# encoding: utf-8
+$LANG = "UTF-8"
+
 module Templatey
   def h(text)
     CGI.escapeHTML(text.to_s)
@@ -49,6 +53,7 @@ class Hammer
       %Q{
         <html>
         <head>
+          <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
           <style type="text/css">#{output_css}</style>
           <script type="text/javascript">#{jquery}</script>
           <script type="text/javascript">#{tabs}</script>
@@ -320,11 +325,11 @@ class Hammer
       
       def links
         links = [
-          %Q{<a target="blank" href="edit://#{CGI.escapeHTML @file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
-          %Q{<a target="blank" href="reveal://#{CGI.escapeHTML @file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+          %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html" && @file.output_path
-          links.unshift %Q{<a target="blank" href="#{CGI.escapeHTML @file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
+          links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
         end
         links
       end

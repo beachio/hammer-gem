@@ -1,3 +1,6 @@
+# encoding: utf-8
+$LANG = "UTF-8"
+
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 
 temporary_directory = ARGV[0]
