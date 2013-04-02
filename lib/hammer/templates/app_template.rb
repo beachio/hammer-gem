@@ -33,13 +33,25 @@ class Hammer
     
     private
     
+    def output_css
+      File.open(File.join(File.dirname(__FILE__), "../../../assets/output.css")).read
+    end
+    
+    def jquery
+      File.open(File.join(File.dirname(__FILE__), "../../../assets/jquery.min.js")).read
+    end
+    
+    def tabs
+      File.open(File.join(File.dirname(__FILE__), "../../../assets/tabs.js")).read
+    end
+    
     def header
       %Q{
         <html>
         <head>
-          <link href="output.css" rel="stylesheet" />
-          <script src="jquery.min.js" type="text/javascript"></script>
-          <script src="tabs.js" type="text/javascript"></script>
+          <style type="text/css">#{output_css}</style>
+          <script type="text/javascript">#{jquery}</script>
+          <script type="text/javascript">#{tabs}</script>
         </head>
         <body>
       }
@@ -308,11 +320,11 @@ class Hammer
       
       def links
         links = [
-          %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
-          %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+          %Q{<a target="blank" href="edit://#{CGI.escapeHTML @file.full_path}" class="edit" title="Edit Original">Edit Original</a>},
+          %Q{<a target="blank" href="reveal://#{CGI.escapeHTML @file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
         ]
         if @filename.end_with? ".html" && @file.output_path
-          links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
+          links.unshift %Q{<a target="blank" href="#{CGI.escapeHTML @file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
         end
         links
       end
