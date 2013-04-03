@@ -54,9 +54,9 @@ class Hammer
         <html>
         <head>
           <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-          <style type="text/css">#{output_css}</style>
-          <script type="text/javascript">#{jquery}</script>
-          <script type="text/javascript">#{tabs}</script>
+          <link href="output.css" rel="stylesheet" />
+          <script src="jquery.min.js" type="text/javascript"></script>
+          <script src="tabs.js" type="text/javascript"></script>
         </head>
         <body>
       }
