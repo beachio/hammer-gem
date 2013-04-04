@@ -12,13 +12,13 @@ class Hammer
 
     def parse
       
-      placeholders()
       get_variables()
       
       # TODO: Check whether we want to do this first
       path_tags()
       
       includes()
+      placeholders()
       get_variables()
       reload_tags()
       stylesheet_tags()
