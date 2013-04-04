@@ -67,6 +67,18 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html>header</html>", @parser.parse()
     end
     
+    should "do placeholders inside include files" do
+      header = Hammer::HammerFile.new
+      header.filename = "_header.html"
+      header.raw_text = "<!-- @placeholder 100x100 -->"
+      @hammer_project << header
+
+      @parser.text = "<html><!-- @include _header --></html>"
+      @parser.expects(:find_files).returns([header])
+      
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", @parser.parse()
+    end
+    
     context "with script tags" do
       setup do
         @new_file = Hammer::HammerFile.new
