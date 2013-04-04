@@ -16,6 +16,8 @@ class Hammer
     
     def parse
       convert(text)
+    rescue Haml::SyntaxError => e
+      raise Hammer::Error.new(e.message, e.line)
     end
     
     private

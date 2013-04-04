@@ -311,7 +311,11 @@ class Hammer
         if @error_file
           @line = "Error in #{@error_file.filename}"
         elsif @error
-          @line = "<span class=\"error\"><b>Line #{error_line}</b> #{error_message}</span>"
+          lines = ["<span class=\"error\">"]
+          lines << "<b>Line #{error_line}:</b> "
+          lines << error_message
+          lines << "</span>"
+          @line = lines.join()
         elsif @include
           @line = "Compiled to <b>#{link}</b>"
         elsif !@file.compiled

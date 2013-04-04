@@ -589,11 +589,6 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 12px 13px;
   }
   
-  section article span.error {
-    background-image: url(IconError@2x.png);
-    background-size: 14px 13px;
-  }
-  
   article a.edit {
     background-image: url(IconEdit@2x.png);
     background-size: 32px 15px;
