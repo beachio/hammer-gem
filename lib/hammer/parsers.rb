@@ -45,6 +45,13 @@ class Hammer
       @filename ||= @hammer_file.filename
     end
     
+    def path_to(hammer_file)
+      them = Pathname.new(hammer_file.finished_filename)
+      me =  Pathname.new(File.dirname(self.filename))
+      path = them.relative_path_from(me)
+      path
+    end
+    
     def find_files(filename, extension=nil)
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")

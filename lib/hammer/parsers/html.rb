@@ -1,6 +1,29 @@
 class Hammer
   class HTMLParser < HammerParser
     
+    RELOADER_SCRIPT = "
+        <!-- Hammer reload -->
+          <script>
+            setInterval(function(){
+              try {
+                if(typeof ws != 'undefined' && ws.readyState == 1){return true;}
+                ws = new WebSocket('ws://'+(location.host || 'localhost').split(':')[0]+':35353')
+                ws.onopen = function(){ws.onclose = function(){document.location.reload()}}
+                ws.onmessage = function(){
+                  var links = document.getElementsByTagName('link'); 
+                    for (var i = 0; i < links.length;i++) { 
+                    var link = links[i]; 
+                    if (link.rel === 'stylesheet' && !link.href.match(/typekit/)) { 
+                      href = link.href.replace(/((&|\\?)hammer=)[^\&]+/,''); 
+                      link.href = href + (href.indexOf('?')>=0?'&':'?') + 'hammer='+(new Date().valueOf());
+                    }
+                  }
+                }
+              }catch(e){}
+            }, 1000)
+          </script>
+        <!-- /Hammer reload -->
+      "
     @@cached_files = {}
     
     def to_html
@@ -146,30 +169,7 @@ class Hammer
 
     def reload_tags
       return if @hammer_project.production
-      reloader_script = "
-        <!-- Hammer reload -->
-          <script>
-            setInterval(function(){
-              try {
-                if(typeof ws != 'undefined' && ws.readyState == 1){return true;}
-                ws = new WebSocket('ws://'+(location.host || 'localhost').split(':')[0]+':35353')
-                ws.onopen = function(){ws.onclose = function(){document.location.reload()}}
-                ws.onmessage = function(){
-                  var links = document.getElementsByTagName('link'); 
-                    for (var i = 0; i < links.length;i++) { 
-                    var link = links[i]; 
-                    if (link.rel === 'stylesheet' && !link.href.match(/typekit/)) { 
-                      href = link.href.replace(/((&|\\?)hammer=)[^\&]+/,''); 
-                      link.href = href + (href.indexOf('?')>=0?'&':'?') + 'hammer='+(new Date().valueOf());
-                    }
-                  }
-                }
-              }catch(e){}
-            }, 1000)
-          </script>
-        <!-- /Hammer reload -->
-      "
-      @text = text.gsub(/<!-- @reload -->/, reloader_script)
+      @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
     end
     
     def path_tags
@@ -242,14 +242,7 @@ class Hammer
       
       file
     end
-    
-    def path_to(hammer_file)
-      them = Pathname.new(hammer_file.finished_filename)
-      me =  Pathname.new(File.dirname(self.filename))
-      path = them.relative_path_from(me)
-      path
-    end
-    
+        
     def javascript_tags
       @included_javascripts ||= []
       

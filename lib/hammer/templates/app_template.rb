@@ -312,7 +312,7 @@ class Hammer
           @line = "Error in #{@error_file.filename}"
         elsif @error
           lines = ["<span class=\"error\">"]
-          lines << "<b>Line #{error_line}:</b> "
+          lines << "<b>Line #{error_line}:</b> " if error_line
           lines << error_message
           lines << "</span>"
           @line = lines.join()
