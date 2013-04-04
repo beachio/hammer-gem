@@ -29,7 +29,7 @@ class Hammer
       
       ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
       
-      @ignored_paths = []
+      @ignored_paths = [HAMMER_IGNORE_FILENAME]
       if File.exists?(ignore_file)
         lines = File.open(ignore_file).read.split("\n")
         lines.each do |line|

@@ -75,15 +75,23 @@ class Hammer
                 #{%Q{<li id="show-other">Other</li>} if other_files.length > 0}
               </ul>
               <ul>
-              #{%Q{
-                <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
+                #{%Q{
+                  <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
                 } if total_todos > 0}
+                
+                #{%Q{
+                    <li id="show-error">#{total_errors} Error#{"s" if total_errors != 1}</li>
+                } if total_errors > 0}
                 
                 #{%Q{<li id="show-ignored">Ignored Files</li>} if ignored_files.length > 0}
               </ul>
             </nav>
           </header>
       }
+    end
+    
+    def total_errors
+      error_files.length rescue 0
     end
     
     def total_todos
