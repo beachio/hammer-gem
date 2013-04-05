@@ -167,7 +167,7 @@ class Hammer
     
     def load_paths
       [
-        (File.join(@hammer_project.input_directory, "*") rescue nil),
+        (File.join(@hammer_project.input_directory, "**/*") rescue nil),
         File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
       ].compact
     end
