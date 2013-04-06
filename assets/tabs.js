@@ -25,7 +25,7 @@ $(function(){
       set = $('.set.'+name);
       $.each(set, function(i, set){
         if ($(set).hasClass('empty')) {
-          $(set).append($('<article id="placeholder"><span class="filename">No files</span></article>')).show()
+          $(set).append($('<article class="ignored" id="placeholder"><span class="filename">No files</span></article>')).show()
         }
       })
     }   
