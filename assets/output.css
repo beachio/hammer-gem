@@ -9,7 +9,7 @@ html {
   -webkit-font-smoothing: antialiased;
   text-shadow: 0 1px 0 #ffffff;
   cursor: default;
-  background: white;
+  background: transparent;
 }
 
 ::selection {
@@ -38,6 +38,7 @@ nav {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   -webkit-user-select: none;
   -webkit-user-drag: none;
+  display: none;
 }
 
 nav ul {
@@ -102,7 +103,7 @@ nav ul + ul li {
 }
 
 section {
-  padding-top: 38px;
+  padding-top: 8px;
   padding-bottom: 12px;
   display: none;
 }
@@ -307,6 +308,15 @@ section article:hover span.filename a {
   -moz-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+section article#placeholder {
+  border-bottom: none;
+  padding-left: 35px;
+}
+
+section article#placeholder span.filename {
+  color: #a6a9b1;
 }
 
 section article.ignored span.filename {

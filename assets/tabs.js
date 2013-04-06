@@ -1,31 +1,52 @@
 $(function(){
-  
+    
   $("article").on("contextmenu", function(e){
     $(this).addClass('selected')
   });
   
-  $('.todo').parents('article').clone().appendTo($('#todos .set'))
+  $('.set').each(function(i, set){
+    if ($('span', set).length == 0) {
+      $(set).addClass('empty').hide()
+    }
+  })
   
-  $('li').on('mousedown', function(){
-    var hash = $(this).attr('id').split('-')[1];
-    document.location.hash = hash;
+  window.didClickTab = function(name) {
+    document.location.hash = name;
     $('li.active').removeClass('active')
     $(this).addClass('active') // .siblings('.active').removeClass('active')
     $('.set').hide()
-    $('.set.'+hash).show()
-    if(hash == 'all') {
-      $('.set').show()
+    
+    $('#placeholder').remove()
+    
+    var set = $('.set.'+name+':not(.empty)');
+    set.show();
+
+    if (set.length == 0) {
+      set = $('.set.'+name);
+      $.each(set, function(i, set){
+        if ($(set).hasClass('empty')) {
+          $(set).append($('<article id="placeholder"><span class="filename">No files</span></article>')).show()
+        }
+      })
+    }   
+    
+    if(name == 'all') {
+      $('.set:not(.empty)').show()
     }
+    
     $('section').hide()
-    if(hash == 'todos'){
+    if(name == 'todos'){
       $('#todos').show()
     } else {
       $('section').show()
       $('#todos').hide()
     }
-  })
-
-  var hash = document.location.hash.replace('#', '');
-  $('li#show-'+hash).trigger('mousedown')
+  }
+  
+  if (window.tab) {
+    window.didClickTab(window.tab)
+  } 
+  
+  $('.todo').parents('article').clone().appendTo($('#todos .set'))
   
 })
