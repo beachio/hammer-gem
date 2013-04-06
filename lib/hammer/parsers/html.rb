@@ -128,42 +128,44 @@ class Hammer
     end
     
     def includes
-      lines = []
-      replace(/<!-- @include (.*?) -->/) do |tag, line_number|
-        tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
-        tags.map do |tag|
-          
-          if (tag.start_with? "$")
-            variable_value = variables[tag[1..-1]]
+      while text.match /<!-- @include (.*?) -->/
+        lines = []
+        replace(/<!-- @include (.*?) -->/) do |tag, line_number|
+          tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
+          tags.map do |tag|
             
-            if !variable_value
-              raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set."
+            if (tag.start_with? "$")
+              variable_value = variables[tag[1..-1]]
+              
+              if !variable_value
+                raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set."
+              end
+              
+              tag = variable_value
             end
             
-            tag = variable_value
-          end
-          
-          file = find_file(tag, 'html')
-          if file
-            
-            parser = @hammer_project.parser_for_hammer_file(file)
-            parser.variables = self.variables
-            
-            begin
-              parser.parse()
-            rescue Hammer::Error => e
-              e.hammer_file = file
-              raise e
+            file = find_file(tag, 'html')
+            if file
+              
+              parser = @hammer_project.parser_for_hammer_file(file)
+              parser.variables = self.variables
+              
+              begin
+                parser.parse()
+              rescue Hammer::Error => e
+                e.hammer_file = file
+                raise e
+              end
+              
+              parser = @hammer_project.parser_for_hammer_file(file)
+              parser.variables = self.variables
+              self.variables = self.variables.merge(parser.variables)
+              parser.to_html()
+            else
+              raise "Includes: File <b>#{h tag}</b> couldn't be found."
             end
-            
-            parser = @hammer_project.parser_for_hammer_file(file)
-            parser.variables = self.variables
-            self.variables = self.variables.merge(parser.variables)
-            parser.to_html()
-          else
-            raise "Includes: File <b>#{h tag}</b> couldn't be found."
-          end
-        end.compact.join("\n")
+          end.compact.join("\n")
+        end
       end
     end
 

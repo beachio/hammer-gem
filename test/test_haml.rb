@@ -22,6 +22,7 @@ class TestHaml < Test::Unit::TestCase
     end
     
   end
+  
   context "A HAML file in a project" do
   
     setup do
@@ -46,5 +47,39 @@ class TestHaml < Test::Unit::TestCase
         assert_equal "<img src='<!-- @path logo.png -->' />\n", text
       end
     end
+    
+    context "with multiple-layer inheritance" do
+      
+      setup do
+        @parser = Hammer::HTMLParser.new(@hammer_project)
+        @file = Hammer::HammerFile.new(:filename => "index.haml", :hammer_project => @hammer_project)
+        @file.filename = "index.haml"
+        @file.raw_text = "<!-- @include _first_level_include -->"
+        @file.hammer_project = @hammer_project
+        
+        first_level_include = Hammer::HammerFile.new
+        first_level_include.filename = "_first_level_include.haml"
+        first_level_include.raw_text = "<!-- @include _second_level_include -->"
+        @hammer_project << first_level_include
+        
+        second_level_include = Hammer::HammerFile.new
+        second_level_include.filename = "_first_level_include.haml"
+        second_level_include.raw_text = "Second level included!"
+        @hammer_project << second_level_include
+
+        @parser.expects(:find_files).returns(first_level_include)
+      end
+      
+      should "have the right output" do
+        @parser.hammer_file = @file
+        text = @parser.parse()
+        assert_equal "Second level included!", text
+      end
+      
+    end
+    
+    
+    
   end
+  
 end
