@@ -174,6 +174,17 @@ class Hammer
       @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
     end
     
+    def alternative_path_tags
+      replace(/['|"]@path (.*?)['|"]/) do |tag, line_number|
+        filenmae = tag[6..-2]
+        file = find_file(filenmae)
+        if !file
+          raise "Path tags: <b>#{h tag}</b> couldn't be found."
+        end
+        [tag[0], path_to(file), tag[-1]].join()
+      end
+    end
+    
     def path_tags
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
@@ -183,9 +194,9 @@ class Hammer
         if !file
           raise "Path tags: <b>#{h tag}</b> couldn't be found."
         end
-        
         path_to(file)
       end
+      alternative_path_tags
     end
 
     def stylesheet_tags

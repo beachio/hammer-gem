@@ -284,13 +284,18 @@ class TestHtmlParser < Test::Unit::TestCase
         logo.filename = "images/logo.png"
         @hammer_project << logo
         @parser.expects(:find_files).returns([logo])
+        @parser.hammer_file = @file
       end
       
       should "replace path tags" do
-        # @parser.text = @file.raw_text
-        @parser.hammer_file = @file
         text = @parser.parse()
         assert_equal "../images/logo.png", text
+      end
+      
+      should "also replace @path tags inside attributes" do
+        @parser.text = "<img src='@path logo.png' />"
+        text = @parser.parse()
+        assert_equal "<img src='../images/logo.png' />", text
       end
     end
     

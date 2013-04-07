@@ -15,7 +15,12 @@ class Hammer
     
     def create_hammer_files_from_directory(input_directory, output_directory)
 
-      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"))
+      # Grab all files in this directory, including dotfiles
+      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
+      
+      files = files.reject { |a| a =~ /\.{1,2}$/ }
+      files = files.reject { |a| a =~ /\.git/ }
+      files = files.reject { |a| a =~ /\.DS_Store/ }
       
       escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
       escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
