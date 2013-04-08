@@ -17,11 +17,10 @@ class Amp
     
     if File.basename(filename) == "index.html"
       regex = /href=["'][..\/]+index.html["']/m
-      replace(text, regex, 'parent')
     else
       regex = /href=["'][..\/]*index.html["']/m
-      replace(text, regex, 'parent')
     end
+    replace(text, regex, 'current-parent')
 
     return text
 

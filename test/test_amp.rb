@@ -102,13 +102,13 @@ class HammerAppTemplateTest < Test::Unit::TestCase
     end
     
     
-    should "add parent classes" do
+    should "add current-parent classes" do
       
       # Test that blog/show.html adds a parent class to blog/index.html
-      test "<a href='../index.html'></a>", "<a class='parent' href='../index.html'></a>", "blog/show.html"
-      test "<a href='index.html'></a>", "<a class='parent' href='index.html'></a>", "blog/show.html"
-      test "<a href='../../index.html'></a>", "<a class='parent' href='../../index.html'></a>", "blog/about/show.html"
-      test "<li><a href='../../index.html'></a></li>", "<li class='parent'><a class='parent' href='../../index.html'></a></li>", "blog/about/show.html"
+      test "<a href='../index.html'></a>", "<a class='current-parent' href='../index.html'></a>", "blog/show.html"
+      test "<a href='index.html'></a>", "<a class='current-parent' href='index.html'></a>", "blog/show.html"
+      test "<a href='../../index.html'></a>", "<a class='current-parent' href='../../index.html'></a>", "blog/about/show.html"
+      test "<li><a href='../../index.html'></a></li>", "<li class='current-parent'><a class='current-parent' href='../../index.html'></a></li>", "blog/about/show.html"
       
     end
     
