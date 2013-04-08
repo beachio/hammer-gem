@@ -15,8 +15,13 @@ class Amp
     regex = /href=["']#{filename}["']/m
     replace(text, regex, class_to_be_added)
     
-    regex = /href=["'][..\/]+index.html["']/m
-    replace(text, regex, 'parent')
+    if File.basename(filename) == "index.html"
+      regex = /href=["'][..\/]+index.html["']/m
+      replace(text, regex, 'parent')
+    else
+      regex = /href=["'][..\/]*index.html["']/m
+      replace(text, regex, 'parent')
+    end
 
     return text
 

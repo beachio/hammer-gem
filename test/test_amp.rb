@@ -22,7 +22,7 @@ end
 
 def test_adding_class(input, expected_output, number_of_characters_in_tag)
   output = Amp.add_class_to_tag(input, 'current', number_of_characters_in_tag)
-  assert_equal output, expected_output
+  assert_equal expected_output, output
 end
   
 
@@ -30,7 +30,12 @@ class HammerAppTemplateTest < Test::Unit::TestCase
   
   context "Amp" do
     
-    should "add classes" do
+    should "only add the current class when told to" do
+      tag = "<a class='a' href='index.html'></a>"
+      test_adding_class tag, "<a class='current a' href='index.html'></a>", 1
+    end
+    
+    should "add current class" do
       test "
         <!doctype html>
         <html>
@@ -51,7 +56,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
             <a class='current' href='index.html'>This is some text here.</a>
           </body>
         </html>"
-      
+
       test  "<li><a href='index.html'></a></li>", 
             "<li class='current'><a class='current' href='index.html'></a></li>"
 
@@ -91,9 +96,9 @@ class HammerAppTemplateTest < Test::Unit::TestCase
 
       test "<a href='index.html'></a><span> <a class='hat' href='index.html'></a> <span href='index.html'>", 
             "<a class='current' href='index.html'></a><span> <a class='current hat' href='index.html'></a> <span href='index.html'>"
-
-      tag = "<a class='a' href='index.html'></a>"
-      test_adding_class tag, "<a class='current a' href='index.html'></a>", 1
+      
+      test "<a class='a' href='index.html'></a>", 
+            "<a class='current a' href='index.html'></a>"
     end
     
     
@@ -101,6 +106,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       
       # Test that blog/show.html adds a parent class to blog/index.html
       test "<a href='../index.html'></a>", "<a class='parent' href='../index.html'></a>", "blog/show.html"
+      test "<a href='index.html'></a>", "<a class='parent' href='index.html'></a>", "blog/show.html"
       test "<a href='../../index.html'></a>", "<a class='parent' href='../../index.html'></a>", "blog/about/show.html"
       test "<li><a href='../../index.html'></a></li>", "<li class='parent'><a class='parent' href='../../index.html'></a></li>", "blog/about/show.html"
       
