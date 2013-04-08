@@ -46,7 +46,7 @@ class TestHaml < Test::Unit::TestCase
         text = @parser.parse()
         assert_equal "<img src='<!-- @path logo.png -->' />\n", text
       end
-    end
+    # end
     
     # context "with multiple-layer inheritance" do
       

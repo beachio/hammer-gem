@@ -13,7 +13,41 @@ class Amp
   def self.parse(text, filename, class_to_be_added)
 
     regex = /href=["']#{filename}["']/m
+    replace(text, regex, class_to_be_added)
+    
+    regex = /href=["'][..\/]+index.html["']/m
+    replace(text, regex, 'parent')
 
+    return text
+
+  end
+
+  def self.add_class_to_tag(tag, class_to_be_added, number_of_characters_in_tag)
+
+    if tag.include? "class="
+      # Not a very clever substitution, but it'll do for now. 
+      # TODO: Make sure this works for edge HTML cases.
+      tag.gsub!("class='", "class='#{class_to_be_added} ")
+      tag.gsub!("class=\"", "class=\"#{class_to_be_added} ")
+
+    elsif tag.include? "class" 
+
+      # They've done something weird, and included a blank attribute.
+      # Since this is only a naive parser, we're not obliged to handle this. 
+      # But we will, because that's how we roll.
+      tag.gsub!("class", "class='#{class_to_be_added}'")
+    else
+
+      # This element is a bit like you.
+      # No class.
+      tag.insert number_of_characters_in_tag + 1, " class='#{class_to_be_added}'"
+    end
+
+    return tag
+  end
+  
+  def self.replace(text, regex, class_to_be_added)
+    
     matches = text.enum_for(:scan, regex).map { Regexp.last_match.begin(0) }
 
     matches.length.times do |match_index|
@@ -122,33 +156,6 @@ class Amp
       text[start_of_a..end_of_a] = a_tag
 
     end
-
-    return text
-
-  end
-
-  def self.add_class_to_tag(tag, class_to_be_added, number_of_characters_in_tag)
-
-    if tag.include? "class="
-      # Not a very clever substitution, but it'll do for now. 
-      # TODO: Make sure this works for edge HTML cases.
-      tag.gsub!("class='", "class='#{class_to_be_added} ")
-      tag.gsub!("class=\"", "class=\"#{class_to_be_added} ")
-
-    elsif tag.include? "class" 
-
-      # They've done something weird, and included a blank attribute.
-      # Since this is only a naive parser, we're not obliged to handle this. 
-      # But we will, because that's how we roll.
-      tag.gsub!("class", "class='#{class_to_be_added}'")
-    else
-
-      # This element is a bit like you.
-      # No class.
-      tag.insert number_of_characters_in_tag + 1, " class='#{class_to_be_added}'"
-    end
-
-    return tag
   end
 
 end

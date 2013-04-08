@@ -20,7 +20,9 @@ if File.exists? project_directory
   hammer_files = project.compile() 
     
   # Clear the final product out
-  FileUtils.rm_rf(output_directory)
+  # TODO: Put this back in the Ruby if we ever release this as a gem.
+  # Hammer currently expects an empty directory, I suppose.
+  # FileUtils.rm_rf(output_directory)
   hammer_files.each do |hammer_file|
     
     if !File.basename(hammer_file.filename).start_with?("_")
