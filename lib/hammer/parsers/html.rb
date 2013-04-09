@@ -170,8 +170,13 @@ class Hammer
     end
 
     def reload_tags
-      return if @hammer_project.production
-      @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
+      
+      if @hammer_project.production
+        @text = text.gsub(/<!-- @reload -->/, "")
+      else
+        @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
+      end
+        
     end
     
     def alternative_path_tags

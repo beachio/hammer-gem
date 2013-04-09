@@ -151,7 +151,7 @@ section article.html {
   padding-bottom: 10px;
 }
 
-section article.html.partial {
+section article.html.include {
   background-image: url(IconHTMLInclude.png);
   background-position: 14px 12px;
   padding-left: 57px;
@@ -166,7 +166,7 @@ section article.haml {
   padding-bottom: 10px;
 }
 
-section article.haml.partial {
+section article.haml.include {
   background-image: url(IconHAMLInclude.png);
   background-position: 14px 12px;
   padding-left: 57px;
@@ -181,7 +181,7 @@ section article.md {
   padding-bottom: 10px;
 }
 
-section article.md.partial {
+section article.md.include {
   background-image: url(IconMDInclude.png);
   background-position: 14px 12px;
   padding-left: 57px;
@@ -210,6 +210,13 @@ section article.sass {
   padding-bottom: 10px;
 }
 
+section article.scss {
+  background: url(IconSCSS.png) no-repeat 14px 12px;
+  padding-left: 46px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
 section article.sass.optimized {
   background-image: url(IconSASSOptimized.png);
   padding-left: 54px;
@@ -217,28 +224,35 @@ section article.sass.optimized {
   padding-bottom: 10px;
 }
 
-section article.js {
+section article.scss.optimized {
+  background-image: url(IconSCSSOptimized.png);
+  padding-left: 54px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.js, section article.jst {
   background: url(IconJS.png) no-repeat 14px 12px;
   padding-left: 46px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
-section article.js.optimized {
+section article.js.optimized, section article.jst.optimized {
   background-image: url(IconJSOptimized.png);
   padding-left: 54px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
-section article.coff {
+section article.coffee {
   background: url(IconCoff.png) no-repeat 14px 12px;
   padding-left: 46px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
-section article.coff.optimized {
+section article.coffee.optimized {
   background-image: url(IconCoffOptimized.png);
   padding-left: 54px;
   padding-top: 8px;
@@ -514,8 +528,8 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 35px 28px;
   }
   
-  section article.html.partial {
-    background-image: url(IconHTMLPartial@2x.png);
+  section article.html.include {
+    background-image: url(IconHTMLInclude@2x.png);
     background-size: 29px 28px;
   }
   
@@ -524,8 +538,8 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 35px 28px;
   }
   
-  section article.haml.partial {
-    background-image: url(IconHAMLPartial@2x.png);
+  section article.haml.include {
+    background-image: url(IconHAMLInclude@2x.png);
     background-size: 29px 28px;
   }
   
@@ -534,8 +548,8 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 35px 28px;
   }
   
-  section article.md.partial {
-    background-image: url(IconMDPartial@2x.png);
+  section article.md.include {
+    background-image: url(IconMDInclude@2x.png);
     background-size: 29px 28px;
   }
   
@@ -554,27 +568,37 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 24px 28px;
   }
   
+  section article.scss {
+    background-image: url(IconSCSS@2x.png);
+    background-size: 24px 28px;
+  }
+  
   section article.sass.optimized {
     background-image: url(IconSASSOptimized@2x.png);
     background-size: 32px 28px;
   }
   
-  section article.js {
+  section article.scss.optimized {
+    background-image: url(IconSCSSOptimized@2x.png);
+    background-size: 32px 28px;
+  }
+  
+  section article.js, section article.jst {
     background-image: url(IconJS@2x.png);
     background-size: 24px 28px;
   }
   
-  section article.js.optimized {
+  section article.js.optimized, section article.jst.optimized {
     background-image: url(IconJSOptimized@2x.png);
     background-size: 32px 28px;
   }
   
-  section article.coff {
+  section article.coffee {
     background-image: url(IconCoff@2x.png);
     background-size: 24px 28px;
   }
   
-  section article.coff.optimized {
+  section article.coffee.optimized {
     background-image: url(IconCoffOptimized@2x.png);
     background-size: 32px 28px;
   }

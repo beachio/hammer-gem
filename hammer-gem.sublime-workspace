@@ -145,12 +145,13 @@
 	},
 	"file_history":
 	[
+		"/Users/elliott/Sites/hammer/hammer-gem/hammer-gem.sublime-project",
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/amp.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/test_scss.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/test_app_template.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/test_css.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/test_haml.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/test_hammer.rb",
-		"/Users/elliott/Sites/hammer/hammer-gem/hammer-gem.sublime-project",
 		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/sass-3.2.7/lib/sass/script/css_parser.rb",
 		"/Users/elliott/Sites/hammer/Server/app/views/publish/404.html.erb",
 		"/Users/elliott/Sites/hammer/Server/app/views/publish/error.html.erb",
@@ -271,8 +272,7 @@
 		"/Users/elliott/Sites/hammer/hammer-gem/Rakefile",
 		"/Users/elliott/Sites/hammer/hammer-gem/test/tests.rb",
 		"/Users/elliott/Sites/hammer/hammer-gem/vendor/gems/tilt-1.3.3/TEMPLATES.md",
-		"/Users/elliott/Sites/hammer/hammer-gem/lib/include.rb",
-		"/Users/elliott/Sites/hammer/hammer-gem/lib/templates/app_template.rb"
+		"/Users/elliott/Sites/hammer/hammer-gem/lib/include.rb"
 	],
 	"find":
 	{
@@ -480,18 +480,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.5,
 			1.0
 		],
 		"rows":

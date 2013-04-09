@@ -4,6 +4,12 @@ class Hammer
       parse
     end
     
+    def to_format(format)
+      if format == :js
+        parse()
+      end
+    end
+    
     def parse
       @text = EJS.compile(@text)
       name = File.basename(@hammer_file.filename, '.*')

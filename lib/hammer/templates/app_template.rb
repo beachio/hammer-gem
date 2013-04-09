@@ -283,15 +283,15 @@ class Hammer
         
         @filename = file.finished_filename
         @messages = file.messages
-        @extension = File.extname(@file.finished_filename)[1..-1]
+        @extension = File.extname(@file.filename)[1..-1]
         @include = File.basename(file.filename).start_with?("_")
       end
       
       def span_class
-        return "error could_not_compile" if @error_file
         
         classes = []
         
+        classes << "error could_not_compile" if @error_file
         classes << "optimized" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
@@ -334,7 +334,7 @@ class Hammer
           sources = @file.source_files.map { |hammer_file| "<a href='#{@file.output_path}' title='#{hammer_file.full_path}'>#{File.basename(hammer_file.filename)}</a>" }
           @line = "Compiled into #{link}"
         else
-          @line = "Compiled #{link}"
+          @line = "Compiled to #{link}"
         end
       end
       
