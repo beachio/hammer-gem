@@ -186,7 +186,7 @@ class Hammer
         if !file
           raise "Path tags: <b>#{h tag}</b> couldn't be found."
         end
-        [tag[0], path_to(file), tag[-1]].join()
+        [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
       end
     end
     
