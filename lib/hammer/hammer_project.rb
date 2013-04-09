@@ -1,4 +1,4 @@
-HAMMER_IGNORE_FILENAME = "ignore.txt"
+HAMMER_IGNORE_FILENAME = ".hammer-ignore"
 
 class Hammer
   class Project

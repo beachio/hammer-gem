@@ -128,10 +128,6 @@ class Hammer
       }
     end
     
-    def ignored_files
-      sorted_files.select {|file| file.is}
-    end
-    
     def html_files
       sorted_files.select {|file| File.extname(file.finished_filename) == ".html" && !file.error }.compact
     end
@@ -344,13 +340,14 @@ class Hammer
       end
       
       def links
-        links = [
-          %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
-        ]
+        links = []
+        if !@filename.start_with?(".")
+          links.unshift %Q{<a target="blank" href="reveal://#{@file.output_path}" class="reveal" title="Reveal Built File">Reveal in Finder</a>}
+        end
         if @filename.end_with?(".html") && @file.output_path
           links.unshift %Q{<a target="blank" href="#{@file.output_path}" class="browser" title="Open in Browser">Open in Browser</a>}
         end
-        if ['.html', ".css", ".js"].include?(File.extname(@filename))
+        if ['.html', ".css", ".js"].include?(File.extname(@filename)) || @filename.start_with?(".")
           links.unshift %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>}
         end
         links
@@ -403,7 +400,7 @@ class Hammer
     
     class IgnoredTemplateLine < TemplateLine
       def to_s
-        %Q{<article class="ignored #{span_class}">
+        %Q{<article class="ignored" hammer-original-filename="#{@file.full_path}">
           <span class="filename">#{filename}</span>
         </article>}
       end
