@@ -119,6 +119,24 @@ class TestHtmlParser < Test::Unit::TestCase
         end
       end
       
+      context "with variables" do
+        should "replace @javascript tags" do
+          @file.raw_text = "<!-- $variable app --><!-- @javascript $variable -->"
+          @new_file.filename = "assets/app.js"
+          @parser.text = @file.raw_text
+          assert_equal "<script src='assets/app.js'></script>", @parser.parse()
+        end
+        
+        should "raise an error if the variable isn't set" do
+          @file.raw_text = "<!-- $variable NOTHING --><!-- @javascript $variable -->"
+          @parser.text = @file.raw_text
+          # assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
+          assert_raises Hammer::Error do
+            @parser.parse()
+          end
+        end 
+      end
+      
       context "when referring to multiple script tags" do
       
         setup do
@@ -200,6 +218,23 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.hammer_file = @file
           assert_equal "<link rel='stylesheet' href='../assets/app.css'>", @parser.parse()
         end
+      end
+      
+      context "with variables" do
+        should "replace @stylesheet tags" do
+          @file.raw_text = "<!-- $variable app --><!-- @stylesheet $variable -->"
+          @parser.text = @file.raw_text
+          assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
+        end
+        
+        should "raise an error if the variable isn't set" do
+          @file.raw_text = "<!-- $variable NOTHING --><!-- @stylesheet $variable -->"
+          @parser.text = @file.raw_text
+          # assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
+          assert_raises Hammer::Error do
+            @parser.parse()
+          end
+        end 
       end
       
       context "when referring to multiple stylesheet tags" do

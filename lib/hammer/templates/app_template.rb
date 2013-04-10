@@ -236,21 +236,9 @@ class Hammer
       # This sorts the files into the correct order for display
       @sorted_files ||= @files.sort_by { |file|
         extension = File.extname(file.finished_filename).downcase
-        length = file.finished_filename.length
-
-        if file.error # (file.result == :error) || file.error != nil
-          0 + length
-        elsif file.filename == "index.html"
-          1000 + length
-        elsif extension == ".html"
-          10000 + length
-        elsif extension == ".css" || extension == ".sass" || extension == ".scss"
-          100000 + length
-        elsif extension == ".js" || extension == ".coffee"
-          200000 + length
-        else
-          1000000 + length
-        end
+        file.filename
+      }.sort_by {|file|
+        (file.filename == "index.html") ? 0 : 1
       }.select { |file|
         underscore = File.basename(file.finished_filename).start_with? "_"
         !underscore || file.messages.count > 0 || file.error

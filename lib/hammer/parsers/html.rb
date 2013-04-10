@@ -203,6 +203,17 @@ class Hammer
       end
       alternative_path_tags
     end
+    
+    def get_variable(variable_name)
+      if variable_name.split("")[0] == "$"
+        variable_name = variable_name.split("")[1..-1].join("")
+      end
+      variable_value = @variables[variable_name]
+      if !variable_value
+        raise "Variable #{variable_name} wasn't set!"
+      end
+      return variable_value
+    end
 
     def stylesheet_tags
       @included_stylesheets ||= []
@@ -212,7 +223,8 @@ class Hammer
         
         filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
         
-        filenames.each do |filename| 
+        filenames.each do |filename|
+          filename = get_variable(filename) if filename.split("")[0] == "$"
           matching_files = find_files(filename, 'css')
           raise "Stylesheet tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
@@ -270,6 +282,7 @@ class Hammer
         filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")
         
         filenames.each do |filename| 
+          filename = get_variable(filename) if filename.split("")[0] == "$"
           matching_files = find_files(filename, 'js')
           raise "Javascript tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
