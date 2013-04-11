@@ -235,6 +235,7 @@ class Hammer
           
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
+          
           path = path_to(file)
           
           next if @included_stylesheets.include?(path) 

@@ -44,11 +44,23 @@ class Hammer
   end
   
   def self.parser_for_hammer_file(hammer_file)
-    raise "Hammer File was nil" unless hammer_file
-    parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
+    raise "An error occured parsing a Hammer file." unless hammer_file
+    
+    if @@default_parser_for[hammer_file.extension]
+      parser = @@default_parser_for[hammer_file.extension].new(hammer_file.hammer_project)
+    else
+      raise "Unrecognised format: #{hammer_file.extension}"
+    end
+    
     parser.text = hammer_file.raw_text
     parser.hammer_file = hammer_file
     parser
+  rescue => e
+    if hammer_file && hammer_file.is_a?(Hammer::HammerFile)
+      raise "Error parsing #{hammer_file.filename}!"
+    else
+      raise e
+    end
   end
   
   def self.possible_other_extensions_for(extension)

@@ -9,7 +9,7 @@ class Hammer
     end
     
     def format
-      filename.split('.')[1].to_sym
+      filename.split('.')[-1].to_sym
     end
     
     def to_css
@@ -77,7 +77,7 @@ class Hammer
     end
     
     def format
-      filename.split('.')[1].to_sym
+      filename.split('.')[-1].to_sym
     end
     
     def text=(new_text)
@@ -105,6 +105,11 @@ class Hammer
     end
 
     def parse
+      
+      if !([:scss, :sass].include?(format))
+        raise "Error in #{@hammer_file.filename}: Wrong format (#{format})"
+      end
+      
       semicolon = format == :scss ? ";\n" : "\n"
       @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
       
