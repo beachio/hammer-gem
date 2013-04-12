@@ -6,7 +6,7 @@ $(function(){
   
   $('.set').each(function(i, set){
     if ($('span', set).length == 0) {
-      $(set).addClass('empty').hide()
+      $(set).addClass('empty') // .hide()
     }
   })
   
@@ -18,16 +18,11 @@ $(function(){
     
     $('#placeholder').remove()
     
-    var set = $('.set.'+name+':not(.empty)');
+    var set = $('.set.'+name);
     set.show();
 
     if (set.length == 0) {
       set = $('.set.'+name);
-      $.each(set, function(i, set){
-        if ($(set).hasClass('empty')) {
-          $(set).append($('<article class="ignored" id="placeholder"><span class="filename">No files</span></article>')).show()
-        }
-      })
     }   
     
     if(name == 'all') {

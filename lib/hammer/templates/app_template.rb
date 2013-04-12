@@ -164,64 +164,91 @@ class Hammer
       body = [%Q{<section id="all">}]
       files = sorted_files
       
-      # if error_files.any?
         body << %Q{<div class="error set">}
-        body << "<strong>Errors</strong>"
-        body << error_files.map {|file| TemplateLine.new(file) }
+        if error_files.any?
+          body << "<strong>Errors</strong>"
+          body << error_files.map {|file| TemplateLine.new(file) }
+        else
+          body << '<div class="message">
+            <p><b>There are no errors in your project</b></p>
+          </div>'
+        end
         body << %Q{</div>}
-      # end
       
-      # if html_files.any?
         body << %Q{<div class="html set">}
-        body << "<strong>HTML pages</strong>"
-        body << html_files.map {|file| TemplateLine.new(file) if !file.error }
+        if html_files.any?
+          body << "<strong>HTML pages</strong>"
+          body << html_files.map {|file| TemplateLine.new(file) if !file.error }
+        else
+          body << '<div class="message">
+            <p><b>There are no HTML files in your project</b></p>
+          </div>'
+        end
         body << %Q{</div>}
-      # end
       
-      # if compilation_files.any?
-        body << %Q{<div class="optimized cssjs set">}
-        body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
-        body << compilation_files.map {|file| TemplateLine.new(file) if !file.error }
-        body << %Q{</div>}
-      # end
+        if compilation_files.any?
+          body << %Q{<div class="optimized cssjs set">}
+          body << %Q{ <strong>Optimized CSS &amp; JS</strong> }
+          body << compilation_files.map {|file| TemplateLine.new(file) if !file.error }
+          body << %Q{</div>}
+        end
       
-      # if css_js_files.any?
         body << %Q{<div class="cssjs set">}
-        body << "<strong>CSS &amp; JS</strong>"
-        body << css_js_files.map {|file| TemplateLine.new(file) if !file.error }
+        if css_js_files.any?
+          body << "<strong>CSS &amp; JS</strong>"
+          body << css_js_files.map {|file| TemplateLine.new(file) if !file.error }
+        else
+            body << '<div class="message">
+            <p><b>There are no CSS or JS files in your project</b></p>
+          </div>'
+        end
         body << %Q{</div>}
-      # end
       
-      # if image_files.any?
         body << %Q{<div class="images set">}
-        body << %Q{<strong>Image assets</strong>}
-        body << image_files.map {|file| TemplateLine.new(file)}
+        if image_files.any?
+          body << %Q{<strong>Image assets</strong>}
+          body << image_files.map {|file| TemplateLine.new(file)}
+        else
+          body << '<div class="message">
+            <p><b>There are no images in your project</b></p>
+          </div>'
+        end
         body << %Q{</div>}
-      # end
       
-      # if other_files.any?
         body << %Q{<div class="other set">}
-        body << %Q{<strong>Other files</strong>}
-        body << other_files.map {|file| TemplateLine.new(file)}
+        if other_files.any?
+          body << %Q{<strong>Other files</strong>}
+          body << other_files.map {|file| TemplateLine.new(file)}
+        else
+          body << '<div class="message">
+                    <p><b>There are no other files in your project</b></p>
+                  </div>'
+        end
         body << %Q{</div>}
-      # end
       
-      # if ignored_files.any?
         body << %Q{<div class="ignored set">}
-        body << %Q{<strong>Ignored files</strong>}
-        body << ignored_files.map {|file| IgnoredTemplateLine.new(file)}
+        if ignored_files.any?
+          body << %Q{<strong>Ignored files</strong>}
+          body << ignored_files.map {|file| IgnoredTemplateLine.new(file)}
+        else
+          body << '<div class="message">
+                    <p><b>There are no ignored files in your project</b></p>
+                  </div>'
+        end
         body << %Q{</div>}
-      # end
-      
       body << %Q{</section>}
       
-      # if todo_files.any?
-        body << %Q{<section id="todos">
-          <strong>Todos</strong>
-          <div class="todos set"></div>
-        </section>}
-      # end
-            
+      body << %Q{<section id="todos">}
+      if todo_files.any?
+        body << %Q{<strong>Todos</strong>}
+        body << %Q{<div class="todos set"></div>}
+      else
+        body << '<div class="message">
+                  <p><b>There are no todos in your project</b> <em>You can create a todo using <code>&lt;!-- @todo My todo --&gt;</code></em></p>
+                </div>'
+      end
+      body << %Q{</section>}
+          
       body.join("\n")
     end
     

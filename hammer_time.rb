@@ -33,6 +33,7 @@ if File.exists? project_directory
       FileUtils.mkdir_p(final_location)
       
       output_path = File.join(output_directory, hammer_file.output_filename)
+      output_path = Pathname.new(output_path).cleanpath
       hammer_file.output_path = output_path
       
       @errors += 1 if hammer_file.error
