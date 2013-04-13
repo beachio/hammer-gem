@@ -165,8 +165,8 @@ class Hammer
       files = sorted_files
       
         body << %Q{<div class="error set">}
+        body << "<strong>Errors</strong>"
         if error_files.any?
-          body << "<strong>Errors</strong>"
           body << error_files.map {|file| TemplateLine.new(file) }
         else
           body << '<div class="message">
@@ -176,8 +176,8 @@ class Hammer
         body << %Q{</div>}
       
         body << %Q{<div class="html set">}
+        body << "<strong>HTML pages</strong>"
         if html_files.any?
-          body << "<strong>HTML pages</strong>"
           body << html_files.map {|file| TemplateLine.new(file) if !file.error }
         else
           body << '<div class="message">
@@ -194,8 +194,8 @@ class Hammer
         end
       
         body << %Q{<div class="cssjs set">}
+        body << "<strong>CSS &amp; JS</strong>"
         if css_js_files.any?
-          body << "<strong>CSS &amp; JS</strong>"
           body << css_js_files.map {|file| TemplateLine.new(file) if !file.error }
         else
             body << '<div class="message">
@@ -205,8 +205,8 @@ class Hammer
         body << %Q{</div>}
       
         body << %Q{<div class="images set">}
+        body << %Q{<strong>Image assets</strong>}
         if image_files.any?
-          body << %Q{<strong>Image assets</strong>}
           body << image_files.map {|file| TemplateLine.new(file)}
         else
           body << '<div class="message">
@@ -216,8 +216,8 @@ class Hammer
         body << %Q{</div>}
       
         body << %Q{<div class="other set">}
+        body << %Q{<strong>Other files</strong>}
         if other_files.any?
-          body << %Q{<strong>Other files</strong>}
           body << other_files.map {|file| TemplateLine.new(file)}
         else
           body << '<div class="message">
@@ -227,8 +227,8 @@ class Hammer
         body << %Q{</div>}
       
         body << %Q{<div class="ignored set">}
+        body << %Q{<strong>Ignored files</strong>}
         if ignored_files.any?
-          body << %Q{<strong>Ignored files</strong>}
           body << ignored_files.map {|file| IgnoredTemplateLine.new(file)}
         else
           body << '<div class="message">
@@ -239,8 +239,8 @@ class Hammer
       body << %Q{</section>}
       
       body << %Q{<section id="todos">}
+      body << %Q{<strong>Todos</strong>}
       if todo_files.any?
-        body << %Q{<strong>Todos</strong>}
         body << %Q{<div class="todos set"></div>}
       else
         body << '<div class="message">
