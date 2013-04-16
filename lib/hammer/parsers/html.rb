@@ -315,10 +315,13 @@ class Hammer
       # If we don't have any links to the current page, let's get outta here real fast.
       # Otherwise, let's Amp it.
       filename = File.basename(@hammer_file.finished_filename)
-      if !@hammer_file.finished_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
-        return 
-      end
+      # if !@hammer_file.finished_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
+      #   return 
+      # end
       @text = Amp.parse(@text, filename, 'current')
+      @text = Amp.parse_for_current_parent(@text, @hammer_file.finished_filename, 'current-parent')
+      
+      
     end
   end
   register_parser_for_extensions HTMLParser, ['html']

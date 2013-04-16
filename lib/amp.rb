@@ -12,18 +12,25 @@ class Amp
   # It adds the class_to_be_added to those links, and also to the parent tag, if it's an <li>.
   def self.parse(text, filename, class_to_be_added)
 
+    filename = File.basename(filename)
     regex = /href=["']#{filename}["']/m
     replace(text, regex, class_to_be_added)
     
-    if File.basename(filename) == "index.html"
-      regex = /href=["'][..\/]+index.html["']/m
-    else
-      regex = /href=["'][..\/]*index.html["']/m
-    end
-    replace(text, regex, 'current-parent')
-
     return text
-
+  end
+  
+  def self.parse_for_current_parent(text, full_filename, class_to_be_added)
+    
+    maximum_number_of_levels = full_filename.split(File::SEPARATOR).length - 2
+    
+    if maximum_number_of_levels >= 0
+      # puts "maximum_number_of_levels for #{full_filename}: #{maximum_number_of_levels}"
+      regex = /href=["'](..\/){0,#{maximum_number_of_levels}}index.html["']/m
+      replace(text, regex, class_to_be_added)
+    end
+    
+    return text
+    
   end
 
   def self.add_class_to_tag(tag, class_to_be_added, number_of_characters_in_tag)
@@ -100,9 +107,17 @@ class Amp
       start_of_li = nil
       character = start_of_a
       while start_of_li == nil and character > 0
+        
         if chars[character-3..character].join.match /<li( |>)/
           start_of_li = character-3
+          break
         end
+        
+        # Wrong Li!
+        if chars[character-4..character].join == "</li>"
+          break
+        end
+        
         character -= 1
       end
     

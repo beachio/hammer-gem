@@ -289,7 +289,7 @@ class TestHtmlParser < Test::Unit::TestCase
         @file.raw_text = "<a href='<!-- @path index -->'></a>"
         @parser.hammer_file = @file
         @parser.text = @file.raw_text
-        assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
+        assert_equal "<a class='current-parent current' href='index.html'></a>", @parser.parse()
       end
             
       should "not add a current class to a link to a different page" do
