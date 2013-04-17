@@ -1,5 +1,3 @@
-require "tests"
-
 class CSSParserTest < Test::Unit::TestCase
   context "A CSS Parser" do
     setup do
@@ -23,7 +21,7 @@ class CSSParserTest < Test::Unit::TestCase
       assert_equal "a { background: url(images/proximanova-regular.eot?#iefix) }", @parser.parse()
     end
     
-    should "parse url images even with queries" do
+    should "parse url images even with queries part II" do
       font = Hammer::HammerFile.new()
       font.filename = "images/proximanova-regular.eot"
       @hammer_project << font

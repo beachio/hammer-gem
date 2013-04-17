@@ -1,5 +1,3 @@
-require "tests"
-
 class HammerAppTemplateTest < Test::Unit::TestCase
   
   context "A template" do

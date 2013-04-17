@@ -1,5 +1,3 @@
-require "tests"
-
 class TestHtmlParser < Test::Unit::TestCase
   
   context "An HTML file parser" do

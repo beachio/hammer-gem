@@ -1,5 +1,3 @@
-require "tests"
-
 class TestJavascriptTemplates < Test::Unit::TestCase
   
   context "A JST Parser" do

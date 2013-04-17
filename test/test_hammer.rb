@@ -1,5 +1,3 @@
-require "tests"
-
 class TestHammer < Test::Unit::TestCase
   context "Hammer"  do
     should "find the right parser" do

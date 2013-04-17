@@ -1,7 +1,5 @@
 #!/usr/bin/ruby
 
-require "tests"
-
 # require File.expand_path(File.join(__FILE__, '../../lib/amp.rb'))
 
 # def check(output, expected_output)

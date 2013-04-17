@@ -1,5 +1,3 @@
-require "tests"
-
 class TestParsers < Test::Unit::TestCase
   
   context "a parser" do
