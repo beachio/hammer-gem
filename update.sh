@@ -33,3 +33,5 @@ gem unpack ejs --target=vendor/gems
 gem unpack eco --target=vendor/gems
 gem unpack eco-source --target=vendor/gems
 gem unpack uglifier --target=vendor/gems
+
+gem unpack shoulda-context shoulda-matchers bourne metaclass --target=test/vendor/gems
