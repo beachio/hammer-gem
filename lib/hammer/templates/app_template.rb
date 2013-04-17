@@ -31,7 +31,7 @@ class Hammer
       elsif @files == []
         [header, no_files, footer].join("\n")
       else
-        [header, nav, body, footer].join("\n")
+        [header, body, footer].join("\n")
       end
     end
     
@@ -59,34 +59,6 @@ class Hammer
           <script src="tabs.js" type="text/javascript"></script>
         </head>
         <body>
-      }
-    end
-    
-    def nav
-      
-      %Q{
-          <header>
-            <nav>
-              <ul>
-                <li id="show-all" class="active">All</li>
-                <li id="show-html">HTML</li>
-                <li id="show-cssjs">CSS &amp; JS</li>
-                #{%Q{<li id="show-images">Images</li>} if image_files.length > 0}
-                #{%Q{<li id="show-other">Other</li>} if other_files.length > 0}
-              </ul>
-              <ul>
-                #{%Q{
-                  <li id="show-todos">#{total_todos} Todo#{"s" if total_todos != 1}</li>
-                } if total_todos > 0}
-                
-                #{%Q{
-                    <li id="show-error">#{total_errors} Error#{"s" if total_errors != 1}</li>
-                } if total_errors > 0}
-                
-                #{%Q{<li id="show-ignored">Ignored Files</li>} if ignored_files.length > 0}
-              </ul>
-            </nav>
-          </header>
       }
     end
     

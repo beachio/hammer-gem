@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 html {
@@ -20,86 +21,6 @@ body {
   margin: 0;
   overflow-x: hidden;
   width: 100%;
-}
-
-nav {
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#ebeceb), to(#fefffe));
-  background-image: -moz-linear-gradient(90deg, #ebeceb 0%, #fefffe 100%);
-  overflow: hidden;
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  right: 0;
-  left: 0;
-  border-bottom-width: 1px;
-  border-bottom-color: #d8d9d8;
-  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  display: none;
-}
-
-nav ul {
-  margin: 0;
-  padding: 5px 6px;
-  float: left;
-  position: relative;
-  z-index: 1;
-}
-
-nav ul li {
-  display: inline-block;
-  color: #999;
-  font-weight: bold;
-  text-decoration: none;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 20px;
-  margin-right: -2px;
-  position: relative;
-}
-
-nav ul:first-child li:first-child {
-  margin-right: 11px;
-}
-
-nav ul:first-child li:first-child::after {
-  content: '';
-  position: absolute;
-  right: -7px;
-  top: -5px;
-  bottom: -5px;
-  width: 1px;
-  background-image: -moz-linear-gradient(90deg, rgba(215, 217, 215, 0) 0%, #d7d9d7 50.1%, rgba(215, 217, 215, 0) 100%);
-  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(215, 217, 215, 0)), color-stop(0.501, #d7d9d7), to(rgba(215, 217, 215, 0)));
-}
-
-.errors nav ul:first-child li:first-child::after {
-  display: none;
-}
-
-nav ul li.active {
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#d2d3d6), to(#b5b6ba));
-  background-image: -moz-linear-gradient(90deg, #d2d3d6 0%, #b5b6ba 100%);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-nav ul + ul {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 0;
-  opacity: 1;
-  -webkit-transition: opacity ease .1s;
-}
-
-nav ul + ul li {
-  margin-right: 0;
-  margin-left: -2px;
 }
 
 section {
@@ -505,15 +426,6 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
 
 .too-big span {
   background: url(WarningStatus.png) top center no-repeat;
-}
-
-@media all and (max-width: 440px) {
-
-  nav ul + ul {
-    opacity: 0;
-    pointer-events: none;
-  }
-
 }
 
 @media all and (-webkit-min-device-pixel-ratio: 2) {
