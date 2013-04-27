@@ -43,6 +43,18 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", text
     end
     
+    should "replace placeholder tags with only one dimension" do
+      @parser.text = "<html><!-- @placeholder 100 --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", text
+    end
+    
+    should "replace placeholder tags with text" do
+      @parser.text = "<html><!-- @placeholder 100x100 I am a teapot --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100px' height='100px' /></html>", text
+    end
+    
     should "replace kitten tags" do
       @parser.text = "<html><!-- @kitten 100x100 --></html>"
       text = @parser.parse()
