@@ -61,12 +61,6 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html><img src='http://placekitten.com/100/100' width='100px' height='100px' /></html>", text
     end
     
-    # should "remove todos" do
-    #   @parser.text = "<html><!-- @todo Do this --></html>"
-    #   text = @parser.parse()
-    #   assert_equal "<html></html>", text
-    # end
-
     should "include files" do
       header = Hammer::HammerFile.new
       header.filename = "_header.html"
