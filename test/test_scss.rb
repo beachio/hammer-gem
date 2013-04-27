@@ -10,9 +10,10 @@ class TestSCSS < Test::Unit::TestCase
       @hammer_file = Hammer::HammerFile.new
       @hammer_file.filename = "style.scss"
       @parser.hammer_file = @hammer_file
+      @parser.hammer_project = @hammer_project
       
       @parser.text = "a { b { background: red; } }"
-      assert_equal "a b {\n  background: red; }\n", @parser.parse()
+      assert_includes @parser.parse(), "a b {\n  background: red; }\n"
     end
     
     
@@ -33,7 +34,7 @@ class TestSCSS < Test::Unit::TestCase
         parser.hammer_file = new_file
         
         text = parser.parse()
-        assert_equal "a {\n  background: red; }\n", text
+        assert_includes text, "a {\n  background: red; }\n"
       end
     end
     
