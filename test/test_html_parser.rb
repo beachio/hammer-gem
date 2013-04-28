@@ -351,6 +351,14 @@ class TestHtmlParser < Test::Unit::TestCase
 
         assert_equal "", @parser.parse()
       end
+
+      should "work with a variable with | in its name" do
+        @file.raw_text = "<!-- $title This is my title | I am cool --><!-- $title -->"
+        @parser.hammer_file = @file
+
+        assert_equal "This is my title | I am cool", @parser.parse()
+      end
+
       
       should "work with a variable with > in its name" do
         @file.raw_text = "<!-- $title B> -->"

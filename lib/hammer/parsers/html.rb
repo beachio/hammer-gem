@@ -117,15 +117,18 @@ class Hammer
     def output_variables
       replace(/<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
-        
-        if variable_declaration.include? "|"
-          variable_name = variable_declaration.split("|")[0].strip
+
+        has_spaces = variable_declaration.include?(' ')
+
+        variable_name = variable_declaration.split(" ")[0]
+        variable_value = variable_declaration.split("|")[1..-1].join("|").strip rescue false
+
+        is_a_getter_with_a_default = variable_declaration.split(" ")[1] == "|"
+        if is_a_getter_with_a_default
           default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
-        else
-          
-          variable_name = variable_declaration.split(" ")[0]
         end
-        if variable_declaration.include?(' ') && !(variable_declaration.include? "|")
+        
+        if has_spaces && !is_a_getter_with_a_default
           # Oh god it's a setter why are you still here
           self.variables[variable_name] = variable_declaration.split(" ")[1..-1].join(' ')
           ""
