@@ -71,7 +71,7 @@ class Hammer
       
       # Yes if the file is modified.
       if new_hash != @hashes[path]
-        puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
+        # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
         @new_dependency_hash[path] = nil
         return true 
       end
@@ -83,7 +83,7 @@ class Hammer
           types.each do |type, results|
             new_results = @hammer_project.find_files(query, type).collect(&:filename)
             if new_results != results
-              puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{results}"
+              # puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{results}"
               return true
             end
           end
@@ -97,9 +97,9 @@ class Hammer
             @hammer_project.find_files(query, type).each do |file|
               path = file.filename
               
-              puts "Testing dependency #{query} for #{path}"
+              # puts "Testing dependency #{query} for #{path}"
               if needs_recompiling?(path)
-                puts "File's dependencies need recompiling!"
+                # puts "File's dependencies need recompiling!"
                 return true 
               end
             end
@@ -120,7 +120,7 @@ class Hammer
       begin
         results = @hammer_project.find_files(query, type)
       rescue => e
-        puts "Exception: #{e}"
+        # puts "Exception: #{e}"
       end
       # puts "Results: #{results}"
       
