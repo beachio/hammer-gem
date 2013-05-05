@@ -112,6 +112,9 @@ class Hammer
 
       # puts "File #{path} was not modified."
       return false
+    rescue
+      puts "Error in #{path}"
+      return false
     end
     
     def add_dependency(path, query, type)
