@@ -197,7 +197,7 @@ class Hammer
     def alternative_path_tags
       replace(/['|"]@path (.*?)['|"]/) do |tag, line_number|
         filename = tag[6..-2]
-        file = find_file(filename)
+        file = find_file_without_adding_dependency(filename)
         if !file
           raise "Path tags: <b>#{h tag}</b> couldn't be found."
         end
@@ -209,7 +209,7 @@ class Hammer
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
         
-        file = find_file(tag)
+        file = find_file_without_adding_dependency(tag)
         
         if !file
           raise "Path tags: <b>#{h tag}</b> couldn't be found."

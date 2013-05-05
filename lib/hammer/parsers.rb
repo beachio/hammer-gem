@@ -15,11 +15,7 @@ class Hammer
     def text=(text)
       @text = text
     end
-    
-    def add_dependency(tag, type)
-      @hammer_project.cacher.add_dependency(self.hammer_file.filename, tag, type)
-      # puts "Added dependency #{tag}.#{type} for #{self.hammer_file.filename}"
-    end
+
 
     attr_reader :hammer_file
     def hammer_file=(hammer_file)
@@ -57,21 +53,40 @@ class Hammer
       path
     end
     
-    def find_files(filename, extension=nil)
-      
-      add_dependency(filename, extension)
-      
+    def add_wildcard_dependency(tag, type)
+      @hammer_project.cacher.add_wildcard_dependency(self.hammer_file.filename, tag, type)
+    end
+    
+    def add_file_dependency(file)
+      @hammer_project.cacher.add_file_dependency(self.hammer_file.filename, file.filename)
+    end
+    
+    def _find_files(filename, extension=nil)
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
       files = @hammer_project.find_files(filename, extension)
-      files
+      files      
+    end
+    
+    def find_file_without_adding_dependency(filename, extension=nil)
+      _find_files(filename, extension)[0]
     rescue => e
       nil
     end
     
+    def find_files(filename, extension=nil)
+      add_wildcard_dependency(filename, extension)
+      return _find_files(filename, extension)
+    end
+    
     def find_file(filename, extension=nil)
-      find_files(filename, extension)[0]
+      file = _find_files(filename, extension)[0]
+      puts ""
+      add_file_dependency(file)
+      return file
     rescue => e
+      puts e.message
+      puts e.backtrace
       nil
     end
     
