@@ -18,7 +18,7 @@ class Hammer
     
     def add_dependency(tag, type)
       @hammer_project.cacher.add_dependency(self.hammer_file.filename, tag, type)
-      puts "Added dependency #{tag}.#{type} for #{self.hammer_file.filename}"
+      # puts "Added dependency #{tag}.#{type} for #{self.hammer_file.filename}"
     end
 
     attr_reader :hammer_file

@@ -62,59 +62,90 @@ class Hammer
       end
     end
 
-    
-    # Check a file to see whether it needs recompiling.
-    def needs_recompiling?(path)
+    def needs_recompiling_without_cache(path)
       
-      @new_hashes[path] ||= hash(path)
-      new_hash = @new_hashes[path]
+      # @new_hashes[path] ||= hash(path)
+      # new_hash = @new_hashes[path]
       
-      # Yes if the file is modified.
-      if new_hash != @hashes[path]
-        # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
-        @new_dependency_hash[path] = nil
-        return true 
-      end
+      # # Yes if the file is modified.
+      # if new_hash != @hashes[path]
+      #   # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
+      #   @new_dependency_hash[path] = nil
+      #   return true 
+      # end
       
       if @dependency_hash[path]
         # Yes if the file's references have changed (new files).
-        @dependency_hash[path].each do |query, types|
+        # @dependency_hash[path].each do |query, types|
           
-          types.each do |type, results|
-            new_results = @hammer_project.find_files(query, type).collect(&:filename)
-            if new_results != results
-              # puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{results}"
-              return true
-            end
-          end
-        end
+        #   types.each do |type, results|
+        #     new_results = @hammer_project.find_files(query, type).collect(&:filename)
+        #     if new_results != results
+        #       # puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{results}"
+        #       return true
+        #     end
+        #   end
+        # end
 
-        # Yes if any dependencies need recompiling.  
-        @dependency_hash[path].each do |query, types|
+        # Yes if any dependencies need recompiling. 
+        
+        # puts @dependency_hash[path].inspect
+        @dependency_hash[path].each_pair do |type, matches|
           
-          types.each do |type|
+          # puts "Type: #{type}"
+          matches.each do |query, filenames|
+            # puts "Filenames: #{filenames.inspect}"
             
+            files = @hammer_project.find_files(query, type)
+            
+            # puts "--->"
+            # puts type.inspect
+            # puts "<---"
+            # puts "Found files for #{query.to_s} and #{type.to_s} for path #{path}"
+            
+            # puts "  Found files for \n#{query}/#{type} \nin #{path}: #{file.filename}"
             @hammer_project.find_files(query, type).each do |file|
-              path = file.filename
               
-              # puts "Testing dependency #{query} for #{path}"
-              if needs_recompiling?(path)
-                # puts "File's dependencies need recompiling!"
+              
+              ########
+              ######## TODO: Stack level gets too deep here. 
+              ########
+              sub_file_path = file.filename
+              
+              # puts "File's dependencies need recompiling!"
+              if needs_recompiling?(sub_file_path)
                 return true 
               end
             end
           end
         end
-      else
-        # puts "Not found in the dependencies hash!"
-        # return true
+        
       end
-
+      
       # puts "File #{path} was not modified."
       return false
-    rescue
-      puts "Error in #{path}"
-      return false
+      
+    # rescue => e
+    #   puts "Error in #{path}: #{e}"
+    #   return false
+    end
+    
+    # Check a file to see whether it needs recompiling.
+    def needs_recompiling?(path)
+      
+      # puts "Checking #{path}"
+      
+      @needs_recompiling ||= {}
+      if @needs_recompiling[path] != nil
+        puts "Cache hit for #{path}"
+        result = @needs_recompiling[path]
+      else
+        # puts "Checking #{path}"
+        result = needs_recompiling_without_cache(path)
+        @needs_recompiling[path] = result
+      end
+      
+      return result
     end
     
     def add_dependency(path, query, type)
