@@ -278,6 +278,7 @@ class Hammer
         classes << "optimized" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
+        classes << "cached" if !@file.compiled
         
         classes << @extension
         if ['png', 'gif', 'svg', 'jpg', 'gif'].include? @extension
@@ -310,7 +311,7 @@ class Hammer
         elsif @include
           @line = "Compiled to <b>#{link}</b>"
         elsif !@file.compiled
-          # @line = "Copied to <b>#{link}</b>"
+          @line = "Copied to  <b>#{link}</b> from cache"
         elsif @extension == "html"
           @line = "Compiled to <b>#{link}</b>"
         elsif @file.is_a_compiled_file

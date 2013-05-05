@@ -45,6 +45,7 @@ class Hammer
       return true unless @directory
       path = File.join(@directory, "cache.json")
       
+      FileUtils.mkdir_p File.dirname(path)
       File.open(path, "w") do |f|     
         f.write contents.to_json
       end
@@ -61,6 +62,7 @@ class Hammer
     
     def set_cached_contents_for(path, contents)
       path = File.join(@directory, path)
+      FileUtils.mkdir_p File.dirname(path)
       File.open(path, "w") do |f|
         f.write(contents)
       end
