@@ -1,4 +1,10 @@
 class Hammer
+  class HammerFile
+    attr_accessor :cached
+  end
+end
+
+class Hammer
   class Cacher
     
     # Start this off with a hammer_project. It belongs to the project.
@@ -83,6 +89,7 @@ class Hammer
     
       if @hard_dependencies[path]
         @hard_dependencies[path].each do |dependency|
+          next if dependency == path
           if needs_recompiling?(dependency)
             return true 
           end
@@ -90,6 +97,7 @@ class Hammer
       end
       
       if @dependency_hash[path]
+        
         # Yes if the file's references have changed (new files).
         @dependency_hash[path].each_pair do |query, matches|
           
@@ -100,36 +108,17 @@ class Hammer
               # puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{filenames}"
               return true
             end
-          end
-        end
-        
-
-
-        # Yes if any dependencies need recompiling. 
-        
-        # puts @dependency_hash[path].inspect
-        @dependency_hash[path].each_pair do |type, matches|
+        #   end
           
-          # puts "Type: #{type}"
-          matches.each do |query, filenames|
-            # puts "Filenames: #{filenames.inspect}"
+        # # end
+
+        # # # Yes if any dependencies need recompiling. 
+        # # @dependency_hash[path].each_pair do |type, matches|
+        #   matches.each do |query, filenames|
             next if query.nil?
             files = @hammer_project.find_files(query, type)
-            
-            # puts "--->"
-            # puts type.inspect
-            # puts "<---"
-            # puts "Found files for #{query.to_s} and #{type.to_s} for path #{path}"
-            
-            # puts "  Found files for \n#{query}/#{type} \nin #{path}: #{file.filename}"
             @hammer_project.find_files(query, type).each do |file|
-              
-              ########
-              ######## TODO: Stack level gets too deep here. 
-              ########
               sub_file_path = file.filename
-              
-              # puts "File's dependencies need recompiling!"
               if needs_recompiling?(sub_file_path)
                 return true 
               end
@@ -139,12 +128,9 @@ class Hammer
         
       end
       
-      # puts "File #{path} was not modified."
+      # File #{path} was not modified.
       return false
       
-    # rescue => e
-    #   puts "Error in #{path}: #{e}"
-    #   return false
     end
     
     # Check a file to see whether it needs recompiling.
@@ -153,12 +139,9 @@ class Hammer
       
       @needs_recompiling ||= {}
       if @needs_recompiling[path] != nil
-        # puts "Cache hit for #{path}"
         result = @needs_recompiling[path]
       else
-        # puts "Recompile-Checking #{path}"
         result = needs_recompiling_without_cache(path)
-        # puts "#{path} needs compiling" if result
         @needs_recompiling[path] = result
       end
       
@@ -170,13 +153,14 @@ class Hammer
     
     def add_wildcard_dependency(path, query, type)
       begin
-        results = @hammer_project.find_files(query, type)
+        results = @hammer_project.find_files(query, type).collect(&:filename)
+        results -= [path]
         @new_dependency_hash[path] ||= {}
         @new_dependency_hash[path][query] ||= {}
-        @new_dependency_hash[path][query][type] ||= results.collect(&:filename)
+        @new_dependency_hash[path][query][type] ||= results
       rescue => e
-        puts "Exception: #{e}"
-        return
+        puts e.message
+        puts e.backtrace
       end
     end
     
@@ -193,6 +177,8 @@ class Hammer
       return nil unless @hammer_project.input_directory
       full_path = File.join(@hammer_project.input_directory, path)
       md5 = Digest::MD5.file(full_path).hexdigest
+    rescue
+      nil
     end
     
   end

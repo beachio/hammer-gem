@@ -54,11 +54,12 @@ class Hammer
     end
     
     def add_wildcard_dependency(tag, type)
-      @hammer_project.cacher.add_wildcard_dependency(self.hammer_file.filename, tag, type)
+      @hammer_project.cacher.add_wildcard_dependency(@hammer_file.filename, tag, type)
     end
     
     def add_file_dependency(file)
-      @hammer_project.cacher.add_file_dependency(self.hammer_file.filename, file.filename)
+      return unless file
+      @hammer_project.cacher.add_file_dependency(@hammer_file.filename, file.filename)
     end
     
     def _find_files(filename, extension=nil)
@@ -75,6 +76,7 @@ class Hammer
     end
     
     def find_files(filename, extension=nil)
+      # puts "Adding wildcard dependency #{filename}.#{extension} to #{self.hammer_file.filename}<br />"
       add_wildcard_dependency(filename, extension)
       return _find_files(filename, extension)
     end
@@ -83,10 +85,10 @@ class Hammer
       file = _find_files(filename, extension)[0]
       add_file_dependency(file)
       return file
-    rescue => e
-      puts e.message
-      puts e.backtrace
-      nil
+    # rescue => e
+      # puts e.message
+      # puts e.backtrace
+      # nil
     end
     
     def error(text, line_number, hammer_file=nil)

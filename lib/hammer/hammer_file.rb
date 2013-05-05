@@ -8,6 +8,7 @@ class Hammer
     attr_accessor :error_line, :error_message, :error_file, :error
     attr_accessor :compiled, :is_a_compiled_file, :source_files
     attr_accessor :messages, :todos
+    attr_accessor :from_cache
     attr_accessor :compiled, :is_a_compiled_file
 
     def initialize(options={})

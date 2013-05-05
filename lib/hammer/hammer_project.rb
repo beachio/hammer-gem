@@ -126,6 +126,7 @@ class Hammer
         
         if contents
           hammer_file.compiled_text = contents
+          hammer_file.from_cache = true
         else
           
           begin

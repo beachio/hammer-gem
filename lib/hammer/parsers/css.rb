@@ -118,6 +118,19 @@ class Hammer
       engine = Sass::Engine.new(@text, options)
       begin
         @text = engine.render()
+        
+        engine.dependencies.each do |dependency|
+          next if dependency.options[:original_filename].end_with? "_bourbon.scss"
+          path = dependency.options[:original_filename]
+          
+          if path.start_with? @hammer_project.input_directory
+            relative_path = path[@hammer_project.input_directory.length..-1]
+          end
+          
+          # find_file adds a hard dependency for us :)
+          find_file(relative_path)
+        end
+        
       rescue => e
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
           # TODO: Make this nicer.
