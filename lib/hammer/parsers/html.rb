@@ -65,12 +65,22 @@ class Hammer
     private
     
     def placeholders
-      replace(/<!-- @placeholder (\S*) -->/) do |tag, line_number|
-        dimensions = tag.gsub("<!-- @placeholder ", "").gsub("-->", "").strip
+      replace(/<!-- @placeholder (.*?) -->/) do |tag, line_number|
+        options = tag.gsub("<!-- @placeholder ", "").gsub("-->", "").strip.split(" ")
+        
+        dimensions = options[0]
+        text = ""
+        
+        if options[1]
+          text = options[1..-1].join(" ")
+          text = "&text=#{CGI.escape(text)}"
+        end
+        
+        x = dimensions.split('x')[0]
+        y = dimensions.split('x')[1] || x
+
         begin
-          x = dimensions.split('x')[0]
-          y = dimensions.split('x')[1]
-          "<img src='http://placehold.it/#{x}x#{y}' width='#{x}px' height='#{y}px' />"
+          "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}px' height='#{y}px' />"
         rescue 
           tag
         end
@@ -107,15 +117,18 @@ class Hammer
     def output_variables
       replace(/<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
-        
-        if variable_declaration.include? "|"
-          variable_name = variable_declaration.split("|")[0].strip
+
+        has_spaces = variable_declaration.include?(' ')
+
+        variable_name = variable_declaration.split(" ")[0]
+        variable_value = variable_declaration.split("|")[1..-1].join("|").strip rescue false
+
+        is_a_getter_with_a_default = variable_declaration.split(" ")[1] == "|"
+        if is_a_getter_with_a_default
           default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
-        else
-          
-          variable_name = variable_declaration.split(" ")[0]
         end
-        if variable_declaration.include?(' ') && !(variable_declaration.include? "|")
+        
+        if has_spaces && !is_a_getter_with_a_default
           # Oh god it's a setter why are you still here
           self.variables[variable_name] = variable_declaration.split(" ")[1..-1].join(' ')
           ""

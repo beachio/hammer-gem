@@ -41,18 +41,24 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", text
     end
     
+    should "replace placeholder tags with only one dimension" do
+      @parser.text = "<html><!-- @placeholder 100 --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", text
+    end
+    
+    should "replace placeholder tags with text" do
+      @parser.text = "<html><!-- @placeholder 100x100 I am a teapot --></html>"
+      text = @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100px' height='100px' /></html>", text
+    end
+    
     should "replace kitten tags" do
       @parser.text = "<html><!-- @kitten 100x100 --></html>"
       text = @parser.parse()
       assert_equal "<html><img src='http://placekitten.com/100/100' width='100px' height='100px' /></html>", text
     end
     
-    # should "remove todos" do
-    #   @parser.text = "<html><!-- @todo Do this --></html>"
-    #   text = @parser.parse()
-    #   assert_equal "<html></html>", text
-    # end
-
     should "include files" do
       header = Hammer::HammerFile.new
       header.filename = "_header.html"
@@ -343,6 +349,14 @@ class TestHtmlParser < Test::Unit::TestCase
 
         assert_equal "", @parser.parse()
       end
+
+      should "work with a variable with | in its name" do
+        @file.raw_text = "<!-- $title This is my title | I am cool --><!-- $title -->"
+        @parser.hammer_file = @file
+
+        assert_equal "This is my title | I am cool", @parser.parse()
+      end
+
       
       should "work with a variable with > in its name" do
         @file.raw_text = "<!-- $title B> -->"
