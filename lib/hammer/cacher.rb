@@ -73,7 +73,7 @@ class Hammer
       
       # # Yes if the file is modified.
       if new_hash != @hashes[path]
-        puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
+        # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
         @new_dependency_hash[path] = nil
         return true 
       end
@@ -122,7 +122,6 @@ class Hammer
             # puts "  Found files for \n#{query}/#{type} \nin #{path}: #{file.filename}"
             @hammer_project.find_files(query, type).each do |file|
               
-              
               ########
               ######## TODO: Stack level gets too deep here. 
               ########
@@ -161,6 +160,9 @@ class Hammer
         @needs_recompiling[path] = result
       end
       
+      if !result
+        @new_hard_dependencies[path] = @hard_dependencies[path]
+      end
       return result
     end
     

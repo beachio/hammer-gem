@@ -81,7 +81,6 @@ class Hammer
     
     def find_file(filename, extension=nil)
       file = _find_files(filename, extension)[0]
-      puts ""
       add_file_dependency(file)
       return file
     rescue => e
