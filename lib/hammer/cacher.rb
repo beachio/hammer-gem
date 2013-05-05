@@ -64,8 +64,8 @@ class Hammer
 
     def needs_recompiling_without_cache(path)
       
-      # @new_hashes[path] ||= hash(path)
-      # new_hash = @new_hashes[path]
+      @new_hashes[path] ||= hash(path)
+      new_hash = @new_hashes[path]
       
       # # Yes if the file is modified.
       if new_hash != @hashes[path]
