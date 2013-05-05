@@ -144,7 +144,9 @@ class Hammer
       while text.match /<!-- @include (.*?) -->/
         lines = []
         replace(/<!-- @include (.*?) -->/) do |tag, line_number|
+          
           tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
+          
           tags.map do |tag|
             
             if (tag.start_with? "$")
@@ -194,8 +196,8 @@ class Hammer
     
     def alternative_path_tags
       replace(/['|"]@path (.*?)['|"]/) do |tag, line_number|
-        filenmae = tag[6..-2]
-        file = find_file(filenmae)
+        filename = tag[6..-2]
+        file = find_file(filename)
         if !file
           raise "Path tags: <b>#{h tag}</b> couldn't be found."
         end

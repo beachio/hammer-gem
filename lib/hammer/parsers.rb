@@ -15,6 +15,11 @@ class Hammer
     def text=(text)
       @text = text
     end
+    
+    def add_dependency(tag, type)
+      @hammer_project.cacher.add_dependency(self.hammer_file.filename, tag, type)
+      puts "Added dependency #{tag}.#{type} for #{self.hammer_file.filename}"
+    end
 
     attr_reader :hammer_file
     def hammer_file=(hammer_file)
@@ -53,6 +58,9 @@ class Hammer
     end
     
     def find_files(filename, extension=nil)
+      
+      add_dependency(filename, extension)
+      
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
       files = @hammer_project.find_files(filename, extension)
