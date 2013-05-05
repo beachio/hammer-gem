@@ -311,7 +311,6 @@ class Hammer
         elsif @include
           @line = "Compiled to <b>#{link}</b>"
         elsif @file.from_cache
-          puts "AAA"
           @line = "Copied to  <b>#{link}</b> from cache"
         elsif !@file.compiled
           # Nothing
