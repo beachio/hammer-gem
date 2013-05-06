@@ -85,10 +85,6 @@ class Hammer
       file = _find_files(filename, extension)[0]
       add_file_dependency(file)
       return file
-    # rescue => e
-      # puts e.message
-      # puts e.backtrace
-      # nil
     end
     
     def error(text, line_number, hammer_file=nil)
