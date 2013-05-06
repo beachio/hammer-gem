@@ -82,7 +82,7 @@ class Hammer
       # # Yes if the file is modified.
       if new_hash != @hashes[path]
         # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
-        @new_dependency_hash[path] = nil
+        @new_dependency_hash.delete(path)
         return true 
       end
     
@@ -145,7 +145,7 @@ class Hammer
         @needs_recompiling[path] = result
       end
       
-      if !result
+      if !result && path && @hard_dependencies[path]
         @new_hard_dependencies[path] = @hard_dependencies[path]
       end
       return result
@@ -155,9 +155,11 @@ class Hammer
       begin
         results = @hammer_project.find_files(query, type).collect(&:filename)
         results -= [path]
-        @new_dependency_hash[path] ||= {}
-        @new_dependency_hash[path][query] ||= {}
-        @new_dependency_hash[path][query][type] ||= results
+        if results
+          @new_dependency_hash[path] ||= {}
+          @new_dependency_hash[path][query] ||= {}
+          @new_dependency_hash[path][query][type] ||= results
+        end
       rescue => e
         puts e.message
         puts e.backtrace
@@ -165,8 +167,10 @@ class Hammer
     end
     
     def add_file_dependency(file_path, dependency_path)
-      @new_hard_dependencies[file_path] ||= []
-      @new_hard_dependencies[file_path] << dependency_path
+      if dependency_path
+        @new_hard_dependencies[file_path] ||= []
+        @new_hard_dependencies[file_path] << dependency_path
+      end
     end
     
   private
