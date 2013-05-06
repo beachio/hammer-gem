@@ -97,31 +97,17 @@ class Hammer
       end
       
       if @dependency_hash[path]
-        
         # Yes if the file's references have changed (new files).
         @dependency_hash[path].each_pair do |query, matches|
           
+          next if query.nil?
           matches.each do |type, filenames|
-            next if query.nil?
-            new_results = @hammer_project.find_files(query, type).collect(&:filename)
-            if new_results != filenames
-              # puts "File #{path}'s references have changed: #{query} is now #{new_results} instead of #{filenames}"
-              return true
-            end
-        #   end
-          
-        # # end
-
-        # # # Yes if any dependencies need recompiling. 
-        # # @dependency_hash[path].each_pair do |type, matches|
-        #   matches.each do |query, filenames|
-            next if query.nil?
             files = @hammer_project.find_files(query, type)
-            @hammer_project.find_files(query, type).each do |file|
-              sub_file_path = file.filename
-              if needs_recompiling?(sub_file_path)
-                return true 
-              end
+            return true if files.collect(&:filename) != filenames
+            
+            # Yes if any dependencies need recompiling. 
+            files.each do |file|
+              return true if needs_recompiling?(file.filename)
             end
           end
         end

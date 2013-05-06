@@ -119,8 +119,9 @@ class Hammer
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
+        needs_compiling = !cacher.needs_recompiling?(hammer_file.filename)
         
-        if !cacher.needs_recompiling?(hammer_file.filename)
+        if needs_compiling && !hammer_file.is_a_compiled_file
           contents = cacher.cached_contents_for(hammer_file.filename)
         end
         
@@ -150,34 +151,33 @@ class Hammer
       return @hammer_files
     end
     
-    
-  def write
-    @errors = 0
-    output_directory = @output_directory
-    @hammer_files.each do |hammer_file|
-      if !File.basename(hammer_file.filename).start_with?("_")
-        
-        sub_directory   = File.dirname(hammer_file.output_filename)
-        final_location  = File.join output_directory, sub_directory
-        
-        FileUtils.mkdir_p(final_location)
-        
-        output_path = File.join(output_directory, hammer_file.output_filename)
-        output_path = Pathname.new(output_path).cleanpath
-        hammer_file.output_path = output_path
-        
-        @errors += 1 if hammer_file.error
+    def write
+      @errors = 0
+      output_directory = @output_directory
+      @hammer_files.each do |hammer_file|
+        if !File.basename(hammer_file.filename).start_with?("_")
+          
+          sub_directory   = File.dirname(hammer_file.output_filename)
+          final_location  = File.join output_directory, sub_directory
+          
+          FileUtils.mkdir_p(final_location)
+          
+          output_path = File.join(output_directory, hammer_file.output_filename)
+          output_path = Pathname.new(output_path).cleanpath
+          hammer_file.output_path = output_path
+          
+          @errors += 1 if hammer_file.error
 
-        if hammer_file.compiled_text
-          f = File.new(output_path, "w")
-          f.write(hammer_file.compiled_text)
-          f.close
-        else
-          FileUtils.cp(hammer_file.full_path, hammer_file.output_path)
+          if hammer_file.compiled_text
+            f = File.new(output_path, "w")
+            f.write(hammer_file.compiled_text)
+            f.close
+          else
+            FileUtils.cp(hammer_file.full_path, hammer_file.output_path)
+          end
         end
       end
     end
-  end
     
   private
   
