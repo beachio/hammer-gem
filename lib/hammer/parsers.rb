@@ -16,6 +16,7 @@ class Hammer
       @text = text
     end
 
+
     attr_reader :hammer_file
     def hammer_file=(hammer_file)
       @hammer_file = hammer_file
@@ -52,19 +53,38 @@ class Hammer
       path
     end
     
-    def find_files(filename, extension=nil)
+    def add_wildcard_dependency(tag, type)
+      @hammer_project.cacher.add_wildcard_dependency(@hammer_file.filename, tag, type)
+    end
+    
+    def add_file_dependency(file)
+      return unless file
+      @hammer_project.cacher.add_file_dependency(@hammer_file.filename, file.filename)
+    end
+    
+    def _find_files(filename, extension=nil)
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
       files = @hammer_project.find_files(filename, extension)
-      files
+      files      
+    end
+    
+    def find_file_without_adding_dependency(filename, extension=nil)
+      _find_files(filename, extension)[0]
     rescue => e
       nil
     end
     
+    def find_files(filename, extension=nil)
+      # puts "Adding wildcard dependency #{filename}.#{extension} to #{self.hammer_file.filename}<br />"
+      add_wildcard_dependency(filename, extension)
+      return _find_files(filename, extension)
+    end
+    
     def find_file(filename, extension=nil)
-      find_files(filename, extension)[0]
-    rescue => e
-      nil
+      file = _find_files(filename, extension)[0]
+      add_file_dependency(file)
+      return file
     end
     
     def error(text, line_number, hammer_file=nil)

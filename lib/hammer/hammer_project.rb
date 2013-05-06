@@ -6,12 +6,16 @@ class Hammer
     def initialize(production=false)
       @production = production
       @ignored_files = []
-      @hammer_files = [] 
+      @hammer_files = []
     end
     
-    attr_reader :production
+    def cacher
+      @cacher ||= Hammer::Cacher.new(self, @temporary_directory)
+    end
     
-    attr_accessor :hammer_files, :ignored_files, :input_directory
+    attr_reader :production, :errors
+    
+    attr_accessor :hammer_files, :ignored_files, :input_directory, :temporary_directory, :output_directory
     
     def create_hammer_files_from_directory(input_directory, output_directory)
 
@@ -111,24 +115,68 @@ class Hammer
     def compile()
       
       @compiled_hammer_files = []
+      cacher.read_from_disk
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
-        begin
-          hammer_file.hammer_project ||= self
-          pre_compile(hammer_file)
-          next if File.basename(hammer_file.filename).start_with? "_"
-          compile_hammer_file(hammer_file)
-          after_compile(hammer_file)
-        rescue Hammer::Error => error
-          hammer_file.error = error
-        rescue => error
-          # In case there's another error!
-          hammer_file.error = Hammer::Error.new(error.to_s, nil)
+        needs_compiling = !cacher.needs_recompiling?(hammer_file.filename)
+        
+        if needs_compiling && !hammer_file.is_a_compiled_file
+          contents = cacher.cached_contents_for(hammer_file.filename)
         end
+        
+        if contents
+          hammer_file.compiled_text = contents
+          hammer_file.from_cache = true
+        else
+          
+          begin
+            hammer_file.hammer_project ||= self
+            pre_compile(hammer_file)
+            next if File.basename(hammer_file.filename).start_with? "_"
+            compile_hammer_file(hammer_file)
+            after_compile(hammer_file)
+          rescue Hammer::Error => error
+            hammer_file.error = error
+          rescue => error
+            # In case there's another error!
+            hammer_file.error = Hammer::Error.new(error.to_s, nil)
+          end
+        end
+        
       end
       
+      cacher.write_to_disk
+      
       return @hammer_files
+    end
+    
+    def write
+      @errors = 0
+      output_directory = @output_directory
+      @hammer_files.each do |hammer_file|
+        if !File.basename(hammer_file.filename).start_with?("_")
+          
+          sub_directory   = File.dirname(hammer_file.output_filename)
+          final_location  = File.join output_directory, sub_directory
+          
+          FileUtils.mkdir_p(final_location)
+          
+          output_path = File.join(output_directory, hammer_file.output_filename)
+          output_path = Pathname.new(output_path).cleanpath
+          hammer_file.output_path = output_path
+          
+          @errors += 1 if hammer_file.error
+
+          if hammer_file.compiled_text
+            f = File.new(output_path, "w")
+            f.write(hammer_file.compiled_text)
+            f.close
+          else
+            FileUtils.cp(hammer_file.full_path, hammer_file.output_path)
+          end
+        end
+      end
     end
     
   private
@@ -152,6 +200,7 @@ class Hammer
       end
       hammer_file.output_filename = Hammer.output_filename_for(hammer_file)
       hammer_file.compiled_text = text
+      cacher.set_cached_contents_for(hammer_file.filename, text)
     end
     
     def after_compile(hammer_file)

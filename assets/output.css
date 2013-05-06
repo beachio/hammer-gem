@@ -68,6 +68,10 @@ section article {
   -webkit-transition: background-color ease .2s;
 }
 
+section article.cached {
+  opacity: 0.5;
+}
+
 section article.html {
   background: url(IconHTML.png) no-repeat 14px 12px;
   padding-left: 57px;
@@ -547,7 +551,7 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-image: url(IconEditPushed@2x.png);
     background-size: 32px 15px;
   }
-  
+    
   article a.reveal {
     background-image: url(IconReveal@2x.png);
     background-size: 14px 15px;

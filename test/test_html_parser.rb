@@ -66,7 +66,7 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << header
 
       @parser.text = "<html><!-- @include _header --></html>"
-      @parser.expects(:find_files).returns([header])
+      # @parser.expects(:find_files).returns([header])
       
       assert_equal "<html>header</html>", @parser.parse()
     end
@@ -78,7 +78,7 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project << header
 
       @parser.text = "<html><!-- @include _header --></html>"
-      @parser.expects(:find_files).returns([header])
+      # @parser.expects(:find_files).returns([header])
       
       assert_equal "<html><img src='http://placehold.it/100x100' width='100px' height='100px' /></html>", @parser.parse()
     end
@@ -322,7 +322,7 @@ class TestHtmlParser < Test::Unit::TestCase
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
-        @parser.expects(:find_files).returns([logo])
+        # @parser.expects(:find_files).returns([logo])
         @parser.hammer_file = @file
       end
       

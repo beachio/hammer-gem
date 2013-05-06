@@ -25,7 +25,7 @@ end
 
 require File.join(File.dirname(__FILE__), "hammer")
 
-["hammer", "parsers", "compressor", "hammer_file", "hammer_project", "hammer_error"].each do |file|
+["hammer", "parsers", "compressor", "hammer_file", "hammer_project", "hammer_error", "cacher"].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
 

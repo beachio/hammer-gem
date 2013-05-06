@@ -22,7 +22,7 @@ class Hammer
     end
     
   private
-    
+  
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
