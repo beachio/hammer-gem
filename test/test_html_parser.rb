@@ -60,15 +60,21 @@ class TestHtmlParser < Test::Unit::TestCase
     end
     
     should "include files" do
-      header = Hammer::HammerFile.new
-      header.filename = "_header.html"
-      header.raw_text = "header"
-      @hammer_project << header
 
-      @parser.text = "<html><!-- @include _header --></html>"
-      # @parser.expects(:find_files).returns([header])
+    end
+    
+    context "including files" do
+      setup do
+        header = Hammer::HammerFile.new
+        header.filename = "_header.html"
+        header.raw_text = "header"
+        @hammer_project << header
+      end
       
-      assert_equal "<html>header</html>", @parser.parse()
+      should "include files" do
+        @parser.text = "<html><!-- @include _header --></html>"
+        assert_equal "<html>header</html>", @parser.parse()
+      end
     end
     
     should "do placeholders inside include files" do
@@ -139,6 +145,13 @@ class TestHtmlParser < Test::Unit::TestCase
             @parser.parse()
           end
         end 
+        
+        should "remove empty lines from the start of a page" do
+          @file.raw_text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
+          @new_file.filename = "assets/app.js"
+          @parser.text = @file.raw_text
+          assert_equal "This is a line\nThis is another line", @parser.parse()
+        end
       end
       
       context "when referring to multiple script tags" do

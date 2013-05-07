@@ -1,3 +1,5 @@
+
+
 class Hammer
   class HTMLParser < HammerParser
     
@@ -40,6 +42,7 @@ class Hammer
       # TODO: Check whether we want to do this first
       path_tags()
       
+      # Do the parse thing
       includes()
       placeholders()
       get_variables()
@@ -50,6 +53,9 @@ class Hammer
       output_variables()
       
       current_tags()
+      
+      # Cleanup
+      ensure_text_has_no_leading_blank_lines()
       
       return @text
     end
@@ -62,7 +68,8 @@ class Hammer
       'html'
     end
 
-    private
+  private
+
     
     def placeholders
       replace(/<!-- @placeholder (.*?) -->/) do |tag, line_number|
@@ -337,9 +344,14 @@ class Hammer
       # end
       @text = Amp.parse(@text, filename, 'current')
       @text = Amp.parse_for_current_parent(@text, @hammer_file.finished_filename, 'current-parent')
-      
-      
     end
+    
+    def ensure_text_has_no_leading_blank_lines
+      while @text.split("\n")[0] == ""
+        @text = @text[1..-1]
+      end
+    end
+    
   end
   register_parser_for_extensions HTMLParser, ['html']
   register_parser_as_default_for_extensions HTMLParser, ['html']
