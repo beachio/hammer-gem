@@ -19,8 +19,12 @@ class Hammer
     
     private
     
+    def options
+      {:auto_ids => false}
+    end
+    
     def convert(markdown)
-      Kramdown::Document.new(markdown).to_html
+      doc = Kramdown::Document.new(markdown, options).to_html
     end
     
   end

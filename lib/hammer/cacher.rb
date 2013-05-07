@@ -76,6 +76,8 @@ class Hammer
 
     def needs_recompiling_without_cache(path)
       
+      return true if DEBUG
+      
       @new_hashes[path] ||= hash(path)
       new_hash = @new_hashes[path]
       

@@ -1,5 +1,3 @@
-
-
 class Hammer
   class HTMLParser < HammerParser
     

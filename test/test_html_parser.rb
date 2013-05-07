@@ -222,19 +222,32 @@ class TestHtmlParser < Test::Unit::TestCase
           assert_equal "<link rel='stylesheet' href='assets/app.css'>", @parser.parse()
         end
         
-        should "replace @stylesheet tags with correct paths for SCSS" do
-          @new_file.filename = "assets/three/app.scss"
-          @new_file.raw_text = "<!-- @stylesheet app.scss -->"
-          @parser.hammer_file = @file
-          assert_equal "<link rel='stylesheet' href='assets/three/app.css'>", @parser.parse()
-        end
-        
         should "replace @javascript tags with correct paths in another directory" do
           @file.filename = "blog/index.html"
           @new_file.filename = "assets/app.css"
           @parser.hammer_file = @file
           assert_equal "<link rel='stylesheet' href='../assets/app.css'>", @parser.parse()
         end
+      end
+
+      ## TODO: Re-enable line breaks in tags.
+      ## This is quite tricky, though.      
+      # should "allow line breaks" do
+      #   @third_file = Hammer::HammerFile.new
+      #   @third_file.filename = "two.css"
+        
+      #   @new_file.filename = "assets/three/fail.scss"
+      #   @new_file.raw_text = "<!-- @stylesheet xxxxxxx\nyyyyyyy -->"
+      #   @parser.hammer_file = @file
+      #   @parser.text = @new_file.raw_text
+      #   assert_equal "<link rel='stylesheet' href='assets/three/fail.css'>\n<link rel='stylesheet' href='assets/app.css'>", @parser.parse()
+      # end
+      
+      should "replace @stylesheet tags with correct paths for SCSS" do
+        @new_file.filename = "assets/three/app.scss"
+        @new_file.raw_text = "<!-- @stylesheet app.scss -->"
+        @parser.hammer_file = @file
+        assert_equal "<link rel='stylesheet' href='assets/three/app.css'>", @parser.parse()
       end
       
       context "with variables" do

@@ -10,6 +10,18 @@ class Object
   end
 end
 
+DEBUG = ARGV.include? "DEBUG"
+
+if DEBUG
+  def log(val)
+    puts(val)
+  end
+else
+  def log(val)
+    #
+  end
+end
+
 $FILE_PATH = File.expand_path(File.dirname(File.dirname(__FILE__)))
 $LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "lib")
 $LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "..")
