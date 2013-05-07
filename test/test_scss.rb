@@ -1,9 +1,15 @@
 class TestSCSS < Test::Unit::TestCase
+  
+    def assert_includes(a, b)
+      assert a.include? b
+    end
+  
   context "A SCSS Parser" do
     setup do
       @hammer_project = Hammer::Project.new
       @parser = Hammer::SASSParser.new
     end
+    
     should "parse SASS" do
       @hammer_file = Hammer::HammerFile.new
       @hammer_file.filename = "style.scss"

@@ -322,7 +322,7 @@ class TestHtmlParser < Test::Unit::TestCase
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
-        # @parser.expects(:find_files).returns([logo])
+        @parser.expects(:find_file_without_adding_dependency).returns(logo)
         @parser.hammer_file = @file
       end
       

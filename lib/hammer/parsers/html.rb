@@ -199,22 +199,24 @@ class Hammer
         filename = tag[6..-2]
         file = find_file_without_adding_dependency(filename)
         if !file
-          raise "Path tags: <b>#{h tag}</b> couldn't be found."
+          raise "Path tags: <b>#{h filename}</b> couldn't be found."
+        else
+          [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
         end
-        [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
       end
     end
     
     def path_tags
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
-        tag = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
+        filename = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
         
-        file = find_file_without_adding_dependency(tag)
+        file = find_file_without_adding_dependency(filename)
         
         if !file
-          raise "Path tags: <b>#{h tag}</b> couldn't be found."
+          raise "Path tags: <b>#{h filename}</b> couldn't be found."
+        else
+          path_to(file)
         end
-        path_to(file)
       end
       alternative_path_tags
     end
