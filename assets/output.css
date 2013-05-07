@@ -69,11 +69,11 @@ section article {
 }
 
 span.from-cache {
-  background: #ededed;
+  /*background: #ededed;*/
   /*color: white;*/
   font-style: italic;
-  padding: 2px 5px;
-  border-radius: 8px;
+  /*padding: 2px 5px;*/
+  /*border-radius: 8px;*/
   display: inline;
 }
 
