@@ -106,9 +106,9 @@ class Hammer
             return true if files.collect(&:filename) != filenames
             
             # Yes if any dependencies need recompiling. 
-            files.each do |file|
-              return true if needs_recompiling?(file.filename)
-            end
+            # files.each do |file|
+            #   return true if needs_recompiling?(file.filename)
+            # end
           end
         end
         
@@ -122,7 +122,6 @@ class Hammer
     # Check a file to see whether it needs recompiling.
     def needs_recompiling?(path)
       
-      
       @needs_recompiling ||= {}
       if @needs_recompiling[path] != nil
         result = @needs_recompiling[path]
@@ -134,6 +133,7 @@ class Hammer
       if !result && path && @hard_dependencies[path]
         @new_hard_dependencies[path] = @hard_dependencies[path]
       end
+
       return result
     end
     
