@@ -25,6 +25,7 @@ class Hammer
     end
     
     def includes
+      return unless @hammer_project
       
       while text.match /[\s-]*\/ @include (.*)/
         
