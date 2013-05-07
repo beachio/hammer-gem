@@ -6,7 +6,7 @@ class TestMarkdown < Test::Unit::TestCase
     
     should "parse markdown" do
       @parser.text = "# This is markdown"
-      assert_equal "<h1 id=\"this-is-markdown\">This is markdown</h1>\n", @parser.parse()
+      assert_equal "<h1>This is markdown</h1>\n", @parser.parse()
     end
     
     should "preserve comments" do
