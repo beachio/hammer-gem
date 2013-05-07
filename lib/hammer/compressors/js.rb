@@ -1,6 +1,6 @@
 class Hammer
   class JSCompressor < Compressor
-    def parse
+    def compress
       Uglifier.compile(@text)+"\n;"
     end
   end
