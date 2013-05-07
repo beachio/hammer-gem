@@ -72,8 +72,8 @@ span.from-cache {
   background: #ededed;
   /*color: white;*/
   font-style: italic;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 2px 5px;
+  border-radius: 8px;
   display: inline;
 }
 
