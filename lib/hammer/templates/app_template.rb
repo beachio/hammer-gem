@@ -311,7 +311,7 @@ class Hammer
         elsif @include
           @line = "Compiled to <b>#{link}</b>"
         elsif @file.from_cache
-          @line = "Copied to  <b>#{link}</b> from cache"
+          @line = "Copied to  <b>#{link}</b> <span class='from-cache'>from&nbsp;cache</span>"
         elsif !@file.compiled
           # Nothing
         elsif @extension == "html"

@@ -68,8 +68,13 @@ section article {
   -webkit-transition: background-color ease .2s;
 }
 
-section article.cached {
-  opacity: 0.5;
+span.from-cache {
+  background: #ededed;
+  /*color: white;*/
+  font-style: italic;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: inline;
 }
 
 section article.html {
