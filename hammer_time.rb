@@ -27,26 +27,6 @@ if File.exists? project_directory
   # FileUtils.rm_rf(output_directory)
 
   project.write()  
-  # hammer_files.each do |hammer_file|
-    
-  #   if !File.basename(hammer_file.filename).start_with?("_")
-      
-  #     sub_directory   = File.dirname(hammer_file.output_filename)
-  #     final_location  = File.join output_directory, sub_directory
-      
-  #     FileUtils.mkdir_p(final_location)
-      
-  #     output_path = File.join(output_directory, hammer_file.output_filename)
-  #     output_path = Pathname.new(output_path).cleanpath
-  #     hammer_file.output_path = output_path
-      
-  #     @errors += 1 if hammer_file.error
-
-  #     f = File.new(output_path, "w")
-  #     f.write(hammer_file.compiled_text)
-  #     f.close
-  #   end
-  # end
   @errors = project.errors
 end
 
