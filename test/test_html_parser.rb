@@ -146,6 +146,16 @@ class TestHtmlParser < Test::Unit::TestCase
           end
         end 
         
+        should "work with Clever Paths" do
+          @file.raw_text = "<!-- $variable logo.png --><!-- @path $variable -->"
+          image = Hammer::HammerFile.new
+          image.filename = "assets/logo.png"
+          @hammer_project << image
+          @parser.expects(:find_file_without_adding_dependency).returns(image)
+          @parser.text = @file.raw_text
+          assert_equal "assets/logo.png", @parser.parse()
+        end
+        
         should "remove empty lines from the start of a page" do
           @file.raw_text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
           @new_file.filename = "assets/app.js"
