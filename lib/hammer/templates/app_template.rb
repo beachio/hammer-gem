@@ -240,6 +240,8 @@ class Hammer
         (file.filename == "index.html") ? 0 : 1
       }.sort_by {|file|
         file.from_cache ? 1 : 0
+      }.sort_by {|file|
+        file.messages.length > 0 ? 0 : 1
       }.select { |file|
         underscore = File.basename(file.finished_filename).start_with? "_"
         !underscore || file.messages.count > 0 || file.error
@@ -357,8 +359,14 @@ class Hammer
       end
       
       def to_s
+        
+        hammer_final_filename_attribute = ""
+        if @file.output_path && !@include
+          hammer_final_filename_attribute = "hammer-final-filename=\"#{@file.output_path}\""
+        end
+        
         text = %Q{
-          <article class="#{span_class}" hammer-original-filename="#{@file.full_path}" hammer-final-filename="#{@file.output_path}">
+          <article class="#{span_class}" hammer-original-filename="#{@file.full_path}" #{hammer_final_filename_attribute}">
             <span class="filename">#{filename}</span>
             <small class="#{span_class}">#{line}</small>
             #{todos}
