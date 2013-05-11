@@ -238,6 +238,8 @@ class Hammer
         file.filename
       }.sort_by {|file|
         (file.filename == "index.html") ? 0 : 1
+      }.sort_by {|file|
+        file.from_cache ? 1 : 0
       }.select { |file|
         underscore = File.basename(file.finished_filename).start_with? "_"
         !underscore || file.messages.count > 0 || file.error
@@ -309,7 +311,7 @@ class Hammer
           lines << "</span>"
           @line = lines.join()
         elsif @include
-          @line = "Compiled to <b>#{link}</b>"
+          # @line = "Compiled to <b>#{link}</b>"
         elsif @file.from_cache
           @line = "Copied to  <b>#{link}</b> <span class='from-cache'>from&nbsp;cache</span>"
         elsif !@file.compiled
