@@ -237,11 +237,11 @@ class Hammer
         extension = File.extname(file.finished_filename).downcase
         file.filename
       }.sort_by {|file|
-        (file.filename == "index.html") ? 0 : 1
-      }.sort_by {|file|
         file.from_cache ? 1 : 0
       }.sort_by {|file|
         file.messages.length > 0 ? 0 : 1
+      }.sort_by {|file|
+        (file.filename == "index.html") ? 0 : 1
       }.select { |file|
         underscore = File.basename(file.finished_filename).start_with? "_"
         !underscore || file.messages.count > 0 || file.error
