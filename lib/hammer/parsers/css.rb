@@ -185,11 +185,16 @@ class Hammer
     
     def load_paths
       [
-        (File.dirname(@hammer_file.full_path) rescue nil),
-        (File.join(@hammer_project.input_directory, "**/*") rescue nil),
+        File.dirname(escape_glob(@hammer_file.full_path)),
+        File.join(escape_glob(@hammer_project.input_directory), "**/*"),
         File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
       ].compact
     end
+    
+    def escape_glob(s)
+      s.gsub(/[\\\{\}\[\]\*\?]/) { |x| "\\"+x }
+    end
+
 
     def options
       {
