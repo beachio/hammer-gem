@@ -37,6 +37,7 @@ class Hammer
           url_tag
         else
           
+          add_wildcard_dependency file_path
           file_name = file_path.split(/\?|#/)[0]
           extras = file_path.split(file_name)[1]
           file = find_file(file_name)
@@ -56,6 +57,7 @@ class Hammer
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
+          add_wildcard_dependency tag
           file = find_file(tag, 'css')
           raise "Included file <b>#{tag}</b> couldn't be found." unless file
           Hammer.parser_for_hammer_file(file).to_css()

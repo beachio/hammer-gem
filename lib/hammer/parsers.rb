@@ -53,7 +53,7 @@ class Hammer
       path
     end
     
-    def add_wildcard_dependency(tag, type)
+    def add_wildcard_dependency(tag, type=nil)
       @hammer_project.cacher.add_wildcard_dependency(@hammer_file.filename, tag, type)
     end
     
