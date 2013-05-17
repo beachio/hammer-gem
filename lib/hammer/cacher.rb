@@ -1,3 +1,5 @@
+require "md5"
+
 class Hammer
   class HammerFile
     attr_accessor :cached
@@ -31,6 +33,7 @@ class Hammer
         contents = File.open(path).read
         if contents && contents != ""
           contents = JSON.parse(contents)
+          @files_digest = contents['files_digest'] if contents['files_digest']
           @dependency_hash = contents['dependency_hash'] if contents['dependency_hash']
           @hard_dependencies = contents['hard_dependencies'] if contents['hard_dependencies']
           @new_dependency_hash = @dependency_hash
@@ -45,8 +48,9 @@ class Hammer
       @dependency_hash = @new_dependency_hash
       @hashes = @new_hashes
       @hard_dependencies = @new_hard_dependencies
+      @files_digest = @new_files_digest
       
-      contents = {:dependency_hash => @dependency_hash, :hashes => @hashes, :hard_dependencies => @hard_dependencies}
+      contents = {:dependency_hash => @dependency_hash, :hashes => @hashes, :hard_dependencies => @hard_dependencies, :files_digest => @files_digest}
       
       return true unless @directory
       path = File.join(@directory, "cache.json")
@@ -83,7 +87,6 @@ class Hammer
       
       # # Yes if the file is modified.
       if new_hash != @hashes[path]
-        # puts "File #{path} is modified from #{@hashes[path]} to #{new_hash}!"
         @new_dependency_hash.delete(path)
         return true 
       end
@@ -98,22 +101,23 @@ class Hammer
         end
       end
       
-      if @dependency_hash[path]
-        # Yes if the file's references have changed (new files).
-        @dependency_hash[path].each_pair do |query, matches|
-          
-          next if query.nil?
-          matches.each do |type, filenames|
-            files = @hammer_project.find_files(query, type)
-            return true if files.collect(&:filename) != filenames
+      if files_added_or_removed
+        if @dependency_hash[path]
+          # Yes if the file's references have changed (new files).
+          @dependency_hash[path].each_pair do |query, matches|
             
-            # Yes if any dependencies need recompiling. 
-            # files.each do |file|
-            #   return true if needs_recompiling?(file.filename)
-            # end
+            next if query.nil?
+            matches.each do |type, filenames|
+              files = @hammer_project.find_files(query, type)
+              return true if files.collect(&:filename) != filenames
+              
+              # Yes if any dependencies need recompiling. 
+              # files.each do |file|
+              #   return true if needs_recompiling?(file.filename)
+              # end
+            end
           end
         end
-        
       end
       
       # File #{path} was not modified.
@@ -162,6 +166,16 @@ class Hammer
     end
     
   private
+  
+    def files_added_or_removed
+      send @hammer_project.hammer_files.collect(&:filename).join("")
+      if @files_added_or_removed == nil
+        current_files_digest = Digest::MD5.hexdigest @hammer_project.hammer_files.collect(&:filename).join("")
+        @files_added_or_removed = current_files_digest != @files_digest
+        @new_files_digest = current_files_digest
+      end
+      return @files_added_or_removed
+    end
     
     # TODO: CHange this from reading the whole file.
     # We may be able to do this with timestamps instead. Might be a better approach.
