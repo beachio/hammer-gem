@@ -26,13 +26,7 @@ class Hammer
   class AppTemplate < Template
     
     def to_s
-      if @files == nil
-        return [header, not_found, footer].join("\n")
-      elsif @files == []
-        [header, no_files, footer].join("\n")
-      else
-        [header, body, footer].join("\n")
-      end
+      [header, body, footer].join("\n")
     end
     
     private
