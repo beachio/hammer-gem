@@ -85,7 +85,7 @@ class Hammer
         y = dimensions.split('x')[1] || x
 
         begin
-          "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}px' height='#{y}px' />"
+          "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' />"
         rescue 
           tag
         end
@@ -96,7 +96,7 @@ class Hammer
         begin
           x = dimensions.split('x')[0]
           y = dimensions.split('x')[1]
-          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}px' height='#{y}px' />"
+          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' />"
         rescue 
           tag
         end

@@ -52,7 +52,7 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       end
       
       should "display the error messages" do
-        assert @text.include? "Error message"
+        assert @text.include? "Error&nbsp;message"
         assert @text.include? "123"
       end
     end

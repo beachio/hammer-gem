@@ -186,11 +186,17 @@ class Hammer
     end
     
     def load_paths
-      [
-        File.dirname(escape_glob(@hammer_file.full_path)),
-        File.join(escape_glob(@hammer_project.input_directory), "**/*"),
-        File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
-      ].compact
+      if @hammer_file.full_path && @hammer_project.input_directory
+        [
+          File.dirname(escape_glob(@hammer_file.full_path)),
+          File.join(escape_glob(@hammer_project.input_directory), "**/*"),
+          File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
+        ].compact
+      else
+        [
+          File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
+        ].compact
+      end
     end
     
     def escape_glob(s)
