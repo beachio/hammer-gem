@@ -109,7 +109,10 @@ class Hammer
             next if query.nil?
             matches.each do |type, filenames|
               files = @hammer_project.find_files(query, type)
-              return true if files.collect(&:filename) != filenames
+              # return true if files.collect(&:filename) != filenames
+              if files.collect(&:filename) != filenames
+                return true
+              end
               
               # Yes if any dependencies need recompiling. 
               # files.each do |file|
@@ -150,11 +153,11 @@ class Hammer
         if results
           @new_dependency_hash[path] ||= {}
           @new_dependency_hash[path][query] ||= {}
-          @new_dependency_hash[path][query][type] ||= results
+          @new_dependency_hash[path][query][type] = results
         end
       rescue => e
-        puts e.message
-        puts e.backtrace
+        # puts e.message
+        # puts e.backtrace
       end
     end
     
@@ -168,7 +171,6 @@ class Hammer
   private
   
     def files_added_or_removed
-      send @hammer_project.hammer_files.collect(&:filename).join("")
       if @files_added_or_removed == nil
         current_files_digest = Digest::MD5.hexdigest @hammer_project.hammer_files.collect(&:filename).join("")
         @files_added_or_removed = current_files_digest != @files_digest
