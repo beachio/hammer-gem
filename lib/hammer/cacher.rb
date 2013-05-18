@@ -38,6 +38,7 @@ class Hammer
           @hard_dependencies = contents['hard_dependencies'] if contents['hard_dependencies']
           @new_dependency_hash = @dependency_hash
           @hashes = contents['hashes'] if contents['hashes']
+          @messages = contents['messages'] if contents['messages']
         end
       end
     end
@@ -45,12 +46,17 @@ class Hammer
     # When finished:
     def write_to_disk
       
+      @messages ||= {}
+      @hammer_project.hammer_files.each do |hammer_file|
+        @messages[hammer_file.filename] = Marshal.dump hammer_file.messages
+      end
+      
       @dependency_hash = @new_dependency_hash
       @hashes = @new_hashes
       @hard_dependencies = @new_hard_dependencies
       @files_digest = @new_files_digest
       
-      contents = {:dependency_hash => @dependency_hash, :hashes => @hashes, :hard_dependencies => @hard_dependencies, :files_digest => @files_digest}
+      contents = {:messages => @messages, :dependency_hash => @dependency_hash, :hashes => @hashes, :hard_dependencies => @hard_dependencies, :files_digest => @files_digest}
       
       return true unless @directory
       path = File.join(@directory, "cache.json")
@@ -61,6 +67,16 @@ class Hammer
       end
     end
     
+    def messages_for(path)
+      @messages ||= {}
+      if @messages[path]
+        Marshal.load @messages[path]
+      else
+        []
+      end
+    rescue 
+      []
+    end
     
     def cached_contents_for(path)
       path = File.join(@directory, path)

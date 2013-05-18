@@ -31,18 +31,6 @@ class Hammer
     
     private
     
-    def output_css
-      File.open(File.join(File.dirname(__FILE__), "../../../assets/output.css")).read
-    end
-    
-    def jquery
-      File.open(File.join(File.dirname(__FILE__), "../../../assets/jquery.min.js")).read
-    end
-    
-    def tabs
-      File.open(File.join(File.dirname(__FILE__), "../../../assets/tabs.js")).read
-    end
-    
     def header
       %Q{
         <html>
