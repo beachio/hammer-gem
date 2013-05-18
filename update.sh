@@ -18,7 +18,7 @@ gem update eco-source --pre
 gem update uglifier
 
 gem unpack bourbon --target=vendor/gems
-gem unpack coffee-script-source --target=vendor/gems
+gem unpack -v '1.5.0' coffee-script-source --target=vendor/gems
 gem unpack execjs --target=vendor/gems
 gem unpack haml --target=vendor/gems
 gem unpack coffee-script --target=vendor/gems

@@ -145,6 +145,13 @@ class Hammer
             # In case there's another error!
             hammer_file.error = Hammer::Error.new(error.to_s, nil)
           end
+          
+          if hammer_file.error
+            cacher.clear_cached_contents_for(hammer_file.filename)
+          else
+            cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+          end
+          
         end
         
       end
@@ -203,7 +210,6 @@ class Hammer
       end
       hammer_file.output_filename = Hammer.output_filename_for(hammer_file)
       hammer_file.compiled_text = text
-      cacher.set_cached_contents_for(hammer_file.filename, text)
     end
     
     def after_compile(hammer_file)

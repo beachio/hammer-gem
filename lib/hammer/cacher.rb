@@ -56,7 +56,13 @@ class Hammer
       @hard_dependencies = @new_hard_dependencies
       @files_digest = @new_files_digest
       
-      contents = {:messages => @messages, :dependency_hash => @dependency_hash, :hashes => @hashes, :hard_dependencies => @hard_dependencies, :files_digest => @files_digest}
+      contents = {
+        :messages => @messages, 
+        :dependency_hash => @dependency_hash, 
+        :hashes => @hashes, 
+        :hard_dependencies => @hard_dependencies, 
+        :files_digest => @files_digest
+      }
       
       return true unless @directory
       path = File.join(@directory, "cache.json")
@@ -84,6 +90,14 @@ class Hammer
       File.open(path).read
     rescue
       nil
+    end
+    
+    def clear_cached_contents_for(path)
+      path = File.join(@directory, path)
+      begin
+        FileUtils.rm(path)
+      rescue
+      end
     end
     
     def set_cached_contents_for(path, contents)
