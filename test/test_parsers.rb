@@ -27,6 +27,20 @@ class TestParsers < Test::Unit::TestCase
       assert_equal @haml, @parser.find_file("_haml", "html")
     end
     
+    should "not find files without extensions" do
+      @anonymous_file = Hammer::HammerFile.new
+      @anonymous_file.filename = "my_file"
+      @project << @anonymous_file
+      assert_equal nil, @parser.find_file("my_file", "html")
+    end
+    
+    should "find files without extensions when asked without an extension" do
+      @anonymous_file = Hammer::HammerFile.new
+      @anonymous_file.filename = "my_file"
+      @project << @anonymous_file
+      assert_equal @anonymous_file, @parser.find_file("my_file")
+    end
+    
   end
   
   context "where there's an error in an include" do
