@@ -168,6 +168,9 @@ class Hammer
             if file
               
               parser = @hammer_project.parser_for_hammer_file(file)
+              
+              next unless parser
+              
               parser.variables = self.variables
               
               begin

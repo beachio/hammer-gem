@@ -105,11 +105,17 @@ class Hammer
     end
     
     def parser_for_hammer_file(hammer_file)
-      parser = Hammer.parser_for_extension(hammer_file.extension).new(hammer_file.hammer_project)
-      parser.hammer_project = self
-      parser.text = hammer_file.raw_text
-      parser.hammer_file = hammer_file
-      parser
+      parser_type = Hammer.parser_for_extension(hammer_file.extension)
+      if parser_type
+        parser = parser_type.new(hammer_file.hammer_project)
+        parser.hammer_project = self
+        parser.text = hammer_file.raw_text
+        parser.hammer_file = hammer_file
+        parser
+      else
+        raise "No parser found for #{hammer_file.filename}"
+        # nil
+      end
     end
     
     ## The compile method. This does all the files.
@@ -140,6 +146,7 @@ class Hammer
             compile_hammer_file(hammer_file)
             after_compile(hammer_file)
           rescue Hammer::Error => error
+            puts error
             hammer_file.error = error
           rescue => error
             # In case there's another error!
