@@ -89,7 +89,14 @@ class Hammer
       regex = Hammer.regex_for(filename, extension)
 
       files = @hammer_files.select { |file|
-        file.filename =~ regex || File.basename(file.filename) == filename
+        
+        match = file.filename =~ regex
+        straight_basename = File.basename(file.filename) == filename
+        
+        no_extension_required = extension.nil?
+        has_extension = File.extname(file.filename) != ""
+        
+        (has_extension || no_extension_required) && (straight_basename || match)
       }.sort_by {|file| 
         file.filename.to_s
       }.sort_by { |file|
@@ -113,8 +120,8 @@ class Hammer
         parser.hammer_file = hammer_file
         parser
       else
-        raise "No parser found for #{hammer_file.filename}"
-        # nil
+        # raise "No parser found for #{hammer_file.filename}"
+        nil
       end
     end
     
