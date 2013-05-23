@@ -30,10 +30,11 @@ class Hammer
   private
 
     def url_paths
-      replace(/url\((\S*)\)/) do |url_tag, line_number|
-        file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
+      replace(/url\((\S*?)\)/) do |url_tag, line_number|
 
-        if file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+        file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
+        
+        if file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
           url_tag
         else
           

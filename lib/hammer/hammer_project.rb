@@ -153,7 +153,6 @@ class Hammer
             compile_hammer_file(hammer_file)
             after_compile(hammer_file)
           rescue Hammer::Error => error
-            puts error
             hammer_file.error = error
           rescue => error
             # In case there's another error!
