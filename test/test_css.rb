@@ -33,6 +33,30 @@ class CSSParserTest < Test::Unit::TestCase
       assert_equal "a { background: url(images/proximanova-regular.eot#iefix) }", @parser.parse()
     end
     
+    context "with strange url() params" do
+      
+      setup do
+        @css_file = Hammer::HammerFile.new()
+        @css_file.filename = "style.css"
+        @parser.hammer_file = @css_file
+      end
+      
+      should "parse empty url()" do
+        @parser.text = "a {background: url()}"
+        assert_equal "a {background: url()}", @parser.parse()
+      end
+      
+      should "parse multiple url() on one line" do
+        image = Hammer::HammerFile.new
+        image.filename = "button_bg_over.png"
+        @hammer_project << image
+        @parser.text = ".aui-form-trigger:focus{background-image:url(button_bg_over.png)}.aui-trigger-selected{background: red}"
+        output = ".aui-form-trigger:focus{background-image:url(button_bg_over.png)}.aui-trigger-selected{background: red}"
+        assert_equal output, @parser.parse()
+      end
+      
+    end
+    
     context "with a CSS file" do
       
       setup do
@@ -95,9 +119,18 @@ class CSSParserTest < Test::Unit::TestCase
           end
 
         end
+        
+        should "work with more than one url() on a line with or without a ;" do
+          assert_compilation "url(../../_include.css)};url(_include.css)", "url(assets/_include.css)};url(assets/_include.css)"
+          assert_compilation "url(../../_include.css)}url(_include.css)", "url(assets/_include.css)}url(assets/_include.css)"
+        end
+        
+        should "work with empty url()" do
+          assert_compilation "url()", "url()"
+        end
 
         should "do stupid relative paths again" do
-          assert_compilation "url(../../_include.css);", "url(assets/_include.css);"          
+          assert_compilation "url(../../_include.css);", "url(assets/_include.css);"
         end
 
         should "not do http paths" do
