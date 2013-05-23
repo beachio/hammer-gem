@@ -75,7 +75,8 @@ class Hammer
     
     def parse
       includes()
-      convert(text)
+      @text = convert(text)
+      @text = convert_comments(text)
     rescue Haml::SyntaxError => e
       raise Hammer::Error.new(e.message, e.line)
     end
@@ -87,6 +88,11 @@ class Hammer
       # Haml::Engine.new(text).render(base)
       Haml::Engine.new(text).to_html
     end
+    
+    def convert_comments(text)
+      text.gsub("&lt;!--", "<!--").gsub("--&gt;", "-->")
+    end
+    
   end
   register_parser_for_extensions HAMLParser, ['haml']
   register_parser_as_default_for_extensions HAMLParser, ['haml']
