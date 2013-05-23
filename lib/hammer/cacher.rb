@@ -48,7 +48,9 @@ class Hammer
       
       @messages ||= {}
       @hammer_project.hammer_files.each do |hammer_file|
-        @messages[hammer_file.filename] = Marshal.dump hammer_file.messages
+        if hammer_file.messages.any?
+          @messages[hammer_file.filename] = Marshal.dump hammer_file.messages
+        end
       end
       
       @dependency_hash = @new_dependency_hash
@@ -121,11 +123,23 @@ class Hammer
         return true 
       end
     
-    
+      
       if @hard_dependencies[path]
+        # p "Dependencies for #{path}:"
         @hard_dependencies[path].each do |dependency|
+          # p "&nbsp;&nbsp;&nbsp;#{dependency}"
           next if dependency == path
+          
+          # p "Nested dependencies: "
+          # p @hard_dependencies[dependency]
+          
+          if needs_recompiling_without_cache(dependency)
+            # p "#{dependency} needs recompiling!"
+            return true
+          end
+          
           if needs_recompiling?(dependency)
+            # p "#{dependency} needs recompiling!"
             return true 
           end
         end

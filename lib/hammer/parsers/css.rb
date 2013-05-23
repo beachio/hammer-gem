@@ -123,8 +123,9 @@ class Hammer
         @text = engine.render()
         
         engine.dependencies.each do |dependency|
-          next if dependency.options[:original_filename].end_with? "_bourbon.scss"
-          path = dependency.options[:original_filename]
+          
+          path = dependency.options[:filename]
+          next unless path.start_with? @hammer_project.input_directory
           
           if path.start_with? @hammer_project.input_directory
             relative_path = path[@hammer_project.input_directory.length..-1]
