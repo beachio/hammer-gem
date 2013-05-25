@@ -119,6 +119,7 @@ class Hammer
       includes()
       
       engine = Sass::Engine.new(@text, options)
+      
       begin
         @text = engine.render()
         
@@ -212,8 +213,9 @@ class Hammer
         :syntax => format, 
         :load_paths => load_paths,
         :relative_assets => true,
+        :quiet => true,
         # :debug_info => !@hammer_project.production,
-        # :cache_location => @hammer_project.sass_cache_directory,
+        :cache_location => @hammer_project.temporary_directory, # @hammer_project.sass_cache_directory,
         :sass => sass_options
       }
     end
