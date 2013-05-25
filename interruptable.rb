@@ -13,6 +13,14 @@ output_directory = ARGV[2] || File.join(project_directory, "Build")
 
 hammer_files = nil
 
+# Make sure we aren't a zombie!
+Thread.new do
+  while true
+    exit if Process.ppid == 1
+    sleep 1
+  end
+end
+
 begin
   while true
     sleep 0.1
