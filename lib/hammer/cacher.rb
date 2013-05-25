@@ -206,9 +206,18 @@ class Hammer
     end
     
     def add_file_dependency(file_path, dependency_path)
+      
+      extension = File.extname(dependency_path)[1..-1]
+      if Hammer.parsers_for_extension(extension).length == 0
+        return
+      end
+      
       if dependency_path
         @new_hard_dependencies[file_path] ||= []
-        @new_hard_dependencies[file_path] << dependency_path
+        unless @new_hard_dependencies[file_path].include? dependency_path
+          @new_hard_dependencies[file_path] << dependency_path
+          @new_hard_dependencies[file_path] = @new_hard_dependencies[file_path].uniq
+        end
       end
     end
     
