@@ -59,7 +59,7 @@ class Hammer
         
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
-        hammer_file.raw_text = File.read(filename)
+        # hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
         hammer_file.hammer_project = self
@@ -147,6 +147,7 @@ class Hammer
         else
           
           begin
+            hammer_file.raw_text = File.read(hammer_file.full_path)
             hammer_file.hammer_project ||= self
             pre_compile(hammer_file)
             next if File.basename(hammer_file.filename).start_with? "_"
