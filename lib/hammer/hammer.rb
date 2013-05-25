@@ -132,3 +132,5 @@ class Hammer
   
   
 end
+
+require File.join(File.dirname(__FILE__), "include")
