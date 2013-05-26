@@ -22,7 +22,7 @@ if File.exists? project_directory
 end
 
 unless ARGV.include? "DEBUG"
-  template = Hammer::AppTemplate.new(hammer_files, project)
+  template = Hammer::AppTemplate.new(project)
   puts template
   exit template.success? ? 0 : 1
 end

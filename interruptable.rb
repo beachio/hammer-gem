@@ -41,7 +41,7 @@ rescue SystemExit, Interrupt
   end
   
   unless ARGV.include? "DEBUG"
-    template = Hammer::AppTemplate.new(project.hammer_files, project)
+    template = Hammer::AppTemplate.new(project)
     puts template
     exit template.success? ? 0 : 1
   end

@@ -11,8 +11,8 @@ end
 class Hammer
   
   class Template
-    def initialize(files, project)
-      @files = files
+    def initialize(project)
+      @files = project.hammer_files
       @project = project
     end
     

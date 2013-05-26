@@ -134,7 +134,9 @@ class Hammer
       create_hammer_files_from_directory(input_directory, output_directory)
       
       @compiled_hammer_files = []
+      
       cacher.read_from_disk
+      
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
@@ -160,11 +162,9 @@ class Hammer
           if hammer_file.error
             cacher.clear_cached_contents_for(hammer_file.filename)
           elsif hammer_file.compiled_text
-            p "Cache contents of #{hammer_file.filename}"
             cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
-          # else
-            # p "Caching #{hammer_file.full_path} to #{hammer_file.filename}"
-            # cacher.cache(hammer_file.full_path, hammer_file.filename)
+          else
+            cacher.cache(hammer_file.full_path, hammer_file.filename)
           end
           
         end
@@ -195,7 +195,11 @@ class Hammer
 
           if hammer_file.from_cache
             cache_path = cacher.cached_path_for(hammer_file.filename)
-            FileUtils.cp(cache_path, hammer_file.output_path)
+            
+            if !File.exists? hammer_file.output_path
+              FileUtils.cp(cache_path, hammer_file.output_path)
+            end
+            
           elsif hammer_file.compiled_text
             f = File.new(output_path, "w")
             f.write(hammer_file.compiled_text)

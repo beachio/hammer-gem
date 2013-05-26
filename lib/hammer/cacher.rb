@@ -19,7 +19,7 @@ class Hammer
       @new_dependency_hash = {}
       @new_hard_dependencies = {}
       
-      read_from_disk
+      # read_from_disk
     end
     
     def valid_cache_for(path)
@@ -42,17 +42,20 @@ class Hammer
       @hashes = {}
       
       return true unless @directory
-      path = File.join(@directory, "cache.json")
+      path = File.join(@directory, "cache.data")
       if File.exists? path
-        contents = File.open(path).read
+        
+        contents = File.open(path) do |file|
+          Marshal.load(file)
+        end
+        
         if contents && contents != ""
-          contents = JSON.parse(contents)
-          @files_digest = contents['files_digest'] if contents['files_digest']
-          @dependency_hash = contents['dependency_hash'] if contents['dependency_hash']
-          @hard_dependencies = contents['hard_dependencies'] if contents['hard_dependencies']
+          @files_digest = contents[:files_digest] if contents[:files_digest]
+          @dependency_hash = contents[:dependency_hash] if contents[:dependency_hash]
+          @hard_dependencies = contents[:hard_dependencies] if contents[:hard_dependencies]
           @new_dependency_hash = @dependency_hash
-          @hashes = contents['hashes'] if contents['hashes']
-          @messages = contents['messages'] if contents['messages']
+          @hashes = contents[:hashes] if contents[:hashes]
+          @messages = contents[:messages] if contents[:messages]
         end
       end
     end
@@ -81,11 +84,11 @@ class Hammer
       }
       
       return true unless @directory
-      path = File.join(@directory, "cache.json")
+      path = File.join(@directory, "cache.data")
       
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, "w") do |f|     
-        f.write contents.to_json
+        f.write Marshal.dump(contents)
       end
     end
     

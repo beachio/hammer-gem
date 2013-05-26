@@ -4,7 +4,9 @@ class HammerAppTemplateTest < Test::Unit::TestCase
     setup do
       file = Hammer::HammerFile.new(:filename => "index.html")
       file.full_path = "/Users/elliott/index.html"
-      @template = Hammer::AppTemplate.new([file], Hammer::Project.new)
+      project = Hammer::Project.new
+      project << file
+      @template = Hammer::AppTemplate.new(project)
     end
     
     should "compile" do
@@ -18,7 +20,9 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       setup do
         file = Hammer::HammerFile.new(:filename => filename)
         file.messages = [{:line => 1, :message => "Testing", :html_class => "todo"}]
-        @template = Hammer::AppTemplate.new([file], Hammer::Project.new)
+        project = Hammer::Project.new
+        project << file
+        @template = Hammer::AppTemplate.new(project)
       end
       
       should "show the todo" do
@@ -32,7 +36,9 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       @file = Hammer::HammerFile.new(:filename => "index.html")
       @file.compiled = true
       @file.full_path = "/Users/elliott/home files\"/index.html"
-      @template = Hammer::AppTemplate.new([@file], Hammer::Project.new)
+      project = Hammer::Project.new
+      project << @file
+      @template = Hammer::AppTemplate.new(project)
       @text = @template.to_s
     end
     
@@ -61,15 +67,17 @@ class HammerAppTemplateTest < Test::Unit::TestCase
   context "A template with files including a partial" do
     setup do
       files = []
+      project = Hammer::Project.new
+      
       @file = Hammer::HammerFile.new(:filename => "index.html")
       @file.full_path = "/Users/elliott/home files\"/index.html"
-      files << @file
+      project << @file
       
       @file = Hammer::HammerFile.new(:filename => "_nav.html")
       @file.full_path = "/Users/elliott/home files\"/_nav.html"
-      files << @file
+      project << @file
       
-      @template = Hammer::AppTemplate.new(files, Hammer::Project.new)
+      @template = Hammer::AppTemplate.new(project)
     end
     
     should "Not display the partials" do
