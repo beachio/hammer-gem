@@ -13,7 +13,7 @@ class Hammer
     end
     
     def to_css
-      @hammer_file.raw_text
+      @text || @hammer_file.raw_text
     end
 
     def parse

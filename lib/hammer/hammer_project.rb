@@ -19,6 +19,8 @@ class Hammer
     
     def create_hammer_files_from_directory(input_directory, output_directory)
 
+      return if input_directory == nil
+
       # Grab all files in this directory, including dotfiles
       files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
       
@@ -59,7 +61,7 @@ class Hammer
         
         hammer_file = Hammer::HammerFile.new
         hammer_file.full_path = filename
-        hammer_file.raw_text = File.read(filename)
+        # hammer_file.raw_text = File.read(filename)
         hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
         hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
         hammer_file.hammer_project = self
@@ -129,25 +131,20 @@ class Hammer
     
     def compile()
       
+      create_hammer_files_from_directory(input_directory, output_directory)
+      
       @compiled_hammer_files = []
       cacher.read_from_disk
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
-        needs_compiling = !cacher.needs_recompiling?(hammer_file.filename)
         
-        if needs_compiling && !hammer_file.is_a_compiled_file
-          contents = cacher.cached_contents_for(hammer_file.filename)
-        end
-        
-        if contents
-          hammer_file.compiled_text = contents
+        cached = cacher.valid_cache_for(hammer_file.filename)
+        if cached
           hammer_file.from_cache = true
           hammer_file.messages = cacher.messages_for(hammer_file.filename)
         else
-          
           begin
-            hammer_file.raw_text = File.read(hammer_file.full_path)
             hammer_file.hammer_project ||= self
             pre_compile(hammer_file)
             next if File.basename(hammer_file.filename).start_with? "_"
@@ -162,8 +159,12 @@ class Hammer
           
           if hammer_file.error
             cacher.clear_cached_contents_for(hammer_file.filename)
-          else
+          elsif hammer_file.compiled_text
+            p "Cache contents of #{hammer_file.filename}"
             cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+          # else
+            # p "Caching #{hammer_file.full_path} to #{hammer_file.filename}"
+            # cacher.cache(hammer_file.full_path, hammer_file.filename)
           end
           
         end
@@ -192,7 +193,10 @@ class Hammer
           
           @errors += 1 if hammer_file.error
 
-          if hammer_file.compiled_text
+          if hammer_file.from_cache
+            cache_path = cacher.cached_path_for(hammer_file.filename)
+            FileUtils.cp(cache_path, hammer_file.output_path)
+          elsif hammer_file.compiled_text
             f = File.new(output_path, "w")
             f.write(hammer_file.compiled_text)
             f.close
@@ -214,10 +218,12 @@ class Hammer
     end
     
     def compile_hammer_file(hammer_file)
-      text = hammer_file.raw_text
+      # text = hammer_file.raw_text
+      text = nil
       Hammer.parsers_for_extension(hammer_file.extension).each do |parser|
         parser = parser.new(self)
         parser.hammer_file = hammer_file
+        text ||= hammer_file.raw_text
         parser.text = text
         text = parser.parse()
         hammer_file.compiled = true

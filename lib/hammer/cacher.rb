@@ -22,6 +22,20 @@ class Hammer
       read_from_disk
     end
     
+    def valid_cache_for(path)
+      return false unless @directory
+      if !needs_recompiling? path
+        if File.exists?(File.join(@directory, path))
+          return true
+        end
+      end
+    end
+    
+    def cache(full_path, path)
+      return false unless @directory
+      FileUtils.mkdir_p File.dirname(cached_path_for(path))
+      FileUtils.cp full_path, cached_path_for(path)
+    end
 
     def read_from_disk
       @dependency_hash = {}
@@ -84,6 +98,10 @@ class Hammer
       end
     rescue 
       []
+    end
+    
+    def cached_path_for(path)
+      File.join(@directory, path)
     end
     
     def cached_contents_for(path)

@@ -32,9 +32,9 @@ class TestSCSS < Test::Unit::TestCase
       should "include SCSS files" do
         @hammer_project.expects(:find_files).returns([@file])
         new_file = Hammer::HammerFile.new(:text => "/* @include style */", :filename => "whatever.scss", :hammer_project => @hammer_project)
-                
+        
         parser = Hammer::SASSParser.new(@hammer_project)
-        parser.text = new_file.raw_text
+        parser.text = "/* @include style */"
         parser.hammer_file = new_file
         
         text = parser.parse()

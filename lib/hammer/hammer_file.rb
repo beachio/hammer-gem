@@ -32,6 +32,13 @@ class Hammer
     def output_filename
       @output_filename || Hammer.output_filename_for(self)
     end
+    
+    def raw_text
+      if full_path
+        @raw_text ||= File.open(full_path).read
+      end
+      @raw_text
+    end
 
     # style.scss -> style.css    
     # blog/app.coffee -> blog/app.js

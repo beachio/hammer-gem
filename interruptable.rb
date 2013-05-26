@@ -29,20 +29,19 @@ rescue SystemExit, Interrupt
   project = Hammer::Project.new(@production)
 
   if File.exists? project_directory
+    project = Hammer::Project.new(@production)
+    project.input_directory     = project_directory
     project.temporary_directory = temporary_directory
-    project.create_hammer_files_from_directory(project_directory, output_directory)
-    project.output_directory = output_directory
-    hammer_files = project.compile() 
+    project.output_directory    = output_directory
+    project.compile()
+    project.write()  
   else
     # Minimum sleep time. No files. 
     sleep 0.5
   end
-
-  project.write()  
-  @errors = project.errors
   
   unless ARGV.include? "DEBUG"
-    template = Hammer::AppTemplate.new(hammer_files, project)
+    template = Hammer::AppTemplate.new(project.hammer_files, project)
     puts template
     exit template.success? ? 0 : 1
   end
