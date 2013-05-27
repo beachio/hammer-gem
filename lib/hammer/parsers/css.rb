@@ -28,13 +28,17 @@ class Hammer
     end
     
   private
+  
+    def ignore_file_path?(file_path)
+      file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+    end
 
     def url_paths
       replace(/url\((\S*?)\)/) do |url_tag, line_number|
 
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
         
-        if file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+        if ignore_file_path?(file_path)
           url_tag
         else
           
@@ -58,7 +62,7 @@ class Hammer
         
         file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
         
-        if file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+        if ignore_file_path?(file_path)
           url_tag
         else
           
