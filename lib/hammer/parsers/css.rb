@@ -53,6 +53,28 @@ class Hammer
       end
     end
     
+    def clever_paths
+      replace(/\/\* @path (.*) \*\//) do |tag, line_number|
+        
+        file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
+        
+        if file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+          url_tag
+        else
+          
+          add_wildcard_dependency file_path
+          file_name = file_path.split(/\?|#/)[0]
+          file = find_file(file_name)
+          
+          if file
+            Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
+          else
+            url_tag
+          end
+        end
+      end
+    end
+    
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
@@ -67,8 +89,6 @@ class Hammer
       end
     end
 
-    def clever_paths
-    end
   end
   register_parser_for_extensions CSSParser, ['css']
   register_parser_as_default_for_extensions CSSParser, ['css']

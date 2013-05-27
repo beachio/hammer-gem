@@ -9,6 +9,19 @@ class CSSParserTest < Test::Unit::TestCase
       assert @parser
     end
     
+    should "parse url images with normal comments" do
+      font = Hammer::HammerFile.new()
+      font.filename = "images/proximanova-regular.eot"
+      @hammer_project << font
+      
+      @css_file = Hammer::HammerFile.new()
+      @css_file.filename = "style.css"
+      @parser.hammer_file = @css_file
+      # @parser.expects(:find_file).returns(font)
+      @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
+      assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()
+    end
+    
     should "parse url images even with queries" do
       font = Hammer::HammerFile.new()
       font.filename = "images/proximanova-regular.eot"
