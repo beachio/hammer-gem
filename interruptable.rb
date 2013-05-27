@@ -29,7 +29,6 @@ rescue SystemExit, Interrupt
   project = Hammer::Project.new(@production)
 
   if File.exists? project_directory
-    project = Hammer::Project.new(@production)
     project.input_directory     = project_directory
     project.temporary_directory = temporary_directory
     project.output_directory    = output_directory

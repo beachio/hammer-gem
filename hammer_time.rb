@@ -12,13 +12,13 @@ output_directory = ARGV[2] || File.join(project_directory, "Build")
 @errors = 0
 
 hammer_files = nil
+project = Hammer::Project.new(@production)
 if File.exists? project_directory
-  project = Hammer::Project.new(@production)
   project.input_directory = project_directory
   project.temporary_directory = temporary_directory
   project.output_directory = output_directory
   project.compile()
-  project.write()  
+  project.write()
 end
 
 unless ARGV.include? "DEBUG"
