@@ -8,50 +8,41 @@ class CSSParserTest < Test::Unit::TestCase
     should "exist" do
       assert @parser
     end
-    
-    should "parse url images with normal comments" do
-      font = Hammer::HammerFile.new()
-      font.filename = "images/proximanova-regular.eot"
-      @hammer_project << font
-      
-      @css_file = Hammer::HammerFile.new()
-      @css_file.filename = "style.css"
-      @parser.hammer_file = @css_file
-      # @parser.expects(:find_file).returns(font)
-      @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
-      assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()
-    end
-    
-    should "parse url images even with queries" do
-      font = Hammer::HammerFile.new()
-      font.filename = "images/proximanova-regular.eot"
-      @hammer_project << font
-      
-      @css_file = Hammer::HammerFile.new()
-      @css_file.filename = "style.css"
-      @parser.hammer_file = @css_file
-      @parser.text = "a { background: url(proximanova-regular.eot?#iefix) }"
-      assert_equal "a { background: url(images/proximanova-regular.eot?#iefix) }", @parser.parse()
-    end
-    
-    should "parse url images even with queries part II" do
-      font = Hammer::HammerFile.new()
-      font.filename = "images/proximanova-regular.eot"
-      @hammer_project << font
-      
-      @css_file = Hammer::HammerFile.new()
-      @css_file.filename = "style.css"
-      @parser.hammer_file = @css_file
-      @parser.text = "a { background: url(proximanova-regular.eot#iefix) }"
-      assert_equal "a { background: url(images/proximanova-regular.eot#iefix) }", @parser.parse()
-    end
-    
-    context "with strange url() params" do
-      
+
+    context "parsing clever paths" do
       setup do
+        font = Hammer::HammerFile.new()
+        font.filename = "images/proximanova-regular.eot"
+        @hammer_project << font
+      
         @css_file = Hammer::HammerFile.new()
         @css_file.filename = "style.css"
         @parser.hammer_file = @css_file
+      end
+      
+      should "parse paths with normal comments" do
+        @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
+        assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()
+      end
+      
+      should "parse paths on one line" do
+        @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
+        assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()
+      end
+      
+      should "parse paths two to a line" do
+        @parser.text = "a { background: url(/* @path proximanova-regular.eot */) url(/* @path proximanova-regular.eot */)}"
+        assert_equal "a { background: url(images/proximanova-regular.eot) url(images/proximanova-regular.eot)}", @parser.parse()
+      end
+      
+      should "parse paths with queries" do
+        @parser.text = "a { background: url(proximanova-regular.eot?#iefix) }"
+        assert_equal "a { background: url(images/proximanova-regular.eot?#iefix) }", @parser.parse()
+      end
+      
+      should "parse URL images with queries that are just hashes" do
+        @parser.text = "a { background: url(proximanova-regular.eot#iefix) }"
+        assert_equal "a { background: url(images/proximanova-regular.eot#iefix) }", @parser.parse()
       end
       
       should "parse empty url()" do
@@ -67,8 +58,8 @@ class CSSParserTest < Test::Unit::TestCase
         output = ".aui-form-trigger:focus{background-image:url(button_bg_over.png)}.aui-trigger-selected{background: red}"
         assert_equal output, @parser.parse()
       end
-      
     end
+
     
     context "with a CSS file" do
       
@@ -93,7 +84,7 @@ class CSSParserTest < Test::Unit::TestCase
           @hammer_project << @new_file
           def assert_compilation(pre, post)
             @parser.text = pre
-            assert_equal post, @parser.parse()
+            assert_equal @parser.parse(), post
           end
         end
 
@@ -108,10 +99,17 @@ class CSSParserTest < Test::Unit::TestCase
         
         should "do paths" do
           assert_compilation "url(_include.css);", "url(assets/_include.css);"
+        end        
+        
+        should "do paths with normal comments" do
+          assert_compilation "url(/* @path _include.css */);", "url(assets/_include.css);"
         end
 
         should "do stupid relative paths" do
+          # TODO: WHAT ? This shouldn't pass.
+          # TODO: Make this more logical.
           assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
+          assert_compilation "url(/* @path things/like/_include.css */);", "url(assets/_include.css);"
         end
         
         context "with multiple paths" do
@@ -123,8 +121,9 @@ class CSSParserTest < Test::Unit::TestCase
 
           should "match files with matching file paths" do
             assert_compilation "url(assets/_include.css);", "url(assets/_include.css);"
+            assert_compilation "url(/* @path assets/_include.css */);", "url(assets/_include.css);"
             assert_compilation "url(something/assets/_include.css);", "url(something/assets/_include.css);"
-            assert_compilation "url(ing/assets/_include.css);", "url(something/assets/_include.css);"
+            assert_compilation "url(/* @path ing/assets/_include.css */);", "url(something/assets/_include.css);"
           end
 
           should "match absolute file paths" do
@@ -135,7 +134,8 @@ class CSSParserTest < Test::Unit::TestCase
         
         should "work with more than one url() on a line with or without a ;" do
           assert_compilation "url(../../_include.css)};url(_include.css)", "url(assets/_include.css)};url(assets/_include.css)"
-          assert_compilation "url(../../_include.css)}url(_include.css)", "url(assets/_include.css)}url(assets/_include.css)"
+          assert_compilation "url(/* @path ../../_include.css */)}url(_include.css)", "url(assets/_include.css)}url(assets/_include.css)"
+          assert_compilation "url(../../_include.css)}url(/* @path _include.css */)", "url(assets/_include.css)}url(assets/_include.css)"
         end
         
         should "work with empty url()" do
@@ -144,6 +144,7 @@ class CSSParserTest < Test::Unit::TestCase
 
         should "do stupid relative paths again" do
           assert_compilation "url(../../_include.css);", "url(assets/_include.css);"
+          assert_compilation "url(/* @path ../../_include.css */);", "url(assets/_include.css);"
         end
 
         should "not do http paths" do

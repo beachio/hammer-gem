@@ -54,7 +54,7 @@ class Hammer
     end
     
     def clever_paths
-      replace(/\/\* @path (.*) \*\//) do |tag, line_number|
+      replace(/\/\* @path (.*?) \*\//) do |tag, line_number|
         
         file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
         
