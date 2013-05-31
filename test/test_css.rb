@@ -20,6 +20,25 @@ class CSSParserTest < Test::Unit::TestCase
         @parser.hammer_file = @css_file
       end
       
+      context "when parsing @import paths" do
+        
+        setup do
+          stylesheet = Hammer::HammerFile.new()
+          stylesheet.filename = "assets/imported.css"
+          @hammer_project << stylesheet
+        end
+        
+        should "parse standard filenames" do
+          @parser.text = '@import "imported.css"'
+          assert_equal '@import "assets/imported.css";', @parser.parse()
+        end
+        
+        should "not parse http links" do
+          @parser.text = '@import "http://google.com/style.css"'
+          assert_equal '@import "http://google.com/style.css"', @parser.parse()
+        end
+      end
+      
       should "parse paths with normal comments" do
         @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
         assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()

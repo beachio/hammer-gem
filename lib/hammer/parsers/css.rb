@@ -20,6 +20,7 @@ class Hammer
       includes
       clever_paths
       url_paths
+      import_url_paths
       return @text
     end
     
@@ -31,6 +32,30 @@ class Hammer
   
     def ignore_file_path?(file_path)
       file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+    end
+    
+    def import_url_paths
+      replace(/@import "(\S*?)"/) do |url_tag, line_number|
+        
+        file_path = url_tag.gsub('@import ', '').gsub('"', '').gsub(";", "").strip
+        return url_tag if file_path.start_with? "http"
+        
+        if ignore_file_path?(file_path)
+          url_tag
+        else
+          
+          add_wildcard_dependency file_path
+          file_name = file_path.split(/\?|#/)[0]
+          file = find_file(file_name)
+          
+          if file
+            url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
+            '@import "'+url+'";'
+          else
+            url_tag
+          end
+        end
+      end
     end
 
     def url_paths

@@ -284,11 +284,14 @@ class Hammer
       # return false if files.collect(&:error) != []
       contents = []
       
-      key = files.collect(&:to_s).join(':') + ":format"
+      key = files.collect(&:to_s).join(':') + ":#{format}"
       return @@cached_files[key] if @@cached_files[key]
       
       files.each do |file|
         contents << Hammer.parser_for_hammer_file(file).to_format(format)
+        if format == :js
+          contents << ";"
+        end
       end
       contents = contents.join("\n\n\n\n")
       filename = Digest::MD5.hexdigest(contents)

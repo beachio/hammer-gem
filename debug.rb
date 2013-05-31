@@ -39,6 +39,6 @@ puts "Temporary directory: #{temporary_directory}"
 
 project.hammer_files.each do |hammer_file|
   if !hammer_file.from_cache && hammer_file.compiled_text
-    puts hammer_file.filename
+    # puts hammer_file.filename
   end
 end
