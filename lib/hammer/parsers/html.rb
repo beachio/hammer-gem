@@ -352,7 +352,7 @@ class Hammer
     end
     
     def ensure_text_has_no_leading_blank_lines
-      while @text.split("\n")[0] == ""
+      while @text.split(/\n|\t|\r/)[0] == ""
         @text = @text[1..-1]
       end
     end

@@ -34,7 +34,6 @@ class Hammer
     def cache(full_path, path)
       return false unless @directory
       FileUtils.mkdir_p File.dirname(cached_path_for(path))
-      puts "Copy #{full_path} to #{cached_path_for(path)}"
       FileUtils.cp full_path, cached_path_for(path)
     end
 
