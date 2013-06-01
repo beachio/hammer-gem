@@ -15,12 +15,14 @@ class Hammer
       @source_files = []
       @messages = []
       super()
+      
+      # This is an initializer because I have this as a function.
       self.filename = options.delete(:filename) if options[:filename]
-      @raw_text = options.delete(:text) if options[:text]
+      self.raw_text = options.delete(:text) if options[:text]
+      self.full_path = options.delete(:full_path) if options[:full_path]
 
       if options[:hammer_project]
         @hammer_project = options.delete(:hammer_project)
-        @hammer_project << self
       end
     end
     

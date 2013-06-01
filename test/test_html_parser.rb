@@ -5,6 +5,7 @@ class TestHtmlParser < Test::Unit::TestCase
     setup do
       @hammer_project       = Hammer::Project.new
       @file                 = Hammer::HammerFile.new(:hammer_project => @hammer_project, :filename => "index.html")
+      @hammer_project << @file
       @parser               = Hammer::HTMLParser.new(@hammer_project)
       @parser.hammer_file   = @file
     end

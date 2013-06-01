@@ -17,27 +17,18 @@ class Hammer
     
     attr_accessor :hammer_files, :ignored_files, :input_directory, :temporary_directory, :output_directory
     
-    def create_hammer_files_from_directory(input_directory, output_directory)
-
-      return if input_directory == nil
-
-      # Grab all files in this directory, including dotfiles
+    def file_list_for_directory(input_directory, output_directory)
       files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
-      
-      files = files.reject { |a| a =~ /\.{1,2}$/ }
-      files = files.reject { |a| a =~ /\.git/ }
-      files = files.reject { |a| a =~ /\.DS_Store/ }
-      
-      escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
-      escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
-
-      input_directory          = Pathname.new(input_directory).cleanpath.expand_path.to_s
-      @input_directory = input_directory
-      output_directory         = Pathname.new(output_directory).cleanpath.expand_path.to_s
-      
-      # files = Dir.glob(File.join(input_directory, "**/*"))
+      files.reject! { |a| a =~ /\.{1,2}$/ }
+      files.reject! { |a| a =~ /\.git/ }
+      files.reject! { |a| a =~ /\.DS_Store/ }
       files.reject! {|file| file.match(output_directory)}
-      
+      files.reject! {|file| File.directory?(file)}
+      return files
+    end
+    
+    def ignored_paths
+      return @ignored_paths if @ignored_paths
       ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
       
       @ignored_paths = [ignore_file]
@@ -51,20 +42,32 @@ class Hammer
           # @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}/*"))
         end
       end
-      
       @ignored_paths.flatten!
       @ignored_paths.uniq!
+      return @ignored_paths || []
+    end
+    
+    def create_hammer_files_from_directory(input_directory, output_directory)
+
+      return if input_directory == nil
       
-      files.each do |filename|
-        
-        next if File.directory?(filename)
-        
-        hammer_file = Hammer::HammerFile.new
-        hammer_file.full_path = filename
-        # hammer_file.raw_text = File.read(filename)
-        hammer_file.filename = filename.to_s.gsub(input_directory.to_s, "")
-        hammer_file.filename = hammer_file.filename[1..-1] if hammer_file.filename.start_with? "/"
-        hammer_file.hammer_project = self
+      @input_directory = Pathname.new(input_directory).cleanpath.expand_path.to_s
+      @output_directory = Pathname.new(output_directory).cleanpath.expand_path.to_s
+      # TODO: WTF were these for
+      # escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+      # escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
+
+      # Grab all files in this directory
+      filenames = file_list_for_directory(input_directory, output_directory)
+      
+      @ignored_paths = ignored_paths
+      @hammer_files = []
+      
+      filenames.each do |full_path|
+
+        filename = full_path.to_s.gsub(input_directory.to_s, "")
+        filename = filename[1..-1] if filename.start_with? "/"
+        hammer_file = Hammer::HammerFile.new(:filename => filename, :full_path => full_path, :hammer_project => self)
         
         if @ignored_paths.include? hammer_file.full_path
           @ignored_files << hammer_file

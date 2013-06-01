@@ -39,6 +39,7 @@ class TestHammerProject < Test::Unit::TestCase
       setup do
         @hammer_project = Hammer::Project.new
         @file = Hammer::HammerFile.new(:filename => "index.md", :hammer_project => @hammer_project)
+        @hammer_project << @file
       end
       should "find the markdown file given index.md and html" do
         assert_equal @file, @hammer_project.find_file("index.md", "html")
@@ -77,6 +78,7 @@ class TestHammerProject < Test::Unit::TestCase
     context "when the path is an extension" do
       setup do
         @f = Hammer::HammerFile.new(:filename => "assets/stylesheets/extension_included.scss", :hammer_project => @hammer_project)
+        @hammer_project << @f
         @parser.text = "<!-- @stylesheet assets/stylesheets/extension_included.scss -->"
       end
       
@@ -94,6 +96,25 @@ class TestHammerProject < Test::Unit::TestCase
       
       should "find that image" do
         assert_equal [@image], @hammer_project.find_files("logo", "png")
+      end
+    end
+    
+  end
+  
+  context "A basic hammer project" do
+    
+    setup do
+      @hammer_project = Hammer::Project.new
+    end
+    
+    context "with ignore paths" do
+      setup do
+        @hammer_project.expects(:file_list_for_directory).returns(['style.css', 'another.css'])
+        @hammer_project.expects(:ignored_paths).returns(['style.css'])
+      end
+      should "ignore the right files" do
+        hammer_files = @hammer_project.create_hammer_files_from_directory('', '')
+        assert_equal 1, hammer_files.length
       end
     end
     
