@@ -22,6 +22,10 @@ class Hammer
       # read_from_disk
     end
     
+    def clear
+      FileUtils.rm_rf(@directory)
+    end
+    
     def valid_cache_for(path)
       return false unless @directory
       if !needs_recompiling? path

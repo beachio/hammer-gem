@@ -76,7 +76,7 @@ class Hammer
         end
       end
       
-      return @hammer_files
+      return true
     end
     
     def << (file)
@@ -176,7 +176,11 @@ class Hammer
       
       cacher.write_to_disk
       
-      return @hammer_files
+      return !errors.any?
+    end
+    
+    def errors
+      hammer_files.collect(&:error).compact
     end
     
     def write
@@ -212,6 +216,11 @@ class Hammer
           end
         end
       end
+    end
+    
+    def reset
+      cacher.clear()
+      create_hammer_files_from_directory(@input_directory, @output_directory)
     end
     
   private

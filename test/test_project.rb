@@ -7,7 +7,7 @@ class TestHammerProject < Test::Unit::TestCase
     context "when empty" do
       should "compile" do
         assert @hammer_project.compile()
-        assert_equal @hammer_project.compile().length, 0
+        assert_equal @hammer_project.hammer_files.length, 0
       end
     end
     
@@ -24,9 +24,9 @@ class TestHammerProject < Test::Unit::TestCase
       
       should "compile and return hammer files" do
         assert @hammer_project.compile()
-        assert_equal @hammer_project.compile().length, 1
-        assert_equal @hammer_project.compile().first, @header
-        assert_equal @hammer_project.compile().first.text, @header.text
+        assert_equal @hammer_project.hammer_files.length, 1
+        assert_equal @hammer_project.hammer_files.first, @header
+        assert_equal @hammer_project.hammer_files.first.text, @header.text
       end
       
       should "find the right parser for a file" do
@@ -113,8 +113,8 @@ class TestHammerProject < Test::Unit::TestCase
         @hammer_project.expects(:ignored_paths).returns(['style.css'])
       end
       should "ignore the right files" do
-        hammer_files = @hammer_project.create_hammer_files_from_directory('', '')
-        assert_equal 1, hammer_files.length
+        @hammer_project.create_hammer_files_from_directory('', '')
+        assert_equal 1, @hammer_project.hammer_files.length
       end
     end
     
