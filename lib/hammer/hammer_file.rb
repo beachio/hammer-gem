@@ -14,6 +14,7 @@ class Hammer
     def initialize(options={})
       @source_files = []
       @messages = []
+      @from_cache = false
       super()
       
       # This is an initializer because I have this as a function.

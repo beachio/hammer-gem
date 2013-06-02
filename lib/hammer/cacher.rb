@@ -18,8 +18,7 @@ class Hammer
       @new_hashes = {}
       @new_dependency_hash = {}
       @new_hard_dependencies = {}
-      
-      # read_from_disk
+      read_from_disk()
     end
     
     def clear

@@ -32,11 +32,11 @@ def load_project()
   
   @project.compile()
 
-  @project.hammer_files.each do |file|
-    if file.error
-      puts "Error in #{file.filename} on line #{file.error.line_number}: #{file.error.text}"
-    end
-  end
+  # @project.hammer_files.each do |file|
+  #   if file.error
+  #     puts "Error in #{file.filename} on line #{file.error.line_number}: #{file.error.text}"
+  #   end
+  # end
 end
 
 def reload!

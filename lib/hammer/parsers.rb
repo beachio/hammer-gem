@@ -87,8 +87,9 @@ class Hammer
       return file
     end
     
-    def error(text, line_number, hammer_file=nil)
-      @hammer_file.error = Hammer::Error.new(text, line_number, hammer_file)
+    def error(text, line_number, error=nil)
+      @hammer_file.error = Hammer::Error.new(text, line_number)
+      @hammer_file.error.original_error = error
       raise @hammer_file.error
     end
     

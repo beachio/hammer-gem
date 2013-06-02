@@ -138,16 +138,16 @@ class Hammer
       
       @compiled_hammer_files = []
       
-      cacher.read_from_disk
+      @cacher = Hammer::Cacher.new(self, @temporary_directory)
       
       @hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
         
-        cached = cacher.valid_cache_for(hammer_file.filename)
+        cached = @cacher.valid_cache_for(hammer_file.filename)
         if cached
           hammer_file.from_cache = true
-          hammer_file.messages = cacher.messages_for(hammer_file.filename)
+          hammer_file.messages = @cacher.messages_for(hammer_file.filename)
         else
           begin
             hammer_file.hammer_project ||= self
@@ -159,22 +159,22 @@ class Hammer
             hammer_file.error = error
           rescue => error
             # In case there's another error!
-            hammer_file.error = Hammer::Error.new(error.to_s, nil)
+            hammer_file.error = Hammer::Error.from_error(error)
           end
           
           if hammer_file.error
-            cacher.clear_cached_contents_for(hammer_file.filename)
+            @cacher.clear_cached_contents_for(hammer_file.filename)
           elsif hammer_file.compiled_text
-            cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+            @cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
           else
-            cacher.cache(hammer_file.full_path, hammer_file.filename)
+            @cacher.cache(hammer_file.full_path, hammer_file.filename)
           end
           
         end
         
       end
       
-      cacher.write_to_disk
+      @cacher.write_to_disk
       
       return !errors.any?
     end
@@ -201,7 +201,7 @@ class Hammer
           @errors += 1 if hammer_file.error
 
           if hammer_file.from_cache
-            cache_path = cacher.cached_path_for(hammer_file.filename)
+            cache_path = @cacher.cached_path_for(hammer_file.filename)
             
             if !File.exists? hammer_file.output_path
               FileUtils.cp(cache_path, hammer_file.output_path)
@@ -219,7 +219,7 @@ class Hammer
     end
     
     def reset
-      cacher.clear()
+      @cacher.clear()
       create_hammer_files_from_directory(@input_directory, @output_directory)
     end
     
