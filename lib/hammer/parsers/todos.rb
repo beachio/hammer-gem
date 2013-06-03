@@ -19,7 +19,8 @@ class Hammer
     end
     
     def parse
-      @text ||= @hammer_file.raw_text
+      
+      @text = @hammer_file.raw_text
       @format = File.extname(@hammer_file.filename)[1..-1]
       
       results = {}

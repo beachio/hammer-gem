@@ -24,6 +24,8 @@ class Hammer
       files.reject! { |a| a =~ /\.DS_Store/ }
       files.reject! {|file| file.match(output_directory)}
       files.reject! {|file| File.directory?(file)}
+      files.reject! {|file| File.basename(file).start_with? '.'}
+      # files.reject! {|file| file.split("/").filter { |directory|  directory.start_with? "."}.length > 0}
       return files
     end
     

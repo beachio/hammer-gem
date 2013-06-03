@@ -15,7 +15,6 @@ class TestTodos < Test::Unit::TestCase
           hammer_file = Hammer::HammerFile.new(:filename => "index.#{format}")
           hammer_file.raw_text = formats[format]
           @parser = parser.new(nil, hammer_file)
-          @parser.text = formats[format]
         end
         should "set todos for #{comment}" do
           assert_equal({1 => ['eat', 'cake']}, @parser.parse())
