@@ -75,17 +75,19 @@ class Hammer
         
         dimensions = options[0]
         text = ""
+        alt = 'Placeholder Image'
         
         if options[1]
           text = options[1..-1].join(" ")
+          alt = text.gsub('"', '')
           text = "&text=#{CGI.escape(text)}"
         end
         
         x = dimensions.split('x')[0]
         y = dimensions.split('x')[1] || x
-
+        
         begin
-          "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' />"
+          "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' alt='#{alt}' />"
         rescue 
           tag
         end
@@ -96,7 +98,7 @@ class Hammer
         begin
           x = dimensions.split('x')[0]
           y = dimensions.split('x')[1]
-          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' />"
+          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
         rescue 
           tag
         end

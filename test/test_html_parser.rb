@@ -41,25 +41,25 @@ class TestHtmlParser < Test::Unit::TestCase
     should "replace placeholder tags" do
       @parser.text = "<html><!-- @placeholder 100x100 --></html>"
       text = @parser.parse()
-      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' /></html>", text
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>", text
     end
     
     should "replace placeholder tags with only one dimension" do
       @parser.text = "<html><!-- @placeholder 100 --></html>"
       text = @parser.parse()
-      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' /></html>", text
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>", text
     end
     
     should "replace placeholder tags with text" do
       @parser.text = "<html><!-- @placeholder 100x100 I am a teapot --></html>"
       text = @parser.parse()
-      assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100' height='100' /></html>", text
+      assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100' height='100' alt='I am a teapot' /></html>", text
     end
     
     should "replace kitten tags" do
       @parser.text = "<html><!-- @kitten 100x100 --></html>"
       text = @parser.parse()
-      assert_equal "<html><img src='http://placekitten.com/100/100' width='100' height='100' /></html>", text
+      assert_equal "<html><img src='http://placekitten.com/100/100' width='100' height='100' alt='Meow' /></html>", text
     end
     
     should "include files" do
@@ -89,7 +89,7 @@ class TestHtmlParser < Test::Unit::TestCase
       @parser.text = "<html><!-- @include _header --></html>"
       # @parser.expects(:find_files).returns([header])
       
-      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' /></html>", @parser.parse()
+      assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>", @parser.parse()
     end
     
     context "with script tags" do
