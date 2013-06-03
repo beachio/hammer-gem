@@ -9,7 +9,9 @@
 #     puts "Fail!"
 #     puts "Expected \n  #{expected_output}, \ngot \n  #{output}"
 #   end
-# end
+# end\
+
+require "tests.rb"
 
 def test(input, expected_output, filename="index.html")
   input = input.strip

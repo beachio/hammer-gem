@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestSCSS < Test::Unit::TestCase
   
     def assert_includes(a, b)

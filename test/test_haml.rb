@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestHaml < Test::Unit::TestCase
   context "A HAML file parser" do
     setup do

@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestMarkdown < Test::Unit::TestCase
   context "An HTML file parser" do
     setup do

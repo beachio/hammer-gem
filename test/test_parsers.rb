@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestParsers < Test::Unit::TestCase
   
   context "a parser" do

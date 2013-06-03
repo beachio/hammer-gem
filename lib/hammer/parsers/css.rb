@@ -50,7 +50,7 @@ class Hammer
           
           if file
             url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
-            '@import "'+url+'";'
+            "@import \"#{url}\";"
           else
             url_tag
           end

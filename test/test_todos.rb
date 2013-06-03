@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestTodos < Test::Unit::TestCase
   
   context "multiple comments on one line" do

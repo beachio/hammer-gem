@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestHammerProject < Test::Unit::TestCase
   context "a hammer project" do
     setup do

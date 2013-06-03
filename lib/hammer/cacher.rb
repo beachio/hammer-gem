@@ -1,4 +1,4 @@
-require "md5"
+require "digest"
 
 class Hammer
   class HammerFile

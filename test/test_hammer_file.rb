@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class TestHammerFile < Test::Unit::TestCase
   context "A file" do
     setup do

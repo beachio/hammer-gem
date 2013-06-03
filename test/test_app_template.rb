@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class HammerAppTemplateTest < Test::Unit::TestCase
   
   context "A template" do

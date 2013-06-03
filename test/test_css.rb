@@ -1,3 +1,5 @@
+require "tests.rb"
+
 class CSSParserTest < Test::Unit::TestCase
   context "A CSS Parser" do
     setup do
