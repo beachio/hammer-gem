@@ -28,7 +28,8 @@ class Hammer
     def add_file(filename, text)
       file = @hammer_project.hammer_files.select{|file| file.filename == filename}[0]
       if file == nil
-        file = HammerFile.new({:filename => filename, :text => text, :hammer_project => @hammer_project})
+        file = HammerFile.new({:filename => filename, :text => text})
+        @hammer_project << file
         file.is_a_compiled_file = true
       end
       return file
