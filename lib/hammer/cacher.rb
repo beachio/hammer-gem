@@ -22,7 +22,7 @@ class Hammer
     end
     
     def clear
-      FileUtils.rm_rf(@directory)
+      FileUtils.rm_rf(@directory) if @directory
     end
     
     def valid_cache_for(path)
@@ -37,6 +37,7 @@ class Hammer
     def cache(full_path, path)
       return false unless @directory
       FileUtils.mkdir_p File.dirname(cached_path_for(path))
+      # File.delete(cached_path_for(path)) 
       FileUtils.cp full_path, cached_path_for(path)
     end
 
