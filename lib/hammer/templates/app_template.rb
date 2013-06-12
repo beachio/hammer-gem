@@ -1,4 +1,3 @@
-
 # encoding: utf-8
 $LANG = "UTF-8"
 
@@ -74,10 +73,14 @@ class Hammer
       sorted_files.select {|file| 
         file.error 
       }.sort_by{|file|
-        if file.error.hammer_file != file 
-          100
-        else
-          10
+        begin
+          if file.error && file.error.hammer_file != file 
+            100
+          else
+            10
+          end
+        rescue
+          1000
         end
       }
     end
@@ -242,12 +245,14 @@ class Hammer
         
         @error = file.error
         
-        if file.error
+        if file.error && !file.error.is_a?(ArgumentError)
           @error_message = file.error.text
           @error_line = file.error.line_number
           if file.error.hammer_file != @file
             @error_file = file.error.hammer_file
           end
+        elsif file.error.is_a?(ArgumentError)
+          @error_message = [file.error.message, file.error.backtrace].join(" ")
         end
         
         @filename = file.finished_filename
@@ -326,7 +331,7 @@ class Hammer
         if ['.html', ".css", ".js"].include?(File.extname(@filename)) || @filename.start_with?(".")
           links.unshift %Q{<a target="blank" href="edit://#{@file.full_path}" class="edit" title="Edit Original">Edit Original</a>}
         end
-        links
+        return links.join("")
       end
       
       def todos
@@ -337,7 +342,7 @@ class Hammer
               #{message[:message]}
             </span>
           }
-        end
+        end.join("")
       end
       
       def to_s

@@ -38,6 +38,8 @@ class Hammer
       
       return results
       
+    rescue
+      []
     end
   end
 end

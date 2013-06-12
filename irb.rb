@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 require "tmpdir"
 
 require 'rubygems'
-require 'ruby-debug'
+# require 'ruby-debug'
 
 def prompt(*args)
   print(*args)
