@@ -50,13 +50,10 @@ class Hammer
       if File.exists? path
         
         begin
-          puts path
           contents = File.open(path) do |file|
             Marshal.load(file)
-            # JSON.parse(file.read)
           end
         rescue EOFError
-          # puts "Error."
           File.delete(path)
           contents = ""
         end
