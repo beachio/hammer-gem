@@ -50,11 +50,13 @@ class Hammer
       if File.exists? path
         
         begin
+          puts path
           contents = File.open(path) do |file|
-            # Marshal.load(file)
-            JSON.parse(file.read)
+            Marshal.load(file)
+            # JSON.parse(file.read)
           end
-        rescue
+        rescue EOFError
+          # puts "Error."
           File.delete(path)
           contents = ""
         end
@@ -97,8 +99,9 @@ class Hammer
       path = File.join(@directory, "cache.data")
       
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, "w") do |f|     
-        f.write contents.to_json # Marshal.dump(contents)
+      File.open(path, "wb") do |f|     
+        # f.write contents.to_json # 
+        f.write Marshal.dump(contents)
       end
     end
     
