@@ -157,12 +157,13 @@ class TestHammerProject < Test::Unit::TestCase
     end
     
     should "prioritze exact filenames" do
-      fake_target = Hammer::HammerFile.new(:filename => "a_header.html")
+      fake_target = Hammer::HammerFile.new(:filename => "a_thing.html")
       @hammer_project << fake_target
-      real_target = Hammer::HammerFile.new(:filename => "real/header.html")
+      real_target = Hammer::HammerFile.new(:filename => "real/thing.html")
       @hammer_project << real_target
       
-      assert_equal real_target, @hammer_project.find_file("header", "html")
+      assert_equal real_target, @hammer_project.find_file("thing", "html")
+      assert_equal [real_target, fake_target], @hammer_project.find_files("thing", "html")
     end
 
   end
