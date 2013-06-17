@@ -98,16 +98,25 @@ class Hammer
       files = @hammer_files.select { |file|
         
         match = file.filename =~ regex
-        straight_basename = File.basename(file.filename) == filename
+        straight_basename = false  # File.basename(file.filename) == filename
         
         no_extension_required = extension.nil?
         has_extension = File.extname(file.filename) != ""
         
-        (has_extension || no_extension_required) && (straight_basename || match)
+        (has_extension || no_extension_required) && (match)
       }.sort_by {|file| 
         file.filename.to_s
       }.sort_by { |file|
-        file.filename.split(filename).join().length
+        # file.filename.split(filename).join().length
+        
+        # If they're matching against a/bc.html
+        # then see how much of the filename they're including
+        if filename.include? "/"
+          file.filename.split(filename).join.length
+        else
+          # If it matches the filename, 
+          "#{File.basename(file.filename)}" == "#{filename}.#{extension}" ? 0 : 1
+        end
       }
       
       @cached_files["#{filename}:#{extension}"] = files

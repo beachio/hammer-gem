@@ -155,6 +155,15 @@ class TestHammerProject < Test::Unit::TestCase
     should "Find a file" do
       assert_equal @hammer_project.find_file('_header', "html"), @header
     end
+    
+    should "prioritze exact filenames" do
+      fake_target = Hammer::HammerFile.new(:filename => "a_header.html")
+      @hammer_project << fake_target
+      real_target = Hammer::HammerFile.new(:filename => "real/header.html")
+      @hammer_project << real_target
+      
+      assert_equal real_target, @hammer_project.find_file("header", "html")
+    end
 
   end
 end
