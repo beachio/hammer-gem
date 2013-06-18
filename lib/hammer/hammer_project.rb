@@ -242,8 +242,10 @@ class Hammer
     ## Compilation stages: Before, during and after.
     def pre_compile(hammer_file)
       todos = TodoParser.new(self, hammer_file).parse()
-      todos.each do |line_number, message|
-        hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+      todos.each do |line_number, messages|
+        messages.each do |message|
+          hammer_file.messages.push({:line => line_number, :message => message, :html_class => 'todo'})
+        end
       end
     end
     

@@ -339,7 +339,7 @@ class Hammer
           %Q{
             <span class="#{message[:html_class] || 'error'}">
               #{"<b>Line #{message[:line]}</b>" if message[:line]} 
-              #{message[:message]}
+              #{message[:message].to_str}
             </span>
           }
         end.join("")

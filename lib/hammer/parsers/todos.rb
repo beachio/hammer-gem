@@ -29,7 +29,7 @@ class Hammer
       @text.split("\n").each_with_index do |line, line_number|
         line_number += 1
         line.scan(regex).each do |messages|
-          messages.compact.each do |message|
+          messages.flatten.compact.each do |message|
             results[line_number] ||= []
             results[line_number] << message.strip
           end
