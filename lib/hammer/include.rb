@@ -1,5 +1,7 @@
-Encoding.default_external = Encoding::UTF_8
-Encoding.default_internal = Encoding::UTF_8
+if RUBY_VERSION.to_f == 2.0
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
 
 module Templatey
   def h(text)
