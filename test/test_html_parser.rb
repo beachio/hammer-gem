@@ -361,13 +361,20 @@ class TestHtmlParser < Test::Unit::TestCase
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
-        @parser.expects(:find_file_without_adding_dependency).returns(logo)
         @parser.hammer_file = @file
       end
       
       should "replace path tags" do
         text = @parser.parse()
         assert_equal "../images/logo.png", text
+      end
+      
+      should "replace path tags that are variables" do
+        @file.raw_text = "<!-- $file logo.png --> Testing <!-- @path $file -->"
+        @parser.text = @file.raw_text
+        @parser.hammer_file = @file
+        text = @parser.parse()
+        assert_equal " Testing ../images/logo.png", text
       end
       
       should "also replace @path tags inside attributes" do
