@@ -14,10 +14,10 @@ require "shoulda-context"
 
 include Test::Unit
 
-require File.join(File.dirname(__FILE__), "../lib/hammer/include")
+require File.expand_path(File.join(File.dirname(__FILE__), "../lib/hammer/include"))
 
 tests = Dir.glob(File.join(File.dirname(__FILE__), "*.rb")) - [__FILE__]
 
 tests.each { |file|
-  require file
+  require File.expand_path(file)
 }
