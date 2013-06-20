@@ -14,7 +14,7 @@ gem update plist
 gem update thor
 gem update ejs
 gem update eco
-gem update eco-source --pre
+gem update eco-source
 gem update uglifier
 
 gem unpack bourbon --target=vendor/gems
