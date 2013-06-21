@@ -23,16 +23,27 @@ def p(text)
   puts text
 end
 
+puts "Starting compilation..."
+puts "Temporary directory:"
+puts temporary_directory
+
 project = Hammer::Project.new(@production)
 project.input_directory = project_directory
 project.temporary_directory = temporary_directory
 project.output_directory = output_directory
+
 t = Time.now
 project.compile()
 p "Compile time: #{Time.now - t} seconds"
+
 t = Time.now
 project.write()
 p "Write time: #{Time.now - t} seconds"
 @errors = project.errors
 
-puts "Temporary directory: #{temporary_directory}"
+project.hammer_files.each do |hammer_file|
+  if hammer_file.error
+    puts "Error in #{hammer_file.filename}:"
+    puts " - #{hammer_file.error.text}"
+  end
+end

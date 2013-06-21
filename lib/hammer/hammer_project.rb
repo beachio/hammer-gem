@@ -118,7 +118,13 @@ class Hammer
           match = "#{File.basename(file.filename)}" == "#{filename}.#{extension}" 
           match ||= "#{File.basename(file.filename)}" == "_#{filename}.#{extension}" 
           
-          match ? 0 : 1
+          if match
+            file.filename.split(filename).join.length
+          else
+            1000
+          end
+          
+          # match ? 0 : 1
         end
       }
       
