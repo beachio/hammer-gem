@@ -67,7 +67,7 @@ class Hammer
       # Convert relative paths to simple directories and filenames.
       filename = filename.gsub("../", "").gsub("./", "")
       files = @hammer_project.find_files(filename, extension)
-      files      
+      files
     end
     
     def find_file_without_adding_dependency(filename, extension=nil)

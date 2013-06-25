@@ -111,21 +111,23 @@ class Hammer
         
         # If they're matching against a/bc.html
         # then see how much of the filename they're including
-        if filename.include? "/"
-          file.filename.split(filename).join.length
-        else
+        # if filename.include? "/"
+          # file.filename.split(filename).join.length
+        # else
           # If it matches the filename, 
           match = "#{File.basename(file.filename)}" == "#{filename}.#{extension}" 
-          match ||= "#{File.basename(file.filename)}" == "_#{filename}.#{extension}" 
+          partial_match = "#{File.basename(file.filename)}" == "_#{filename}.#{extension}" 
           
           if match
             file.filename.split(filename).join.length
+          elsif partial_match
+            file.filename.split(filename).join.length + 10
           else
-            1000
+            file.filename.split(filename).join.length + 100
           end
           
           # match ? 0 : 1
-        end
+        # end
       }
       
       @cached_files["#{filename}:#{extension}"] = files
