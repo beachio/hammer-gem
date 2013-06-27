@@ -21,6 +21,7 @@ class Hammer
       files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
       files.reject! { |a| a =~ /\.{1,2}$/ }
       files.reject! { |a| a =~ /\.git/ }
+      files.reject! { |a| a =~ /\.svn/ }
       files.reject! { |a| a =~ /\.DS_Store/ }
       files.reject! {|file| file.match(output_directory)}
       files.reject! {|file| File.directory?(file)}
