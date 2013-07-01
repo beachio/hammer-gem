@@ -17,20 +17,25 @@ class Hammer
     
     attr_accessor :hammer_files, :ignored_files, :input_directory, :temporary_directory, :output_directory
     
-    def file_list_for_directory(input_directory, output_directory)
-      files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
-      files.reject! { |a| a =~ /\.{1,2}$/ }
-      files.reject! { |a| a =~ /\.git/ }
-      files.reject! { |a| a =~ /\.svn/ }
-      files.reject! { |a| a =~ /\.DS_Store/ }
-      files.reject! {|file| file.match(output_directory)}
-      files.reject! {|file| File.directory?(file)}
-      files.reject! {|file| File.basename(file).start_with?('.') && File.basename(file) != ".htaccess"}
-      # files.reject! {|file| file.split("/").filter { |directory|  directory.start_with? "."}.length > 0}
-      return files
+    def file_list
+      files = []
+      if input_directory
+        files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
+        files.reject! { |a| a =~ /\.{1,2}$/ }
+        files.reject! { |a| a =~ /\/\.git\// }
+        files.reject! { |a| a =~ /\/\.svn\// }
+        files.reject! { |a| a =~ /\.DS_Store/ }
+        files.reject! {|file| file.match(output_directory)}
+        files.reject! {|file| File.directory?(file)}
+        # .ht files are Apache!
+        files.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
+        files.reject! {|file| file.split("/").select { |directory|  directory.start_with? "."}.length > 0}
+      end
+      files
     end
     
     def ignored_paths
+      return [] unless input_directory
       return @ignored_paths if @ignored_paths
       ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
       
@@ -41,45 +46,38 @@ class Hammer
           line = line.strip
           @ignored_paths << Dir.glob(File.join(input_directory, "#{line}/**/*"))
           @ignored_paths << Dir.glob(File.join(input_directory, "#{line.gsub("*", "**/*")}"))
-          # @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}"))
-          # @ignored_paths << Dir.glob(File.join(input_directory, "**/#{line}/*"))
         end
       end
-      @ignored_paths.flatten!
-      @ignored_paths.uniq!
+      @ignored_paths.flatten!.uniq!
       return @ignored_paths || []
+    rescue
+      []
     end
     
-    def create_hammer_files_from_directory(input_directory, output_directory)
-
-      return if input_directory == nil
+    def input_directory=(new_input_directory)
+      @input_directory = Pathname.new(new_input_directory.to_s).cleanpath.expand_path.to_s
+    end
+    
+    def output_directory=(new_output_directory)
+      @output_directory = Pathname.new(new_output_directory.to_s).cleanpath.expand_path.to_s
+    end
+    
+    def hammer_files
+      return @hammer_files if @has_created_hammer_files
       
-      @input_directory = Pathname.new(input_directory).cleanpath.expand_path.to_s
-      @output_directory = Pathname.new(output_directory).cleanpath.expand_path.to_s
-      # TODO: WTF were these for
-      # escaped_input_directory  = input_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
-      # escaped_output_directory = output_directory.gsub(/([\[\]\{\}\*\?\\])/, '\\\\\1')
-
-      # Grab all files in this directory
-      filenames = file_list_for_directory(input_directory, output_directory)
-      
-      @ignored_paths = ignored_paths
-      @hammer_files = []
-      
-      filenames.each do |full_path|
-
+      file_list.each do |full_path|
         filename = full_path.to_s.gsub(input_directory.to_s, "")
         filename = filename[1..-1] if filename.start_with? "/"
         hammer_file = Hammer::HammerFile.new(:filename => filename, :full_path => full_path, :hammer_project => self)
         
-        if @ignored_paths.include? hammer_file.full_path
+        if ignored_paths.include? hammer_file.full_path
           @ignored_files << hammer_file
         else
           @hammer_files << hammer_file
         end
       end
-      
-      return true
+      @has_created_hammer_files = true
+      return @hammer_files
     end
     
     def << (file)
@@ -96,7 +94,7 @@ class Hammer
       filename = filename[1..-1] if filename.start_with? "/"
       regex = Hammer.regex_for(filename, extension)
 
-      files = @hammer_files.select { |file|
+      files = hammer_files.select { |file|
         
         match = file.filename =~ regex
         straight_basename = false  # File.basename(file.filename) == filename
@@ -108,27 +106,19 @@ class Hammer
       }.sort_by {|file| 
         file.filename.to_s
       }.sort_by { |file|
-        # file.filename.split(filename).join().length
+      
+        basename = File.basename(file.filename)
+        match         = basename == [filename, extension].compact.join(".")
+        partial_match = basename == ["_"+filename, extension].compact.join(".")
         
-        # If they're matching against a/bc.html
-        # then see how much of the filename they're including
-        # if filename.include? "/"
-          # file.filename.split(filename).join.length
-        # else
-          # If it matches the filename, 
-          match = "#{File.basename(file.filename)}" == "#{filename}.#{extension}" 
-          partial_match = "#{File.basename(file.filename)}" == "_#{filename}.#{extension}" 
-          
-          if match
-            file.filename.split(filename).join.length
-          elsif partial_match
-            file.filename.split(filename).join.length + 10
-          else
-            file.filename.split(filename).join.length + 100
-          end
-          
-          # match ? 0 : 1
-        # end
+        if match
+          file.filename.split(filename).join.length
+        elsif partial_match
+          file.filename.split(filename).join.length + 10
+        else
+          file.filename.split(filename).join.length + 100
+        end
+        
       }
       
       @cached_files["#{filename}:#{extension}"] = files
@@ -154,16 +144,10 @@ class Hammer
     end
     
     ## The compile method. This does all the files.
-    
     def compile()
-      
-      create_hammer_files_from_directory(input_directory, output_directory)
-      
       @compiled_hammer_files = []
-      
       @cacher = Hammer::Cacher.new(self, @temporary_directory)
-      
-      @hammer_files.each do |hammer_file|
+      hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file
         
@@ -182,8 +166,9 @@ class Hammer
             hammer_file.error = error
           rescue => error
             # In case there's another error!
-            hammer_file.error = Hammer::Error.from_error(error)
+            hammer_file.error = Hammer::Error.from_error(error, hammer_file)
           end
+          
           
           if hammer_file.error
             @cacher.clear_cached_contents_for(hammer_file.filename)
@@ -209,7 +194,7 @@ class Hammer
     def write
       @errors = 0
       output_directory = @output_directory
-      @hammer_files.each do |hammer_file|
+      hammer_files.each do |hammer_file|
         if !File.basename(hammer_file.filename).start_with?("_")
           
           sub_directory   = File.dirname(hammer_file.output_filename)
@@ -243,7 +228,7 @@ class Hammer
     
     def reset
       @cacher.clear()
-      create_hammer_files_from_directory(@input_directory, @output_directory)
+      hammer_files()
     end
     
   private

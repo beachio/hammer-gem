@@ -33,7 +33,11 @@ class Hammer
         replace(/[\s-]*\/ @include (.*)/) do |line, line_number|
           
           tags = line.gsub("/ @include ", "").strip.split(" ")
+          number_of_indents_in_this_line = line[/\A[|\t]*/].size
+          number_of_indents_in_the_next_line = @text.split("\n")[line_number+1][/\A[|\t]*/].size rescue 0
           
+          indented_after_this_line = number_of_indents_in_this_line >= number_of_indents_in_the_next_line
+
           tags.map do |tag|
             
             if (tag.start_with? "$")
@@ -49,7 +53,7 @@ class Hammer
             file = find_file(tag, 'html')
             
             if file
-              if file.extension == "haml"
+              if file.extension == "haml" && !indented_after_this_line
                 
                 indentation = line.split("/")[0].length
                 char = line.split("/")[0].split("")[0]
@@ -77,8 +81,6 @@ class Hammer
       includes()
       @text = convert(text)
       @text = convert_comments(text)
-    rescue Haml::SyntaxError => e
-      raise Hammer::Error.new(e.message, e.line)
     end
     
     private

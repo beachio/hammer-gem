@@ -117,11 +117,10 @@ class TestHammerProject < Test::Unit::TestCase
     
     context "with ignore paths" do
       setup do
-        @hammer_project.expects(:file_list_for_directory).returns(['style.css', 'another.css'])
-        @hammer_project.expects(:ignored_paths).returns(['style.css'])
+        @hammer_project.expects(:file_list).returns(['style.css', 'another.css']).at_least_once
+        @hammer_project.expects(:ignored_paths).returns(['style.css']).at_least_once
       end
       should "ignore the right files" do
-        @hammer_project.create_hammer_files_from_directory('', '')
         assert_equal 1, @hammer_project.hammer_files.length
       end
     end

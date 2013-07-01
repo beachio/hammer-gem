@@ -27,7 +27,7 @@ def load_project()
   print "Creating #{production ? "production " : ""}Hammer project (@project)..."
   @project = Hammer::Project.new(production)
   @project.temporary_directory = temporary_directory
-  @project.create_hammer_files_from_directory(project_directory, output_directory)
+  @project.hammer_files()
   puts " done."
   
   @project.compile()

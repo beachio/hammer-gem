@@ -4,10 +4,6 @@ $LANG = "UTF-8"
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 require "tmpdir"
 
-temporary_directory = Dir.tmpdir
-project_directory = ARGV[0]
-output_directory = File.join(project_directory, "Build")
-
 @production = ARGV.include?('PRODUCTION')
 @errors = 0
 
@@ -19,18 +15,13 @@ Thread.new do
   end
 end
 
-def p(text)
-  puts text
-end
+project = Hammer::Project.new(@production)
+project.input_directory = ARGV[0]
+project.temporary_directory = Dir.tmpdir
+project.output_directory = File.join(project.input_directory, "Build")
 
 puts "Starting compilation..."
-puts "Temporary directory:"
-puts temporary_directory
-
-project = Hammer::Project.new(@production)
-project.input_directory = project_directory
-project.temporary_directory = temporary_directory
-project.output_directory = output_directory
+puts "Temporary directory: #{project.temporary_directory}"
 
 t = Time.now
 project.compile()

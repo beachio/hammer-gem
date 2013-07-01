@@ -88,10 +88,12 @@ class Hammer
       return file
     end
     
-    def error(text, line_number, error=nil)
-      @hammer_file.error = Hammer::Error.new(text, line_number)
-      @hammer_file.error.original_error = error
-      raise @hammer_file.error
+    def error(text, line_number, alternate_hammer_file = nil, error=nil)
+      subject = alternate_hammer_file ? alternate_hammer_file : @hammer_file
+      subject.error = Hammer::Error.new(text, line_number)
+      subject.error.hammer_file = subject
+      subject.error.original_error = error
+      raise subject.error
     end
     
     def replace(regex, &block)

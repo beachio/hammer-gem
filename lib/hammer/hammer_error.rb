@@ -12,9 +12,11 @@ class Hammer
       end
     end
     
-    def self.from_error(error)
-      hammer_file = new(error.to_s, nil)
-      hammer_file.original_error = error
+    def self.from_error(error, hammer_file)
+      error_created = new(error.to_s, nil)
+      error_created.hammer_file = hammer_file
+      error_created.original_error = error
+      return error_created
     end
     
     def hammer_file=(hammer_file)
