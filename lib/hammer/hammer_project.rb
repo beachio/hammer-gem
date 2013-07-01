@@ -25,7 +25,7 @@ class Hammer
         files.reject! { |a| a =~ /\/\.git\// }
         files.reject! { |a| a =~ /\/\.svn\// }
         files.reject! { |a| a =~ /\.DS_Store/ }
-        files.reject! {|file| file.match(output_directory)}
+        files.reject! {|file| file.include?(output_directory)}
         files.reject! {|file| File.directory?(file)}
         # .ht files are Apache!
         files.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
