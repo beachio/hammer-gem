@@ -21,7 +21,7 @@ class Hammer
       files = []
       if input_directory
         files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
-        files.reject! { |a| a =~ /\.{1,2}$/ }
+        # files.reject! { |a| a =~ /\.{1,2}$/ }
         files.reject! { |a| a =~ /\/\.git\// }
         files.reject! { |a| a =~ /\/\.svn\// }
         files.reject! { |a| a =~ /\.DS_Store/ }
@@ -29,7 +29,7 @@ class Hammer
         files.reject! {|file| File.directory?(file)}
         # .ht files are Apache!
         files.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
-        files.reject! {|file| file.split("/").select { |directory|  directory.start_with? "."}.length > 0}
+        # files.reject! {|file| file.split("/")[0..-2].select { |directory| directory.start_with? "."}.length > 0}
       end
       files
     end
