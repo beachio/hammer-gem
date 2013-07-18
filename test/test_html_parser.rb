@@ -167,6 +167,26 @@ class TestHtmlParser < Test::Unit::TestCase
         end
       end
       
+      context "when there are multiple matches for a script tag" do
+        
+        setup do
+          @file.filename = "index.html"
+          @new_file.filename = "assets/asdfasdf.css"
+          @other_file = @new_file.dup
+          @other_file.filename = "assets/ui-asdfasdf.css"
+          
+          @hammer_project << @new_file
+          @hammer_project << @other_file
+        end
+        
+        should "only add each entry once unless it's a wildcard" do
+          @file.raw_text = "<!-- @stylesheet asdfasdf -->"
+          @parser.hammer_file = @file
+          assert_equal "<link rel='stylesheet' href='assets/asdfasdf.css'>", @parser.parse()
+        end
+        
+      end
+      
       context "when referring to multiple script tags" do
       
         setup do
@@ -174,6 +194,9 @@ class TestHtmlParser < Test::Unit::TestCase
           @new_file.filename = "assets/app.js"
           @other_file = @new_file.dup
           @other_file.filename = "assets/x.js"
+          
+          @hammer_project << @new_file
+          @hammer_project << @other_file
         end
       
         context "with wildcard script tags" do
@@ -287,6 +310,8 @@ class TestHtmlParser < Test::Unit::TestCase
           @new_file.filename = "assets/app.css"
           @other_file = @new_file.dup
           @other_file.filename = "assets/x.css"
+          @hammer_project << @new_file
+          @hammer_project << @other_file
         end
       
         context "with wildcard script tags" do
@@ -297,19 +322,19 @@ class TestHtmlParser < Test::Unit::TestCase
           end
           
           should "write this test" do
-            assert_equal @parser.parse(), "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>"
+            assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
           end
         end
       
         context "with multiple stylesheet tag invocation" do
           setup do
-            @parser.expects(:find_files).twice.returns([@new_file, @other_file])
+            # @parser.expects(:find_files).twice.returns([@new_file, @other_file])
             @file.raw_text = "<!-- @stylesheet app x -->"
             @parser.hammer_file = @file
           end
           
           should "create multiple script tags" do
-            assert_equal @parser.parse(), "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>"
+            assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
           end
         end
       end

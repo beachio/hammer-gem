@@ -258,11 +258,17 @@ class Hammer
         
         filenames.each do |filename|
           filename = get_variable(filename) if filename.split("")[0] == "$"
+          
           matching_files = find_files(filename, 'css')
+          
+          # if !filename.include? "*"
+          #   matching_files = [matching_files[0]]
+          # end
+          
           raise "Stylesheet tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
-        
+
         hammer_files_to_tag = []
         hammer_files.each do |file|
           

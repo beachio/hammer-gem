@@ -74,7 +74,7 @@ class TestHammerProject < Test::Unit::TestCase
     should "find the right files with an extension when there's another file with the same name" do
       file = Hammer::HammerFile.new(:filename => "header.html")
       @hammer_project << file
-      assert_equal [file, @header], @hammer_project.find_files("header", "html")
+      assert_equal [file], @hammer_project.find_files("header", "html")
     end
     
     should "find the right wildcard paths starting with a / (/*.html)" do
@@ -168,7 +168,7 @@ class TestHammerProject < Test::Unit::TestCase
       @hammer_project << real_target
       
       assert_equal real_target, @hammer_project.find_file("thing", "html")
-      assert_equal [real_target, fake_target], @hammer_project.find_files("thing", "html")
+      assert_equal [real_target], @hammer_project.find_files("thing", "html")
     end
 
   end
