@@ -50,11 +50,34 @@ class TestHammerProject < Test::Unit::TestCase
 
   end
   
+  context "A Hammer project with lots of files" do
+    setup do 
+      @hammer_project = Hammer::Project.new
+      
+      @files = []
+      ['a','b','c','ad'].each do |filename|
+        file = Hammer::HammerFile.new :filename => "#{filename}.html"
+        file.raw_text = "This is file #{filename}"
+        @files.push file
+        @hammer_project << file
+      end
+    end
+    
+    should "find the right filenames with wildcards" do
+      assert_equal [@files[0]], @hammer_project.find_files("a", "html")
+      assert_equal [@files[1]], @hammer_project.find_files("b", "html")
+      assert_equal @files.collect(&:filename).sort, @hammer_project.find_files("*", "html").collect(&:filename).sort
+    end
+  end
+  
   context "A Hammer project with multiple files" do
     
     setup do
       @header = Hammer::HammerFile.new
       @header.filename = "_header.html"
+      
+      @unrelated = Hammer::HammerFile.new
+      @unrelated.filename = "unrelated.html"
       
       @style = Hammer::HammerFile.new
       @style.filename = "style.css"
@@ -63,6 +86,7 @@ class TestHammerProject < Test::Unit::TestCase
       
       @hammer_project << @header
       @hammer_project << @style
+      @hammer_project << @unrelated
       
       @parser = Hammer::HTMLParser.new
     end
@@ -80,7 +104,7 @@ class TestHammerProject < Test::Unit::TestCase
     should "find the right wildcard paths starting with a / (/*.html)" do
       assert_equal [@header], @hammer_project.find_files("/_header", "html")
       assert_equal [], @hammer_project.find_files("assets/*", "html")
-      assert_equal [@header], @hammer_project.find_files("/*", "html")
+      assert_equal [@header, @unrelated], @hammer_project.find_files("/*", "html")
     end
     
     context "when the path is an extension" do
