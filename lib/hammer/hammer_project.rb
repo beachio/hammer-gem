@@ -121,7 +121,7 @@ class Hammer
         
       }
       
-      if files && files.length > 0 && !filename.include?('x')
+      if files && files.length > 0 && !filename.include?('*')
         files = [files[0]]
       end
       @cached_files["#{filename}:#{extension}"] = files
