@@ -2,39 +2,55 @@
 $LANG = "UTF-8"
 
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
-require "tmpdir"
+require File.join(File.dirname(__FILE__), "lib/hammer/build")
 
-@production = ARGV.include?('PRODUCTION')
-@errors = 0
-
-# Make sure we aren't a zombie!
-Thread.new do
-  while true
-    exit if Process.ppid == 1
-    sleep 1
+class Hammer::DebugBuild < Hammer::Build
+  def project
+    @project ||= Hammer::DebugProject.new(optimize_assets)
   end
 end
 
-project = Hammer::Project.new(@production)
-project.input_directory = ARGV[0]
-project.cache_directory = Dir.tmpdir
-project.output_directory = File.join(project.input_directory, "Build")
+class Hammer::DebugProject < Hammer::Project
+  def time(label)
+    t = Time.now
+    value = yield
+    puts "#{label} time: #{Time.now - t} seconds"
+    value
+  end
+
+  def compile
+    time('Compile') { super }
+  end
+
+  def write
+    time('Write') { super }
+  end
+end
+
+cache_directory   = ARGV[0]
+project_directory = ARGV[1]
+output_directory  = ARGV[2]
+
+# If only one argument is given, use it as the project directory.
+if project_directory.nil?
+  project_directory = cache_directory
+  cache_directory = Dir.tmpdir
+end
+
+build = Hammer::DebugBuild.new(:cache_directory   => cache_directory,
+                               :project_directory => project_directory,
+                               :output_directory  => output_directory,
+                               :optimize_assets   => ARGV.include?('PRODUCTION'))
 
 puts "Starting compilation..."
-puts "Cache directory: #{project.cache_directory}"
+puts "Cache directory: #{build.cache_directory}"
 
-t = Time.now
-project.compile()
-p "Compile time: #{Time.now - t} seconds"
-
-t = Time.now
-project.write()
-p "Write time: #{Time.now - t} seconds"
-@errors = project.errors
-
-project.hammer_files.each do |hammer_file|
-  if hammer_file.error
+build.hammer_time! do |project, app_template|
+  project.hammer_files.each do |hammer_file|
+    next unless hammer_file.error
     puts "Error in #{hammer_file.filename}:"
     puts " - #{hammer_file.error.text}"
   end
+
+  exit app_template.success? ? 0 : 1
 end

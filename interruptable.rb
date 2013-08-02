@@ -2,30 +2,24 @@
 $LANG = "UTF-8"
 
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
-require File.join(File.dirname(__FILE__), "lib/hammer/thing")
+require File.join(File.dirname(__FILE__), "lib/hammer/build")
 
-def watch_parent
-  Thread.new do
-    while true
-      exit if Process.ppid == 1
-      sleep 1
-    end
-  end
+# Pause to prevent the UI from returning too quickly and wreaking havoc with
+# FSEvents.
+def not_too_fast(start, minimum_duration = 0.5)
+  duration = Time.now - start
+  sleep minimum_duration - duration if duration < minimum_duration
 end
 
-def compile_project_when_interrupted
-  sleep 0.1 while true
-rescue SystemExit, Interrupt
-  thing = Thing.new(:cache_directory   => ARGV[0],
-                    :project_directory => ARGV[1],
-                    :output_directory  => ARGV[2])
-  # No files to process. Pause to prevent the UI from returning too quickly
-  # and wreaking havoc with FSEvents.
-  thing.no_project do
-    sleep 0.5
-  end
-  thing.hammer_time!
-end
+build = Hammer::Build.new(:cache_directory   => ARGV[0],
+                          :project_directory => ARGV[1],
+                          :output_directory  => ARGV[2],
+                          :optimize_assets   => ARGV.include?('PRODUCTION'))
 
-watch_parent
-compile_project_when_interrupted
+start = Time.now
+build.interruptable_hammer_time! do |project, app_template|
+  not_too_fast(start)
+
+  puts app_template
+  exit app_template.success? ? 0 : 1
+end
