@@ -36,7 +36,6 @@ class Thing
   end
 
   def write_template
-    return if debug?
     puts template
     exit template.success? ? 0 : 1
   end
@@ -47,10 +46,6 @@ class Thing
 
   def production?
     input.include?('PRODUCTION')
-  end
-
-  def debug?
-    ARGV.include?('DEBUG')
   end
 
   def project
