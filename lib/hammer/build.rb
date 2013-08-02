@@ -16,7 +16,7 @@ class Hammer
       complete.call project, app_template
     end
 
-    def interruptable_hammer_time!(&complete)
+    def stop_hammer_time!(&complete)
       watch_parent
       puts 'interrupt...'
       sleep 0.1 while true
