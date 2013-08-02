@@ -10,12 +10,12 @@ class Hammer
     end
     
     def cacher
-      @cacher ||= Hammer::Cacher.new(self, @temporary_directory)
+      @cacher ||= Hammer::Cacher.new(self, @cache_directory)
     end
     
     attr_reader :production, :errors
     
-    attr_accessor :hammer_files, :ignored_files, :input_directory, :temporary_directory, :output_directory
+    attr_accessor :hammer_files, :ignored_files, :input_directory, :cache_directory, :output_directory
     
     def file_list
       files = []
@@ -149,7 +149,7 @@ class Hammer
     ## The compile method. This does all the files.
     def compile()
       @compiled_hammer_files = []
-      @cacher = Hammer::Cacher.new(self, @temporary_directory)
+      @cacher = Hammer::Cacher.new(self, @cache_directory)
       hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file

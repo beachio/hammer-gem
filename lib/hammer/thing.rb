@@ -1,12 +1,12 @@
 class Thing
-  attr_accessor :temporary_directory, :project_directory, :output_directory,
+  attr_accessor :cache_directory, :project_directory, :output_directory,
                 :no_project_process
 
   def initialize(options)
-    @temporary_directory = options.fetch(:temporary_directory)
-    @project_directory   = options.fetch(:project_directory)
-    @output_directory    = options.fetch(:output_directory) ||
-                             default_output_directory
+    @cache_directory   = options.fetch(:cache_directory)
+    @project_directory = options.fetch(:project_directory)
+    @output_directory  = options.fetch(:output_directory) ||
+                           default_output_directory
   end
 
   def default_output_directory
@@ -28,9 +28,9 @@ class Thing
       return
     end
 
-    project.input_directory     = project_directory
-    project.temporary_directory = temporary_directory
-    project.output_directory    = output_directory
+    project.input_directory  = project_directory
+    project.cache_directory  = cache_directory
+    project.output_directory = output_directory
     project.compile
     project.write
   end

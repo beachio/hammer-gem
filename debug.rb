@@ -17,11 +17,11 @@ end
 
 project = Hammer::Project.new(@production)
 project.input_directory = ARGV[0]
-project.temporary_directory = Dir.tmpdir
+project.cache_directory = Dir.tmpdir
 project.output_directory = File.join(project.input_directory, "Build")
 
 puts "Starting compilation..."
-puts "Temporary directory: #{project.temporary_directory}"
+puts "Cache directory: #{project.cache_directory}"
 
 t = Time.now
 project.compile()

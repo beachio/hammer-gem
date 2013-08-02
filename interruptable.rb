@@ -16,9 +16,9 @@ end
 def compile_project_when_interrupted
   sleep 0.1 while true
 rescue SystemExit, Interrupt
-  thing = Thing.new(:temporary_directory => ARGV[0],
-                    :project_directory   => ARGV[1],
-                    :output_directory    => ARGV[2])
+  thing = Thing.new(:cache_directory   => ARGV[0],
+                    :project_directory => ARGV[1],
+                    :output_directory  => ARGV[2])
   # No files to process. Pause to prevent the UI from returning too quickly
   # and wreaking havoc with FSEvents.
   thing.no_project do
