@@ -1,8 +1,16 @@
 class Thing
-  attr_accessor :input, :no_project_process
+  attr_accessor :temporary_directory, :project_directory, :output_directory,
+                :no_project_process
 
-  def initialize(input = ARGV)
-    @input = input
+  def initialize(options)
+    @temporary_directory = options.fetch(:temporary_directory)
+    @project_directory   = options.fetch(:project_directory)
+    @output_directory    = options.fetch(:output_directory) ||
+                             default_output_directory
+  end
+
+  def default_output_directory
+    File.join(project_directory, 'Build')
   end
 
   def hammer_time!
@@ -11,12 +19,12 @@ class Thing
   end
 
   def no_project(&no_project_process)
-    self.no_project_process = no_project_process
+    @no_project_process = no_project_process
   end
 
   def compile_project
     unless project_exists?
-      no_project_process.call
+      no_project_process.call if no_project_process
       return
     end
 
@@ -31,18 +39,6 @@ class Thing
     return if debug?
     puts template
     exit template.success? ? 0 : 1
-  end
-
-  def temporary_directory
-    input[0]
-  end
-
-  def project_directory
-    input[1]
-  end
-
-  def output_directory
-    input[2] || File.join(project_directory, 'Build')
   end
 
   def project_exists?
