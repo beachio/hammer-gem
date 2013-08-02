@@ -35,7 +35,8 @@ rescue SystemExit, Interrupt
     project.compile()
     project.write()  
   else
-    # Minimum sleep time. No files. 
+    # No files to process. Pause to prevent the UI from returning too quickly
+    # and wreaking havoc with FSEvents.
     sleep 0.5
   end
   
