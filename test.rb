@@ -7,5 +7,5 @@ require "tmpdir"
 @project = Hammer::Project.new
 @project.input_directory = "/Users/elliott/Desktop/a"
 @project.output_directory = File.join(@project.input_directory, "Build")
-@project.temporary_directory = Dir.tmpdir
+@project.cache_directory = Dir.tmpdir
 @project.hammer_files()

@@ -11,7 +11,7 @@ profiler.profile('Hammer') do
 
   require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 
-  temporary_directory = ARGV[0]
+  cache_directory = ARGV[0]
   project_directory = ARGV[1]
   output_directory = ARGV[2] || File.join(project_directory, "Build")
 
@@ -24,7 +24,7 @@ profiler.profile('Hammer') do
   if File.exists? project_directory
     project.cacher.clear()
     project.input_directory = project_directory
-    project.temporary_directory = temporary_directory
+    project.cache_directory = cache_directory
     project.output_directory = output_directory
     project.compile()
     project.write()

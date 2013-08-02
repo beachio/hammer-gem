@@ -16,10 +16,10 @@ paths = Dir.glob("/Users/elliott/Sites/hammer/Hammer\ Projects/*")
 paths.each do |path|
   project = Hammer::Project.new(@production)
   project.input_directory = path
-  project.temporary_directory = Dir.tmpdir
+  project.cache_directory = Dir.tmpdir
   project.output_directory = File.join(project.input_directory, "Build")
   
-  FileUtils.rm_rf project.temporary_directory
+  FileUtils.rm_rf project.cache_directory
   FileUtils.rm_rf project.output_directory
   t = Time.now
   
