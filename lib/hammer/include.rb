@@ -9,12 +9,6 @@ module Templatey
   end
 end
 
-class Object
-  def try(method)
-    send method if respond_to? method
-  end
-end
-
 DEBUG = ARGV.include? "DEBUG"
 
 if DEBUG
@@ -27,32 +21,28 @@ else
   end
 end
 
-$FILE_PATH = File.expand_path(File.dirname(File.dirname(__FILE__)))
-$LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "lib")
-$LOAD_PATH << File.join(File.dirname(File.expand_path(__FILE__)), "..")
+require 'pathname'
 
-## Let's start by $LOAD_PATHing all the directories inside vendor/gems/*/lib
-# ["../vendor/gems/*"].each do |directory|
+root = Pathname.new('.').expand_path
+$LOAD_PATH << root
+$LOAD_PATH << root + 'lib'
+$LOAD_PATH << root + 'vendor' + 'bundle'
 
-dir = File.join(File.dirname(__FILE__), "../../vendor/gems/*")
-Dir.glob(dir).each do |dir|
-  d = File.directory?(lib = "#{dir}/lib") ? lib : dir
-  $LOAD_PATH << d
-end
+require 'bundler/setup'
+require 'hammer/parsers'
+require 'hammer/compressor'
+require 'hammer/hammer_file'
+require 'hammer/hammer_project'
+require 'hammer/hammer_error'
+require 'hammer/cacher'
 
-require File.join(File.dirname(__FILE__), "hammer")
-
-["hammer", "parsers", "compressor", "hammer_file", "hammer_project", "hammer_error", "cacher"].each do |file|
-  require File.join(File.dirname(__FILE__), file)
-end
-
-["templates/*.rb", "parsers/*.rb", "compressors/*"].each do |path|
-  Dir[File.join(File.dirname(__FILE__), path)].each do |file| 
-    require file 
+%w(templates parsers compressors).each do |type|
+  Pathname.glob(File.join('lib', 'hammer', type, '*')).each do |file|
+    path = file.expand_path.relative_path_from(root + 'lib').dirname
+    file_name = file.basename(file.extname)
+    require path + file_name
   end
 end
-
-$LOAD_PATH << File.dirname(__FILE__)
 
 ## Now require all the gems we need
 require 'json'

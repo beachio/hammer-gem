@@ -33,7 +33,8 @@ paths.each do |path|
     print " #{project.errors.length} errors. Total time: #{Time.now - t}"
   else
     project.errors.each do |error|
-      puts "  Error in #{error.try(:hammer_file).try(:filename)}:"
+      filename = error && error.hammer_file && error.hammer_file.filename
+      puts "  Error in #{filename}:"
       puts "    #{error.text}"
       binding.pry if @pry
     end
