@@ -19,14 +19,14 @@ def p
 end
 
 def load_project()
-  project_directory   = @project_directory
-  production          = ARGV.include? "PRODUCTION"
-  temporary_directory = Dir.tmpdir
-  output_directory    = File.join(project_directory, "Build")
+  project_directory = @project_directory
+  production        = ARGV.include? "PRODUCTION"
+  cache_directory   = Dir.tmpdir
+  output_directory  = File.join(project_directory, "Build")
 
   print "Creating #{production ? "production " : ""}Hammer project (@project)..."
   @project = Hammer::Project.new(production)
-  @project.temporary_directory = temporary_directory
+  @project.cache_directory = cache_directory
   @project.hammer_files()
   puts " done."
   
