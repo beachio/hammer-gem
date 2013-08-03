@@ -40,7 +40,7 @@ end
 build = Hammer::DebugBuild.new(:cache_directory   => cache_directory,
                                :project_directory => project_directory,
                                :output_directory  => output_directory,
-                               :optimize_assets   => ARGV.include?('PRODUCTION'))
+                               :optimized   => ARGV.include?('PRODUCTION'))
 
 puts "Starting compilation..."
 puts "Cache directory: #{build.cache_directory}"

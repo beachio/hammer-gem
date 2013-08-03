@@ -1,14 +1,14 @@
 class Hammer
   class Build
     attr_accessor :cache_directory, :project_directory, :output_directory,
-                  :optimize_assets
+                  :optimized
 
     def initialize(options)
       @cache_directory   = options.fetch(:cache_directory)
       @project_directory = options.fetch(:project_directory)
       @output_directory  = options.fetch(:output_directory) ||
                              default_output_directory
-      @optimize_assets   = options.fetch(:optimize_assets)
+      @optimized   = options.fetch(:optimized)
     end
 
     def hammer_time!(&complete)
@@ -29,11 +29,14 @@ class Hammer
 
     def compile_project
       return unless project_exists?
-      project.input_directory  = project_directory
-      project.cache_directory  = cache_directory
-      project.output_directory = output_directory
-      project.compile
-      project.write
+      project = Hammer::Project.new
+                    :input_directory => project_directory, 
+                    :cache_directory => cache_directory, 
+                    :output_directory => output_directory
+                    :production => optimized
+      
+      project.compile()
+      project.write()
     rescue Object => e
       project.error = e
     end
@@ -43,7 +46,7 @@ class Hammer
     end
 
     def project
-      @project ||= Hammer::Project.new(optimize_assets)
+      @project ||= Hammer::Project.new(optimized)
     end
 
     def app_template

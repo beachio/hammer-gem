@@ -55,13 +55,28 @@ class Hammer
       %Q{</body></html>}
     end
     
-    def not_found
+    ### Body templates
+    
+    def error_template(error_object)
+      "
+        <div class='build-error'>
+          <span>Error while building!</span>
+          <span>Error details:</span>
+          <p>#{error_object}</p>
+          <p>#{error_object.try(:backtrace)}</p>
+        </div>
+      "
+    end
+    
+    def not_found_template
       "<div class='build-error not-found'><span>Folder not found</span></div>"
     end
     
-    def no_files
+    def no_files_template
       "<div class='build-error no-files'><span>No files to build</span></div>"
     end
+    
+    # 
     
     def todo_files
       sorted_files.select {|file| 
@@ -115,8 +130,10 @@ class Hammer
     
     def body
       
-      return not_found if @files == nil
-      return no_files if @files == []
+      return error_template(@project.error) if @project.error
+      
+      return not_found_template if @files == nil
+      return no_files_template if @files == []
       
       body = [%Q{<section id="all">}]
       files = sorted_files

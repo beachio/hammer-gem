@@ -1,42 +1,110 @@
+# TODO: Rename me
 HAMMER_IGNORE_FILENAME = ".hammer-ignore"
 
 class Hammer
   class Project
 
-    def initialize(production=false)
-      @production = production
-      @ignored_files = []
-      @hammer_files = []
+    attr_reader :production, :errors
+    attr_accessor :hammer_files, :ignored_files, :input_directory, :cache_directory, :output_directory, :error
+
+    # TODO: Replace all initializations with the hash-based method.
+
+    def initialize(production_or_options=false)
+      if production_or_options.is_a? Hash
+        setup(production_or_options)
+      else
+        @error = nil
+        @production = production
+        @ignored_files = []
+        @hammer_files = []
+      end
     end
+    
+    def setup(options)
+      @production       = options.fetch(:production)
+      @input_directory  = options.fetch(:input_directory)
+      @output_directory = options.fetch(:output_directory)
+      @cache_directory  = options.fetch(:cache_directory)
+      
+      # TODO: turn these into private methods as we don't need accessors.
+      @file_paths       = file_paths()
+      @ignored_paths    = ignored_paths()
+      @hammer_files     = hammer_files()
+      
+      @cacher = Hammer::Cacher.new(self, @cache_directory)
+    end
+
+
+
+
+
+
+    
+    
+    # Hammer cacher object.
+    # We use this to check staleness of files and retrieve their cached contents.
     
     def cacher
       @cacher ||= Hammer::Cacher.new(self, @cache_directory)
     end
     
-    attr_reader :production, :errors
+
+
+
+
+
+    ## Sanitized setters
+    # We need to ensure that input_directory and output_directory are clean and expanded.
     
-    attr_accessor :hammer_files, :ignored_files, :input_directory, :cache_directory, :output_directory
+    def input_directory=(new_input_directory)
+      @input_directory = Pathname.new(new_input_directory.to_s).cleanpath.expand_path.to_s
+    end
     
-    def file_list
+    def output_directory=(new_output_directory)
+      @output_directory = Pathname.new(new_output_directory.to_s).cleanpath.expand_path.to_s
+    end
+
+
+
+
+
+    
+    # Let's create a list of filenames in the Hammer project.
+    # We ignore anything with .git, .svn and .DS_Store.
+    # This keeps our set of hammer files nice and sane.
+    def file_paths
       files = []
       if input_directory
         files = Dir.glob(File.join(Shellwords.escape(input_directory), "/**/*"), File::FNM_DOTMATCH)
-        # files.reject! { |a| a =~ /\.{1,2}$/ }
+        
         files.reject! { |a| a =~ /\/\.git\// }
         files.reject! { |a| a =~ /\/\.svn\// }
         files.reject! { |a| a =~ /\.DS_Store/ }
         files.reject! {|file| file.include?(output_directory)}
         files.reject! {|file| File.directory?(file)}
+        
         # .ht files are Apache!
         files.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
+        
+        # This is where I tried to ignore directories which start with a .
+        # TODO: ignore directories which start with a .
         # files.reject! {|file| file.split("/")[0..-2].select { |directory| directory.start_with? "."}.length > 0}
+        # files.reject! { |a| a =~ /\.{1,2}$/ }
       end
+      
       files
     end
     
+    # Check a hammer_file for whether we should ignore it.
+    def ignore_file?(hammer_file)
+      ignored_paths.include? hammer_file.full_path
+    end
+    
+    # Parse our HAMMER_IGNORE_FILENAME file, register it against our input_directory.
     def ignored_paths
       return [] unless input_directory
       return @ignored_paths if @ignored_paths
+      
       ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
       
       @ignored_paths = [ignore_file]
@@ -51,39 +119,43 @@ class Hammer
       @ignored_paths.flatten!.uniq!
       return @ignored_paths || []
     rescue
+      # TODO: Find out whether we actually use this rescue block.
+      # It would be good to be able to output debug information into a console somewhere.
       []
     end
     
-    def input_directory=(new_input_directory)
-      @input_directory = Pathname.new(new_input_directory.to_s).cleanpath.expand_path.to_s
-    end
-    
-    def output_directory=(new_output_directory)
-      @output_directory = Pathname.new(new_output_directory.to_s).cleanpath.expand_path.to_s
-    end
     
     def hammer_files
       return @hammer_files if @has_created_hammer_files
       
-      file_list.each do |full_path|
-        filename = full_path.to_s.gsub(input_directory.to_s, "")
-        filename = filename[1..-1] if filename.start_with? "/"
-        hammer_file = Hammer::HammerFile.new(:filename => filename, :full_path => full_path, :hammer_project => self)
+      file_paths.each do |file_path|
         
-        if ignored_paths.include? hammer_file.full_path
+        filename = file_path.to_s.gsub(@input_directory.to_s, "")
+        filename = filename[1..-1] if filename.start_with? "/"
+        
+        hammer_file = Hammer::HammerFile.new :filename => filename, 
+                                             :full_path => file_path, 
+                                             :hammer_project => self
+        
+        if ignore_file? hammer_file
           @ignored_files << hammer_file
         else
           @hammer_files << hammer_file
         end
       end
+      
       @has_created_hammer_files = true
       return @hammer_files
     end
     
+    # Shorthand for "add a hammer file to this project."
     def << (file)
       @hammer_files << file
     end
 
+
+    # Project-wide file finding.
+    # TODO: We might want to put this inside a helper object?
     def find_files(filename, extension=nil)
       
       @cached_files ||= {}
@@ -132,6 +204,8 @@ class Hammer
       find_files(filename, extension)[0]
     end
     
+    
+    # Parser chain management.
     def parser_for_hammer_file(hammer_file)
       parser_type = Hammer.parser_for_extension(hammer_file.extension)
       if parser_type
@@ -180,9 +254,7 @@ class Hammer
           else
             @cacher.cache(hammer_file.full_path, hammer_file.filename)
           end
-          
         end
-        
       end
       
       @cacher.write_to_disk
