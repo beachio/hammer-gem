@@ -88,7 +88,7 @@ class Hammer
         file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
         
         if ignore_file_path?(file_path)
-          url_tag
+          tag
         else
           
           add_wildcard_dependency file_path
@@ -98,7 +98,7 @@ class Hammer
           if file
             Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
           else
-            url_tag
+            tag
           end
         end
       end
