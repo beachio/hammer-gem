@@ -34,6 +34,8 @@ class Hammer
       project.output_directory = output_directory
       project.compile
       project.write
+    rescue Object => e
+      project.error = e
     end
 
     def project_exists?
