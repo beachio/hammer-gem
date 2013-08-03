@@ -16,10 +16,10 @@ build = Hammer::Build.new(:cache_directory   => ARGV[0],
                           :output_directory  => ARGV[2],
                           :optimized   => ARGV.include?('PRODUCTION'))
 
-start = Time.now
-build.stop_hammer_time! do |project, app_template|
-  not_too_fast(start)
+# start = Time.now
+# build.stop_hammer_time! do |project, app_template|
+#   not_too_fast(start)
 
-  puts app_template
-  exit app_template.success? ? 0 : 1
-end
+#   puts app_template
+#   exit app_template.success? ? 0 : 1
+# end

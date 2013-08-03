@@ -21,7 +21,8 @@ class Hammer
     end
     
     def setup(options)
-      @production       = options.fetch(:production)
+      @production       = options[:production] == true # this parameter is optional
+      
       @input_directory  = options.fetch(:input_directory)
       @output_directory = options.fetch(:output_directory)
       @cache_directory  = options.fetch(:cache_directory)
@@ -125,8 +126,14 @@ class Hammer
     end
     
     
+    
+    # This creates an array of @hammer_files and an array of @ignored_files.
+    
     def hammer_files
       return @hammer_files if @has_created_hammer_files
+      
+      @hammer_files = []
+      @ignored_files = []
       
       file_paths.each do |file_path|
         
@@ -223,7 +230,10 @@ class Hammer
     ## The compile method. This does all the files.
     def compile()
       @compiled_hammer_files = []
-      @cacher = Hammer::Cacher.new(self, @cache_directory)
+      
+      # Ensure cacher has been created.
+      cacher() unless @cacher
+      
       hammer_files.each do |hammer_file|
         
         @compiled_hammer_files << hammer_file

@@ -25,9 +25,12 @@ def load_project()
   output_directory  = File.join(project_directory, "Build")
 
   print "Creating #{production ? "production " : ""}Hammer project (@project)..."
-  @project = Hammer::Project.new(production)
-  @project.cache_directory = cache_directory
-  @project.hammer_files()
+  
+  @project = Hammer::Project.new(:cache_directory   => cache_directory,
+                               :project_directory => project_directory,
+                               :output_directory  => output_directory,
+                               :optimized   => ARGV.include?('PRODUCTION'))
+  
   puts " done."
   
   @project.compile()

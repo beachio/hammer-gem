@@ -8,7 +8,8 @@ class Hammer
       @project_directory = options.fetch(:project_directory)
       @output_directory  = options.fetch(:output_directory) ||
                              default_output_directory
-      @optimized   = options.fetch(:optimized)
+                             
+      @optimized   = options[:optimized] || false
     end
 
     def hammer_time!(&complete)
@@ -29,11 +30,6 @@ class Hammer
 
     def compile_project
       return unless project_exists?
-      project = Hammer::Project.new
-                    :input_directory => project_directory, 
-                    :cache_directory => cache_directory, 
-                    :output_directory => output_directory
-                    :production => optimized
       
       project.compile()
       project.write()
@@ -46,7 +42,11 @@ class Hammer
     end
 
     def project
-      @project ||= Hammer::Project.new(optimized)
+      @project ||= Hammer::Project.new(
+                    :input_directory => project_directory, 
+                    :cache_directory => cache_directory, 
+                    :output_directory => output_directory,
+                    :production => optimized)
     end
 
     def app_template

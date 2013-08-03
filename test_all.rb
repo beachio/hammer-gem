@@ -14,10 +14,12 @@ paths = Dir.glob("/Users/elliott/Sites/hammer/Hammer\ Projects/*")
 @longest = paths.max_by{|a| a.length}.length
 
 paths.each do |path|
-  project = Hammer::Project.new(@production)
-  project.input_directory = path
-  project.cache_directory = Dir.tmpdir
-  project.output_directory = File.join(project.input_directory, "Build")
+  
+  project = Hammer::Project.new(
+              :input_directory => path, 
+              :cache_directory => Dir.tmpdir, 
+              :output_directory => File.join(path, "Build"),
+              :production => @production)
   
   FileUtils.rm_rf project.cache_directory
   FileUtils.rm_rf project.output_directory
