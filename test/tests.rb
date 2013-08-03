@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'hammer', 'hammer')
+require 'pathname'
+require Pathname.new('.').expand_path + 'lib' + 'hammer' + 'hammer'
 
 require "test/unit"
 
