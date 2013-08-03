@@ -10,13 +10,13 @@ class Hammer
     # TODO: Replace all initializations with the hash-based method.
 
     def initialize(production_or_options=false)
+      @error = nil
+      @ignored_files = []
+      @hammer_files = []
       if production_or_options.is_a? Hash
         setup(production_or_options)
       else
-        @error = nil
         @production = production
-        @ignored_files = []
-        @hammer_files = []
       end
     end
     
@@ -132,9 +132,6 @@ class Hammer
     def hammer_files
       return @hammer_files if @has_created_hammer_files
       
-      @hammer_files = []
-      @ignored_files = []
-      
       file_paths.each do |file_path|
         
         filename = file_path.to_s.gsub(@input_directory.to_s, "")
@@ -164,7 +161,6 @@ class Hammer
     # Project-wide file finding.
     # TODO: We might want to put this inside a helper object?
     def find_files(filename, extension=nil)
-      
       @cached_files ||= {}
       if @cached_files["#{filename}:#{extension}"]
         return @cached_files["#{filename}:#{extension}"]
@@ -173,7 +169,9 @@ class Hammer
       filename = filename[1..-1] if filename.start_with? "/"
       regex = Hammer.regex_for(filename, extension)
 
-      files = hammer_files.select { |file|
+      hammer_files()
+
+      files = @hammer_files.select { |file|
         
         match = file.filename =~ regex
         straight_basename = false  # File.basename(file.filename) == filename
