@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'rake'
 gem 'bourbon'
   gem 'sass', '3.2.9'
 gem 'eco'
