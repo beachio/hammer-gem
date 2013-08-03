@@ -2,7 +2,7 @@
 $LANG = "UTF-8"
 
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
-require File.join(File.dirname(__FILE__), "lib/hammer/build")
+require 'hammer/build'
 
 class Hammer::DebugBuild < Hammer::Build
   def project

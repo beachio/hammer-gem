@@ -2,7 +2,7 @@
 $LANG = "UTF-8"
 
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
-require File.join(File.dirname(__FILE__), "lib/hammer/build")
+require 'hammer/build'
 
 # Pause to prevent the UI from returning too quickly and wreaking havoc with
 # FSEvents.
