@@ -18,7 +18,6 @@ class Hammer
 
     def stop_hammer_time!(&complete)
       watch_parent
-      puts 'interrupt...'
       sleep 0.1 while true
     rescue SystemExit, Interrupt
       hammer_time!(&complete)
