@@ -9,12 +9,6 @@ module Templatey
   end
 end
 
-class Object
-  def try(method)
-    send method if respond_to? method
-  end
-end
-
 DEBUG = ARGV.include? "DEBUG"
 
 if DEBUG
