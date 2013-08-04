@@ -59,4 +59,5 @@ include Open3
     !output.include? "build-error"
   end
   
+  puts
 end
