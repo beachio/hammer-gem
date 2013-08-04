@@ -46,7 +46,7 @@ class Hammer
                     :input_directory => project_directory, 
                     :cache_directory => cache_directory, 
                     :output_directory => output_directory,
-                    :production => optimized)
+                    :optimized => optimized)
     end
 
     def app_template

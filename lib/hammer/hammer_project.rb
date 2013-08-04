@@ -21,7 +21,7 @@ class Hammer
     end
     
     def setup(options)
-      @production       = options[:production] == true # this parameter is optional
+      @production       = options[:optimized] == true # this parameter is optional
       
       @input_directory  = options.fetch(:input_directory)
       @output_directory = options.fetch(:output_directory)

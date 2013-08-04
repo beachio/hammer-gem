@@ -19,7 +19,7 @@ paths.each do |path|
               :input_directory => path, 
               :cache_directory => Dir.tmpdir, 
               :output_directory => File.join(path, "Build"),
-              :production => @production)
+              :optimized => @production)
   
   FileUtils.rm_rf project.cache_directory
   FileUtils.rm_rf project.output_directory

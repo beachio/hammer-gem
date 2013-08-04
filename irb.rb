@@ -20,7 +20,7 @@ end
 
 def load_project()
   project_directory = @project_directory
-  production        = ARGV.include? "PRODUCTION"
+  optimized         = ARGV.include? "PRODUCTION"
   cache_directory   = Dir.tmpdir
   output_directory  = File.join(project_directory, "Build")
 
@@ -29,7 +29,7 @@ def load_project()
   @project = Hammer::Project.new(:cache_directory   => cache_directory,
                                :project_directory => project_directory,
                                :output_directory  => output_directory,
-                               :optimized   => ARGV.include?('PRODUCTION'))
+                               :optimized   => optimized)
   
   puts " done."
   

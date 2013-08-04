@@ -5,9 +5,9 @@ require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 require 'hammer/build'
 
 class Hammer::DebugBuild < Hammer::Build
-  # def project
-    # @project ||= Hammer::DebugProject.new(:optimized => false)
-  # end
+  def project
+    @project ||= Hammer::DebugProject.new(:optimized => false)
+  end
 end
 
 class Hammer::DebugProject < Hammer::Project
@@ -41,7 +41,7 @@ end
 build = Hammer::DebugBuild.new(:cache_directory   => cache_directory,
                                :project_directory => project_directory,
                                :output_directory  => output_directory,
-                               :optimize   => ARGV.include?('PRODUCTION'))
+                               :optimized  => ARGV.include?('PRODUCTION'))
 
 puts "Starting compilation..."
 puts "Cache directory: #{build.cache_directory}"
