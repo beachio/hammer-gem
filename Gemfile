@@ -8,7 +8,7 @@ gem 'eco'
     gem 'coffee-script-source', '~> 1.5.0'
 gem 'ejs'
 gem 'haml', '~> 4.0.3'
-gem 'json', '~> 1.7.7'
+gem "json_pure", "~> 1.8.0"
 gem 'kramdown', '~> 1.0.2'
 gem 'plist'
 gem 'uglifier', '2.1.1'
