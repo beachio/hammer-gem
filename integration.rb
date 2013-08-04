@@ -26,10 +26,12 @@ def run_integration_test(optimized)
   status = nil
 
   puts "Testing #{optimized ? 'optimized' : 'standard'} integration"
-  
-  Open3.popen3('/usr/bin/ruby', 'hammer_time.rb',
-               cache_directory, input_directory, 
-               output_directory, "PRODUCTION") do |stdin, stdout, stderr, wait_thread|
+
+  args = ['/usr/bin/ruby', 'hammer_time.rb', cache_directory,
+          input_directory, output_directory]
+  args << 'PRODUCTION' if optimized
+
+  Open3.popen3(*args) do |stdin, stdout, stderr, wait_thread|
     output = stdout.read
     error = stderr.read
   end
