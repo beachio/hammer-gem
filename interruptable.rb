@@ -4,6 +4,8 @@ $LANG = "UTF-8"
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 require 'hammer/build'
 
+# TODO: Remove this file. We're moving to hammer_time.rb with PRELOAD.
+
 # Pause to prevent the UI from returning too quickly and wreaking havoc with
 # FSEvents.
 def not_too_fast(start, minimum_duration = 0.5)
