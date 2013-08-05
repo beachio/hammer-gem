@@ -2,24 +2,21 @@ source 'https://rubygems.org'
 
 gem 'rake'
 gem 'bourbon'
-  gem 'sass', '3.2.9'
+gem 'sass', '~> 3.2.9'
 gem 'eco'
-  gem 'coffee-script', '~> 2.2.0'
-    gem 'coffee-script-source', '~> 1.5.0'
+gem 'coffee-script', '~> 2.2.0'
 gem 'ejs'
 gem 'haml', '~> 4.0.3'
 gem "json_pure", "~> 1.8.0"
-gem 'kramdown', '~> 1.0.2'
+gem 'kramdown'
 gem 'plist'
-gem 'uglifier', '2.1.1'
-  gem 'multi_json', '1.5.0'
+gem 'uglifier'
 
-gem 'shoulda', '3.3.2'
-gem 'shoulda-context', '1.0.2'
-gem 'shoulda-matchers', '1.4.2'
+gem 'shoulda'
 
-# Dependency of shoulda-matchers. 4.0 dropped support for ruby 1.8.
-gem 'activesupport', '< 4.0.0'
+# Dependencies which dropped support for ruby 1.8.
+gem 'shoulda-matchers', '< 2.1.0'
+gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 # Gems pre-bundler:
 #
