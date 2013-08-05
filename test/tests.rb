@@ -7,7 +7,7 @@ require "test/unit"
 
 # mocha uses Gem. This might change in a later version.
 require "rubygems"
-require "mocha"
+require "mocha/setup"
 
 require "shoulda-context"
 

@@ -13,6 +13,7 @@ gem 'plist'
 gem 'uglifier'
 
 gem 'shoulda'
+gem 'mocha'
 
 # Dependencies which dropped support for ruby 1.8.
 gem 'shoulda-matchers', '< 2.1.0'
