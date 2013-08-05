@@ -63,7 +63,7 @@ class Hammer
           <span>Error while building!</span>
           <span>Error details:</span>
           <p>#{error_object}</p>
-          <p>#{error_object.try(:backtrace)}</p>
+          <p>#{error_object && error_object.backtrace}</p>
         </div>
       "
     end
