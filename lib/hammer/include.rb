@@ -23,7 +23,7 @@ end
 
 require 'pathname'
 
-root = Pathname.new(__FILE__) + '..' + '..' + '..'
+root = Pathname.new(__FILE__).expand_path + '..' + '..' + '..'
 $LOAD_PATH << root
 $LOAD_PATH << root + 'lib'
 $LOAD_PATH << root + 'vendor' + 'bundle'
