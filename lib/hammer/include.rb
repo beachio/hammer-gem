@@ -37,7 +37,7 @@ require 'hammer/hammer_error'
 require 'hammer/cacher'
 
 %w(templates parsers compressors).each do |type|
-  Pathname.glob(File.join('lib', 'hammer', type, '*')).each do |file|
+  Pathname.glob(File.join(root, 'lib', 'hammer', type, '*')).each do |file|
     path = file.expand_path.relative_path_from(root + 'lib').dirname
     file_name = file.basename(file.extname)
     require path + file_name
