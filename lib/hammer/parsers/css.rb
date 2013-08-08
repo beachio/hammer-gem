@@ -107,6 +107,9 @@ class Hammer
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
+        
+        return tag if tag.include? "("
+        
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           add_wildcard_dependency tag
@@ -213,6 +216,9 @@ class Hammer
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
+        
+        return tag if tag.include? "("
+        
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         
         replacement = []

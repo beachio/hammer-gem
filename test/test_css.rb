@@ -66,6 +66,16 @@ class CSSParserTest < Test::Unit::TestCase
         assert_equal "a { background: url(images/proximanova-regular.eot#iefix) }", @parser.parse()
       end
       
+      should "not parse css gradients" do
+        @parser.text = "a { background: css-gradient(#dfdfdf,#f8f8f8); }"
+        assert_equal "a { background: css-gradient(#dfdfdf,#f8f8f8); }", @parser.parse()
+      end      
+      
+      should "not parse css gradients as includes" do
+        @parser.text = "a/* @include css-gradient(#dfdfdf,#f8f8f8); */"
+        assert_equal "a/* @include css-gradient(#dfdfdf,#f8f8f8); */", @parser.parse()
+      end
+      
       should "parse empty url()" do
         @parser.text = "a {background: url()}"
         assert_equal "a {background: url()}", @parser.parse()
