@@ -3,6 +3,7 @@ def assert(name, &thing)
   if success
     print "."
   else
+    @success = false
     puts "#{name} failed!"
   end
 end
@@ -15,6 +16,39 @@ require "tmpdir"
 
 require "open3"
 include Open3
+
+@success = true
+
+def run_failure_test(optimized)
+  input_directory  = File.join('test', 'integration', 'missingdirectory')
+  output_directory = Dir.mktmpdir('Build')
+  cache_directory  = Dir.mktmpdir('cache')
+  
+  output = nil
+  error = nil
+  status = nil
+  
+  args = ['/usr/bin/ruby', 'hammer_time.rb', cache_directory,
+          input_directory, output_directory]
+  args << 'PRODUCTION' if optimized
+  
+  Open3.popen3(*args) do |stdin, stdout, stderr, wait_thread|
+    output = stdout.read
+    error = stderr.read
+  end
+  
+  assert "task completes successfully" do
+    error == ""
+  end
+  
+  assert "We have output" do 
+    output.length > 0
+  end
+  
+  assert "our output contains errors" do
+    output.include? "build-error"
+  end
+end
 
 def run_integration_test(optimized)
   input_directory  = File.join('test', 'integration', 'case1')
@@ -54,7 +88,6 @@ def run_integration_test(optimized)
     !output.include? "build-error"
   end
 
-  puts
 ensure
   FileUtils.remove_entry output_directory
   FileUtils.remove_entry cache_directory
@@ -62,4 +95,9 @@ end
 
 [false, true].each do |optimized|
   run_integration_test optimized
+  puts
+  run_failure_test optimized
+  puts
 end
+
+exit @success ? 0 : 1
