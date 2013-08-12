@@ -84,12 +84,14 @@ task :test_release do
   require "tmpdir"
   require "zlib"
   require "open-uri"
+  original = Dir.pwd
   Dir.mktmpdir "testing-build" do |dir|
     Dir.chdir(dir)
     sh 'wget', 'http://hammer-updates.s3.amazonaws.com/Gem.zip'
     sh 'unzip', 'Gem.zip'
     sh 'ruby', '-I', 'test:lib', './test/tests.rb'
   end
+  Dir.chdir original
 end
 
 task :mark_release do
