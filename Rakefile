@@ -16,10 +16,6 @@ task :test do
   Rake::Task['integration'].execute
 end
 
-task :version do
-  puts open("VERSION").read
-end
-
 desc "Bump the version by 0.0.1"
 task :bump_version do
   current_version = open("VERSION").read
