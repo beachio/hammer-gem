@@ -81,15 +81,14 @@ end
 
 desc "Test the released version of the Hammer compiler"
 task :test_release do
-  puts "Testing http://hammer-updates.s3.amazonaws.com/Gem.zip ..."
   require "tmpdir"
   require "zlib"
   require "open-uri"
   Dir.mktmpdir "testing-build" do |dir|
     Dir.chdir(dir)
-    `wget http://hammer-updates.s3.amazonaws.com/Gem.zip`
-    `unzip Gem.zip -d #{dir}`
-    system "cd #{dir} && rake"
+    sh 'wget', 'http://hammer-updates.s3.amazonaws.com/Gem.zip'
+    sh 'unzip', 'Gem.zip'
+    sh 'ruby', '-I', 'test:lib', './test/tests.rb'
   end
 end
 
