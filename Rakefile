@@ -16,6 +16,11 @@ task :test do
   Rake::Task['integration'].execute
 end
 
+desc 'Run the integration tests'
+task :integration do
+  ruby "integration.rb"
+end
+
 desc "Bump the version by 0.0.1"
 task :bump_version do
   current_version = open("VERSION").read
@@ -26,11 +31,6 @@ task :bump_version do
   File.open("VERSION", 'w') do |f|
     f.write new_version
   end
-end
-
-desc 'Run the integration tests'
-task :integration do
-  ruby "integration.rb"
 end
 
 task :check_hammer_app_access do
