@@ -12,16 +12,14 @@ task :version do
 end
 
 desc "Bump the version by 0.0.1"
-namespace :version do
-  task :bump do
-    current_version = open("VERSION").read
-    new_version = current_version.split(".").join("")
-    new_version = (new_version.to_i + 1).to_s
-    new_version = new_version.split("").join(".")
-    puts "Bumping from #{current_version} to #{new_version}"
-    File.open("VERSION", 'w') do |f|
-      f.write new_version
-    end
+task :bump_version do
+  current_version = open("VERSION").read
+  new_version = current_version.split(".").join("")
+  new_version = (new_version.to_i + 1).to_s
+  new_version = new_version.split("").join(".")
+  puts "Bumping from #{current_version} to #{new_version}"
+  File.open("VERSION", 'w') do |f|
+    f.write new_version
   end
 end
 
@@ -87,6 +85,6 @@ task :mark_release do
 end
 
 desc "Release a gem!"
-task :release => [ :check_hammer_app_access, :upload_gem, :mark_release, :test_release ] do
+task :release => [ :test, :check_hammer_app_access, :bump_version, :upload_gem, :test_release, :mark_release ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
