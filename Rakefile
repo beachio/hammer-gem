@@ -6,6 +6,12 @@ def version
   open("VERSION").read.strip
 end
 
+def gem_files
+  `git ls-files -z`.split("\0") +
+    Dir['vendor/production/bundle/bundler/**/*'] +
+    Dir['vendor/production/bundle/**/gems/**/*']
+end
+
 
 task :default => [:test]
 
@@ -38,7 +44,18 @@ task :check_hammer_app_access do
   sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
 end
 
-file "Gem.zip" => `git ls-files -z`.split("\0") do |t|
+task :bundle do
+  rm_rf [ 'vendor/cache', 'vendor/production' ]
+  sh *%w(bundle cache)
+  sh *%w(bundle install
+         --local
+         --path=vendor/production/bundle
+         --standalone
+         --without development)
+  sh *%w(git checkout .bundle/config)
+end
+
+file "Gem.zip" => [:bundle] + gem_files do |t|
   sh 'zip', '-o', t.name, '-r', *t.prerequisites
 end
 
