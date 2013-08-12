@@ -24,9 +24,12 @@ end
 require 'pathname'
 
 root = Pathname.new(__FILE__).expand_path + '..' + '..' + '..'
-$LOAD_PATH << root
-$LOAD_PATH << root + 'lib'
-$LOAD_PATH << root + 'vendor' + 'bundle'
+$LOAD_PATH.unshift root
+$LOAD_PATH.unshift root + 'lib'
+
+# Development gems take precedence
+$LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
+$LOAD_PATH.unshift root + 'vendor' + 'bundle'
 
 require 'bundler/setup'
 require 'hammer/parsers'
