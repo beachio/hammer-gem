@@ -67,9 +67,12 @@ task :release => [ :check_hammer_app_access, :check_s3_credentials ] do
   filename = "Gem.zip"
 
   if File.exist? filename
-    puts "Deleting the #{filename} that I found"
+    puts "Deleting the #{filename} that I found."
     `rm #{filename}`
   end
+  
+  puts "Deleting any ZIP files in this directory."
+  `rm *.zip`
 
   puts "Zipping to #{filename}"
   `zip -o #{filename} -r *`
@@ -81,7 +84,7 @@ task :release => [ :check_hammer_app_access, :check_s3_credentials ] do
 
   local_file = filename
   base_name = File.basename(local_file)
-  puts "Uploading #{local_file} to '#{bucket}'..."
+  puts "Uploading #{local_file} to '#{s3_config['bucket']}'..."
 
   AWS::S3::S3Object.store(
     base_name,
