@@ -9,7 +9,6 @@ gem 'json_pure',     '~> 1.8.0'
 gem 'kramdown'
 gem 'mocha'
 gem 'plist'
-gem 'rake'
 gem 'sass',          '~> 3.2.9'
 gem 'shoulda'
 gem 'uglifier'
@@ -20,4 +19,5 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 group 'development' do
   gem 'aws-sdk'
+  gem 'rake'
 end
