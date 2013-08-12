@@ -67,12 +67,26 @@ def version
   open("VERSION").read.strip
 end
 
+desc "Test the released version of the Hammer compiler"
+task :test_release do
+  puts "Testing http://hammer-updates.s3.amazonaws.com/Gem.zip ..."
+  require "tmpdir"
+  require "zlib"
+  require "open-uri"
+  Dir.mktmpdir "testing-build" do |dir|
+    Dir.chdir(dir)
+    `wget http://hammer-updates.s3.amazonaws.com/Gem.zip`
+    `unzip Gem.zip -d #{dir}`
+    system "cd #{dir} && rake"
+  end
+end
+
 task :mark_release do
   sh 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}", '--app',
      'hammerformac'
 end
 
 desc "Release a gem!"
-task :release => [ :check_hammer_app_access, :upload_gem, :mark_release ] do
+task :release => [ :check_hammer_app_access, :upload_gem, :mark_release, :test_release ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
