@@ -1,3 +1,12 @@
+def s3_config
+  YAML.load_file('s3.yml')
+end
+
+def version
+  open("VERSION").read.strip
+end
+
+
 task :default => [:test]
 
 desc 'Run the test suite'
@@ -55,14 +64,6 @@ task :upload_gem => 'Gem.zip' do
   )
 
   puts "Uploaded!"
-end
-
-def s3_config
-  YAML.load_file('s3.yml')
-end
-
-def version
-  open("VERSION").read.strip
 end
 
 desc "Test the released version of the Hammer compiler"
