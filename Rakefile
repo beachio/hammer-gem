@@ -30,86 +30,49 @@ task :integration do
   ruby "integration.rb"
 end
 
-task :check_s3_credentials do
-  if !File.exist?("s3.yml")
-    puts "Whoops! I couldn't find s3.yml. You have to set up s3.yml before you get started."
-    exit
-  end
-end
-
 task :check_hammer_app_access do
   puts "Checking for Hammer app access..."
-  unless `heroku config --app hammerformac`.include? 'LATEST_GEM_VERSION'
-    puts "Whoops! No access to hammerformac.herokuapp.com "
-    puts "Please ensure that 'heroku config --app hammerformac' works."
-    exit
-  end
+  sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
 end
 
-desc "Release a gem!"
-task :release => [ :check_hammer_app_access, :check_s3_credentials ] do
-  require 'yaml'
-  require 'rubygems'
+file "Gem.zip" => `git ls-files -z`.split("\0") do |t|
+  sh 'zip', '-o', t.name, '-r', *t.prerequisites
+end
+
+task :upload_gem => 'Gem.zip' do
   require 'aws/s3'
 
-  version = open("VERSION").read
-  s3_config = YAML.load_file("./s3.yml")
-
-  puts "All right! We're good to go."
-  puts "Today we'll be zipping, uploading and releasing version #{version}"
-  puts "Ready to roll! Cancel this task now if you're not ready! <3"
-
+  puts "Ready to upload! Cancel this task now if you're not ready! <3"
   sleep 2
 
-  puts "Let's do this."
-
-  # Gem.zip is used by the upload server as the filename in the S3 bucket that we redirect to.
-  filename = "Gem.zip"
-
-  if File.exist? filename
-    puts "Deleting the #{filename} that I found."
-    `rm #{filename}`
-  end
-  
-  puts "Deleting any ZIP files in this directory."
-  `rm *.zip`
-
-  puts "Zipping to #{filename}"
-  `zip -o #{filename} -r *`
-
-  AWS::S3::Base.establish_connection!(
-    :access_key_id     => s3_config['aws_access_key'],
-    :secret_access_key => s3_config['aws_secret_access_key']
-  )
-
-  local_file = filename
-  base_name = File.basename(local_file)
-  puts "Uploading #{local_file} to '#{s3_config['bucket']}'..."
+  AWS.config(s3_config)
+  puts "Uploading to '#{s3_config['bucket']}'..."
 
   AWS::S3::S3Object.store(
-    base_name,
-    File.open(local_file),
+    'Gem',
+    File.open('Gem.zip'),
     s3_config['bucket'],
     :content_type => "application/zip",
     :access => :public_read
   )
 
-  puts " - Finished!"
-  puts "Setting the LATEST_GEM_VERSION in Heroku app 'hammerformac'"
-  puts `heroku config:set LATEST_GEM_VERSION=#{version} --app hammerformac`
-  puts "Done! We're now live on #{version}."
+  puts "Uploaded!"
+end
 
-  puts "Testing http://hammer-updates.s3.amazonaws.com/Gem.zip ..."
+def s3_config
+  YAML.load_file('s3.yml')
+end
 
-  require "tmpdir"
-  require "zlib"
-  require "open-uri"
-  Dir.mktmpdir "testing-build" do |dir|
-    Dir.chdir(dir)
-    `wget http://hammer-updates.s3.amazonaws.com/Gem.zip`
-    `unzip Gem.zip -d #{dir}`
-    `cd #{dir} && rake`
-  end
+def version
+  open("VERSION").read.strip
+end
 
-  puts "We're done here. Later!"
+task :mark_release do
+  sh 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}", '--app',
+     'hammerformac'
+end
+
+desc "Release a gem!"
+task :release => [ :check_hammer_app_access, :upload_gem, :mark_release ] do
+  puts "Done! We're now live on #{version}. Go test it."
 end
