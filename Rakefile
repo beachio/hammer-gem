@@ -78,5 +78,25 @@ task :release do
   
   puts "Setting the LATEST_GEM_VERSION in Heroku app 'hammerformac'"
   puts `heroku config:set LATEST_GEM_VERSION=#{version} --app hammerformac`
-  puts "Done! We're now live on #{version}. Go test it."
+  puts "Done! We're now live on #{version}."
+  
+  puts "Testing http://hammer-updates.s3.amazonaws.com/Gem.zip ..."
+  
+  require "tmpdir"
+  require "zlib"
+  require "open-uri"
+  Dir.mktmpdir "testing-build" do |dir|
+    Dir.chdir(dir)
+    `wget http://hammer-updates.s3.amazonaws.com/Gem.zip`
+    `unzip Gem.zip -d #{dir}`
+    `cd #{dir} && rake`
+  end
+
+  puts "We're done here. Later!"
+    
 end
+
+
+
+
+
