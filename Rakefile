@@ -11,3 +11,72 @@ desc 'Run the integration tests'
 task :integration do
   ruby "integration.rb"
 end
+
+desc "Release a gem!"
+task :release do
+  
+  require 'yaml'
+  require 'rubygems'
+  require 'aws/s3'
+  
+  s3_config = YAML.load_file("./s3.yml")
+  
+  puts "Releasing the Hammer gem."
+  puts "We'll need S3 access (s3.yml) and command-line heroku access to the hammerformac app."
+  
+  puts "Checking for Hammer app access..."
+  unless `heroku config --app hammerformac`.include? 'LATEST_GEM_VERSION'
+    puts "Whoops! No access to hammerformac.herokuapp.com "
+    puts "Please ensure that 'heroku config --app hammerformac' works."
+    exit
+  end
+  
+  if !File.exist?("s3.yml")
+    puts "Whoops! I couldn't find s3.yml. You have to set up s3.yml before you get started."
+    exit
+  end
+  
+  version = open("VERSION").read
+  
+  puts "All right! We're good to go."
+  puts "Today we'll be zipping, uploading and releasing version #{version} of the Hammer gem."
+  puts "Ready to roll! Cancel this task now if you're not ready! <3"
+  
+  sleep 2
+  
+  puts "Let's do this."
+  
+  # Gem.zip is used by the upload server as the filename in the S3 bucket that we redirect to.
+  filename = "Gem.zip"
+  
+  if File.exist? filename
+    puts "Deleting the Gem.zip that I found"
+    `rm #{filename}`
+  end
+  
+  puts "Zipping..."
+  `zip -o #{filename} -r *`
+  
+  AWS::S3::Base.establish_connection!(
+    :access_key_id     => s3_config['aws_access_key'],
+    :secret_access_key => s3_config['aws_secret_access_key']
+  )
+
+  local_file = filename
+  base_name = File.basename(local_file)
+  puts "Uploading #{local_file} to '#{bucket}'..."
+  
+  AWS::S3::S3Object.store(
+    base_name,
+    File.open(local_file),
+    s3_config['bucket'],
+    :content_type => "application/zip",
+    :access => :public_read
+  )
+
+  puts "Uploaded!"
+  
+  puts "Setting the LATEST_GEM_VERSION in Heroku app 'hammerformac'"
+  puts `heroku config:set LATEST_GEM_VERSION=#{version} --app hammerformac`
+  puts "Done! We're now live on #{version}. Go test it."
+end
