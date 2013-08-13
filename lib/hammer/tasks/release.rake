@@ -14,7 +14,7 @@ end
 
 desc "Release a gem!"
 task :release => [ :test, :check_hammer_app_access, :bump_version,
-                   :upload_gem, :test_release, :mark_release ] do
+                   :upload_gem, :test_release, :deploy ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
 
@@ -100,7 +100,7 @@ task :test_release do
   end
 end
 
-task :mark_release do
+task :deploy do
   sh 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}", '--app',
      'hammerformac'
 end
