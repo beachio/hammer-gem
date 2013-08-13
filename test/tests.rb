@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 require 'pathname'
-require Pathname.new('.').expand_path + 'lib' + 'hammer' + 'hammer'
+require (Pathname.new('.').expand_path + 'lib' + 'hammer' + 'hammer').to_s
 
 require "test/unit"
 

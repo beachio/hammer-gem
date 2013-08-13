@@ -43,7 +43,7 @@ require 'hammer/cacher'
   Pathname.glob(File.join(root, 'lib', 'hammer', type, '*')).each do |file|
     path = file.expand_path.relative_path_from(root + 'lib').dirname
     file_name = file.basename(file.extname)
-    require path + file_name
+    require (path + file_name).to_s
   end
 end
 
