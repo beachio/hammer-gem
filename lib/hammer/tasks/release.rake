@@ -23,8 +23,8 @@ end
 
 desc "Release a gem!"
 task :release => [ :test, :check_hammer_app_access, :pause_for_confirmation,
-                   :bump_version, :tag_release, :upload_gem, :test_release,
-                   :deploy ] do
+                   :bump_version, :test_local, :tag_release, :upload_gem,
+                   :test_release, :deploy ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
 
@@ -104,6 +104,25 @@ task :upload_gem => 'Gem.zip' do
   puts "Uploaded!"
 end
 
+def extract_and_test
+  puts "Extracting and testing gem..."
+  sh 'unzip', '-q', 'Gem.zip'
+  sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+  sh 'ruby', 'integration.rb'
+end
+
+task :test_local do
+  require "tmpdir"
+  Rake::FileUtilsExt.verbose false do
+    Dir.mktmpdir "testing-build" do |dir|
+      sh 'cp', 'Gem.zip', dir
+      Dir.chdir(dir) do
+        extract_and_test
+      end
+    end
+  end
+end
+
 desc "Test the released version of the Hammer compiler"
 task :test_release do
   require "tmpdir"
@@ -115,11 +134,7 @@ task :test_release do
       Dir.chdir(dir) do
         puts "Downloading gem..."
         sh 'wget', 'http://hammer-updates.s3.amazonaws.com/Gem.zip'
-
-        puts "Extracting and testing gem..."
-        sh 'unzip', '-q', 'Gem.zip'
-        sh 'ruby', '-I', 'test:lib', './test/tests.rb'
-        sh 'ruby', 'integration.rb'
+        extract_and_test
       end
     end
   end
