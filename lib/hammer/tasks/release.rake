@@ -44,21 +44,29 @@ task :check_hammer_app_access do
   sh 'bundle', 'exec', 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
 end
 
-task :bundle do
-  puts 'Updating bundle...'
-  Rake::FileUtilsExt.verbose false do
-    rm_rf [ 'vendor/cache', 'vendor/production' ]
+def bundle_production
+  rm_rf [ 'vendor/cache', 'vendor/production' ]
 
-    # bundle-cache has no verbosity option
-    sh 'bundle cache 1>/dev/null'
+  # bundle-cache has no verbosity option
+  sh 'bundle cache 1>/dev/null'
 
-    sh *%w(bundle install
+  sh *%w(bundle install
            --quiet
            --local
            --path=vendor/production/bundle
            --standalone
            --without development)
-    sh *%w(git checkout .bundle/config)
+  sh *%w(git checkout .bundle/config)
+end
+
+task :bundle do
+  puts 'Updating bundle...'
+  Rake::FileUtilsExt.verbose false do
+    if defined?(Bundler)
+      Bundler.with_clean_env { bundle_production }
+    else
+      bundle_production
+    end
   end
 end
 
