@@ -41,7 +41,7 @@ end
 
 task :check_hammer_app_access do
   puts "Checking for Hammer app access..."
-  sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
+  sh 'bundle', 'exec', 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
 end
 
 task :bundle do
@@ -103,13 +103,14 @@ task :test_release do
 
         puts "Extracting and testing gem..."
         sh 'unzip', '-q', 'Gem.zip'
-        sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+        sh 'bundle', 'exec', 'ruby', '-I', 'test:lib', './test/tests.rb'
       end
     end
   end
 end
 
 task :deploy do
-  sh 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}", '--app',
-     'hammerformac'
+  sh 'bundle', 'exec', 'heroku', 'config:set',
+     "LATEST_GEM_VERSION=#{version}",
+     '--app', 'hammerformac'
 end

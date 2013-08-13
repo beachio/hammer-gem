@@ -4,6 +4,7 @@ GEM
     activesupport (3.2.14)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    addressable (2.3.5)
     aws-sdk (1.14.1)
       json (~> 1.4)
       nokogiri (< 1.6.0)
@@ -21,21 +22,37 @@ GEM
       execjs
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
+    excon (0.25.3)
     execjs (1.4.0)
       multi_json (~> 1.0)
     haml (4.0.3)
       tilt
+    heroku (2.40.0)
+      heroku-api (~> 0.3.7)
+      launchy (>= 0.3.2)
+      netrc (~> 0.7.7)
+      rest-client (~> 1.6.1)
+      rubyzip
+    heroku-api (0.3.15)
+      excon (~> 0.25.1)
     i18n (0.6.4)
     json (1.8.0)
     json_pure (1.8.0)
     kramdown (1.1.0)
+    launchy (2.3.0)
+      addressable (~> 2.3)
     metaclass (0.0.1)
+    mime-types (1.23)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.7.8)
+    netrc (0.7.7)
     nokogiri (1.5.10)
     plist (3.1.0)
     rake (10.1.0)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    rubyzip (0.9.9)
     sass (3.2.10)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -61,6 +78,7 @@ DEPENDENCIES
   eco
   ejs
   haml (~> 4.0.3)
+  heroku
   json_pure (~> 1.8.0)
   kramdown
   mocha

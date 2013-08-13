@@ -19,5 +19,6 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 group 'development' do
   gem 'aws-sdk'
+  gem 'heroku'
   gem 'rake'
 end
