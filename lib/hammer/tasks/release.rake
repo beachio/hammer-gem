@@ -22,8 +22,9 @@ def gem_files
 end
 
 desc "Release a gem!"
-task :release => [ :test, :check_hammer_app_access, :bump_version,
-                   :tag_release, :upload_gem, :test_release, :deploy ] do
+task :release => [ :test, :check_hammer_app_access, :pause_for_confirmation,
+                   :bump_version, :tag_release, :upload_gem, :test_release,
+                   :deploy ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
 
@@ -78,18 +79,19 @@ file "Gem.zip" => [:bundle] + gem_files do |t|
   end
 end
 
-task :upload_gem => 'Gem.zip' do
-  require 'aws/s3'
-
+task :pause_for_confirmation do
   puts "Ready to upload! Cancel this task now if you're not ready! <3"
   sleep 2
+end
 
+task :upload_gem => 'Gem.zip' do
+  puts "Uploading to '#{s3_config['bucket']}'..."
+
+  require 'aws/s3'
   AWS::S3::Base.establish_connection!(
     :access_key_id     => s3_config['access_key_id'], 
     :secret_access_key => s3_config['secret_access_key']
   )
-
-  puts "Uploading to '#{s3_config['bucket']}'..."
 
   AWS::S3::S3Object.store(
     'Gem.zip',
