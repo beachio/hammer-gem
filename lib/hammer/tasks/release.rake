@@ -35,8 +35,8 @@ desc 'Create and push a new tag to origin for this version'
 task :tag_release => :bump_version do
   sh 'git', 'commit', '-a', '-m', "Release #{version}"
   sh 'git', 'tag', "v#{version}"
-  # sh 'git', 'push', 'origin'
-  # sh 'git', 'push', 'origin', "v#{version}"
+  sh 'git', 'push', 'origin'
+  sh 'git', 'push', 'origin', "v#{version}"
 end
 
 task :check_hammer_app_access do
