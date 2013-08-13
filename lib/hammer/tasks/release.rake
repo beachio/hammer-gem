@@ -93,7 +93,7 @@ task :upload_gem => 'Gem.zip' do
   puts "Uploading to '#{s3_config['bucket']}'..."
 
   AWS::S3::S3Object.store(
-    'Gem',
+    'Gem.zip',
     File.open('Gem.zip'),
     s3_config['bucket'],
     :content_type => "application/zip",
