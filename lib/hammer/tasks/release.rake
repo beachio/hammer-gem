@@ -41,8 +41,11 @@ end
 
 task :check_hammer_app_access do
   puts "Checking for Hammer app access..."
-  sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
+  Bundler.with_clean_env do
+    sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
+  end
 end
+
 
 def bundle_production
   rm_rf [ 'vendor/cache', 'vendor/production' ]
