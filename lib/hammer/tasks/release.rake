@@ -79,7 +79,7 @@ task :upload_gem => 'Gem.zip' do
   puts "Uploading to '#{s3_config['bucket']}'..."
 
   s3 = AWS::S3.new
-  bucket = s3.buckets[se_config['bucket']]
+  bucket = s3.buckets[s3_config['bucket']]
   gem_file = bucket.objects['Gem.zip']
   gem_file.write(Pathname.new("./Gem.zip"), :acl => :public_read)
 
