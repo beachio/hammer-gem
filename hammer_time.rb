@@ -21,6 +21,8 @@ build = Hammer::Build.new(:cache_directory   => ARGV[0],
                           :optimized   => ARGV.include?('PRODUCTION'))
 start = Time.now
 
+trap('INT', 'DEFAULT')
+
 if ARGV.include?('PRELOAD') and !interrupted
   build.stop_hammer_time! do |project, app_template|
     not_too_fast(start)
