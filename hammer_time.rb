@@ -1,6 +1,10 @@
 # encoding: utf-8
 $LANG = "UTF-8"
 
+# Catch interrupts received before app is loaded.
+interrupted = false
+trap('INT') { interrupted = true }
+
 require File.join(File.dirname(__FILE__), "lib/hammer/hammer")
 require 'hammer/build'
 
@@ -17,7 +21,7 @@ build = Hammer::Build.new(:cache_directory   => ARGV[0],
                           :optimized   => ARGV.include?('PRODUCTION'))
 start = Time.now
 
-if ARGV.include? 'PRELOAD'
+if ARGV.include?('PRELOAD') and !interrupted
   build.stop_hammer_time! do |project, app_template|
     not_too_fast(start)
     puts app_template
