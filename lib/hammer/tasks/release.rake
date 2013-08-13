@@ -84,8 +84,6 @@ task :upload_gem => 'Gem.zip' do
   puts "Ready to upload! Cancel this task now if you're not ready! <3"
   sleep 2
 
-  # AWS.config(s3_config)
-  
   AWS::S3::Base.establish_connection!(
     :access_key_id     => s3_config['access_key_id'], 
     :secret_access_key => s3_config['secret_access_key']
