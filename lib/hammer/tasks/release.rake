@@ -14,7 +14,7 @@ end
 
 desc "Release a gem!"
 task :release => [ :test, :check_hammer_app_access, :bump_version,
-                   :upload_gem, :test_release, :deploy ] do
+                   :tag_release, :upload_gem, :test_release, :deploy ] do
   puts "Done! We're now live on #{version}. Go test it."
 end
 
@@ -28,6 +28,14 @@ task :bump_version do
   File.open("VERSION", 'w') do |f|
     f.write new_version
   end
+end
+
+desc 'Create and push a new tag to origin for this version'
+task :tag_release => :bump_version do
+  sh 'git', 'commit', '-a', '-m', "Release #{version}"
+  sh 'git', 'tag', "v#{version}"
+  # sh 'git', 'push', 'origin'
+  # sh 'git', 'push', 'origin', "v#{version}"
 end
 
 task :check_hammer_app_access do
