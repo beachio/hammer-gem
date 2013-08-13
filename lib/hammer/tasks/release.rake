@@ -36,18 +36,28 @@ task :check_hammer_app_access do
 end
 
 task :bundle do
-  rm_rf [ 'vendor/cache', 'vendor/production' ]
-  sh *%w(bundle cache)
-  sh *%w(bundle install
-         --local
-         --path=vendor/production/bundle
-         --standalone
-         --without development)
-  sh *%w(git checkout .bundle/config)
+  puts 'Updating bundle...'
+  Rake::FileUtilsExt.verbose false do
+    rm_rf [ 'vendor/cache', 'vendor/production' ]
+
+    # bundle-cache has no verbosity option
+    sh 'bundle cache 1>/dev/null'
+
+    sh *%w(bundle install
+           --quiet
+           --local
+           --path=vendor/production/bundle
+           --standalone
+           --without development)
+    sh *%w(git checkout .bundle/config)
+  end
 end
 
 file "Gem.zip" => [:bundle] + gem_files do |t|
-  sh 'zip', '-o', t.name, '-r', *t.prerequisites
+  puts 'Creating Gem.zip...'
+  Rake::FileUtilsExt.verbose false do
+    sh 'zip', t.name, '--quiet', '--latest-time', '--recurse-paths', *t.prerequisites
+  end
 end
 
 task :upload_gem => 'Gem.zip' do
@@ -75,11 +85,17 @@ task :test_release do
   require "tmpdir"
   require "zlib"
   require "open-uri"
-  Dir.mktmpdir "testing-build" do |dir|
-    Dir.chdir(dir) do
-      sh 'wget', 'http://hammer-updates.s3.amazonaws.com/Gem.zip'
-      sh 'unzip', 'Gem.zip'
-      sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+
+  Rake::FileUtilsExt.verbose false do
+    Dir.mktmpdir "testing-build" do |dir|
+      Dir.chdir(dir) do
+        puts "Downloading gem..."
+        sh 'wget', 'http://hammer-updates.s3.amazonaws.com/Gem.zip'
+
+        puts "Extracting and testing gem..."
+        sh 'unzip', '-q', 'Gem.zip'
+        sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+      end
     end
   end
 end
