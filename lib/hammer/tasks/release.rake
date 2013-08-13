@@ -1,3 +1,11 @@
+def sh_with_clean_env(*args)
+  if defined?(Bundler)
+    Bundler.with_clean_env { sh *args }
+  else
+    sh *args
+  end
+end
+
 def s3_config
   require "yaml"
   YAML.load_file('s3.yml')
@@ -41,35 +49,25 @@ end
 
 task :check_hammer_app_access do
   puts "Checking for Hammer app access..."
-  Bundler.with_clean_env do
-    sh 'heroku', 'config:get', 'LATEST_GEM_VERSION', '--app', 'hammerformac'
-  end
-end
-
-
-def bundle_production
-  rm_rf [ 'vendor/cache', 'vendor/production' ]
-
-  # bundle-cache has no verbosity option
-  sh 'bundle cache 1>/dev/null'
-
-  sh *%w(bundle install
-           --quiet
-           --local
-           --path=vendor/production/bundle
-           --standalone
-           --without development)
-  sh *%w(git checkout .bundle/config)
+  sh_with_clean_env 'heroku', 'config:get', 'LATEST_GEM_VERSION',
+                    '--app', 'hammerformac'
 end
 
 task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
-    if defined?(Bundler)
-      Bundler.with_clean_env { bundle_production }
-    else
-      bundle_production
-    end
+    rm_rf [ 'vendor/cache', 'vendor/production' ]
+
+    # bundle-cache has no verbosity option
+    sh_with_clean_env 'bundle cache 1>/dev/null'
+
+    sh_with_clean_env *%w(bundle install
+                        --quiet
+                        --local
+                        --path=vendor/production/bundle
+                        --standalone
+                        --without development)
+    sh_with_clean_env *%w(git checkout .bundle/config)
   end
 end
 
@@ -127,6 +125,6 @@ task :test_release do
 end
 
 task :deploy do
-  sh 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}",
-     '--app', 'hammerformac'
+  sh_with_clean_env 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}",
+                    '--app', 'hammerformac'
 end
