@@ -1,4 +1,5 @@
 def s3_config
+  require 'yaml'
   YAML.load_file('s3.yml')
 end
 
