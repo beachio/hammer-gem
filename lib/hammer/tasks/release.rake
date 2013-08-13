@@ -119,6 +119,7 @@ task :test_release do
         puts "Extracting and testing gem..."
         sh 'unzip', '-q', 'Gem.zip'
         sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+        sh 'ruby', 'integration.rb'
       end
     end
   end
