@@ -18,7 +18,6 @@ gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 group 'development' do
-  gem 'heroku'
   gem 'aws-s3'
   gem 'rake'
 end
