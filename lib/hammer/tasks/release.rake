@@ -78,13 +78,18 @@ task :upload_gem => 'Gem.zip' do
   AWS.config(s3_config)
   puts "Uploading to '#{s3_config['bucket']}'..."
 
-  AWS::S3::S3Object.store(
-    'Gem',
-    File.open('Gem.zip'),
-    s3_config['bucket'],
-    :content_type => "application/zip",
-    :access => :public_read
-  )
+  s3 = AWS::S3.new
+  bucket = s3.buckets[se_config['bucket']]
+  gem_file = bucket.objects['Gem.zip']
+  gem_file.write(Pathname.new("./Gem.zip"), :acl => :public_read)
+
+  # AWS::S3::S3Object.store(
+  #   'Gem',
+  #   File.open('Gem.zip'),
+  #   s3_config['bucket'],
+  #   :content_type => "application/zip",
+  #   :access => :public_read
+  # )
 
   puts "Uploaded!"
 end
