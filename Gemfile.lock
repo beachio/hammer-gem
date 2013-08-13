@@ -5,13 +5,14 @@ GEM
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     addressable (2.3.5)
-    aws-sdk (1.14.1)
-      json (~> 1.4)
-      nokogiri (< 1.6.0)
-      uuidtools (~> 2.1)
+    aws-s3 (0.6.3)
+      builder
+      mime-types
+      xml-simple
     bourbon (3.1.8)
       sass (>= 3.2.0)
       thor
+    builder (3.2.2)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
@@ -36,7 +37,6 @@ GEM
     heroku-api (0.3.15)
       excon (~> 0.25.1)
     i18n (0.6.4)
-    json (1.8.0)
     json_pure (1.8.0)
     kramdown (1.1.0)
     launchy (2.3.0)
@@ -47,7 +47,6 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.7.8)
     netrc (0.7.7)
-    nokogiri (1.5.10)
     plist (3.1.0)
     rake (10.1.0)
     rest-client (1.6.7)
@@ -65,14 +64,14 @@ GEM
     uglifier (2.1.2)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
-    uuidtools (2.1.4)
+    xml-simple (1.1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   activesupport (< 4.0.0)
-  aws-sdk
+  aws-s3
   bourbon
   coffee-script (~> 2.2.0)
   eco
