@@ -125,7 +125,7 @@ class Hammer
   register_parser_for_extensions CSSParser, ['css']
   register_parser_as_default_for_extensions CSSParser, ['css']
 
-  class SASSParser < HammerParser
+  class SASSParser < CSSParser
     
     def format=(format)
       @format = format.to_sym
@@ -169,6 +169,7 @@ class Hammer
       @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
       
       includes()
+      clever_paths()
       
       engine = Sass::Engine.new(@text, options)
       
