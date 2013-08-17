@@ -6,7 +6,9 @@ desc 'Run the test suite'
 task :test do
   ruby "-I test test/tests.rb"
   `rm -rf .sass-cache`
+  puts
   Rake::Task['integration'].execute
+  puts
   Rake::Task['functional'].execute
 end
 

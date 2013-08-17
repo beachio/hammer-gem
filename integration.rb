@@ -59,8 +59,6 @@ def run_integration_test(optimized)
   error = nil
   status = nil
 
-  puts "Testing #{optimized ? 'optimized' : 'standard'} integration"
-
   args = ['/usr/bin/ruby', 'hammer_time.rb', cache_directory,
           input_directory, output_directory]
   args << 'PRODUCTION' if optimized
@@ -95,9 +93,7 @@ end
 
 [false, true].each do |optimized|
   run_integration_test optimized
-  puts
   run_failure_test optimized
-  puts
 end
 
 exit @success ? 0 : 1
