@@ -81,10 +81,6 @@ class HammerAppTemplateTest < Test::Unit::TestCase
       
       @template = Hammer::AppTemplate.new(project)
     end
-    
-    should "Not display the partials" do
-      assert !@template.to_s.include?("_nav.html")
-    end
   end
 
   

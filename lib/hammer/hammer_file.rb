@@ -42,6 +42,10 @@ class Hammer
       end
       @raw_text
     end
+    
+    def include?
+      File.basename(filename).start_with? "_"
+    end
 
     # style.scss -> style.css    
     # blog/app.coffee -> blog/app.js

@@ -152,7 +152,18 @@ class Hammer
         body << %Q{<div class="html set">}
         body << "<strong>HTML pages</strong>"
         if html_files.any?
-          body << html_files.map {|file| TemplateLine.new(file) if !file.error }
+          body << html_files.map {|file| TemplateLine.new(file) if !file.error && !file.include? }
+        else
+          body << '<div class="message">
+            <p><b>There are no HTML files in your project</b></p>
+          </div>'
+        end
+        body << %Q{</div>}
+        
+        body << %Q{<div class="html includes set">}
+        body << "<strong>HTML includes</strong>"
+        if html_files.any?
+          body << html_files.map {|file| TemplateLine.new(file) if !file.error && file.include? }
         else
           body << '<div class="message">
             <p><b>There are no HTML files in your project</b></p>
@@ -244,9 +255,8 @@ class Hammer
         file.messages.length > 0 ? 0 : 1
       }.sort_by {|file|
         (file.filename == "index.html") ? 0 : 1
-      }.select { |file|
-        underscore = File.basename(file.finished_filename).start_with? "_"
-        !underscore || file.messages.count > 0 || file.error
+      }.sort_by {|file|
+        file.include? ? 1 : 0
       }
     end
 
@@ -286,6 +296,7 @@ class Hammer
         classes << "optimized" if @file.is_a_compiled_file
         classes << "error" if @error
         classes << "include" if @include
+        classes << "include" if @file.filename.start_with? "_"
         classes << "cached" if @file.from_cache
         
         classes << @extension
@@ -317,7 +328,7 @@ class Hammer
           lines << "</span>"
           @line = lines.join()
         elsif @include
-          # @line = "Compiled to <b>#{link}</b>"
+          @line = "Include only - not compiled"
         elsif @file.from_cache
           @line = "Copied to  <b>#{link}</b> <span class='from-cache'>from&nbsp;cache</span>"
         elsif !@file.compiled
