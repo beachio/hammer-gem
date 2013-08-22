@@ -80,7 +80,12 @@ end
 file "Gem.zip" => [:bundle] + gem_files do |t|
   puts 'Creating Gem.zip...'
   Rake::FileUtilsExt.verbose false do
-    sh 'zip', t.name, '--symlinks', '--quiet', '--latest-time', '--recurse-paths', *t.prerequisites
+    sh *%W(zip #{t.name}
+           --symlinks
+           --quiet
+           --latest-time
+           --recurse-paths) +
+       t.prerequisites
   end
 end
 
