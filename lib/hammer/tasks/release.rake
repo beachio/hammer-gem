@@ -63,11 +63,11 @@ task :bundle do
     sh_with_clean_env 'bundle cache 1>/dev/null'
 
     sh_with_clean_env *%w(bundle install
-                        --quiet
-                        --local
-                        --path=vendor/production/bundle
-                        --standalone
-                        --without development)
+                          --quiet
+                          --local
+                          --path=vendor/production/bundle
+                          --standalone
+                          --without development)
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
