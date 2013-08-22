@@ -18,7 +18,8 @@ end
 def gem_files
   `git ls-files -z`.split("\0") +
     Dir['vendor/production/bundle/bundler/**/*'] +
-    Dir['vendor/production/bundle/**/gems/**/*']
+    Dir['vendor/production/bundle/ruby/1.8/gems/**/*'] +
+    Dir['vendor/production/bundle/ruby/2.0.0']
 end
 
 desc "Release a gem!"
@@ -79,7 +80,7 @@ end
 file "Gem.zip" => [:bundle] + gem_files do |t|
   puts 'Creating Gem.zip...'
   Rake::FileUtilsExt.verbose false do
-    sh 'zip', t.name, '--quiet', '--latest-time', '--recurse-paths', *t.prerequisites
+    sh 'zip', t.name, '--symlinks', '--quiet', '--latest-time', '--recurse-paths', *t.prerequisites
   end
 end
 
