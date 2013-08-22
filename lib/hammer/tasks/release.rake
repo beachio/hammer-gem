@@ -70,10 +70,8 @@ task :bundle do
                         --without development)
     sh_with_clean_env *%w(git checkout .bundle/config)
 
-    unless File.exists? 'vendor/bundle/ruby/2.0.0'
-      Dir.chdir('vendor/bundle/ruby') do
-        sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)
-      end
+    Dir.chdir('vendor/production/bundle/ruby') do
+      sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)
     end
   end
 end
