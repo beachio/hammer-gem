@@ -31,7 +31,7 @@ class Hammer
   private
   
     def ignore_file_path?(file_path)
-      file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:"
+      file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:" || file_path[0..0] == "/"
     end
     
     def import_url_paths

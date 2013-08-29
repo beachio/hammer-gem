@@ -158,7 +158,7 @@ class CSSParserTest < Test::Unit::TestCase
           end
 
           should "match absolute file paths" do
-            assert_compilation "url(/assets/_include.css);", "url(assets/_include.css);"
+            assert_compilation "url(/assets/_include.css);", "url(/assets/_include.css);"
           end
 
         end
