@@ -34,9 +34,8 @@ class Hammer
           
           tags = line.gsub("/ @include ", "").strip.split(" ")
           number_of_indents_in_this_line = line[/\A[|\t]*/].size
-          number_of_indents_in_the_next_line = @text.split("\n")[line_number+1][/\A[|\t]*/].size rescue 0
-          
-          indented_after_this_line = number_of_indents_in_this_line >= number_of_indents_in_the_next_line
+          number_of_indents_in_the_next_line = @text.split("\n")[line_number][/\A[|\t]*/].size rescue -1
+          indented_after_this_line = number_of_indents_in_this_line <= number_of_indents_in_the_next_line
 
           tags.map do |tag|
             
@@ -63,7 +62,11 @@ class Hammer
                 end
                 text
               else
-                "<!-- @include #{tag} -->"
+                if file.extension == "haml"
+                  file.raw_text
+                else
+                  "<!-- @include #{tag} -->"
+                end
               end
             else
               raise "Includes: File <b>#{h tag}</b> couldn't be found."

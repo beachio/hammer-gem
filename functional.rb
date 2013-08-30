@@ -22,9 +22,24 @@ def _compare_directories a, b
     
     if !File.directory? a_file_path    
       if !FileUtils.compare_file(b_file_path, a_file_path)
+  
         raise %Q{
-  Error in #{relative_file_path} (#{b_file_path} / #{a_file_path}):
-  #{`diff #{a_file_path} #{b_file_path}`.gsub(" ", "-")}}
+Error in #{relative_file_path} (#{b_file_path} / #{a_file_path}):
+
+
+Expected output:    (#{b_file_path})
+----
+#{File.open(b_file_path).read}
+----
+
+Actual output:      (File #{a_file_path})
+----
+#{File.open(a_file_path).read}
+----
+
+
+        }
+
       end
       
       print "."
