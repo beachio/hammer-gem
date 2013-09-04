@@ -24,58 +24,69 @@ class Hammer
       parse
     end
     
+    def as_lines
+      @text.split("\n")
+    end
+    
     def includes
       return unless @hammer_project
       
-      while text.match /[\s-]*\/ @include (.*)/
+      lines = @text.split("\n")
+      
+      line_number = 0
+      # lines.each_with_index do |line, line_number|
+      while line = lines[line_number]
         
-        lines = []
-        replace(/[\s-]*\/ @include (.*)/) do |line, line_number|
+        if line.match /[\s-]*\/ @include (.*)/
           
-          tags = line.gsub("/ @include ", "").strip.split(" ")
-          number_of_indents_in_this_line = line[/\A[|\t]*/].size
-          number_of_indents_in_the_next_line = @text.split("\n")[line_number][/\A[|\t]*/].size rescue -1
-          indented_after_this_line = number_of_indents_in_this_line <= number_of_indents_in_the_next_line
-
-          tags.map do |tag|
+          number_of_indents_in_this_line = line[/\A[ |\t]*/].size
+          next_line = lines[line_number+1]
+          puts "Line after include:"
+          puts next_line
+          number_of_indents_in_the_next_line = next_line[/\A[ |\t]*/].size 
+          indented_after_this_line = number_of_indents_in_this_line < number_of_indents_in_the_next_line
+          
+          tag = line.gsub("/ @include ", "").strip.split(" ")[0]
+          file = find_file(tag, 'html')
+          
+          raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
+          
+          if file.extension == "haml"
             
-            if (tag.start_with? "$")
-              variable_value = variables[tag[1..-1]]
+            letters_to_indent_by = line.split("")[0] * line[/\A[ |\t]*/].size
+            lines[line_number] = file.raw_text.split("\n").map {|line| letters_to_indent_by + line }
+            
+            if indented_after_this_line
+              indents_at_this_line = line[/\A[ |\t]*/].size
+              included_file_last_line_indentation = file.raw_text.split("\n")[-1][/\A[ |\t]*/].size
               
-              if !variable_value
-                raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set."
-              end
+              i = line_number + 1
               
-              tag = variable_value
-            end
-            
-            file = find_file(tag, 'html')
-            
-            if file
-              if file.extension == "haml" && !indented_after_this_line
-                
-                indentation = line.split("/")[0].length
-                char = line.split("/")[0].split("")[0]
-                text = file.raw_text
-                if char
-                  text = text.split("\n").map {|line|  (char * indentation) + line }.join("\n")
+              while i < lines.length
+                if lines[i][/\A[ |\t]*/].size > indents_at_this_line
+                  
+                  letters_to_indent_by = line.split("")[0] * line[/\A[ |\t]*/].size
+                  
+                  lines[i] = letters_to_indent_by + lines[i]
                 end
-                text
-              else
-                if file.extension == "haml"
-                  file.raw_text
-                else
-                  "<!-- @include #{tag} -->"
-                end
+                i+=1
               end
             else
-              raise "Includes: File <b>#{h tag}</b> couldn't be found."
+              
             end
-          end.compact.join("\n")
+            lines = lines.flatten
+          else
+            lines[line_number] = "<!-- @include #{tag} -->"
+          end
+          
         end
+        
+        line_number += 1
       end
+      
+      @text = lines.join("\n")
     end
-    
+     
     def to_haml
       @raw_text
     end
