@@ -54,7 +54,7 @@ class Hammer
     def includes
       return unless @hammer_project
       
-      lines = self.text_as_lines
+      lines = text_as_lines
       
       line_number = 0
       # lines.each_with_index do |line, line_number|
