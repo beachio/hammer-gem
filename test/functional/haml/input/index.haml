@@ -1,5 +1,11 @@
-This is my file
 .container
-  This is the container
+  inside .container
   / @include _nav
-  In .container
+    appended to nav
+  inside .container
+
+.container
+  inside .container
+  / @include _nav
+  after nav
+  inside .container
