@@ -33,9 +33,9 @@ class Hammer
         replace(/[\s-]*\/ @include (.*)/) do |line, line_number|
           
           tags = line.gsub("/ @include ", "").strip.split(" ")
-          number_of_indents_in_this_line = line[/\A[|\t]*/].size
-          number_of_indents_in_the_next_line = @text.split("\n")[line_number][/\A[|\t]*/].size rescue -1
-          indented_after_this_line = number_of_indents_in_this_line <= number_of_indents_in_the_next_line
+          number_of_indents_in_this_line = line[/\A[ |\t]*/].size
+          number_of_indents_in_the_next_line = @text.split("\n")[line_number][/\A[ |\t]*/].size rescue -1
+          indented_after_this_line = number_of_indents_in_this_line < number_of_indents_in_the_next_line
 
           tags.map do |tag|
             
