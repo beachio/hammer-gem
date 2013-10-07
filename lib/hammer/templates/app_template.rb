@@ -101,7 +101,7 @@ class Hammer
     end
     
     def html_files
-      sorted_files.select {|file| File.extname(file.finished_filename) == ".html" && !file.error }.compact
+      sorted_files.select {|file| (['.php', '.html'].include? File.extname(file.finished_filename)) && !file.error }.compact
     end
     
     def compilation_files
@@ -304,7 +304,7 @@ class Hammer
           classes << 'image'
         end
         
-        if @extension == "html"
+        if @extension == "html" || @extension == "php"
           classes << "html"          
         else
           classes << "success" if @file.compiled
