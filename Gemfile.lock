@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:elliottkember/bourbon.git
+  revision: 8ea27a1fbc44fd05c6b27fdfa44a7d82a38b06c8
+  specs:
+    bourbon (3.1.8)
+      sass (>= 3.2.0)
+      thor
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -8,9 +16,6 @@ GEM
       builder
       mime-types
       xml-simple
-    bourbon (3.1.8)
-      sass (>= 3.2.0)
-      thor
     builder (3.2.2)
     coffee-script (2.2.0)
       coffee-script-source
@@ -36,7 +41,7 @@ GEM
     multi_json (1.7.8)
     plist (3.1.0)
     rake (10.1.0)
-    sass (3.2.10)
+    sass (3.2.12)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
       shoulda-matchers (>= 1.4.1, < 3.0)
@@ -56,7 +61,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport (< 4.0.0)
   aws-s3
-  bourbon
+  bourbon!
   coffee-script (~> 2.2.0)
   eco
   ejs
@@ -66,7 +71,7 @@ DEPENDENCIES
   mocha
   plist
   rake
-  sass (~> 3.2.9)
+  sass (~> 3.2.12)
   shoulda
   shoulda-matchers (< 2.1.0)
   uglifier

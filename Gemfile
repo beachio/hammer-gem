@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'bourbon'
+# gem 'bourbon'
+gem 'bourbon', :git => "git@github.com:elliottkember/bourbon.git"
 gem 'coffee-script', '~> 2.2.0'
 gem 'eco'
 gem 'ejs'
@@ -9,7 +10,7 @@ gem 'json_pure',     '~> 1.8.0'
 gem 'kramdown'
 gem 'mocha'
 gem 'plist'
-gem 'sass',          '~> 3.2.9'
+gem 'sass',          '~> 3.2.12'
 gem 'shoulda'
 gem 'uglifier'
 
