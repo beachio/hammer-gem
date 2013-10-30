@@ -72,7 +72,7 @@ task :bundle do
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
-      sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)
+      sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
     end
   end
 end
@@ -121,7 +121,7 @@ def extract_and_test
   sh 'ruby', 'integration.rb'
 end
 
-task :test_local do
+task :test_local => 'Gem.zip' do
   require "tmpdir"
   Rake::FileUtilsExt.verbose false do
     Dir.mktmpdir "testing-build" do |dir|
