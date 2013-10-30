@@ -39,7 +39,6 @@ class Hammer
     def raw_text
       if full_path
         @raw_text ||= File.open(full_path).read
-        # @raw_text = @raw_text.encode!('UTF-8', 'binary', :invalid => :replace, :undef => :replace, :replace => '') rescue @raw_text
       end
       @raw_text
     end
