@@ -119,7 +119,7 @@ class Hammer
     # the last line that was inserted.
     def indent_from_line(line, lines, line_number, number_of_indents)
 
-      indents_at_this_line = line.number_of_tab_or_space_indents
+      indents_at_this_line = line.to_s.number_of_tab_or_space_indents
       
       # Here we have an include that's followed by an indented line.
       # Since we're including HAML inside HAML, we have to shuffle everything downwards until things fit.
@@ -131,7 +131,7 @@ class Hammer
       while i < lines.length
 
         future_line = lines[i]
-        indents_at_the_future_line = future_line.number_of_tab_or_space_indents
+        indents_at_the_future_line = future_line.to_s.number_of_tab_or_space_indents
         next_line_is_indented = indents_at_the_future_line > indents_at_this_line
 
         break unless next_line_is_indented
