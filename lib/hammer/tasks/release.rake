@@ -58,6 +58,12 @@ end
 task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
+
+    puts "Deleting existing file..."
+    Dir.chdir('vendor/production/bundle/ruby') do
+      sh_with_clean_env *%w(rm -rf *)
+    end
+
     rm_rf [ 'vendor/cache', 'vendor/production' ]
 
     # bundle-cache has no verbosity option
@@ -72,7 +78,11 @@ task :bundle do
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
-      sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
+      if File.exists? ("2.0.0")
+        sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
+      else
+        sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)
+      end
     end
   end
 end
