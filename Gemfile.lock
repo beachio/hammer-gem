@@ -1,3 +1,12 @@
+GIT
+  remote: git@github.com:robwierzbowski/bourbon.git
+  revision: a199a965ef9a690583ed6acfbac16677228a0ba0
+  ref: a199a965ef9a690583ed6acfbac16677228a0ba0
+  specs:
+    bourbon (3.1.8)
+      sass (>= 3.2.0)
+      thor
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -8,9 +17,6 @@ GEM
       builder
       mime-types
       xml-simple
-    bourbon (3.1.8)
-      sass (>= 3.2.0)
-      thor
     builder (3.2.2)
     coffee-script (2.2.0)
       coffee-script-source
@@ -56,7 +62,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport (< 4.0.0)
   aws-s3
-  bourbon
+  bourbon!
   coffee-script (~> 2.2.0)
   eco
   ejs
