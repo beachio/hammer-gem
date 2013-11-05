@@ -55,6 +55,7 @@ task :check_hammer_app_access do
                     '--app', 'hammerformac'
 end
 
+desc 'Update vendored bundle'
 task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
@@ -87,6 +88,7 @@ task :bundle do
   end
 end
 
+desc 'Package code and all dependencies'
 file "Gem.zip" => [:bundle] + gem_files do |t|
   require 'open3'
 
@@ -141,6 +143,7 @@ def extract_and_test
   sh 'ruby', 'integration.rb'
 end
 
+desc 'Extract local bundle and run tests'
 task :test_local => 'Gem.zip' do
   require "tmpdir"
   Rake::FileUtilsExt.verbose false do
