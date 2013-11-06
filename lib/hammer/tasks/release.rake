@@ -61,8 +61,12 @@ task :bundle do
   Rake::FileUtilsExt.verbose false do
 
     puts "Deleting existing file..."
-    Dir.chdir('vendor/production/bundle/ruby') do
-      sh_with_clean_env *%w(rm -rf *)
+    begin
+      Dir.chdir('vendor/production/bundle/ruby') do
+        sh_with_clean_env *%w(rm -rf *)
+      end
+    rescue => e
+      puts "Existing files weren't found: #{e}"
     end
 
     rm_rf [ 'vendor/cache', 'vendor/production' ]
