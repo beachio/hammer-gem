@@ -299,7 +299,7 @@ class Hammer
             end
             
           elsif hammer_file.compiled_text
-            f = File.new(output_path, "w")
+            f = File.new(output_path, "w:UTF-8")
             f.write(hammer_file.compiled_text)
             f.close
           else

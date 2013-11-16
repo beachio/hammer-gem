@@ -38,7 +38,7 @@ class Hammer
     
     def raw_text
       if full_path
-        @raw_text ||= File.open(full_path).read
+        @raw_text ||= File.open(full_path, 'r:UTF-8').read
       end
       @raw_text
     end

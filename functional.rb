@@ -29,12 +29,12 @@ Error in #{relative_file_path} (#{b_file_path} / #{a_file_path}):
 
 Expected output:    (#{b_file_path})
 ----
-#{File.open(b_file_path).read}
+#{File.open(b_file_path, 'r:UTF-8').read}
 ----
 
 Actual output:      (File #{a_file_path})
 ----
-#{File.open(a_file_path).read}
+#{File.open(a_file_path, 'r:UTF-8').read}
 ----
 
 
