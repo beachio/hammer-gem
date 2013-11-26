@@ -28,6 +28,7 @@ class TestTodos < Test::Unit::TestCase
     
     formats = {
       'html' => '<!-- @todo eat -->',
+      'html' => '<!-- @TODO eat -->',
       'js' => ['/* @todo eat */', "// @todo eat\n"],
       'css' =>'/* @todo eat */',
       'scss' => ["/* @todo eat */\n", "// @todo eat\n"],
