@@ -69,6 +69,27 @@ class TestHammerProject < Test::Unit::TestCase
       assert_equal @files.collect(&:filename).sort, @hammer_project.find_files("*", "html").collect(&:filename).sort
     end
   end
+
+    context "A Hammer project with deeply-nested files" do
+    setup do 
+      @hammer_project = Hammer::Project.new
+      
+      @files = []
+      
+      @file1 = Hammer::HammerFile.new :filename => "1234567890/location/index.html", :text => "I'm the right file"
+      @files.push @file1
+      @hammer_project << @file1
+
+      @file2 = Hammer::HammerFile.new :filename => "index.html", :text => "<!-- @path location/index.html -->"
+      @files.push @file2
+      @hammer_project << @file2
+      
+    end
+    
+    should "find the right filenames with wildcards" do
+      assert_equal [@file1], @hammer_project.find_files("location/index", "html")
+    end
+  end
   
   context "A Hammer project with multiple files" do
     

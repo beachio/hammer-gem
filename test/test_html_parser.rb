@@ -158,6 +158,14 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.text = @file.raw_text
           assert_equal "assets/logo.png", @parser.parse()
         end
+
+        # should "correctly match Clever Paths" do
+        #   a = Hammer::HammerFile.new(:text => "<!-- @path location/index.html -->", :path => "index.html")
+        #   b = Hammer::HammerFile.new(:text => "I'm the right file.", :path => "1234567890/location/index.html")
+
+        #   @parser.text = a.raw_text
+        #   assert_equal "1234567890/location/index.html", @parser.parse()
+        # end
         
         should "remove empty lines from the start of a page" do
           @file.raw_text = "<!-- $title ABC -->\nThis is a line\nThis is another line"

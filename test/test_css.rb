@@ -136,13 +136,6 @@ class CSSParserTest < Test::Unit::TestCase
           assert_compilation "url(/* @path _include.css */);", "url(assets/_include.css);"
         end
 
-        should "do stupid relative paths" do
-          # TODO: WHAT ? This shouldn't pass.
-          # TODO: Make this more logical.
-          assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
-          assert_compilation "url(/* @path things/like/_include.css */);", "url(assets/_include.css);"
-        end
-        
         context "with multiple paths" do
           setup do
             new_file = Hammer::HammerFile.new

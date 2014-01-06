@@ -105,7 +105,9 @@ class Hammer
     extensions = [*extension].compact
     if !extension
       extension =  File.extname(filename)[1..-1]
-      filename = File.basename(filename, ".*") 
+      if extension
+        filename = filename[0..-extension.length-2]
+      end
     end
     extensions = extensions + possible_other_extensions_for(extension)
     extensions = extensions.flatten
