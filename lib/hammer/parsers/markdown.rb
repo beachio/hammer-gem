@@ -1,5 +1,7 @@
-class Hammer
-  class MarkdownParser < HammerParser
+require 'kramdown'
+
+module Hammer
+  class MarkdownParser < Parser
 
     def self.finished_extension
       "html"
@@ -28,6 +30,6 @@ class Hammer
     end
     
   end
-  register_parser_for_extensions MarkdownParser, ['md']
-  register_parser_as_default_for_extensions MarkdownParser, ['md']
+  Hammer::Parser.register_for_extensions MarkdownParser, ['md']
+  Hammer::Parser.register_as_default_for_extensions MarkdownParser, ['md']
 end

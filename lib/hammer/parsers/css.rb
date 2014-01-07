@@ -1,6 +1,9 @@
-class Hammer
+require 'hammer/parser'
+require 'bourbon'
 
-  class CSSParser < HammerParser
+module Hammer
+
+  class CSSParser < Parser
     
     def to_format(format)
       if format == :css
@@ -71,7 +74,6 @@ class Hammer
           file_name = file_path.split(/\?|#/)[0]
           extras = file_path.split(file_name)[1]
           file = find_file(file_name)
-          
           if file
             url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
             "url(#{url}#{extras if extras})"
@@ -107,23 +109,22 @@ class Hammer
     def includes
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
-        
         return tag if tag.include? "("
         
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
-          add_wildcard_dependency tag
+          # add_wildcard_dependency tag
           file = find_file(tag, 'css')
           raise "Included file <b>#{tag}</b> couldn't be found." unless file
-          Hammer.parser_for_hammer_file(file).to_css()
+          Hammer::Parser.for_hammer_file(file).to_css()
         end
         a.compact.join("\n")
       end
     end
 
   end
-  register_parser_for_extensions CSSParser, ['css']
-  register_parser_as_default_for_extensions CSSParser, ['css']
+  Hammer::Parser.register_for_extensions CSSParser, ['css']
+  Hammer::Parser.register_as_default_for_extensions CSSParser, ['css']
 
   class SASSParser < CSSParser
     
@@ -148,7 +149,7 @@ class Hammer
       if new_format == :css
         parse
       elsif new_format == format
-        @raw_text
+        @hammer_file.raw_text
       elsif format == :scss and new_format == :sass
         # warn "SCSS to SASS isn't done"
         false
@@ -224,12 +225,12 @@ class Hammer
         
         replacement = []
         tags.each do |tag|
-          
+
           file = find_file(tag, 'scss')
           
           raise "Included file <strong>#{tag}</strong> couldn't be found." unless file
           
-          parser = Hammer.parser_for_hammer_file(file)
+          parser = Hammer::Parser.for_hammer_file(file)
           text = parser.to_format(format)
           
           if !text
@@ -245,9 +246,9 @@ class Hammer
     end
     
     def load_paths
-      if @hammer_file.full_path && @input_directory
+      if @hammer_file.path && @input_directory
         [
-          File.dirname(escape_glob(@hammer_file.full_path)),
+          File.dirname(escape_glob(@hammer_file.path)),
           File.join(escape_glob(@input_directory)),
           File.join(escape_glob(@input_directory), "**/*"),
           File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
@@ -265,6 +266,7 @@ class Hammer
 
 
     def options
+      cache_directory = @cache_directory rescue Dir.mktmpdir
       {
         :disable_warnings => true,
         :syntax => format, 
@@ -281,6 +283,6 @@ class Hammer
       { :quiet => true, :logger => nil }
     end
   end
-  register_parser_for_extensions SASSParser, ['sass', 'scss', 'css']
-  register_parser_as_default_for_extensions SASSParser, ['sass', 'scss']
+  Hammer::Parser.register_for_extensions SASSParser, ['sass', 'scss']
+  Hammer::Parser.register_as_default_for_extensions SASSParser, ['sass', 'scss']
 end

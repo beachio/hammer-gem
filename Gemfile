@@ -14,12 +14,17 @@ gem 'plist'
 gem 'sass',          '~> 3.2.12'
 gem 'shoulda'
 gem 'uglifier'
+gem 'execjs'
+
+gem 'test-unit'
 
 # Dependencies which dropped support for ruby 1.8.
 gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
-group 'development' do
+group :development, :test do
   gem 'aws-s3'
   gem 'rake'
 end
+
+gem 'byebug'

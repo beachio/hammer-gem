@@ -1,59 +1,32 @@
-class Hammer
+module Hammer
   class Build
-    attr_accessor :cache_directory, :project_directory, :output_directory,
-                  :optimized
+
+    attr_accessor :cache_directory, :project_directory, :output_directory, 
+                  :optimized, :project
 
     def initialize(options)
-      @cache_directory   = options.fetch(:cache_directory)
-      @project_directory = options.fetch(:project_directory)
-      @output_directory  = options.fetch(:output_directory) ||
-                             default_output_directory
-                             
-      @optimized   = options[:optimized] || false
+      @project = Project.new(options)
     end
 
-    def hammer_time!(&complete)
-      compile_project
-      complete.call project, app_template
-    end
-
-    def stop_hammer_time!(&complete)
-      watch_parent
-      sleep 0.1 while true
-    rescue SystemExit, Interrupt
-      hammer_time!(&complete)
+    def compile
+      @project.read()
+      @project.compile()
+      @project.write()
     end
 
     def default_output_directory
-      File.join(project_directory, 'Build')
+      File.join(@input_directory, 'Build')
     end
 
-    def compile_project
-      return unless project_exists?
-      
-      project.compile()
-      project.write()
-    rescue Object => e
-      project.error = e
+    def wait(&complete)
+      protect_against_zombies
+      sleep 0.1 while true
+    rescue SystemExit, Interrupt
+      compile(&complete)
     end
 
-    def project_exists?
-      File.exists?(project_directory)
-    end
-
-    def project
-      @project ||= Hammer::Project.new(
-                    :input_directory => project_directory, 
-                    :cache_directory => cache_directory, 
-                    :output_directory => output_directory,
-                    :optimized => optimized)
-    end
-
-    def app_template
-      Hammer::AppTemplate.new(project)
-    end
-
-    def watch_parent
+    # This process kills the build if this process's parent process exits.
+    def protect_against_zombies
       Thread.new do
         while true
           exit if Process.ppid == 1

@@ -1,4 +1,4 @@
-class Hammer
+module Hammer
   class PHPParser < HTMLParser
 
     def self.finished_extension
@@ -6,6 +6,6 @@ class Hammer
     end
   end
 
-  register_parser_for_extensions PHPParser, ['php']
-  register_parser_as_default_for_extensions PHPParser, ['php']
+  Hammer::Parser.register_for_extensions PHPParser, ['php']
+  Hammer::Parser.register_as_default_for_extensions PHPParser, ['php']
 end

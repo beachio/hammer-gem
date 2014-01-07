@@ -1,5 +1,5 @@
-class Hammer
-  class TodoParser < HammerParser
+module Hammer
+  class TodoParser < Parser
     
     def regex
       case @format

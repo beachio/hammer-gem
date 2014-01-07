@@ -1,23 +1,15 @@
+require 'rake/testtask'
 import 'lib/hammer/tasks/release.rake'
 
-task :default => [:test]
+task :default => :test
 
-desc 'Run the test suite'
-task :test do
-  ruby "-I test test/tests.rb"
-  `rm -rf .sass-cache`
-  puts
-  Rake::Task['integration'].execute
-  puts
-  Rake::Task['functional'].execute
+def scope(path)
+  File.join(File.dirname(__FILE__), path)
 end
 
-desc 'Run the integration tests'
-task :integration do
-  ruby "integration.rb"
-end
-
-desc 'Run the integration tests'
-task :functional do
-  ruby "functional.rb"
+Rake::TestTask.new do |t|
+  t.libs << 'test'
+  test_files = FileList[scope('test/**/*_test.rb')]
+  t.test_files = test_files
+  t.verbose = true
 end

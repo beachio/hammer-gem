@@ -1,5 +1,5 @@
-class Hammer
-  class JSTParser < HammerParser
+module Hammer
+  class JSTParser < Parser
     def to_javascript
       parse
     end
@@ -20,10 +20,10 @@ class Hammer
       "js"
     end
   end
-  register_parser_for_extensions JSTParser, ['jst']
-  register_parser_as_default_for_extensions JSTParser, ['jst']
+  Hammer::Parser.register_for_extensions JSTParser, ['jst']
+  Hammer::Parser.register_as_default_for_extensions JSTParser, ['jst']
 
-  class EcoParser < HammerParser
+  class EcoParser < Parser
     def parse
       @text = Eco.compile(@text)
       name = File.basename(@hammer_file.filename, '.*')
@@ -34,6 +34,6 @@ class Hammer
        "js"
      end
   end
-  register_parser_for_extensions EcoParser, ['eco', 'js']
-  register_parser_as_default_for_extensions EcoParser, ['eco']
+  Hammer::Parser.register_for_extensions EcoParser, ['eco']
+  Hammer::Parser.register_as_default_for_extensions EcoParser, ['eco']
 end

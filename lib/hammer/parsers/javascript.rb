@@ -1,6 +1,10 @@
-class Hammer
+require "execjs"
+require "coffee-script"
+require "eco"
+
+module Hammer
   
-  class JSParser < HammerParser
+  class JSParser < Parser
 
     def to_javascript
       parse
@@ -32,17 +36,17 @@ class Hammer
           
           raise "Included file <strong>#{h tag}</strong> couldn't be found." unless file
           
-          Hammer.parser_for_hammer_file(file).to_javascript()
+          Hammer::Parser.for_hammer_file(file).to_javascript()
         end
         a.compact.join("\n")
       end
     end
     
   end
-  register_parser_for_extensions JSParser, ['js']
-  register_parser_as_default_for_extensions JSParser, ['js']
+  Hammer::Parser.register_for_extensions JSParser, ['js']
+  Hammer::Parser.register_as_default_for_extensions JSParser, ['js']
 
-  class CoffeeParser < HammerParser
+  class CoffeeParser < Parser
     
     def to_javascript
       parse()
@@ -92,7 +96,7 @@ class Hammer
           
           raise "File not found: <strong>#{h tag}</strong>" unless file
           
-          parser = Hammer.parser_for_hammer_file(file)
+          parser = Hammer::Parser.for_hammer_file(file)
           if parser.respond_to? :to_coffeescript
             parser.to_coffeescript()
           else
@@ -104,7 +108,7 @@ class Hammer
     end
     
   end
-  register_parser_for_extensions CoffeeParser, ['js', 'coffee']
-  register_parser_as_default_for_extensions CoffeeParser, ['coffee']
+  Hammer::Parser.register_for_extensions CoffeeParser, ['coffee']
+  Hammer::Parser.register_as_default_for_extensions CoffeeParser, ['coffee']
 
 end

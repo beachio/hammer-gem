@@ -39,9 +39,9 @@ class HAMLHelper
   end
 end
 
-class Hammer
+module Hammer
     
-  class HAMLParser < HammerParser
+  class HAMLParser < Parser
 
     def self.finished_extension
       "html"
@@ -52,6 +52,8 @@ class Hammer
     end
     
     def includes
+      return unless @hammer_project
+      
       lines = text_as_lines
       
       line_number = 0
@@ -109,7 +111,7 @@ class Hammer
   private
 
     def text_as_lines
-      @text.split("\n")
+      @hammer_file.raw_text.split("\n")
     end
 
     # This function takes an array of lines, and an original line that has been replaced with input.
@@ -162,7 +164,7 @@ class Hammer
     end
     
   end
-  register_parser_for_extensions HAMLParser, ['haml']
-  register_parser_as_default_for_extensions HAMLParser, ['haml']
+  Hammer::Parser.register_for_extensions HAMLParser, ['haml']
+  Hammer::Parser.register_as_default_for_extensions HAMLParser, ['haml']
 
 end

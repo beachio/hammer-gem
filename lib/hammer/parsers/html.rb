@@ -1,6 +1,8 @@
-class Hammer
-  class HTMLParser < HammerParser
-    
+require "amp/amp"
+
+module Hammer
+  class HTMLParser < Parser
+
     RELOADER_SCRIPT = "
         <!-- Hammer reload -->
           <script>
@@ -195,13 +197,11 @@ class Hammer
     end
 
     def reload_tags
-      
-      if @production
+      if production
         @text = text.gsub(/<!-- @reload -->/, "")
       else
         @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
       end
-        
     end
     
     def alternative_path_tags
@@ -215,7 +215,7 @@ class Hammer
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
+          [tag.split("")[0], @hammer_file.path_to_file(file), tag.split("")[-1]].join()
         end
       end
     end
@@ -223,7 +223,7 @@ class Hammer
     def path_tags
       replace(/<!-- @path (.*?) -->/) do |tag, line_number|
         filename = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
-        
+  
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
         file = find_file_without_adding_dependency(filename)
@@ -231,7 +231,7 @@ class Hammer
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          path_to(file)
+          @hammer_file.path_to_file(file)
         end
       end
       alternative_path_tags
@@ -275,7 +275,7 @@ class Hammer
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
           
-          path = path_to(file)
+          path = @hammer_file.path_to_file(file)
           
           next if @included_stylesheets.include?(path) 
           @included_stylesheets << path
@@ -285,7 +285,7 @@ class Hammer
         
         if production
           file = add_file_from_files(hammer_files_to_tag, :css)
-          "<link rel='stylesheet' href='#{path_to(file)}'>" if file
+          "<link rel='stylesheet' href='#{@hammer_file.path_to_file(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
         end
@@ -301,7 +301,7 @@ class Hammer
       return @@cached_files[key] if @@cached_files[key]
       
       files.each do |file|
-        contents << Hammer.parser_for_hammer_file(file).to_format(format)
+        contents << Hammer::Parser.for_hammer_file(file).to_format(format)
         if format == :js
           contents << ";"
         end
@@ -337,7 +337,7 @@ class Hammer
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
           
-          path = path_to(file)
+          path = @hammer_file.path_to_file(file)
           
           next if @included_javascripts.include?(path) 
           @included_javascripts << path
@@ -346,7 +346,7 @@ class Hammer
         end        
         if production
           file = add_file_from_files(hammer_files_to_tag, :js)
-          "<script src='#{path_to(file)}'></script>" if file
+          "<script src='#{@hammer_file.path_to_file(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
         end
@@ -356,12 +356,14 @@ class Hammer
     def current_tags
       # If we don't have any links to the current page, let's get outta here real fast.
       # Otherwise, let's Amp it.
-      filename = File.basename(@hammer_file.finished_filename)
-      # if !@hammer_file.finished_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
-      #   return 
-      # end
-      @text = Amp.parse(@text, filename, 'current')
-      @text = Amp.parse_for_current_parent(@text, @hammer_file.finished_filename, 'current-parent')
+      if @hammer_file
+        filename = File.basename(@hammer_file.output_filename)
+        # if !@hammer_file.output_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
+        #   return 
+        # end
+        @text = Amp.parse(@text, filename, 'current')
+        @text = Amp.parse_for_current_parent(@text, @hammer_file.output_filename, 'current-parent')
+      end
     end
     
     def ensure_text_has_no_leading_blank_lines
@@ -371,6 +373,6 @@ class Hammer
     end
     
   end
-  register_parser_for_extensions HTMLParser, ['html']
-  register_parser_as_default_for_extensions HTMLParser, ['html']
+  Hammer::Parser.register_for_extensions HTMLParser, ['html']
+  Hammer::Parser.register_as_default_for_extensions HTMLParser, ['html']
 end
