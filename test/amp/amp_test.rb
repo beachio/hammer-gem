@@ -13,9 +13,8 @@ def test_adding_class(input, expected_output, number_of_characters_in_tag)
   output = Amp.add_class_to_tag(input, 'current', number_of_characters_in_tag)
   assert_equal expected_output, output
 end
-  
 
-class HammerAppTemplateTest < Test::Unit::TestCase
+class AmpTest < Test::Unit::TestCase
   
   context "Amp" do
     

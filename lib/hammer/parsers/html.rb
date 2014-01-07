@@ -361,8 +361,7 @@ module Hammer
         # if !@hammer_file.output_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
         #   return 
         # end
-        @text = Amp.parse(@text, filename, 'current')
-        @text = Amp.parse_for_current_parent(@text, @hammer_file.output_filename, 'current-parent')
+        @text = Amp.compile(@text, filename, 'current')
       end
     end
     

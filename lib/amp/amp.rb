@@ -64,8 +64,6 @@ class Amp
       
       start = matches[matches.length - match_index - 1]
 
-
-
       # Let's find the start of the <a> tag first
       start_of_a = nil
       character = start
