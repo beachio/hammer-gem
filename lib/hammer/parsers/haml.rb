@@ -52,8 +52,6 @@ class Hammer
     end
     
     def includes
-      return unless @hammer_project
-      
       lines = text_as_lines
       
       line_number = 0

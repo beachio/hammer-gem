@@ -169,7 +169,7 @@ class Hammer
             file = find_file(tag, 'html')
             if file
               
-              parser = @hammer_project.parser_for_hammer_file(file)
+              parser = Hammer::Parser.for_hammer_file(file)
               
               next unless parser
               
@@ -182,7 +182,7 @@ class Hammer
                 raise e
               end
               
-              parser = @hammer_project.parser_for_hammer_file(file)
+              parser = Hammer::Parser.for_hammer_file(file)
               parser.variables = self.variables
               self.variables = self.variables.merge(parser.variables)
               parser.to_html()
@@ -196,7 +196,7 @@ class Hammer
 
     def reload_tags
       
-      if @hammer_project.production
+      if @production
         @text = text.gsub(/<!-- @reload -->/, "")
       else
         @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
@@ -283,7 +283,7 @@ class Hammer
           paths << path
         end
         
-        if production?
+        if production
           file = add_file_from_files(hammer_files_to_tag, :css)
           "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
@@ -344,7 +344,7 @@ class Hammer
           hammer_files_to_tag << file
           paths << path
         end        
-        if production?
+        if production
           file = add_file_from_files(hammer_files_to_tag, :js)
           "<script src='#{path_to(file)}'></script>" if file
         else

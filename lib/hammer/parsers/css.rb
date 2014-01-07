@@ -179,10 +179,10 @@ class Hammer
         engine.dependencies.each do |dependency|
           
           path = dependency.options[:filename]
-          next unless path.start_with? @hammer_project.input_directory
+          next unless path.start_with? @input_directory
           
-          if path.start_with? @hammer_project.input_directory
-            relative_path = path[@hammer_project.input_directory.length..-1]
+          if path.start_with? @input_directory
+            relative_path = path[@input_directory.length..-1]
           end
           
           # find_file adds a hard dependency for us :)
@@ -192,8 +192,8 @@ class Hammer
       rescue => e
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
           # TODO: Make this nicer.
-          @error_file = e.sass_filename.gsub(@hammer_project.input_directory + "/", "")
-          file = @hammer_project.find_file(@error_file, ['css', 'scss', 'sass'])
+          @error_file = e.sass_filename.gsub(@input_directory + "/", "")
+          file = find_file(@error_file, ['css', 'scss', 'sass'])
           if file
             error e.message, e.sass_line, file
           else
@@ -245,11 +245,11 @@ class Hammer
     end
     
     def load_paths
-      if @hammer_file.full_path && @hammer_project.input_directory
+      if @hammer_file.full_path && @input_directory
         [
           File.dirname(escape_glob(@hammer_file.full_path)),
-          File.join(escape_glob(@hammer_project.input_directory)),
-          File.join(escape_glob(@hammer_project.input_directory), "**/*"),
+          File.join(escape_glob(@input_directory)),
+          File.join(escape_glob(@input_directory), "**/*"),
           File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
         ].compact
       else
@@ -271,8 +271,8 @@ class Hammer
         :load_paths => load_paths,
         :relative_assets => true,
         :quiet => true,
-        # :debug_info => !@hammer_project.production,
-        :cache_location => @hammer_project.cache_directory, # @hammer_project.sass_cache_directory,
+        # :debug_info => !@production,
+        :cache_location => @cache_directory,
         :sass => sass_options
       }
     end
