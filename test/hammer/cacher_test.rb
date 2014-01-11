@@ -29,7 +29,7 @@ class ProjectCacherTest < Test::Unit::TestCase
 
     should "add file dependency" do
       assert @cacher.add_file_dependency('about/parent.html', 'about/child.html')
-      # assert !@cacher.needs_recompiling?('about/parent.html')
+      assert !@cacher.needs_recompiling?('about/parent.html')
     end
   end
 

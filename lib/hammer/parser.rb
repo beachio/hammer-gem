@@ -9,7 +9,13 @@ module Hammer
     attr_accessor :hammer_project, :hammer_file, :variables, :text, :production, :input_directory, :output_directory, :cache_directory
 
     extend Forwardable
-    def_delegators :@hammer_file, :filename
+    # def_delegators :@hammer_file, :filename
+
+    def filename
+      if @hammer_file
+        @hammer_file.filename
+      end
+    end
 
     def initialize(options={})
       @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
@@ -77,7 +83,7 @@ module Hammer
 
       other_path = Pathname.new(other_file_filename)
 
-      if self.hammer_file
+      if (self.filename rescue false)
         this_path  = Pathname.new(File.dirname(self.filename))
       else
         this_path = Pathname.new('.')

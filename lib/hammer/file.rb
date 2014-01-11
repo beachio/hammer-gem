@@ -13,8 +13,7 @@ module Hammer
       # This is an initializer because I have this as a function.
       @filename = options.delete(:filename) if options[:filename]
       @path     = options.delete(:path) if options[:path]
-
-      # self.raw_text = options.delete(:text) if options[:text]
+      @raw_text = options.delete(:text) if options[:text]
     end
 
     def output_filename

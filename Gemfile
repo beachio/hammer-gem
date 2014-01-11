@@ -24,6 +24,9 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 group :development, :test do
   gem 'aws-s3'
   gem 'rake'
+  gem 'ZenTest'
+  gem 'autotest-fsevent'
+  gem 'autotest-growl'
 end
 
 gem 'byebug'

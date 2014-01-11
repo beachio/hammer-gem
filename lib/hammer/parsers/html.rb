@@ -36,7 +36,8 @@ module Hammer
     end
 
     def parse
-      
+      @text ||= ""
+
       get_variables()
       
       # TODO: Check whether we want to do this first
@@ -354,20 +355,18 @@ module Hammer
     end
     
     def current_tags
-      # If we don't have any links to the current page, let's get outta here real fast.
       # Otherwise, let's Amp it.
-      if @hammer_file
-        filename = File.basename(@hammer_file.output_filename)
-        # if !@hammer_file.output_filename or !@text.match /href( )*\=( )*[" ']#{filename}["']/
-        #   return 
-        # end
-        @text = Amp.compile(@text, filename, 'current')
+      # if @hammer_file
+      if filename
+        @text = Amp.compile(@text, File.basename(filename), 'current')
       end
+      # end
     end
     
     def ensure_text_has_no_leading_blank_lines
-      while @text.split(/\n|\t|\r/)[0] == ""
-        @text = @text[1..-1]
+      @text ||= ""
+      while text.split(/\n|\t|\r/)[0] == ""
+        @text = text[1..-1]
       end
     end
     
