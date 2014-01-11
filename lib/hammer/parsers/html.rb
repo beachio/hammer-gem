@@ -1,4 +1,4 @@
-require "amp/amp"
+require "amp"
 
 module Hammer
   class HTMLParser < Parser

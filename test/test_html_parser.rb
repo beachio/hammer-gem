@@ -1,4 +1,4 @@
-require "test_helper"
+require "tests.rb"
 
 class TestHtmlParser < Test::Unit::TestCase
   
@@ -8,7 +8,8 @@ class TestHtmlParser < Test::Unit::TestCase
       @hammer_project       = Hammer::Project.new
       @file                 = Hammer::HammerFile.new(:hammer_project => @hammer_project, :filename => "index.html")
       @hammer_project << @file
-      @parser               = Hammer::HTMLParser.new(:hammer_project => @hammer_project, :hammer_file => @file)
+      @parser               = Hammer::HTMLParser.new(@hammer_project)
+      @parser.hammer_file   = @file
     end
     
     context "with an error" do
@@ -103,7 +104,8 @@ class TestHtmlParser < Test::Unit::TestCase
         @file.raw_text = "<!-- @javascript app -->"
         @hammer_project << @file
         
-        @parser = Hammer::HTMLParser.new(:hammer_project => @hammer_project, :hammer_file => @file)
+        @parser = Hammer::HTMLParser.new(@hammer_project)
+        @parser.hammer_file = @file
         @parser.text = @file.raw_text
       end   
       
@@ -156,6 +158,14 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.text = @file.raw_text
           assert_equal "assets/logo.png", @parser.parse()
         end
+
+        # should "correctly match Clever Paths" do
+        #   a = Hammer::HammerFile.new(:text => "<!-- @path location/index.html -->", :path => "index.html")
+        #   b = Hammer::HammerFile.new(:text => "I'm the right file.", :path => "1234567890/location/index.html")
+
+        #   @parser.text = a.raw_text
+        #   assert_equal "1234567890/location/index.html", @parser.parse()
+        # end
         
         should "remove empty lines from the start of a page" do
           @file.raw_text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
@@ -178,7 +188,8 @@ class TestHtmlParser < Test::Unit::TestCase
         end
         
         should "only add each entry once unless it's a wildcard" do
-          @parser.text = "<!-- @stylesheet asdfasdf -->"
+          @file.raw_text = "<!-- @stylesheet asdfasdf -->"
+          @parser.hammer_file = @file
           assert_equal "<link rel='stylesheet' href='assets/asdfasdf.css'>", @parser.parse()
         end
         
@@ -200,7 +211,6 @@ class TestHtmlParser < Test::Unit::TestCase
           setup do
             @file.raw_text = "<!-- @javascript assets/* -->"
             @parser.hammer_file = @file
-            @parser.text = "<!-- @javascript assets/* -->"
             @parser.expects(:find_files).returns([@new_file, @other_file])
           end
           
@@ -211,8 +221,8 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with multiple script tag invocation" do
           setup do
-            @parser.text = "<!-- @javascript app x -->"
-            # @parser.hammer_file = @file
+            @file.raw_text = "<!-- @javascript app x -->"
+            @parser.hammer_file = @file
             @parser.expects(:find_files).twice.returns([@new_file, @other_file])
           end
           
@@ -236,7 +246,8 @@ class TestHtmlParser < Test::Unit::TestCase
         @file.raw_text = "<!-- @stylesheet app -->"
         @hammer_project << @file
         
-        @parser = Hammer::HTMLParser.new(:hammer_project => @hammer_project, :hammer_file => @file)
+        @parser = Hammer::HTMLParser.new(@hammer_project)
+        @parser.hammer_file = @file
         @parser.text = @file.raw_text
       end   
       
@@ -280,7 +291,6 @@ class TestHtmlParser < Test::Unit::TestCase
         @new_file.filename = "assets/three/app.scss"
         @new_file.raw_text = "<!-- @stylesheet app.scss -->"
         @parser.hammer_file = @file
-        @parser.text = "<!-- @stylesheet app.scss -->"
         assert_equal "<link rel='stylesheet' href='assets/three/app.css'>", @parser.parse()
       end
       
@@ -326,7 +336,7 @@ class TestHtmlParser < Test::Unit::TestCase
       
         context "with multiple stylesheet tag invocation" do
           setup do
-            @parser.expects(:find_files).at_least_once.returns([@new_file, @other_file])
+            # @parser.expects(:find_files).twice.returns([@new_file, @other_file])
             @file.raw_text = "<!-- @stylesheet app x -->"
             @parser.hammer_file = @file
           end
@@ -380,12 +390,11 @@ class TestHtmlParser < Test::Unit::TestCase
     context "when parsing path tags" do
       setup do
         @file.filename = "blog/index.html"
-        # @file.raw_text = "<!-- @path logo.png -->"
+        @file.raw_text = "<!-- @path logo.png -->"
         logo = Hammer::HammerFile.new
         logo.filename = "images/logo.png"
         @hammer_project << logo
         @parser.hammer_file = @file
-        @parser.text = "<!-- @path logo.png -->"
       end
       
       should "replace path tags" do
@@ -410,7 +419,7 @@ class TestHtmlParser < Test::Unit::TestCase
     
     context "when just parsing variables" do
       setup do
-        @parser = Hammer::HTMLParser.new(:hammer_project => @hammer_project)
+        @parser = Hammer::HTMLParser.new(@hammer_project)
       end
       
       should "work with normal variables" do
@@ -421,9 +430,9 @@ class TestHtmlParser < Test::Unit::TestCase
       end
 
       should "work with a variable with | in its name" do
-        # @file.raw_text = "<!-- $title This is my title | I am cool --><!-- $title -->"
-        # @parser.hammer_file = @file
-        @parser.text = "<!-- $title This is my title | I am cool --><!-- $title -->"
+        @file.raw_text = "<!-- $title This is my title | I am cool --><!-- $title -->"
+        @parser.hammer_file = @file
+
         assert_equal "This is my title | I am cool", @parser.parse()
       end
 
@@ -495,8 +504,7 @@ class TestHtmlParser < Test::Unit::TestCase
       end
       
       should "do path tags right" do
-        parser = Hammer::Parser.for_hammer_file(@file)
-        parser.text = "<!-- @path about/index.html -->"
+        parser = Hammer.parser_for_hammer_file(@file)
         assert_equal [@f2], parser.find_files('about/index.html', 'html')
         assert_equal "about/index.html", parser.parse()
       end
@@ -512,8 +520,7 @@ class TestHtmlParser < Test::Unit::TestCase
       end
       
       should "include the file" do
-        parser = Hammer::Parser.for_hammer_file(@file)
-        parser.text = @file.raw_text
+        parser = Hammer.parser_for_hammer_file(@file)
         assert_equal [@new_file], parser.find_files("_header.haml", 'html')
         assert parser.parse().include? "haml file"
       end
@@ -530,17 +537,14 @@ class TestHtmlParser < Test::Unit::TestCase
       
       should "include the file" do
         assert @new_file.extension
-        assert_equal Hammer::HTMLParser, Hammer::Parser.for_hammer_file(@file).class
-        parser = Hammer::Parser.for_hammer_file(@file)
-        parser.text = @new_file.raw_text
-        assert_equal "Header", parser.parse()
+        assert_equal Hammer::HTMLParser, Hammer.parser_for_hammer_file(@file).class
+        assert_equal "Header", Hammer.parser_for_hammer_file(@file).parse()
       end
       
       should "carry over variables from included files" do
         @file.raw_text = "<!-- @include _header --><!-- $title -->"
         @new_file.raw_text = "<!-- $title A -->"
-        parser = Hammer::Parser.for_hammer_file(@file)
-        parser.text = @file.raw_text
+        parser = Hammer.parser_for_hammer_file(@file)
         assert_equal "A", parser.parse()
         assert_equal({'title' => "A"}, parser.send(:variables))
       end
@@ -548,8 +552,7 @@ class TestHtmlParser < Test::Unit::TestCase
       should "set variables for included files" do
         @file.raw_text = "<!-- $title A --><!-- @include _header -->"
         @new_file.raw_text = "<!-- $title -->"
-        parser = Hammer::Parser.for_hammer_file(@file)
-        parser.text = @file.raw_text
+        parser = Hammer.parser_for_hammer_file(@file)
         assert_equal "A", parser.parse()
         assert_equal({'title' => "A"}, parser.send(:variables))        
       end
@@ -560,8 +563,7 @@ class TestHtmlParser < Test::Unit::TestCase
         
         should "use variables in include tags" do
           @file.raw_text = "<!-- $name _header --><!-- @include $name -->"
-          parser = Hammer::Parser.for_hammer_file(@file)
-          parser.text = @file.raw_text
+          parser = Hammer.parser_for_hammer_file(@file)
           assert_equal "Header", parser.parse()
           assert_equal({'name' => "_header"}, parser.send(:variables))     
         end

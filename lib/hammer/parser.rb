@@ -136,13 +136,6 @@ module Hammer
           parser = parsers.last
         end
         
-        # # Parser chain!
-        # while parser.next_parser
-        #   parsers << parser.next_parser
-        #   parser = parser.next_parser
-        # end
-            # byebug if extension == "dummy2"
-
         new_extension = nil
         
         while new_extension != parser.finished_extension

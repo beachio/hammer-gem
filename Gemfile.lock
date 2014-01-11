@@ -1,4 +1,10 @@
 GIT
+  remote: git@github.com:elliottkember/amp.git
+  revision: 4081e952758b94781fcb8c764c45577af938d523
+  specs:
+    amp (0.1)
+
+GIT
   remote: git@github.com:robwierzbowski/bourbon.git
   revision: a199a965ef9a690583ed6acfbac16677228a0ba0
   ref: a199a965ef9a690583ed6acfbac16677228a0ba0
@@ -67,6 +73,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (< 4.0.0)
+  amp!
   aws-s3
   bourbon!
   byebug
