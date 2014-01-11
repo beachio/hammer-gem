@@ -14,6 +14,10 @@ module Hammer
       @cache_directory  = options.fetch(:cache_directory) if options.include? :cache_directory
     end
 
+    def << (file)
+      @hammer_files << file
+    end
+
     def read
       files = []
       file_paths.each do |file_path|
@@ -31,45 +35,37 @@ module Hammer
       @hammer_files = files
     end
 
-    # Let's create a list of filenames in the Hammer project.
-    # We ignore anything with .git, .svn and .DS_Store.
-    # This keeps our set of hammer files nice and sane.
-    def file_paths
-      paths = []
-      if @input_directory
-        
-        paths = Dir.glob(File.join(Shellwords.escape(@input_directory), "/**/*"), File::FNM_DOTMATCH)
-        
-        paths.reject! { |a| a =~ /\/\.git\// }
-        paths.reject! { |a| a =~ /\/\.svn\// }
-        paths.reject! { |a| a =~ /\.DS_Store/ }
-        paths.reject! {|file| file.include?(@output_directory)}
-        paths.reject! {|file| File.directory?(file)}
-        
-        # .ht files are Apache!
-        paths.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
-        
-        # This is where I tried to ignore directories which start with a .
-        # TODO: ignore directories which start with a .
-        # files.reject! {|file| file.split("/")[0..-2].select { |directory| directory.start_with? "."}.length > 0}
-        # files.reject! { |a| a =~ /\.{1,2}$/ }
-      end
-      
-      paths
-    end
-
-    def << (file)
-      @hammer_files << file
-    end
-
     def compile
-      @compiled_hammer_files = []
+      compiled_hammer_files = []
       hammer_files.each do |hammer_file|
+
         next if File.basename(hammer_file.filename).start_with? "_"
-        compiler = Hammer::FileCompiler.new(:hammer_file => hammer_file, :hammer_project => self)
-        compiler.compile()
-        @compiled_hammer_files << hammer_file
+
+        if cached? hammer_file
+          hammer_file.from_cache = true
+          hammer_file.messages = @cacher.messages_for(hammer_file.filename)
+        else
+          compile_file(hammer_file)
+        end
+
+        compiled_hammer_files << hammer_file
       end
+      return compiled_hammer_files
+    end
+
+    # Check whether a hammer_file is cached. Uses the @cacher object.
+    def cached? hammer_file
+      if @cacher
+        @cacher.valid_cache_for(hammer_file.filename)
+      else
+        false
+      end
+    end
+
+    def compile_file(hammer_file)
+      # TODO: Compiler.compile() should probably return a new hammer file rather than mutating the hammer_file object!
+      compiler = Hammer::FileCompiler.new(:hammer_file => hammer_file, :hammer_project => self)
+      compiler.compile()
     end
 
     # Writes out to the project.
@@ -106,6 +102,33 @@ module Hammer
           end
         end
       end
+    end
+
+    # Let's create a list of filenames in the Hammer project.
+    # We ignore anything with .git, .svn and .DS_Store.
+    # This keeps our set of hammer files nice and sane.
+    def file_paths
+      paths = []
+      if @input_directory
+        
+        paths = Dir.glob(File.join(Shellwords.escape(@input_directory), "/**/*"), File::FNM_DOTMATCH)
+        
+        paths.reject! { |a| a =~ /\/\.git\// }
+        paths.reject! { |a| a =~ /\/\.svn\// }
+        paths.reject! { |a| a =~ /\.DS_Store/ }
+        paths.reject! {|file| file.include?(@output_directory)}
+        paths.reject! {|file| File.directory?(file)}
+        
+        # .ht files are Apache!
+        paths.reject! {|file| File.basename(file).start_with?('.') && !File.basename(file).start_with?('.ht')}
+        
+        # This is where I tried to ignore directories which start with a .
+        # TODO: ignore directories which start with a .
+        # files.reject! {|file| file.split("/")[0..-2].select { |directory| directory.start_with? "."}.length > 0}
+        # files.reject! { |a| a =~ /\.{1,2}$/ }
+      end
+      
+      paths
     end
 
     # Project-wide file finding.
