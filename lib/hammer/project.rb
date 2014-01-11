@@ -98,7 +98,7 @@ module Hammer
           
           @errors += 1 if hammer_file.error
 
-          if hammer_file.from_cache
+          if @cacher && hammer_file.from_cache
             cache_path = @cacher.cached_path_for(hammer_file.filename)
             
             if !File.exists? hammer_file.output_path

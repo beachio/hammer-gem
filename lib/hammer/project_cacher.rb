@@ -42,7 +42,7 @@ module Hammer
     def valid_cache_for(path)
       return false unless @directory
       if !needs_recompiling? path
-        if File.exists?(File.join(@directory, path))
+        if File.exists?(cached_path_for(path))
           return true
         end
       end
@@ -55,14 +55,20 @@ module Hammer
       FileUtils.cp full_path, cached_path_for(path)
     end
 
+
+
+    ## The data digest. 
+    ## Written to and read from for hashes and things.
+
+    # Read data from disk:
     def read_from_disk
+      return true unless @directory
+
       @dependency_hash = {}
       @hashes = {}
       
-      return true unless @directory
-      path = File.join(@directory, "cache.data")
+      path = cached_path_for("cache.data")
       if File.exists? path
-        
         begin
           contents = File.open(path) do |file|
             Marshal.load(file)
@@ -115,7 +121,10 @@ module Hammer
         f.write Marshal.dump(contents)
       end
     end
-    
+
+
+    ## Cache path management
+
     def messages_for(path)
       @messages ||= {}
       if @messages[path]
@@ -123,8 +132,6 @@ module Hammer
       else
         []
       end
-    rescue 
-      []
     end
     
     def cached_path_for(path)
@@ -132,73 +139,25 @@ module Hammer
     end
     
     def cached_contents_for(path)
-      path = File.join(@directory, path)
-      FileUtils.mkdir_p File.dirname(path)
+      path = cached_path_for(path)
       File.open(path).read
-    rescue
-      nil
     end
     
     def clear_cached_contents_for(path)
-      path = File.join(@directory, path)
-      begin
+      path = cached_path_for(path)
+      if File.exist? path
         FileUtils.rm(path)
-      rescue
       end
     end
     
     def set_cached_contents_for(path, contents)
-      path = File.join(@directory, path)
+      path = cached_path_for(path)
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, "w") do |f|
         f.write(contents)
       end
     end
 
-    def needs_recompiling_without_cache(path)
-      @new_hashes[path] ||= hash(path)
-      new_hash = @new_hashes[path]
-      
-      # # Yes if the file is modified.
-      if new_hash != @hashes[path]
-        @new_dependency_hash.delete(path)
-        return true 
-      end
-    
-      if @hard_dependencies[path]
-        @hard_dependencies[path].each do |dependency|
-          next if dependency == path
-          return needs_recompiling_without_cache(dependency) || needs_recompiling?(dependency)
-        end
-      end
-      
-      if files_added_or_removed
-        if @dependency_hash[path]
-          # Yes if the file's references have changed (new files).
-          @dependency_hash[path].each_pair do |query, matches|
-            
-            next if query.nil?
-            matches.each do |type, filenames|
-              files = find_files(query, type)
-
-              # return true if files.collect(&:filename) != filenames
-              if files.collect(&:filename) != filenames
-                return true
-              end
-
-              # Yes if any dependencies need recompiling. 
-              # files.each do |file|
-              #   return true if needs_recompiling?(file.filename)
-              # end
-            end
-          end
-        end
-      end
-      
-      # File #{path} was not modified.
-      return false
-    end
-    
     # Check a file to see whether it needs recompiling.
     def needs_recompiling?(path)
       @needs_recompiling ||= {}
@@ -243,6 +202,50 @@ module Hammer
     end
     
   private
+
+    def needs_recompiling_without_cache(path)
+      @new_hashes[path] ||= hash(path)
+      new_hash = @new_hashes[path]
+      
+      # # Yes if the file is modified.
+      if new_hash != @hashes[path]
+        @new_dependency_hash.delete(path)
+        return true 
+      end
+    
+      if @hard_dependencies[path]
+        @hard_dependencies[path].each do |dependency|
+          next if dependency == path
+          return needs_recompiling_without_cache(dependency) || needs_recompiling?(dependency)
+        end
+      end
+      
+      if files_added_or_removed
+        if @dependency_hash[path]
+          # Yes if the file's references have changed (new files).
+          @dependency_hash[path].each_pair do |query, matches|
+            
+            next if query.nil?
+            matches.each do |type, filenames|
+              files = find_files(query, type)
+
+              # return true if files.collect(&:filename) != filenames
+              if files.collect(&:filename) != filenames
+                return true
+              end
+
+              # Yes if any dependencies need recompiling. 
+              # files.each do |file|
+              #   return true if needs_recompiling?(file.filename)
+              # end
+            end
+          end
+        end
+      end
+      
+      # File #{path} was not modified.
+      return false
+    end
   
     def files_added_or_removed
       if @files_added_or_removed == nil
