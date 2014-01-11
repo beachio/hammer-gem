@@ -38,7 +38,7 @@ class CSSParserTest < Test::Unit::TestCase
       setup do
         @stylesheet = Hammer::HammerFile.new()
         @stylesheet.filename = "assets/imported.css"
-        @parser.stubs(:find_file).with('imported.css').returns(@stylesheet)
+        @parser.stubs(:find_file).returns(@stylesheet)
       end
       
       should "parse standard filenames" do
@@ -59,7 +59,6 @@ class CSSParserTest < Test::Unit::TestCase
       
         @parser.stubs(:find_files).returns([font])
         @parser.stubs(:find_file).returns(font)
-        @parser.stubs(:find_file_without_adding_dependency).returns(font)
       end
       
       should "parse paths with normal comments" do

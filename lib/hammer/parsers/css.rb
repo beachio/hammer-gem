@@ -49,7 +49,7 @@ module Hammer
           
           add_wildcard_dependency file_path
           file_name = file_path.split(/\?|#/)[0]
-          file = find_file(file_name)
+          file = find_file_with_dependency(file_name)
           
           if file
             url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))

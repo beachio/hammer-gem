@@ -14,15 +14,12 @@ module Hammer
     def initialize(options={})
       @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
       @hammer_file = options.fetch(:hammer_file) if options.include? :hammer_file
-      @text = ""
       @text = options.fetch(:text) if options.include? :text
+      @cacher = options.fetch(:cacher) if options.include? :cacher
     end
 
-    # def text
-      # (@text ||= @hammer_file.raw_text.to_s).to_s
-    # end
-
     def hammer_project=(hammer_project)
+      # @cacher = hammer_project.cacher
       @production = hammer_project.production
       @input_directory = hammer_project.input_directory
       @output_directory = hammer_project.output_directory
@@ -30,74 +27,96 @@ module Hammer
       @text = @hammer_file.raw_text.to_s
     end
 
+
     ## Dependencies
     # This adds a wildcard dependency to the file.
+    # We need wildcards when we're looking for folder/* in case there's a new file that matches that path.
     def add_wildcard_dependency(filename, extension=nil)
-      # @hammer_project.cacher.add_wildcard_dependency(@hammer_file.filename, filename, extension)
+      # TODO: Cacher.
+      # @cacher.add_wildcard_dependency(@hammer_file.filename, filename, extension)
     end
 
+    # A direct dependency.
     def add_file_dependency(file)
-      # @hammer_project.cacher.add_file_dependency(@filename, file.filename)
+      # TODO: Cacher.
+      # @cacher.add_file_dependency(@filename, file.filename)
     end
 
 
+    ## Finders
     # Find matching files in the current project.
-    # Adds a wildcard dependency for this filename and extension for caching purposes.
-    def find_files(filename, extension=nil)
-      add_wildcard_dependency(filename, extension)
-      find_files_without_adding_dependency(filename, extension)
-    end
-    # The same as find_files, without creating the dependency.
-    def find_files_without_adding_dependency(filename, extension=nil)
-      @hammer_project.find_files(filename, extension)
+    def_delegators :@hammer_project, :find_files
+
+    # Find a single file without adding a filename dependency.
+    def find_file(filename, extension=nil)
+      find_files(filename, extension)[0]
     end
 
+    ## Dependency finders
+    # The same as find_files, without creating the dependency.
+    def find_files_with_dependency(filename, extension=nil)
+      add_wildcard_dependency(filename, extension)
+      find_files(filename, extension)
+    end
 
     # Find a single file in the project.
     # Also, add a filename dependency to the file.
-    def find_file(filename, extension=nil)
-      file = find_file_without_adding_dependency(filename, extension)
+    def find_file_with_dependency(filename, extension=nil)
+      file = find_file(filename, extension)
       add_file_dependency(file)
       return file
     end
-    # Find a single file without adding a filename dependency.
-    def find_file_without_adding_dependency(filename, extension=nil)
-      find_files_without_adding_dependency(filename, extension)[0]
-    end
 
+
+    # Find the path to another file, from this file.
+    def path_to_file(other_file_filename)
+
+      if other_file_filename.is_a? Hammer::HammerFile
+        other_file_filename = other_file_filename.output_filename
+      end
+
+      other_path = Pathname.new(other_file_filename)
+
+      if self.hammer_file
+        this_path  = Pathname.new(File.dirname(self.filename))
+      else
+        this_path = Pathname.new('.')
+      end
+      
+      other_path.relative_path_from(this_path).to_s
+    end
 
     ## Actual parser stuff
     # Replace strings in a file. Calls a block on the line.
     def replace(regex, &block)
       lines = []
       if @text.to_s.scan(regex).length > 0
-        line_number = 0
+        @line_number = 0
         @text = @text.to_s.split("\n").map { |line| 
-          line_number += 1
-          line.gsub(regex) { |match|
-            begin 
-              block.call(match, line_number) 
-            rescue => error_message
-              error(error_message, line_number)
-            end
-          }
+          @line_number += 1
+          line.gsub(regex).each do |match|
+            block.call(match, @line_number) 
+          end
         }.join("\n")
       end
       return
+    rescue => e
+      error(e, @line_number)
     end
 
     ## TODO: Add error messages to hammer file compiling.
     ## Called from replace whenever an error is created.
-    def error(text, line_number, alternate_hammer_file = nil, error=nil)
-      subject = alternate_hammer_file
-      subject ||= @hammer_file
-
+    def error(text, line_number, hammer_file_with_error = nil, error=nil)
       error = Hammer::Error.new(text, line_number)
-      error.hammer_file = subject
       error.original_error = error
-      subject.error = error
 
-      raise subject.error
+      hammer_file_with_error ||= @hammer_file
+      if hammer_file_with_error
+        error.hammer_file = hammer_file_with_error
+        hammer_file_with_error.error = error
+      end
+
+      raise error
     end
 
     ### Class methods

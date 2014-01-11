@@ -28,10 +28,10 @@ class HammerFileTest < Test::Unit::TestCase
     assert_equal @file.raw_text, "Testing the file"
   end
 
-  def test_paths
-    @other_file = @file.dup
-    @other_file.filename = 'two.html'
-    assert_equal @file.path_to_file('two.html').to_s, 'two.html'
-  end
+  # def test_paths
+  #   @other_file = @file.dup
+  #   @other_file.filename = 'two.html'
+  #   assert_equal @file.path_to_file('two.html').to_s, 'two.html'
+  # end
 
 end

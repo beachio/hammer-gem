@@ -24,6 +24,7 @@ module Hammer
     end
     
     def hammer_file=(hammer_file)
+      return unless hammer_file
       @hammer_file = hammer_file
       @hammer_file.error = self
     end

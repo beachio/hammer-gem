@@ -154,7 +154,7 @@ class TestHtmlParser < Test::Unit::TestCase
           image = Hammer::HammerFile.new
           image.filename = "assets/logo.png"
           @hammer_project << image
-          @parser.expects(:find_file_without_adding_dependency).returns(image)
+          @parser.expects(:find_file).returns(image)
           @parser.text = @file.raw_text
           assert_equal "assets/logo.png", @parser.parse()
         end

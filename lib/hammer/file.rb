@@ -31,18 +31,6 @@ module Hammer
       end
     end
 
-    def path_to_file(filename)
-
-      if filename.is_a? Hammer::HammerFile
-        filename = filename.output_filename
-      end
-
-      other_path = Pathname.new(filename)
-      this_path  = Pathname.new(File.dirname(self.filename))
-      
-      other_path.relative_path_from(this_path).to_s
-    end
-
     def extension
       File.extname(@filename)[1..-1]
     end

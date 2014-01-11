@@ -211,11 +211,11 @@ module Hammer
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
         
-        file = find_file_without_adding_dependency(filename)
+        file = find_file(filename)
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          [tag.split("")[0], @hammer_file.path_to_file(file), tag.split("")[-1]].join()
+          [tag.split("")[0], path_to_file(file), tag.split("")[-1]].join()
         end
       end
     end
@@ -226,12 +226,12 @@ module Hammer
   
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-        file = find_file_without_adding_dependency(filename)
-        
+        file = find_file(filename)
+
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          @hammer_file.path_to_file(file)
+          path_to_file(file)
         end
       end
       alternative_path_tags
@@ -259,7 +259,7 @@ module Hammer
         filenames.each do |filename|
           filename = get_variable(filename) if filename.split("")[0] == "$"
           
-          matching_files = find_files(filename, 'css')
+          matching_files = find_files_with_dependency(filename, 'css')
           
           # if !filename.include? "*"
           #   matching_files = [matching_files[0]]
@@ -275,7 +275,7 @@ module Hammer
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
           
-          path = @hammer_file.path_to_file(file)
+          path = path_to_file(file)
           
           next if @included_stylesheets.include?(path) 
           @included_stylesheets << path
@@ -285,7 +285,7 @@ module Hammer
         
         if production
           file = add_file_from_files(hammer_files_to_tag, :css)
-          "<link rel='stylesheet' href='#{@hammer_file.path_to_file(file)}'>" if file
+          "<link rel='stylesheet' href='#{path_to_file(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
         end
@@ -326,7 +326,7 @@ module Hammer
         
         filenames.each do |filename| 
           filename = get_variable(filename) if filename.split("")[0] == "$"
-          matching_files = find_files(filename, 'js')
+          matching_files = find_files_with_dependency(filename, 'js')
           raise "Javascript tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
@@ -337,7 +337,7 @@ module Hammer
           next if file.is_a_compiled_file
           next if File.basename(file.filename).start_with?("_")
           
-          path = @hammer_file.path_to_file(file)
+          path = path_to_file(file)
           
           next if @included_javascripts.include?(path) 
           @included_javascripts << path
@@ -346,7 +346,7 @@ module Hammer
         end        
         if production
           file = add_file_from_files(hammer_files_to_tag, :js)
-          "<script src='#{@hammer_file.path_to_file(file)}'></script>" if file
+          "<script src='#{path_to_file(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
         end
