@@ -10,9 +10,15 @@ module Hammer
   class ProjectCacher
     
     attr_writer :directory
+    attr_accessor :hammer_files
 
     extend Forwardable
-    def_delegators :@hammer_project, :find_files, :hammer_files
+    def_delegators :@hammer_project, :find_files
+
+    def hammer_project=(hammer_project)
+      @hammer_project = hammer_project
+      @hammer_files = hammer_project.hammer_files
+    end
 
     # Start this off with a hammer_project. It belongs to the project.
     def initialize(options={})
@@ -22,6 +28,7 @@ module Hammer
       
       @hard_dependencies = {}
       
+      @hammer_files = []
       @new_hashes = {}
       @new_dependency_hash = {}
       @new_hard_dependencies = {}
@@ -149,7 +156,6 @@ module Hammer
     end
 
     def needs_recompiling_without_cache(path)
-      
       @new_hashes[path] ||= hash(path)
       new_hash = @new_hashes[path]
       
@@ -191,7 +197,6 @@ module Hammer
       
       # File #{path} was not modified.
       return false
-      
     end
     
     # Check a file to see whether it needs recompiling.

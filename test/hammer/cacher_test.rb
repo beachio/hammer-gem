@@ -33,4 +33,10 @@ class ProjectCacherTest < Test::Unit::TestCase
     end
   end
 
+  should "store the cache" do
+    @cacher.set_cached_contents_for('index.html', '<h1>Hello</h1>')
+    assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
+    assert !@cacher.needs_recompiling?('index.html')
+  end
+
 end

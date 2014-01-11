@@ -62,10 +62,22 @@ module Hammer
       end
     end
 
+    def cache(hammer_file)
+      return unless @cacher
+      if hammer_file.error
+        @cacher.clear_cached_contents_for(hammer_file.filename)
+      elsif hammer_file.compiled_text
+        @cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+      else
+        @cacher.cache(hammer_file.full_path, hammer_file.filename)
+      end
+    end
+
     def compile_file(hammer_file)
       # TODO: Compiler.compile() should probably return a new hammer file rather than mutating the hammer_file object!
       compiler = Hammer::FileCompiler.new(:hammer_file => hammer_file, :hammer_project => self)
       compiler.compile()
+      cache(hammer_file)
     end
 
     # Writes out to the project.
