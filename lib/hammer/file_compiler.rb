@@ -7,18 +7,9 @@ module Hammer
     end
 
     def compile
-      # @hammer_file.hammer_project ||= self
-
-      # begin
-        pre_compile
-        compile_hammer_file
-        after_compile
-      # rescue Hammer::Error => error
-      #   @hammer_file.error = error
-      # rescue => error
-      #   # In case there's another error!
-      #   @hammer_file.error = Hammer::Error.from_error(error, @hammer_file)
-      # end
+      pre_compile
+      compile_hammer_file
+      after_compile
     end
 
   private
@@ -53,10 +44,9 @@ module Hammer
       extension = File.extname(filename)[1..-1]
       compilers = Hammer.after_compilers[extension] || []
       
-      compilers.each do |precompiler|
-        @hammer_file.compiled_text = precompiler.new(@hammer_file.compiled_text).parse()
+      compilers.each do |postcompiler|
+        @hammer_file.compiled_text = postcompiler.new(@hammer_file.compiled_text).parse()
       end
     end
-
   end
 end
