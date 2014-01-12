@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/test_helper'
-require 'hammer/project_cacher'
+require 'hammer/cacher'
 
 class ProjectCacherTest < Test::Unit::TestCase
   

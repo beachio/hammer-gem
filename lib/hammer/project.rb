@@ -1,5 +1,6 @@
 require 'hammer/file'
 require 'hammer/file_compiler'
+require 'hammer/cacher'
 
 module Hammer
   class Project
@@ -36,6 +37,7 @@ module Hammer
     end
 
     def compile
+
       compiled_hammer_files = []
       hammer_files.each do |hammer_file|
 
@@ -49,8 +51,27 @@ module Hammer
         end
 
         compiled_hammer_files << hammer_file
+
+        cache(hammer_file)
       end
+
+      cacher.write_to_disk
+
       return compiled_hammer_files
+    end
+
+    def cache(hammer_file)
+      if hammer_file.error
+        cacher.clear_cached_contents_for(hammer_file.filename)
+      elsif hammer_file.compiled_text
+        cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+      else
+        cacher.cache(hammer_file.full_path, hammer_file.filename)
+      end
+    end
+
+    def cacher
+      @cacher ||= ProjectCacher.new :hammer_project => self
     end
 
     # Check whether a hammer_file is cached. Uses the @cacher object.

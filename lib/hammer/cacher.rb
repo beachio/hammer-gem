@@ -89,15 +89,19 @@ module Hammer
       end
     end
 
-    # When finished:
-    def write_to_disk
-      
-      @messages ||= {}
+    def messages
+      return @messages if @messages
+      messages_hash = {}
       hammer_files.each do |hammer_file|
         if hammer_file.messages.any?
-          @messages[hammer_file.filename] = Marshal.dump hammer_file.messages
+          messages_hash[hammer_file.filename] = Marshal.dump hammer_file.messages
         end
       end
+      @messages = messages_hash
+    end
+
+    # When finished:
+    def write_to_disk
       
       @dependency_hash = @new_dependency_hash
       @hashes = @new_hashes
