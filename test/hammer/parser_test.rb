@@ -68,8 +68,8 @@ class ParserTest < Test::Unit::TestCase
   end
 
   def test_possible_other_extensions_for_extension_returns_the_correct_extensions
-    assert_equal Hammer::Utils.possible_other_extensions_for_extension('css'), ["css", "sass", "scss"]
-    assert_equal Hammer::Utils.possible_other_extensions_for_extension('js'), ["js", "coffee", "jst", "eco"]
+    assert_equal Hammer::Utils.possible_other_extensions_for_extension('css').sort, ["css", "sass", "scss"].sort
+    assert_equal Hammer::Utils.possible_other_extensions_for_extension('js').sort, ["js", "coffee", "jst", "eco"].sort
   end
 
   def test_for_extension
