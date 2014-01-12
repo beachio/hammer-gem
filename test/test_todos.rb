@@ -4,7 +4,7 @@ class TestTodos < Test::Unit::TestCase
   
   context "multiple comments on one line" do
     formats = {
-      'html' => '<!-- @todo eat --><!-- @todo cake -->'
+      'html' => '<!-- @todo eat --><!-- @TODO cake -->'
     }
     
     parser = Hammer::TodoParser
@@ -28,6 +28,7 @@ class TestTodos < Test::Unit::TestCase
     
     formats = {
       'html' => '<!-- @todo eat -->',
+      'html' => '<!-- @TODO eat -->',
       'js' => ['/* @todo eat */', "// @todo eat\n"],
       'css' =>'/* @todo eat */',
       'scss' => ["/* @todo eat */\n", "// @todo eat\n"],

@@ -4,17 +4,17 @@ class Hammer
     def regex
       case @format
       when 'css'
-        /\/* @todo (.*?)\*\//
+        /\/* @(?:todo|TODO) (.*?)\*\//
       when 'scss', 'sass'
-        /\/\/ @todo (.*)|\/\* @todo (.*) \*\//
+        /\/\/ @(?:todo|TODO) (.*)|\/\* @(?:todo|TODO) (.*) \*\//
       when 'html', 'md'
-        /<!-- @todo (.*?) -->/
+        /<!-- @(?:todo|TODO) (.*?) -->/
       when 'coffee'
-        /# @todo (.*)/
+        /# @(?:todo|TODO) (.*)/
       when 'jst', 'js'
-        /\/* @todo (.*?) \*\/|\/\/ @todo (.*)/
+        /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
       when 'haml'
-        /\/ @todo (.*)/
+        /\/ @(?:todo|TODO) (.*)/
       end
     end
     

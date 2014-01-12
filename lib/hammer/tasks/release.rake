@@ -18,8 +18,8 @@ end
 def gem_files
   `git ls-files -z`.split("\0") +
     Dir['vendor/production/bundle/bundler/**/*'] +
-    Dir['vendor/production/bundle/ruby/1.8/gems/**/*'] +
-    Dir['vendor/production/bundle/ruby/2.0.0']
+    Dir['vendor/production/bundle/ruby/*/gems/**/*'] +
+    Dir['vendor/production/bundle/ruby/*/bundler/gems/**/*']
 end
 
 desc "Release a gem!"
@@ -55,9 +55,20 @@ task :check_hammer_app_access do
                     '--app', 'hammerformac'
 end
 
+desc 'Update vendored bundle'
 task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
+
+    puts "Deleting existing file..."
+    begin
+      Dir.chdir('vendor/production/bundle/ruby') do
+        sh_with_clean_env *%w(rm -rf *)
+      end
+    rescue => e
+      puts "Existing files weren't found: #{e}"
+    end
+
     rm_rf [ 'vendor/cache', 'vendor/production' ]
 
     # bundle-cache has no verbosity option
@@ -72,20 +83,35 @@ task :bundle do
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
-      sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
+      if File.exists? ("2.0.0")
+        sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
+      else
+        sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)
+      end
     end
   end
 end
 
+desc 'Package code and all dependencies'
 file "Gem.zip" => [:bundle] + gem_files do |t|
-  puts 'Creating Gem.zip...'
+  require 'open3'
+
+  puts 'Creating Gem.zip... '
   Rake::FileUtilsExt.verbose false do
-    sh *%W(zip #{t.name}
-           --symlinks
-           --quiet
-           --latest-time
-           --recurse-paths) +
-       t.prerequisites
+    command = %W(zip #{t.name}
+                 --symlinks
+                 --quiet
+                 --latest-time
+                 --recurse-paths
+                 -@)
+    Open3.popen3(*command) {|stdin, stdout, stderr|
+      stdin.puts t.prerequisites
+      stdin.close
+      out = stdout.read.strip
+      err = stderr.read.strip
+      puts "  ** zip output: #{out}" unless out.empty?
+      puts "  ** zip error: #{err}"  unless err.empty?
+    }
   end
 end
 
@@ -121,6 +147,7 @@ def extract_and_test
   sh 'ruby', 'integration.rb'
 end
 
+desc 'Extract local bundle and run tests'
 task :test_local => 'Gem.zip' do
   require "tmpdir"
   Rake::FileUtilsExt.verbose false do
