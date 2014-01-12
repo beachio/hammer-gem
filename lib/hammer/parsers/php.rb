@@ -1,3 +1,5 @@
+require 'hammer/parsers/html'
+
 module Hammer
   class PHPParser < HTMLParser
 
