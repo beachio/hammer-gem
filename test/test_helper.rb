@@ -7,7 +7,7 @@ require 'sass'
 require 'mathn' if ENV['MATHN'] == 'true'
 require 'tmpdir'
 require 'byebug'
-require 'mocha'
+require 'mocha/setup'
 require 'shoulda'
 
 require 'hammer'
