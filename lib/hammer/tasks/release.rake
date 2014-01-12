@@ -71,6 +71,8 @@ task :bundle do
 
     rm_rf [ 'vendor/cache', 'vendor/production' ]
 
+    puts "bundle install..."
+    
     # bundle-cache has no verbosity option
     sh_with_clean_env 'bundle cache 1>/dev/null'
 
@@ -93,10 +95,10 @@ task :bundle do
 end
 
 desc 'Package code and all dependencies'
-file "Gem.zip" => [:bundle] + gem_files do |t|
+file "dist/Gem.zip" => [:bundle] + gem_files do |t|
   require 'open3'
 
-  puts 'Creating Gem.zip... '
+  puts 'Creating dist/Gem.zip... '
   Rake::FileUtilsExt.verbose false do
     command = %W(zip #{t.name}
                  --symlinks
@@ -120,7 +122,7 @@ task :pause_for_confirmation do
   sleep 2
 end
 
-task :upload_gem => 'Gem.zip' do
+task :upload_gem => 'dist/Gem.zip' do
   puts "Uploading to '#{s3_config['bucket']}'..."
 
   require 'aws/s3'
@@ -130,8 +132,8 @@ task :upload_gem => 'Gem.zip' do
   )
 
   AWS::S3::S3Object.store(
-    'Gem.zip',
-    File.open('Gem.zip'),
+    'dist/Gem.zip',
+    File.open('dist/Gem.zip'),
     s3_config['bucket'],
     :content_type => "application/zip",
     :access => :public_read
@@ -142,17 +144,17 @@ end
 
 def extract_and_test
   puts "Extracting and testing gem..."
-  sh 'unzip', '-q', 'Gem.zip'
+  sh 'unzip', '-q', 'dist/Gem.zip'
   sh 'ruby', '-I', 'test:lib', './test/tests.rb'
   sh 'ruby', 'integration.rb'
 end
 
 desc 'Extract local bundle and run tests'
-task :test_local => 'Gem.zip' do
+task :test_local => 'dist/Gem.zip' do
   require "tmpdir"
   Rake::FileUtilsExt.verbose false do
     Dir.mktmpdir "testing-build" do |dir|
-      sh 'cp', 'Gem.zip', dir
+      sh 'cp', 'dist/Gem.zip', dir
       Dir.chdir(dir) do
         extract_and_test
       end
