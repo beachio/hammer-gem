@@ -10,7 +10,7 @@ module Hammer
   class ProjectCacher
     
     attr_writer :directory
-    attr_accessor :hammer_files
+    attr_accessor :hammer_files, :directory
 
     extend Forwardable
     def_delegators :@hammer_project, :find_files
@@ -22,7 +22,13 @@ module Hammer
 
     # Start this off with a hammer_project. It belongs to the project.
     def initialize(options={})
-      @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
+
+      if options.include? :hammer_project
+        @hammer_project = options.fetch(:hammer_project) 
+      end
+
+      @hashes = {}
+
       @directory = options.fetch(:directory) if options.include? :directory
       @directory ||= Dir.mktmpdir
       
@@ -32,7 +38,8 @@ module Hammer
       @new_hashes = {}
       @new_dependency_hash = {}
       @new_hard_dependencies = {}
-      read_from_disk()
+
+      read_from_disk
     end
     
     def clear
@@ -40,7 +47,6 @@ module Hammer
     end
     
     def valid_cache_for(path)
-      return false unless @directory
       if !needs_recompiling? path
         if File.exists?(cached_path_for(path))
           return true
@@ -57,10 +63,8 @@ module Hammer
 
 
 
-    ## The data digest. 
+    ## The data digest. Opens the directory and writes out to cache.data.
     ## Written to and read from for hashes and things.
-
-    # Read data from disk:
     def read_from_disk
       return true unless @directory
 
@@ -163,7 +167,9 @@ module Hammer
     end
 
     # Check a file to see whether it needs recompiling.
+    attr_accessor :needs_recompiling
     def needs_recompiling?(path)
+
       @needs_recompiling ||= {}
       if @needs_recompiling[path] != nil
         result = @needs_recompiling[path]
@@ -171,7 +177,7 @@ module Hammer
         result = needs_recompiling_without_cache(path)
         @needs_recompiling[path] = result
       end
-      
+
       if !result && path && @hard_dependencies[path]
         @new_hard_dependencies[path] = @hard_dependencies[path]
       end
@@ -208,6 +214,7 @@ module Hammer
   private
 
     def needs_recompiling_without_cache(path)
+
       @new_hashes[path] ||= hash(path)
       new_hash = @new_hashes[path]
       
@@ -263,8 +270,8 @@ module Hammer
     # TODO: CHange this from reading the whole file.
     # We may be able to do this with timestamps instead. Might be a better approach.
     def hash(path)
-      return nil unless @hammer_project.input_directory
-      full_path = File.join(@hammer_project.input_directory, path)
+      return nil unless @input_directory
+      full_path = File.join(@input_directory, path)
       md5 = Digest::MD5.file(full_path).hexdigest
     rescue
       nil

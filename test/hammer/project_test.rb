@@ -31,7 +31,6 @@ class ProjectTest < Test::Unit::TestCase
     index_file = File.join(@options[:input_directory], 'index.html')
     FileUtils.touch(index_file)
 
-    
     @project.read()
     assert_equal 1, @project.hammer_files.length
   end
@@ -78,6 +77,20 @@ class ProjectTest < Test::Unit::TestCase
     @project << file2
     assert_equal @project.find_file('style.css'), file1
     assert_equal @project.find_file('sets/style.css'), file2
+  end
+
+  def test_caching_works_correctly
+    index_file = File.join(@project.input_directory, 'index.html')
+    File.open(index_file, 'w') do |f|; f.puts("a"); end
+    files = @project.compile()
+    file = files[0]
+
+    project2 = Hammer::Project.new(@options)
+    files2 = project2.compile()
+    file2 = files2[0]
+
+    # byebug
+    assert file2.from_cache
   end
 
 end

@@ -5,6 +5,7 @@ module Hammer
 
 end
 
+require 'pathname'
 require 'hammer/build'
 require 'hammer/project'
 require 'hammer/parser'

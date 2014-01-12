@@ -7,7 +7,7 @@ module Hammer
     attr_accessor :error_line, :error_message, :error_file, :error
     attr_accessor :path, :filename, :hammer_project, :output_filename, :output_path, 
                   :is_a_compiled_file, :compiled, :compiled_text, 
-                  :from_cache
+                  :from_cache, :messages
 
     def initialize options = {}
       # This is an initializer because I have this as a function.

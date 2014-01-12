@@ -20,6 +20,9 @@ module Hammer
     end
 
     def read
+
+      return @hammer_files if @hammer_files != []
+
       files = []
       file_paths.each do |file_path|
         filename = file_path.to_s.gsub(@input_directory.to_s, "")
@@ -38,49 +41,53 @@ module Hammer
 
     def compile
 
-      compiled_hammer_files = []
-      hammer_files.each do |hammer_file|
+      read()
 
+      # Initialize the cacher up here
+      cacher
+
+      # We're returning an array of compiled hammerfiles.
+      compiled_hammer_files = []
+
+      hammer_files.each do |hammer_file|
+        # Skip include files!
         next if File.basename(hammer_file.filename).start_with? "_"
 
+        # Check whether we've got a cached file for this
         if cached? hammer_file
           hammer_file.from_cache = true
-          hammer_file.messages = @cacher.messages_for(hammer_file.filename)
+          hammer_file.messages = cacher.messages_for(hammer_file.filename)
         else
           compile_file(hammer_file)
         end
 
-        compiled_hammer_files << hammer_file
-
-        cache(hammer_file)
+        compiled_hammer_files.push hammer_file
+        cache_hammer_file(hammer_file)
       end
 
+      # We're done here. Write out the cacher's new caching config stuff.
       cacher.write_to_disk
 
       return compiled_hammer_files
     end
 
-    def cache(hammer_file)
+    def cache_hammer_file(hammer_file)
       if hammer_file.error
         cacher.clear_cached_contents_for(hammer_file.filename)
       elsif hammer_file.compiled_text
         cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
       else
-        cacher.cache(hammer_file.full_path, hammer_file.filename)
+        cacher.cache(hammer_file.path, hammer_file.filename)
       end
     end
 
     def cacher
-      @cacher ||= ProjectCacher.new :hammer_project => self
+      @cacher ||= ProjectCacher.new :hammer_project => self, :directory => @cache_directory
     end
 
     # Check whether a hammer_file is cached. Uses the @cacher object.
     def cached? hammer_file
-      if @cacher
-        @cacher.valid_cache_for(hammer_file.filename)
-      else
-        false
-      end
+      cacher.valid_cache_for(hammer_file.filename)
     end
 
     def cache(hammer_file)

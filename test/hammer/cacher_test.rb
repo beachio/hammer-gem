@@ -5,38 +5,40 @@ require 'hammer/cacher'
 
 class ProjectCacherTest < Test::Unit::TestCase
   
-  def setup
-    @cacher = Hammer::ProjectCacher.new
-  end
-
-  def teardown
-    
-  end
-
-  def test_cacher
-    assert @cacher
-  end
-
-  context "with files stubbed out" do
+  context "A cacher" do
     setup do
-      @cacher.stubs(:find_files).returns([])
-      @cacher.stubs(:hammer_files).returns([])
-    end 
-
-    should "add wildcard dependency" do
-      assert @cacher.add_wildcard_dependency('index.html', 'about', 'html')
+      @cacher = Hammer::ProjectCacher.new
     end
 
-    should "add file dependency" do
-      assert @cacher.add_file_dependency('about/parent.html', 'about/child.html')
-      assert !@cacher.needs_recompiling?('about/parent.html')
+    def teardown
+      
     end
-  end
 
-  should "store the cache" do
-    @cacher.set_cached_contents_for('index.html', '<h1>Hello</h1>')
-    assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
-    assert !@cacher.needs_recompiling?('index.html')
+    should "be a cacher" do
+      assert @cacher
+    end
+
+    context "with files stubbed out" do
+      setup do
+        @cacher.stubs(:find_files).returns([])
+        @cacher.stubs(:hammer_files).returns([])
+      end 
+
+      should "add wildcard dependency" do
+        assert @cacher.add_wildcard_dependency('index.html', 'about', 'html')
+      end
+
+      should "add file dependency" do
+        assert @cacher.add_file_dependency('about/parent.html', 'about/child.html')
+        assert !@cacher.needs_recompiling?('about/parent.html')
+      end
+    end
+
+    should "store the cache" do
+      @cacher.set_cached_contents_for('index.html', '<h1>Hello</h1>')
+      assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
+      assert !@cacher.needs_recompiling?('index.html')
+    end
   end
 
 end
