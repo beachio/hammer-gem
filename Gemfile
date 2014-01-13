@@ -27,7 +27,9 @@ end
 
 group :development, :test do
   gem 'rake'
-  gem 'ZenTest'
+  # gem 'ZenTest'
+  gem 'autotest'
+  gem 'autotest-rails'
   gem 'autotest-fsevent'
   gem 'autotest-growl'
 end

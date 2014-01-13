@@ -9,6 +9,7 @@ class FunctionalTest < Test::Unit::TestCase
       :output_directory => Dir.mktmpdir,
       :cache_directory => Dir.mktmpdir
     }
+    
     @options.values.each do |path|
       FileUtils.mkdir_p(path)
     end
