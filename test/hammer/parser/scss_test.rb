@@ -9,11 +9,11 @@ class TestSCSS < Test::Unit::TestCase
   context "A SCSS Parser" do
     setup do
       @hammer_project = Hammer::Project.new
-      @parser = Hammer::SASSParser.new hammer_project: @hammer_project
+      @parser = Hammer::SASSParser.new :hammer_project => @hammer_project
     end
     
     should "parse SASS" do
-      @hammer_file = Hammer::HammerFile.new filename: 'style.scss'
+      @hammer_file = Hammer::HammerFile.new :filename => 'style.scss'
       @hammer_file.filename = "style.scss"
       @parser.hammer_file = @hammer_file
         
@@ -34,7 +34,7 @@ class TestSCSS < Test::Unit::TestCase
         @hammer_project.expects(:find_files).returns([@file])
         new_file = Hammer::HammerFile.new(:text => "/* @include style */", :filename => "whatever.scss", :hammer_project => @hammer_project)
         
-        parser = Hammer::SASSParser.new(hammer_project: @hammer_project)
+        parser = Hammer::SASSParser.new(:hammer_project => @hammer_project)
         parser.hammer_file = new_file
         parser.text = "/* @include style */"
         
@@ -55,7 +55,7 @@ class TestSCSS < Test::Unit::TestCase
     context "with an SCSS file" do
       
       setup do
-        @parser = Hammer::SASSParser.new(hammer_project: @hammer_project)
+        @parser = Hammer::SASSParser.new(:hammer_project => @hammer_project)
         @file = Hammer::HammerFile.new()
         @parser.hammer_file = Hammer::HammerFile.new()
         @parser.hammer_file.filename = "style.scss"

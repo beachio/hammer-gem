@@ -23,20 +23,14 @@ class UtilsTest < Test::Unit::TestCase
 
   def test_regex_for
     # Stub out the parser's possible_other_extensions_for_extension method
-    Hammer::Utils.expects('possible_other_extensions_for_extension')
-      .with('html')
-      .returns(['a', 'b', 'c'])
-      .once
+    Hammer::Utils.expects('possible_other_extensions_for_extension').with('html').returns(['a', 'b', 'c']).once
 
     assert_equal Hammer::Utils.regex_for("index.html"), /index\.(a|b|c)/
   end
 
   def test_long_paths
-    Hammer::Utils.expects('possible_other_extensions_for_extension')
-      .with('html')
-      .returns(['a', 'b', 'c'])
-      .once
-    assert_equal Hammer::Utils.regex_for("locations/1234567890/index.html"), /locations\/1234567890\/index\.(a|b|c)/
+    Hammer::Utils.expects('possible_other_extensions_for_extension').with('html').returns(['a', 'b', 'c']).once
+    assert_equal Hammer::Utils.regex_for("locations/1234567890/index.html").to_s, /locations\/1234567890\/index\.(a|b|c)/.to_s
   end
 
 end

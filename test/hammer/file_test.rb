@@ -9,7 +9,7 @@ class HammerFileTest < Test::Unit::TestCase
     @project_directory = Dir.mktmpdir
     @filename = 'index.html'
     @file_path = File.join(@project_directory, @filename)
-    @file = Hammer::HammerFile.new filename: @filename, path: @file_path
+    @file = Hammer::HammerFile.new :filename => @filename, :path => @file_path
 
     File.open(@file_path, 'w') do |file|
       file.write "Testing the file"

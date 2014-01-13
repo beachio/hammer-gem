@@ -5,9 +5,9 @@ class FunctionalTest < Test::Unit::TestCase
   
   def setup
     @options = {
-      input_directory: Dir.mktmpdir,
-      output_directory: Dir.mktmpdir,
-      cache_directory: Dir.mktmpdir
+      :input_directory => Dir.mktmpdir,
+      :output_directory => Dir.mktmpdir,
+      :cache_directory => Dir.mktmpdir
     }
     @options.values.each do |path|
       FileUtils.mkdir_p(path)

@@ -6,7 +6,7 @@ $:.unshift lib_dir unless $:.include?(lib_dir)
 require 'sass'
 require 'mathn' if ENV['MATHN'] == 'true'
 require 'tmpdir'
-require 'byebug'
+# require 'byebug'
 require 'mocha/setup'
 require 'shoulda'
 

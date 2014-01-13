@@ -12,16 +12,16 @@ class CSSParserTest < Test::Unit::TestCase
   context "A CSS Parser" do
     setup do
       @options = {
-        input_directory: Dir.mktmpdir,
-        output_directory: Dir.mktmpdir,
-        cache_directory: Dir.mktmpdir
+        :input_directory => Dir.mktmpdir,
+        :output_directory => Dir.mktmpdir,
+        :cache_directory => Dir.mktmpdir
       }
       # @hammer_project = Hammer::Project.new @options
       @parser = Hammer::CSSParser.new()
       @parser.stubs(:find_file).returns(nil)
       @parser.stubs(:find_files).returns([])
 
-      @css_file = Hammer::HammerFile.new(filename: 'style.css')
+      @css_file = Hammer::HammerFile.new(:filename => 'style.css')
       @parser.hammer_file = @css_file
     end
 
@@ -54,7 +54,7 @@ class CSSParserTest < Test::Unit::TestCase
 
     context "parsing clever paths" do
       setup do
-        font = Hammer::HammerFile.new(filename: "images/proximanova-regular.eot")
+        font = Hammer::HammerFile.new(:filename => "images/proximanova-regular.eot")
         # @hammer_project << font
       
         @parser.stubs(:find_files).returns([font])

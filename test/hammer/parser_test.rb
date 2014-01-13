@@ -31,9 +31,9 @@ class ParserTest < Test::Unit::TestCase
   
   def setup
     @project_options = {
-      input_directory: Dir.mktmpdir,
-      output_directory: Dir.mktmpdir,
-      cache_directory: Dir.mktmpdir
+      :input_directory => Dir.mktmpdir,
+      :output_directory => Dir.mktmpdir,
+      :cache_directory => Dir.mktmpdir
     }
   end
 
@@ -63,7 +63,7 @@ class ParserTest < Test::Unit::TestCase
   end
 
   def test_parser_can_be_found
-    file = Hammer::HammerFile.new filename: 'index.html'
+    file = Hammer::HammerFile.new :filename => 'index.html'
     assert Hammer::Parser.for_hammer_file(file)
   end
 

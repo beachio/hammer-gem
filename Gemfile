@@ -21,12 +21,17 @@ gem 'test-unit'
 gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
-group :development, :test do
+group :deployment do
   gem 'aws-s3'
+end
+
+group :development, :test do
   gem 'rake'
   gem 'ZenTest'
   gem 'autotest-fsevent'
   gem 'autotest-growl'
 end
 
-gem 'byebug'
+# if RUBY_VERSION[0] == "2"
+#   gem 'byebug'
+# end

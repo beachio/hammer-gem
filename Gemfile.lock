@@ -28,15 +28,10 @@ GEM
       mime-types
       xml-simple
     builder (3.2.2)
-    byebug (2.5.0)
-      columnize (~> 0.3.6)
-      debugger-linecache (~> 1.2.0)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
-    columnize (0.3.6)
-    debugger-linecache (1.2.0)
     eco (1.0.0)
       coffee-script
       eco-source
@@ -86,7 +81,6 @@ DEPENDENCIES
   autotest-growl
   aws-s3
   bourbon!
-  byebug
   coffee-script (~> 2.2.0)
   eco
   ejs

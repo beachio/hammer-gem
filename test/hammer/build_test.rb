@@ -9,9 +9,9 @@ class BuildTest < Test::Unit::TestCase
     @input_directory = Dir.mktmpdir
     @output_directory = Dir.mktmpdir
     @cache_directory = Dir.mktmpdir
-    @build = Hammer::Build.new(input_directory: @input_directory, 
-                               output_directory: @output_directory,
-                               cache_directory: @cache_directory)
+    @build = Hammer::Build.new(:input_directory => @input_directory, 
+                               :output_directory => @output_directory,
+                               :cache_directory => @cache_directory)
   end
 
   def teardown
