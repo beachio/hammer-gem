@@ -27,13 +27,7 @@ end
 
 group :development, :test do
   gem 'rake'
-  # gem 'ZenTest'
   gem 'autotest'
-  gem 'autotest-rails'
   gem 'autotest-fsevent'
   gem 'autotest-growl'
 end
-
-# if RUBY_VERSION[0] == "2"
-#   gem 'byebug'
-# end
