@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:elliottkember/amp.git
-  revision: 7da513c8521f04db14b29df074fba1855f0b7b87
+  revision: d68ec03e9a49f94a5771fe7e63bdf5f348e19021
   specs:
     amp (0.1)
 

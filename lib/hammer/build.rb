@@ -1,3 +1,5 @@
+require 'hammer/templates/application'
+
 module Hammer
   class Build
 
@@ -12,6 +14,12 @@ module Hammer
       @project.read()
       @project.compile()
       @project.write()
+    end
+
+    def hammer_time!(&complete)
+      compile()
+      app_template = Hammer::ApplicationTemplate.new(:project => @project)
+      complete.call project, app_template
     end
 
     def default_output_directory

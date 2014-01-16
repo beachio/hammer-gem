@@ -33,8 +33,7 @@ class ApplicationTemplateTest < Test::Unit::TestCase
     end
 
     should "not have an error" do
-      puts @template
-      # test_successful_build @template
+      test_successful_build @template
     end
   end
 

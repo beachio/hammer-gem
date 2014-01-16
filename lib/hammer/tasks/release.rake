@@ -81,7 +81,7 @@ task :bundle do
                           --local
                           --path=vendor/production/bundle
                           --standalone
-                          --without development)
+                          --without=development)
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
