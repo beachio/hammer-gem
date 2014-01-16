@@ -7,13 +7,14 @@ module Hammer
     attr_accessor :error_line, :error_message, :error_file, :error
     attr_accessor :path, :filename, :hammer_project, :output_filename, :output_path, 
                   :is_a_compiled_file, :compiled, :compiled_text, 
-                  :from_cache, :messages
+                  :from_cache, :messages, :ignored
 
     def initialize options = {}
       # This is an initializer because I have this as a function.
       @filename = options.delete(:filename) if options[:filename]
       @path     = options.delete(:path) if options[:path]
       @raw_text = options.delete(:text) if options[:text]
+      @messages = []
     end
 
     def output_filename
@@ -32,6 +33,10 @@ module Hammer
 
     def extension
       File.extname(@filename)[1..-1]
+    end
+
+    def include?
+      File.basename(@filename) == '_'
     end
 
   end

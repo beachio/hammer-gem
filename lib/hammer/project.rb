@@ -13,6 +13,16 @@ module Hammer
       @input_directory  = options.fetch(:input_directory) if options.include? :input_directory
       @output_directory = options.fetch(:output_directory) if options.include? :output_directory
       @cache_directory  = options.fetch(:cache_directory) if options.include? :cache_directory
+
+      @output_directory ||= Dir.mktmpdir
+      @cache_directory ||= Dir.mktmpdir
+    end
+
+    def error
+      @hammer_files.each do |file|
+        return true if file.error
+      end
+      false
     end
 
     def << (file)
@@ -32,8 +42,14 @@ module Hammer
         hammer_file.path = file_path
         hammer_file.filename = filename
         hammer_file.hammer_project = self
+
+        if ignore_file? hammer_file
+          hammer_file.ignored = true
+          @ignored_files << hammer_file
+        else
+          files << hammer_file
+        end
         
-        files << hammer_file
       end
       
       @hammer_files = files
@@ -71,6 +87,39 @@ module Hammer
       return compiled_hammer_files
     end
 
+    def ignore?(hammer_file)
+      true
+    end
+
+    # Check a hammer_file for whether we should ignore it.
+    def ignore_file?(hammer_file)
+      ignored_paths.include? hammer_file.path
+    end
+    
+    # Parse our HAMMER_IGNORE_FILENAME file, register it against our input_directory.
+    def ignored_paths
+      return [] unless input_directory
+      return @ignored_paths if @ignored_paths
+      
+      ignore_file = File.join(input_directory, HAMMER_IGNORE_FILENAME)
+      
+      @ignored_paths = [ignore_file]
+      if File.exists?(ignore_file)
+        lines = File.open(ignore_file).read.split("\n")
+        lines.each do |line|
+          line = line.strip
+          @ignored_paths << Dir.glob(File.join(input_directory, "#{line}/**/*"))
+          @ignored_paths << Dir.glob(File.join(input_directory, "#{line.gsub("*", "**/*")}"))
+        end
+      end
+      @ignored_paths.flatten!.uniq!
+      return @ignored_paths || []
+    rescue
+      # TODO: Find out whether we actually use this rescue block.
+      # It would be good to be able to output debug information into a console somewhere.
+      []
+    end
+
     def cache_hammer_file(hammer_file)
       if hammer_file.error
         cacher.clear_cached_contents_for(hammer_file.filename)
@@ -97,7 +146,7 @@ module Hammer
       elsif hammer_file.compiled_text
         @cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
       else
-        @cacher.cache(hammer_file.full_path, hammer_file.filename)
+        @cacher.cache(hammer_file.path, hammer_file.filename)
       end
     end
 
@@ -138,7 +187,7 @@ module Hammer
             f.write(hammer_file.compiled_text)
             f.close
           else
-            FileUtils.cp(hammer_file.full_path, hammer_file.output_path)
+            FileUtils.cp(hammer_file.path, hammer_file.output_path)
           end
         end
       end

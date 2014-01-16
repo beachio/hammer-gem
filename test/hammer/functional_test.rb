@@ -22,7 +22,7 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def test_functional_projects
-    directories = Dir.glob(File.join(File.dirname(__FILE__), 'functional', '*'))
+    directories = functional_test_directories
 
     directories.each do |directory|
       test_input_directory = File.join directory, 'input'

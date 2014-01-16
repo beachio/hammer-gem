@@ -1,0 +1,36 @@
+<article class="<%= span_class %>" hammer-original-filename="<%= path %>" <% if output_path && !include? %>hammer-final-filename="<%= output_path %><% end %>>
+  <span class="filename"><%= filename %></span>
+  
+  <% if !ignored %>
+    <small class="<%= span_class %>">
+      <% if error_filename %>
+        Error in <%= error_filename %>
+      <% elsif error %>
+        <span class="error">
+        <b>Line #{error_line}:</b> " if error_line
+        <%= error_message.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
+        </span>
+      <% elsif include? %>
+        Include only - not compiled
+      <% elsif from_cache %>
+        Copied to <b><a target="_blank" href="<%= output_path %>"><%= output_filename %></a></b> <span class='from-cache'>from&nbsp;cache</span>
+      <% elsif !compiled %>
+        Compiled into <a target="_blank" href="<%= output_path %>"><%= output_filename %></a>
+      <% end %>
+    </small>
+    
+    <% messages.each do |message| %>
+      <span class="<%= message[:html_class] || 'error' %>">
+        <% if message[:line] %>
+          <b>Line #{message[:line]}</b>
+        <% end %>
+        <%= message[:message].to_str %>
+      </span>
+    <% end %>
+
+    <% if reveal %><a target="blank" href="reveal://<%= output_path %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
+    <% if show_open_in_browser %><a target="blank" href="<%= output_path %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
+    <% if show_edit_link %><a target="blank" href="edit://<%= path %>" class="edit" title="Edit Original">Edit Original</a><% end %>
+
+  <% end %>
+</article>

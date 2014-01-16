@@ -1,0 +1,130 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <link href="output.css" rel="stylesheet" />
+  <script src="jquery.min.js" type="text/javascript"></script>
+  <script src="tabs.js" type="text/javascript"></script>
+</head>
+<body>
+
+  <% if files.empty? %>
+    <div class='build-error no-files'><span>No files to build</span></div>
+  <% else %>
+
+    <div class="error set">
+      <strong>Errors</strong>
+      <% if error_files.any? %>
+        <% error_files.each do |error_file| %>
+          <%= line_for(error_file) %>
+        <% end %>
+      <% else %>
+        <div class="message">
+          <p><b>There are no errors in your project</b></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="html set">
+      <strong>HTML Files</strong>
+      <% if html_files.any? %>
+        <% html_files.each do |html_file| %>
+          <%= line_for(html_file) %>
+        <% end %>
+      <% else %>
+        <div class="message">
+          <p><b>There are no HTML files in your project</b></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="html includes set">
+      <strong>HTML includes</strong>
+      <% if html_files.any? %>
+        <% html_files.each do |html_file| %>
+          <%= line_for(html_file) %>
+        <% end %>
+      <% else %>
+        <div class="message">
+          <p><b>There are no HTML files in your project</b></p>
+        </div>
+      <% end %>
+    </div>
+      
+    <% if compilation_files.any? %>
+      <div class="optimized cssjs set">
+        <strong>Optimized CSS &amp; JS</strong>
+        <% compilation_files.each do |file| %>
+          <%= line_for(file) %>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <div class="cssjs set">
+      <strong>CSS &amp; JS</strong>
+      <% if css_js_files.any? %>
+        <% css_js_files.each do |file| %>
+          <%= line_for(file) %>
+        <% end %>
+      <% else %>
+        <div class="message">
+          <p><b>There are no CSS or JS files in your project</b></p>
+        </div>
+      <% end %>
+      </div>
+      
+      <div class="images set">
+        <strong>Image assets</strong>
+        <% if image_files.any? %>
+          <% image_files.each do |file| %>
+            <%= line_for(file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no images in your project</b></p>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="other set">
+        <strong>Other files</strong>
+        <% if other_files.any? %>
+          <% other_files.each do |file| %>
+            <%= line_for(file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no other files in your project</b></p>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="ignored set">
+        <strong>Ignored files</strong>
+        <% if ignored_files.any? %>
+          <% ignored_files.each do |file| %>
+            <%= line_for(file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no ignored files in your project</b></p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+      
+    <section id="todos">
+      <strong>Todos</strong>
+      <% if todo_files.any? %>
+        <div class="todos set">
+        </div>
+      <% else %>
+        <div class="message">
+          <p><b>There are no todos in your project</b> <em>You can create a todo using <code>&lt;!-- @todo My todo --&gt;</code></em></p>
+        </div>
+      <% end %>
+    </section>
+
+  <% end %>
+
+</body>
+</html>
