@@ -18,7 +18,7 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
     filename = File.dirname(File.dirname(File.dirname(__FILE__)))
     filename = File.join(filename, 'hammer_time.rb')
 
-    args = ['/usr/bin/ruby', filename, cache_directory,
+    args = [ruby, filename, cache_directory,
             input_directory, output_directory]
     args << 'PRODUCTION' if optimized
 
@@ -39,4 +39,18 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
     end
   end
 
+  def ruby
+    which('ruby')
+  end
+
+  def which(cmd)
+    exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+    ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+      exts.each { |ext|
+        exe = File.join(path, "#{cmd}#{ext}")
+        return exe if File.executable? exe
+      }
+    end
+    return nil
+  end
 end
