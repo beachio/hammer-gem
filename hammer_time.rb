@@ -1,12 +1,11 @@
 # encoding: utf-8
 $LANG = "UTF-8"
-DEBUG ||= false
 
 # Catch interrupts received before app is loaded.
 interrupted = false
 trap('INT') { interrupted = true }
 
-require File.join(File.dirname(__FILE__), "lib/hammer/")
+require File.join(File.dirname(__FILE__), "lib/hammer")
 require 'hammer/build'
 
 # Pause to prevent the UI from returning too quickly and wreaking havoc with
@@ -27,13 +26,13 @@ trap('INT', 'DEFAULT')
 if ARGV.include?('PRELOAD') and !interrupted
   build.stop_hammer_time! do |project, app_template|
     not_too_fast(start)
-    puts app_template unless DEBUG
+    puts app_template
     exit app_template.success? ? 0 : 1
   end
 else
   build.hammer_time! do |project, app_template|
     not_too_fast(start)
-    puts app_template unless DEBUG
+    puts app_template
     exit app_template.success? ? 0 : 1
   end
 end
