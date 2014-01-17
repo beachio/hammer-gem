@@ -65,7 +65,7 @@ module Hammer
           number_of_indents_in_this_line = line[/\A[ |\t]*/].size
 
           next_line = lines[line_number+1]
-          number_of_indents_in_the_next_line = next_line.number_of_tab_or_space_indents
+          number_of_indents_in_the_next_line = next_line.to_s.number_of_tab_or_space_indents
           is_indented_after_this_line = number_of_indents_in_this_line < number_of_indents_in_the_next_line
 
           tag = files_from_tag_in_line(line)[0] # line.gsub("/ @include ", "").strip.split(" ")[0]
