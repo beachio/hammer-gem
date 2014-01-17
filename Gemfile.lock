@@ -41,6 +41,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.8.4)
     plist (3.1.0)
+    rake (10.1.1)
     sass (3.2.13)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -71,6 +72,7 @@ DEPENDENCIES
   kramdown
   mocha
   plist
+  rake
   sass (~> 3.2.12)
   shoulda
   shoulda-matchers (< 2.1.0)

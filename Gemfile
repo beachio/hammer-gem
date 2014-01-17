@@ -21,9 +21,10 @@ gem 'test-unit'
 gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
+gem 'rake'
+
 # group :development, :test do
 #   gem 'aws-s3'
-#   gem 'rake'
 #   gem 'autotest'
 #   gem 'autotest-fsevent'
 #   gem 'autotest-growl'
