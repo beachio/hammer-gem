@@ -107,7 +107,7 @@ module Hammer
       end
       return
     rescue => e
-      error(e, @line_number)
+      raise error(e, @line_number)
     end
 
     ## TODO: Add error messages to hammer file compiling.
@@ -122,7 +122,8 @@ module Hammer
         hammer_file_with_error.error = error
       end
 
-      throw error
+      # raise error
+      return error
     end
 
     ### Class methods

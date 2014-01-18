@@ -28,7 +28,10 @@ module Hammer
       if options.include? :hammer_project
         @hammer_project = options.fetch(:hammer_project) 
       end
-      @input_directory = options.fetch(:input_directory)
+
+      if options.include? :input_directory
+        @input_directory = options.fetch(:input_directory)
+      end
 
       @hashes = {}
 

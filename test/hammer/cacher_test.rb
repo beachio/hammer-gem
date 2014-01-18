@@ -39,6 +39,10 @@ class ProjectCacherTest < Test::Unit::TestCase
       assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
       assert !@cacher.needs_recompiling?('index.html')
     end
+
+    should "needs_recompiling" do
+      # @cacher.
+    end
   end
 
 end
