@@ -131,7 +131,7 @@ module Hammer
     end
 
     def cacher
-      @cacher ||= ProjectCacher.new :hammer_project => self, :directory => @cache_directory
+      @cacher ||= ProjectCacher.new :hammer_project => self, :directory => @cache_directory, :input_directory => @input_directory
     end
 
     # Check whether a hammer_file is cached. Uses the @cacher object.

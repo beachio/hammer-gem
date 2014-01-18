@@ -56,7 +56,15 @@ module Hammer
     end
 
     def error_filename
-      error.error_file.filename if error
+      error.error_file.filename if error and error.error_file
+    end
+
+    def error_message
+      error.message
+    end
+
+    def error_line
+      error.line_number
     end
   end
 end

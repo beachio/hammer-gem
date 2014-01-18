@@ -65,11 +65,11 @@ module Hammer
       
       filename = Regexp.escape(filename).gsub('\*','.*?')
       if extensions != []
-        /#{filename}\.(#{extensions.join("|")})/
+        /(^|\/)#{filename}\.(#{extensions.join("|")})/
       elsif extension
-        /#{filename}.#{extension}/
+        /(^|\/)#{filename}.#{extension}/
       else
-        /#{filename}/
+        /(^|\/)#{filename}/
       end
     end
 

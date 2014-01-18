@@ -1,7 +1,7 @@
 module Hammer
   class Error < Exception
     
-    attr_accessor :text, :line_number, :original_error
+    attr_accessor :text, :line_number, :original_error, :error_file
     attr_reader :hammer_file
 
     def to_s

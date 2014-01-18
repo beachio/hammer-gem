@@ -14,7 +14,7 @@ module Hammer
       @project.read()
       @project.compile()
       @project.write()
-      @success = true
+      @success = !@project.error
     end
 
     def hammer_time!(&complete)

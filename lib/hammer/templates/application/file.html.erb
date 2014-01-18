@@ -8,7 +8,9 @@
         Error in <%= error_filename %>
       <% elsif error %>
         <span class="error">
-        <b>Line #{error_line}:</b> " if error_line
+        <% if error_line %>
+          <b>Line <%= error_line %>:</b> 
+        <% end %>
         <%= error_message.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
         </span>
       <% elsif include? %>

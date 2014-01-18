@@ -122,7 +122,7 @@ module Hammer
         hammer_file_with_error.error = error
       end
 
-      raise error
+      throw error
     end
 
     ### Class methods

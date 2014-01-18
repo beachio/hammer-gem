@@ -10,13 +10,15 @@ module Hammer
   class ProjectCacher
     
     attr_writer :directory
-    attr_accessor :hammer_files, :directory
+    attr_accessor :hammer_files, :directory, :input_directory
 
     extend Forwardable
     def_delegators :@hammer_project, :find_files
 
     def hammer_project=(hammer_project)
       @hammer_project = hammer_project
+      puts hammer_project.input_directory
+      @input_directory = hammer_project.input_directory
       @hammer_files = hammer_project.hammer_files
     end
 
@@ -26,6 +28,7 @@ module Hammer
       if options.include? :hammer_project
         @hammer_project = options.fetch(:hammer_project) 
       end
+      @input_directory = options.fetch(:input_directory)
 
       @hashes = {}
 
