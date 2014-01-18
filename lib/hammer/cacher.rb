@@ -17,7 +17,6 @@ module Hammer
 
     def hammer_project=(hammer_project)
       @hammer_project = hammer_project
-      puts hammer_project.input_directory
       @input_directory = hammer_project.input_directory
       @hammer_files = hammer_project.hammer_files
     end
