@@ -29,11 +29,7 @@ module Hammer
       Hammer::Parser.for_extension(@hammer_file.extension).each do |parser|
         text ||= @hammer_file.raw_text
         parser = parser.new(:hammer_project => @hammer_project, :hammer_file => @hammer_file, :text => text)
-        begin
-          text = parser.parse() rescue nil
-        rescue => e
-          require 'byebug'
-        end
+        text = parser.parse() rescue nil
         @hammer_file.compiled = true
       end
       @hammer_file.output_filename = Hammer::Utils.output_filename_for(@hammer_file.filename)

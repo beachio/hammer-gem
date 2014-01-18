@@ -176,12 +176,7 @@ module Hammer
           @errors += 1 if hammer_file.error
 
           if @cacher && hammer_file.from_cache
-            cache_path = @cacher.cached_path_for(hammer_file.filename)
-            
-            if !File.exists? hammer_file.output_path
-              FileUtils.cp(cache_path, hammer_file.output_path)
-            end
-            
+            @cacher.copy(hammer_file.filename, hammer_file.output_path)
           elsif hammer_file.compiled_text
             f = File.new(output_path, "w")
             f.write(hammer_file.compiled_text)

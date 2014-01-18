@@ -23,17 +23,12 @@ module Hammer
 
     # Start this off with a hammer_project. It belongs to the project.
     def initialize(options={})
-
-      if options.include? :hammer_project
-        @hammer_project = options.fetch(:hammer_project) 
-      end
-
-      if options.include? :input_directory
-        @input_directory = options.fetch(:input_directory)
-      end
-
       @hashes = {}
 
+      @hammer_project = options.fetch(:hammer_project)  if options.include? :hammer_project
+      @input_directory = options.fetch(:input_directory) if options.include? :input_directory
+
+      # The actual directory where the caching happens.
       @directory = options.fetch(:directory) if options.include? :directory
       @directory ||= Dir.mktmpdir
       
@@ -57,17 +52,9 @@ module Hammer
           return true
         end
       end
+      false
     end
     
-    def cache(full_path, path)
-      return false unless @directory
-      FileUtils.mkdir_p File.dirname(cached_path_for(path))
-      # File.delete(cached_path_for(path)) 
-      FileUtils.cp full_path, cached_path_for(path)
-    end
-
-
-
     ## The data digest. Opens the directory and writes out to cache.data.
     ## Written to and read from for hashes and things.
     def read_from_disk
@@ -98,20 +85,8 @@ module Hammer
       end
     end
 
-    def messages
-      return @messages if @messages
-      messages_hash = {}
-      hammer_files.each do |hammer_file|
-        if hammer_file.messages.any?
-          messages_hash[hammer_file.filename] = Marshal.dump hammer_file.messages
-        end
-      end
-      @messages = messages_hash
-    end
-
     # When finished:
     def write_to_disk
-      
       @dependency_hash = @new_dependency_hash
       @hashes = @new_hashes
       @hard_dependencies = @new_hard_dependencies
@@ -130,27 +105,30 @@ module Hammer
       
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, "wb") do |f|     
-        # f.write contents.to_json # 
         f.write Marshal.dump(contents)
       end
     end
 
-
     ## Cache path management
 
-    def messages_for(path)
-      @messages ||= {}
-      if @messages[path]
-        Marshal.load @messages[path]
-      else
-        []
-      end
-    end
-    
     def cached_path_for(path)
       File.join(@directory, path)
     end
-    
+
+    ## Setting and getting stuff for a given path
+
+    # This copies a file at full_path to a file at cached_path_for(path).
+    def cache(full_path, path)
+      return false unless @directory
+      FileUtils.mkdir_p File.dirname(cached_path_for(path))
+      FileUtils.cp full_path, cached_path_for(path)
+    end
+
+    def copy(filename, output_path)
+      FileUtils.rm output_path
+      FileUtils.cp(cached_path_for(filename), output_path)
+    end
+
     def cached_contents_for(path)
       path = cached_path_for(path)
       File.open(path).read
@@ -171,10 +149,60 @@ module Hammer
       end
     end
 
-    # Check a file to see whether it needs recompiling.
-    attr_accessor :needs_recompiling
-    def needs_recompiling?(path)
+    # Messages are the line-by-line information that goes with every file. 
+    # Todos and errors.
+    def messages
+      return @messages if @messages
+      messages_hash = {}
+      hammer_files.each do |hammer_file|
+        if hammer_file.messages.any?
+          messages_hash[hammer_file.filename] = Marshal.dump hammer_file.messages
+        end
+      end
+      @messages = messages_hash
+    end
 
+    def messages_for(path)
+      if messages[path]
+        Marshal.load messages[path]
+      else
+        []
+      end
+    end
+
+    ## These are used to add wildcard and file dependencies
+    ## to a certain path. These are used for needs_recompiling because
+    ## the cacher handles dependencies.
+    def add_wildcard_dependency(path, query, type)
+      results = find_files(query, type).collect(&:filename)
+      results -= [path]
+      if results
+        @new_dependency_hash[path] ||= {}
+        @new_dependency_hash[path][query] ||= {}
+        @new_dependency_hash[path][query][type] = results
+      end
+    end
+    
+    def add_file_dependency(file_path, dependency_path)
+      extension = File.extname(dependency_path)[1..-1]
+      if Hammer::Parser.for_extension(extension).length == 0
+        return
+      end
+      
+      if dependency_path
+        @new_hard_dependencies[file_path] ||= []
+        unless @new_hard_dependencies[file_path].include? dependency_path
+          @new_hard_dependencies[file_path] << dependency_path
+          @new_hard_dependencies[file_path] = @new_hard_dependencies[file_path].uniq
+        end
+      end
+    end
+
+  private
+
+    # This checks a file to see whether it needs recompiling.
+    # This method needs to be cached so we're not checking the files all day long.
+    def needs_recompiling?(path)
       @needs_recompiling ||= {}
       if @needs_recompiling[path] != nil
         result = @needs_recompiling[path]
@@ -189,37 +217,9 @@ module Hammer
 
       return result
     end
-    
-    def add_wildcard_dependency(path, query, type)
-      results = find_files(query, type).collect(&:filename)
-      results -= [path]
-      if results
-        @new_dependency_hash[path] ||= {}
-        @new_dependency_hash[path][query] ||= {}
-        @new_dependency_hash[path][query][type] = results
-      end
-    end
-    
-    def add_file_dependency(file_path, dependency_path)
-      
-      extension = File.extname(dependency_path)[1..-1]
-      if Hammer::Parser.for_extension(extension).length == 0
-        return
-      end
-      
-      if dependency_path
-        @new_hard_dependencies[file_path] ||= []
-        unless @new_hard_dependencies[file_path].include? dependency_path
-          @new_hard_dependencies[file_path] << dependency_path
-          @new_hard_dependencies[file_path] = @new_hard_dependencies[file_path].uniq
-        end
-      end
-    end
-    
-  private
 
-    def needs_recompiling_without_cache(path)
-
+    def file_changed(path)
+      # @new_hashes[path] != hash(path)
       @new_hashes[path] ||= hash(path)
       new_hash = @new_hashes[path]
       
@@ -228,14 +228,20 @@ module Hammer
         @new_dependency_hash.delete(path)
         return true 
       end
-    
-      if @hard_dependencies[path]
-        @hard_dependencies[path].each do |dependency|
-          next if dependency == path
-          return needs_recompiling_without_cache(dependency) || needs_recompiling?(dependency)
+    end
+
+    def hard_dependencies_need_recompiling_for(path)
+      return false unless @hard_dependencies[path]
+      @hard_dependencies[path].each do |dependency|
+        next if dependency == path
+        if needs_recompiling_without_cache(dependency) || needs_recompiling?(dependency)
+          return true
         end
+        # return needs_recompiling_without_cache(dependency) || needs_recompiling?(dependency)
       end
-      
+    end
+
+    def wildcard_dependencies_need_recompiling_for(path)
       if files_added_or_removed
         if @dependency_hash[path]
           # Yes if the file's references have changed (new files).
@@ -258,6 +264,16 @@ module Hammer
           end
         end
       end
+    end
+
+    def needs_recompiling_without_cache(path)
+      if file_changed(path)
+        @new_dependency_hash.delete(path)
+        return true
+      end
+
+      return true if hard_dependencies_need_recompiling_for(path)
+      return true if wildcard_dependencies_need_recompiling_for(path)
       
       # File #{path} was not modified.
       return false

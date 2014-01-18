@@ -29,15 +29,16 @@ class ProjectCacherTest < Test::Unit::TestCase
       end
 
       should "add file dependency" do
+        @cacher.set_cached_contents_for('about/parent.html', '<h1>Hello</h1>')
         assert @cacher.add_file_dependency('about/parent.html', 'about/child.html')
-        assert !@cacher.needs_recompiling?('about/parent.html')
+        assert @cacher.valid_cache_for('about/parent.html')
       end
     end
 
     should "store the cache" do
       @cacher.set_cached_contents_for('index.html', '<h1>Hello</h1>')
       assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
-      assert !@cacher.needs_recompiling?('index.html')
+      assert @cacher.valid_cache_for('index.html')
     end
 
     should "needs_recompiling" do

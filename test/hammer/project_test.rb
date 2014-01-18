@@ -89,7 +89,6 @@ class ProjectTest < Test::Unit::TestCase
     files2 = project2.compile()
     file2 = files2[0]
 
-    # byebug
     assert file2.from_cache
   end
 
