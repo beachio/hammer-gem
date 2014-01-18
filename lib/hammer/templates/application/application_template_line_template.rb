@@ -18,12 +18,12 @@ module Hammer
       classes << "optimized" if @hammer_file.is_a_compiled_file
       classes << "error" if @error
       classes << "include" if @include
-      classes << "include" if filename.start_with? "_"
+      classes << "include" if File.basename(filename).start_with? "_"
       classes << "cached" if from_cache
-      classes << @extension
-      classes << 'image' if ['png', 'gif', 'svg', 'jpg', 'gif'].include? @extension
-      if @extension == "html" || @extension == "php"
-        classes << "html"          
+      classes << extension
+      classes << 'image' if ['png', 'gif', 'svg', 'jpg', 'gif'].include? extension
+      if extension == "html" || extension == "php"
+        classes << "html"
       else
         classes << "success" if @hammer_file.compiled
         classes << "copied"

@@ -36,7 +36,7 @@ module Hammer
     end
 
     def include?
-      File.basename(@filename) == '_'
+      File.basename(@filename).split('')[0] == '_'
     end
 
   end

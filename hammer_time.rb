@@ -27,12 +27,12 @@ if ARGV.include?('PRELOAD') and !interrupted
   build.wait do |project, app_template|
     not_too_fast(start)
     puts app_template
-    exit app_template.success? ? 0 : 1
+    exit build.success ? 0 : 1
   end
 else
   build.hammer_time! do |project, app_template|
     not_too_fast(start)
     puts app_template
-    exit app_template.success? ? 0 : 1
+    exit build.success ? 0 : 1
   end
 end

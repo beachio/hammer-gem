@@ -4,16 +4,17 @@ module Hammer
   class Build
 
     attr_accessor :cache_directory, :project_directory, :output_directory, 
-                  :optimized, :project
+                  :optimized, :project, :success
 
     def initialize(options)
       @project = Project.new(options)
     end
 
-    def compile
+    def compile(callback=nil)
       @project.read()
       @project.compile()
       @project.write()
+      @success = true
     end
 
     def hammer_time!(&complete)
@@ -30,7 +31,7 @@ module Hammer
       protect_against_zombies
       sleep 0.1 while true
     rescue SystemExit, Interrupt
-      compile(&complete)
+      hammer_time!(&complete)
     end
 
     # This process kills the build if this process's parent process exits.

@@ -1,75 +1,76 @@
 <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <link href="output.css" rel="stylesheet" />
-  <script src="jquery.min.js" type="text/javascript"></script>
-  <script src="tabs.js" type="text/javascript"></script>
-</head>
-<body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link href="output.css" rel="stylesheet" />
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src="tabs.js" type="text/javascript"></script>
+  </head>
+  <body>
 
-  <% if files.empty? %>
-    <div class='build-error no-files'><span>No files to build</span></div>
-  <% else %>
+    <% if files.empty? %>
+      <div class='build-error no-files'><span>No files to build</span></div>
+    <% else %>
 
-    <div class="error set">
-      <strong>Errors</strong>
-      <% if error_files.any? %>
-        <% error_files.each do |error_file| %>
-          <%= line_for(error_file) %>
-        <% end %>
-      <% else %>
-        <div class="message">
-          <p><b>There are no errors in your project</b></p>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="html set">
-      <strong>HTML Files</strong>
-      <% if html_files.any? %>
-        <% html_files.each do |html_file| %>
-          <%= line_for(html_file) %>
-        <% end %>
-      <% else %>
-        <div class="message">
-          <p><b>There are no HTML files in your project</b></p>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="html includes set">
-      <strong>HTML includes</strong>
-      <% if html_files.any? %>
-        <% html_files.each do |html_file| %>
-          <%= line_for(html_file) %>
-        <% end %>
-      <% else %>
-        <div class="message">
-          <p><b>There are no HTML files in your project</b></p>
-        </div>
-      <% end %>
-    </div>
-      
-    <% if compilation_files.any? %>
-      <div class="optimized cssjs set">
-        <strong>Optimized CSS &amp; JS</strong>
-        <% compilation_files.each do |file| %>
-          <%= line_for(file) %>
+    <section id="all">
+      <div class="error set">
+        <strong>Errors</strong>
+        <% if error_files.any? %>
+          <% error_files.each do |error_file| %>
+            <%= line_for(error_file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no errors in your project</b></p>
+          </div>
         <% end %>
       </div>
-    <% end %>
-    
-    <div class="cssjs set">
-      <strong>CSS &amp; JS</strong>
-      <% if css_js_files.any? %>
-        <% css_js_files.each do |file| %>
-          <%= line_for(file) %>
+
+      <div class="html set">
+        <strong>HTML Files</strong>
+        <% if html_files.any? %>
+          <% html_files.each do |html_file| %>
+            <%= line_for(html_file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no HTML files in your project</b></p>
+          </div>
         <% end %>
-      <% else %>
-        <div class="message">
-          <p><b>There are no CSS or JS files in your project</b></p>
+      </div>
+
+      <div class="html includes set">
+        <strong>HTML includes</strong>
+        <% if html_includes.any? %>
+          <% html_includes.each do |html_file| %>
+            <%= line_for(html_file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no HTML includes in your project</b></p>
+          </div>
+        <% end %>
+      </div>
+        
+      <% if compilation_files.any? %>
+        <div class="optimized cssjs set">
+          <strong>Optimized CSS &amp; JS</strong>
+          <% compilation_files.each do |file| %>
+            <%= line_for(file) %>
+          <% end %>
         </div>
       <% end %>
+    
+      <div class="cssjs set">
+        <strong>CSS &amp; JS</strong>
+        <% if css_js_files.any? %>
+          <% css_js_files.each do |file| %>
+            <%= line_for(file) %>
+          <% end %>
+        <% else %>
+          <div class="message">
+            <p><b>There are no CSS or JS files in your project</b></p>
+          </div>
+        <% end %>
       </div>
       
       <div class="images set">
@@ -123,8 +124,7 @@
         </div>
       <% end %>
     </section>
-
   <% end %>
 
-</body>
+  </body>
 </html>

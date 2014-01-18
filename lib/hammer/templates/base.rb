@@ -13,7 +13,21 @@ module Hammer
     end
 
     def files
-      @project.hammer_files
+      files = @project.hammer_files
+      return [] if files.nil?
+      # This sorts the files into the correct order for display
+      @sorted_files ||= files.sort_by { |file|
+        extension = File.extname(file.output_filename).downcase
+        file.filename
+      }.sort_by {|file|
+        file.from_cache ? 1 : 0
+      }.sort_by {|file|
+        file.messages.length > 0 ? 0 : 1
+      }.sort_by {|file|
+        (file.filename == "index.html") ? 0 : 1
+      }.sort_by {|file|
+        file.include? ? 1 : 0
+      }
     end
     
     def success?
@@ -39,7 +53,11 @@ module Hammer
     end
 
     def html_files
-      files.select {|file| (['.php', '.html'].include? File.extname(file.output_filename)) && !file.error }.compact
+      files.select {|file| (['.php', '.html'].include? File.extname(file.output_filename)) && !file.error && !file.include? }.compact
+    end
+
+    def html_includes
+      files.select {|file| (['.php', '.html'].include? File.extname(file.output_filename)) && !file.error && file.include? }.compact
     end
     
     def compilation_files
@@ -59,7 +77,7 @@ module Hammer
     end
     
     def other_files
-      files - image_files - css_js_files - compilation_files - html_files - error_files
+      files - image_files - css_js_files - compilation_files - html_files - error_files - html_includes
     end
     
     def todo_files
