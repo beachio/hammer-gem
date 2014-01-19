@@ -23,7 +23,7 @@ module Hammer
 
     # Start this off with a hammer_project. It belongs to the project.
     def initialize(options={})
-      @hashes = {}
+      @hashes_from_previous_build = {}
 
       @hammer_project = options.fetch(:hammer_project)  if options.include? :hammer_project
       @input_directory = options.fetch(:input_directory) if options.include? :input_directory
@@ -35,11 +35,12 @@ module Hammer
       @hard_dependencies = {}
       
       @hammer_files = []
-      @new_hashes = {}
+      @hashes_from_this_build = {}
       @new_dependency_hash = {}
       @new_hard_dependencies = {}
 
       read_from_disk
+      create_hashes
     end
     
     def clear
@@ -61,7 +62,7 @@ module Hammer
       return true unless @directory
 
       @dependency_hash = {}
-      @hashes = {}
+      @hashes_from_previous_build = {}
       
       path = cached_path_for("cache.data")
       if File.exists? path
@@ -79,23 +80,32 @@ module Hammer
           @dependency_hash = contents[:dependency_hash] if contents[:dependency_hash]
           @hard_dependencies = contents[:hard_dependencies] if contents[:hard_dependencies]
           @new_dependency_hash = @dependency_hash
-          @hashes = contents[:hashes] if contents[:hashes]
+          @hashes_from_previous_build = contents[:hashes] if contents[:hashes]
           @messages = contents[:messages] if contents[:messages]
         end
+      end
+    end
+
+    def create_hashes
+      return unless @input_directory
+      path = File.join(@input_directory, "/**/*")
+      Dir.glob(path).each do |file|
+        path = file[@input_directory.length+1..-1]
+        @hashes_from_this_build[file] = hash(path)
       end
     end
 
     # When finished:
     def write_to_disk
       @dependency_hash = @new_dependency_hash
-      @hashes = @new_hashes
+      @hashes_from_previous_build = @hashes_from_this_build
       @hard_dependencies = @new_hard_dependencies
       @files_digest = @new_files_digest
       
       contents = {
         :messages => @messages, 
         :dependency_hash => @dependency_hash, 
-        :hashes => @hashes, 
+        :hashes => @hashes_from_previous_build, 
         :hard_dependencies => @hard_dependencies, 
         :files_digest => @files_digest
       }
@@ -219,15 +229,17 @@ module Hammer
     end
 
     def file_changed(path)
-      # @new_hashes[path] != hash(path)
-      @new_hashes[path] ||= hash(path)
-      new_hash = @new_hashes[path]
+      # @hashes_from_this_build[path] != hash(path)
+      @hashes_from_this_build[path] ||= hash(path)
+      new_hash = @hashes_from_this_build[path]
       
       # # Yes if the file is modified.
-      if new_hash != @hashes[path]
+      if new_hash != @hashes_from_previous_build[path]
         @new_dependency_hash.delete(path)
         return true 
       end
+      
+      return false
     end
 
     def hard_dependencies_need_recompiling_for(path)

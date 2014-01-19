@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/test_helper'
+require File.join File.dirname(__FILE__), '..', 'test_helper'
+require File.join File.dirname(__FILE__), 'test_helper'
+# require './test_helper'
 require 'hammer/cacher'
 
 class ProjectCacherTest < Test::Unit::TestCase
@@ -41,8 +42,34 @@ class ProjectCacherTest < Test::Unit::TestCase
       assert @cacher.valid_cache_for('index.html')
     end
 
-    should "needs_recompiling" do
-      # @cacher.
+    should "have valid caches when the file hasn't changed" do
+      dir = Dir.mktmpdir
+      File.open(File.join(dir, 'index.html'), 'w') do |f|
+        f.puts "Testing"
+      end
+      @cacher.input_directory = dir
+      @cacher.read_from_disk
+      @cacher.create_hashes
+      assert !@cacher.valid_cache_for('index.html')
+      @cacher.write_to_disk
+      @cacher.read_from_disk
+      assert !@cacher.send(:file_changed, 'index.html')
+    end
+
+    should "have valid caches when the file HAS changed" do
+      dir = Dir.mktmpdir
+      File.open(File.join(dir, 'index.html'), 'w') do |f|
+        f.puts "Testing"
+      end
+      @cacher.input_directory = dir
+      @cacher.read_from_disk
+      @cacher.create_hashes
+      assert !@cacher.valid_cache_for('index.html')
+      @cacher.write_to_disk
+      File.open(File.join(dir, 'index.html'), 'w') do |f|
+        f.puts "Testing 123"
+      end
+      assert !@cacher.send(:file_changed, 'index.html')
     end
   end
 
