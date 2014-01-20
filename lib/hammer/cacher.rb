@@ -236,9 +236,9 @@ module Hammer
       # # Yes if the file is modified.
       if new_hash != @hashes_from_previous_build[path]
         @new_dependency_hash.delete(path)
-        return true 
+        return true
       end
-      
+
       return false
     end
 

@@ -69,7 +69,9 @@ class ProjectCacherTest < Test::Unit::TestCase
       File.open(File.join(dir, 'index.html'), 'w') do |f|
         f.puts "Testing 123"
       end
-      assert !@cacher.send(:file_changed, 'index.html')
+      @cacher.set_cached_contents_for 'index.html', 'Testing 123'
+      # assert !@cacher.send(:file_changed, 'index.html')
+      assert @cacher.needs_recompiling?('index.html')
     end
   end
 
