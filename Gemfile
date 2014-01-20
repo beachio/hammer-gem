@@ -25,7 +25,6 @@ gem 'rake'
 
 group :development, :test do
   gem 'simplecov'
-  gem 'byebug'
 end
 
 # group :development, :test do
