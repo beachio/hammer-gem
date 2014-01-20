@@ -208,7 +208,7 @@ module Hammer
       end
     end
 
-  private
+  # private
 
     # This checks a file to see whether it needs recompiling.
     # This method needs to be cached so we're not checking the files all day long.
