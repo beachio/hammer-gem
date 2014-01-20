@@ -16,9 +16,9 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def teardown
-    @options.values.each do |path|
-      FileUtils.rm_rf(path)
-    end
+    # @options.values.each do |path|
+    #   FileUtils.rm_rf(path)
+    # end
   end
 
   def test_functional_projects
@@ -43,7 +43,7 @@ class FunctionalTest < Test::Unit::TestCase
 
       errors = build.project.hammer_files.collect(&:error).compact
       assert_equal [], errors
-      
+
       # assert Dir.exists? @options[:output_directory]
       compare_directories test_output_directory, @options[:output_directory]
     end

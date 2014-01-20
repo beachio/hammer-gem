@@ -6,7 +6,7 @@ require 'open3'
 # This tests the actual command line syntax.
 class HammerGemIntegrationTest < Test::Unit::TestCase
 
-  def integrate(input_directory, optimized = false)
+  def integrate_and_test(input_directory, optimized = false)
 
     output_directory = Dir.mktmpdir('Build')
     cache_directory  = Dir.mktmpdir('cache')
@@ -27,16 +27,22 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
       error = stderr.read
     end
 
+    # TODO: check integration does more than just length > 0
+    assert output.length > 0, "#{input_directory} was not correctly copied to #{output_directory}"
     return output
   end
 
   def test_integration
     dirs = functional_test_directories
+    assert dirs.length > 0
+    
+    threads = []
     dirs.each do |dir|
-      dir = File.join(dir, 'input')
-      output = integrate(dir)
-      assert output.length > 0
+      threads << Thread.new do
+        integrate_and_test(File.join(dir, 'input'))
+      end
     end
+    threads.each {|t| t.join}
   end
 
   def ruby

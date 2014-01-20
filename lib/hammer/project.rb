@@ -78,7 +78,7 @@ module Hammer
         end
 
         compiled_hammer_files.push hammer_file
-        cache_hammer_file(hammer_file)
+        cache(hammer_file)
       end
 
       # We're done here. Write out the cacher's new caching config stuff.
@@ -120,23 +120,13 @@ module Hammer
       []
     end
 
-    def cache_hammer_file(hammer_file)
-      if hammer_file.error
-        cacher.clear_cached_contents_for(hammer_file.filename)
-      elsif hammer_file.compiled_text
-        cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
-      else
-        cacher.cache(hammer_file.path, hammer_file.filename)
-      end
-    end
-
     def cacher
-      @cacher ||= ProjectCacher.new :hammer_project => self, :directory => @cache_directory, :input_directory => @input_directory
+      @cacher ||= Cacher.new :hammer_project => self, :directory => @cache_directory, :input_directory => @input_directory
     end
 
     # Check whether a hammer_file is cached. Uses the @cacher object.
     def cached? hammer_file
-      cacher.valid_cache_for(hammer_file.filename)
+      cacher.cached?(hammer_file.filename)
     end
 
     def cache(hammer_file)
@@ -144,9 +134,9 @@ module Hammer
       if hammer_file.error
         @cacher.clear_cached_contents_for(hammer_file.filename)
       elsif hammer_file.compiled_text
-        @cacher.set_cached_contents_for(hammer_file.filename, hammer_file.compiled_text)
+        @cacher.cache_contents(hammer_file.output_filename, hammer_file.compiled_text)
       else
-        @cacher.cache(hammer_file.path, hammer_file.filename)
+        @cacher.cache(hammer_file.output_filename, hammer_file.path)
       end
     end
 
@@ -176,7 +166,7 @@ module Hammer
           @errors += 1 if hammer_file.error
 
           if @cacher && hammer_file.from_cache
-            @cacher.copy(hammer_file.filename, hammer_file.output_path)
+            @cacher.copy_from_cache(hammer_file.output_filename, hammer_file.output_path)
           elsif hammer_file.compiled_text
             f = File.new(output_path, "w")
             f.write(hammer_file.compiled_text)
