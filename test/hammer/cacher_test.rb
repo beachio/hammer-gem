@@ -1,16 +1,7 @@
 #!/usr/bin/env ruby
 require File.join File.dirname(__FILE__), '..', 'test_helper'
 require File.join File.dirname(__FILE__), 'test_helper'
-# require './test_helper'
 require 'hammer/cacher'
-
-# require 'byebug'
-# require './cacher'
-# require 'test/unit'
-# require 'shoulda-context'
-# require 'mocha/setup'
-# require 'tmpdir'
-# require 'fileutils'
 
 class CacherTest < Test::Unit::TestCase
   
