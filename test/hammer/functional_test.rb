@@ -16,9 +16,9 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def teardown
-    # @options.values.each do |path|
-    #   FileUtils.rm_rf(path)
-    # end
+    @options.values.each do |path|
+      FileUtils.rm_rf(path)
+    end
   end
 
   def test_functional_projects

@@ -15,10 +15,14 @@ def not_too_fast(start, minimum_duration = 0.5)
   sleep minimum_duration - duration if duration < minimum_duration
 end
 
-build = Hammer::Build.new(:cache_directory   => ARGV[0],
-                          :input_directory => ARGV[1],
-                          :output_directory  => ARGV[2],
-                          :optimized   => ARGV.include?('PRODUCTION'))
+if ARGV.length == 1
+  build = Hammer::Build.new(:input_directory => ARGV[0], :optimized   => ARGV.include?('PRODUCTION'))
+else
+  build = Hammer::Build.new(:cache_directory   => ARGV[0],
+                            :input_directory => ARGV[1],
+                            :output_directory  => ARGV[2],
+                            :optimized   => ARGV.include?('PRODUCTION'))
+end
 start = Time.now
 
 trap('INT', 'DEFAULT')

@@ -165,7 +165,6 @@ module Hammer
 
       # Returns an array of parsers that can compile a given extension.
       def for_extension(extension)
-        
         parser = @@default_parser_for[extension]
         if @@parsers_for && @@parsers_for[extension] && !parser
           parser = @@parsers_for[extension][0]
@@ -184,7 +183,7 @@ module Hammer
         while new_extension != parser.finished_extension
           new_extension = parser.finished_extension
           if new_extension != extension
-            parsers << @@parsers_for[extension] # Hammer::Parser.for_extension(new_extension)
+            parsers << @@parsers_for[new_extension] # Hammer::Parser.for_extension(new_extension)
           end
         end
         

@@ -73,6 +73,7 @@ class ParserTest < Test::Unit::TestCase
   end
 
   def test_for_extension
+    assert_equal [Hammer::SASSParser, Hammer::CSSParser], Hammer::Parser.for_extension('scss')
     assert_equal [Hammer::DummyParser], Hammer::Parser.for_extension('dummy')
     assert_equal [Hammer::DummyTwoFirstParser, Hammer::DummyTwoSecondParser], Hammer::Parser.for_extension('dummy2')
   end

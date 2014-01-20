@@ -171,18 +171,21 @@ module Hammer
       begin
         @text = engine.render()
         
-        engine.dependencies.each do |dependency|
-          
-          path = dependency.options[:filename]
-          next unless path.start_with? @input_directory
-          
-          if path.start_with? @input_directory
-            relative_path = path[@input_directory.length..-1]
+        thread = Thread.new {
+          dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
+          dependencies.each do |dependency|
+            path = dependency #  dependency.options[:filename]
+            next unless path.start_with? @input_directory
+            
+            if path.start_with? @input_directory
+              relative_path = path[@input_directory.length..-1]
+            end
+            
+            # find_file adds a hard dependency for us :)
+            find_file(relative_path)
           end
-          
-          # find_file adds a hard dependency for us :)
-          find_file(relative_path)
-        end
+        }
+        thread.join
         
       rescue => e
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename

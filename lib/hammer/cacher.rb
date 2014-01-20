@@ -35,6 +35,7 @@ module Hammer
     # Caching behaviour
 
     def cache filename, source_path
+      FileUtils.mkdir_p File.dirname(cached_path_for(filename))
       FileUtils.cp source_path, cached_path_for(filename)
     end
 
