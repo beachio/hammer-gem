@@ -30,7 +30,7 @@ class TestHtmlParser < Test::Unit::TestCase
       text = @parser.parse()
       assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100' height='100' alt='I am a teapot' /></html>", text
     end
-    
+
     should "replace kitten tags" do
       @parser.text = "<html><!-- @kitten 100x100 --></html>"
       text = @parser.parse()
@@ -46,6 +46,21 @@ class TestHtmlParser < Test::Unit::TestCase
       should "include the file" do
         @parser.text = "<html><!-- @include _header --></html>"
         assert_equal "<html>header</html>", @parser.parse()
+      end
+
+    end
+
+    should "raise an error when including the wrong file" do
+      @parser.text = "<html><!-- @include _header --></html>"
+      assert_raises Hammer::Error do
+        @parser.parse()
+      end
+    end
+
+    should "raise an error when including an unset variable" do
+      @parser.text = "<html><!-- @include $header --></html>"
+      assert_raises Hammer::Error do
+        @parser.parse()
       end
     end
 
@@ -63,6 +78,15 @@ class TestHtmlParser < Test::Unit::TestCase
       @parser.text = "<!-- @javascript app -->"
       @parser.stubs(:find_files).returns([new_file])
       assert_equal "<script src='a/b/c/app.js'></script>", @parser.parse()
+    end
+
+    should "replace @javascript tags in production" do
+      file = Hammer::HammerFile.new :text => "I'm an include", :filename => 'a/b/c/app.js'
+      other_file = Hammer::HammerFile.new :text => "I'm an include", :filename => 'a/b/c/style.js'
+      @parser.stubs(:find_files).returns([file, other_file])
+      @parser.stubs(:production).returns(true)
+      @parser.text = "<!-- @javascript app style -->"
+      assert @parser.parse().include? "script src="
     end
 
     should "replace @javascript tags with $variable filenames." do
@@ -86,18 +110,53 @@ class TestHtmlParser < Test::Unit::TestCase
       end
     end
 
-
     should "correctly match Clever Paths" do
       @parser.text = "<!-- @path location/index.html -->"
       b = Hammer::HammerFile.new(:text => "I'm the right file.", :filename => "1234567890/location/index.html")
       @parser.stubs(:find_files).returns([b])
       assert_equal "1234567890/location/index.html", @parser.parse()
     end
-  
-      should "remove empty lines from the start of a page" do
-        @parser.text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
-        assert_equal "This is a line\nThis is another line", @parser.parse()
+
+    should "correctly match Clever Paths with alternative syntax" do
+      @parser.text = "'@path location/index.html'"
+      b = Hammer::HammerFile.new(:text => "I'm the right file.", :filename => "1234567890/location/index.html")
+      @parser.stubs(:find_files).returns([b])
+      assert_equal "'1234567890/location/index.html'", @parser.parse()
+    end
+
+    should "raise an error for clever paths if the file isn't found" do
+
+      file = Hammer::HammerFile.new(:filename => "a")
+      @parser = Hammer::HTMLParser.new(:hammer_file => file)
+      @parser.text = '<!-- @path location/index.html -->'
+      @parser.stubs(:find_files).returns([])
+
+      assert_raises do
+        @parser.parse()
       end
+
+      assert @parser.hammer_file.error
+      assert @parser.hammer_file.error.message.to_s.include? "Path tags:"
+
+      ["'@path location/index.html'", '"@path location/index.html"', "<!-- @path location/index.html -->"].each do |text|
+        @parser.text = text
+        assert_raises Hammer::Error do
+          @parser.parse()
+        end
+      end
+    end
+
+    should "correctly match Clever Paths with alternative syntax with doublequotes" do
+      @parser.text = '"@path location/index.html"'
+      b = Hammer::HammerFile.new(:text => "I'm the right file.", :filename => "1234567890/location/index.html")
+      @parser.stubs(:find_files).returns([b])
+      assert_equal '"1234567890/location/index.html"', @parser.parse()
+    end
+  
+    should "remove empty lines from the start of a page" do
+      @parser.text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
+      assert_equal "This is a line\nThis is another line", @parser.parse()
+    end
     
     # should "replace script tags" do
 
@@ -165,6 +224,14 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.text = "<!-- @stylesheet app x -->"
           assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
         end
+
+        should "create a single tag when in production" do
+          @parser.text = "<!-- @stylesheet app x -->"
+          @parser.stubs(:production).returns(true)
+          # assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
+          text = @parser.parse()
+          assert_equal text.scan(/style/).count, 1
+        end
       end
     
   #   context "with stylesheet tags" do
@@ -213,6 +280,28 @@ class TestHtmlParser < Test::Unit::TestCase
   #     end
       
       context "with variables" do
+
+        should "read variables with backups" do
+          @parser.text = "<!-- $variable | yes -->"
+          assert_equal "yes", @parser.parse()
+        end
+
+        should "raise errors for path tags with unset variables" do
+          @parser.text = "<!-- @path $unset_variable -->"
+          assert_raises Hammer::Error do |error|
+            @parser.parse()
+            assert error.message.include?™ "wasn't set"
+          end
+        end
+
+        should "raise errors for unset variables" do
+          @parser.text = "<!-- $unset_variable -->"
+          assert_raises Hammer::Error do |error|
+            @parser.parse()
+            assert error.message.include?™ "wasn't set"
+          end
+        end
+
         should "replace @stylesheet tags" do
           @parser.text = "<!-- $variable app --><!-- @stylesheet $variable -->"
           new_file = Hammer::HammerFile.new(:filename => "app.css")
@@ -229,6 +318,27 @@ class TestHtmlParser < Test::Unit::TestCase
         end 
       end
       
+    should "include a file with errors" do
+      included_file = Hammer::HammerFile.new(:text => "<!-- $unset_variable -->", :filename => "include.html")
+      file = Hammer::HammerFile.new(:text => "<!-- @include include -->", :filename => "index.html")
+      @parser = Hammer::HTMLParser.new(:hammer_file => file)
+      @parser.stubs(:find_files).returns([included_file])
+
+      assert_raises Hammer::Error do
+        @parser.parse()
+      end
+    end
+
+    should "raise an error not finding a file" do
+      included_file = Hammer::HammerFile.new(:text => "<!-- $unset_variable -->", :filename => "include.html")
+      file = Hammer::HammerFile.new(:text => "<!-- @include include -->", :filename => "index.html")
+      @parser = Hammer::HTMLParser.new(:hammer_file => file)
+      @parser.stubs(:find_files).returns([])
+
+      assert_raises Hammer::Error do
+        @parser.parse()
+      end
+    end
 
     
     context "with links" do
@@ -446,17 +556,15 @@ class TestHtmlParser < Test::Unit::TestCase
   #       assert_equal({'title' => "A"}, parser.send(:variables))        
   #     end
       
-  #     context "with variables set" do
-  #       setup do
-  #       end
-        
-  #       should "use variables in include tags" do
-  #         @file.raw_text = "<!-- $name _header --><!-- @include $name -->"
-  #         parser = Hammer.parser_for_hammer_file(@file)
-  #         assert_equal "Header", parser.parse()
-  #         assert_equal({'name' => "_header"}, parser.send(:variables))     
-  #       end
-  #     end
+        should "use variables in include tags" do
+          header = Hammer::HammerFile.new :text => "Header", :filename => "header.html"
+          @file = Hammer::HammerFile.new :text => "<!-- $name _header --><!-- @include $name -->"
+          parser = Hammer::HTMLParser.new :hammer_file => @file, :text => @file.raw_text
+          parser.stubs(:find_files).returns([header])
+          assert_equal "Header", parser.parse()
+          assert_equal({'name' => "_header"}, parser.send(:variables))     
+        end
+
   #   end
 
     #   context "with an error" do

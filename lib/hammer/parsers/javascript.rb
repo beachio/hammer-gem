@@ -69,11 +69,12 @@ module Hammer
       @text = CoffeeScript.compile @text
       replace_includes()
       @text
-    rescue ExecJS::ProgramError => error
+    rescue ExecJS::ProgramError, ExecJS::RuntimeError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
       message = error.message.split("Error: ")[1]
+      message = "Coffeescript Error: #{message}"
       @hammer_file.error = Hammer::Error.new(message, line)
-      @text
+      raise @hammer_file.error
     end
     
     def replace_includes

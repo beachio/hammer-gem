@@ -11,9 +11,6 @@ module Hammer
     def initialize(text, line_number)
       @text = text
       @line_number = line_number
-      if hammer_file
-        self.hammer_file = hammer_file
-      end
     end
     
     def self.from_error(error, hammer_file)

@@ -1,9 +1,8 @@
+require 'ejs'
+require 'eco'
+
 module Hammer
   class JSTParser < Parser
-    def to_javascript
-      parse
-    end
-    
     def to_format(format)
       if format == :js
         parse()
@@ -28,6 +27,12 @@ module Hammer
       @text = Eco.compile(@text)
       name = File.basename(@hammer_file.filename, '.*')
       @text = "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{@text}"
+    end
+
+    def to_format(format)
+      if format == :js
+        parse()
+      end
     end
 
      def self.finished_extension

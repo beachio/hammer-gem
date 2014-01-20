@@ -92,20 +92,14 @@ module Hammer
         
         begin
           "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' alt='#{alt}' />"
-        rescue 
-          tag
         end
       end
       
       replace(/<!-- @kitten (\S*) -->/) do |tag, line_number|
         dimensions = tag.gsub("<!-- @kitten ", "").gsub("-->", "").strip
-        begin
-          x = dimensions.split('x')[0]
-          y = dimensions.split('x')[1]
-          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
-        rescue 
-          tag
-        end
+        x = dimensions.split('x')[0]
+        y = dimensions.split('x')[1]
+        "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
       end
     end
     
@@ -240,6 +234,9 @@ module Hammer
     end
     
     def get_variable(variable_name)
+
+      @variables ||= {}
+
       if variable_name.split("")[0] == "$"
         variable_name = variable_name.split("")[1..-1].join("")
       end

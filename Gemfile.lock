@@ -19,10 +19,16 @@ GEM
     activesupport (3.2.16)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    byebug (2.5.0)
+      columnize (~> 0.3.6)
+      debugger-linecache (~> 1.2.0)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
+    columnize (0.3.6)
+    debugger-linecache (1.2.0)
+    docile (1.1.2)
     eco (1.0.0)
       coffee-script
       eco-source
@@ -49,6 +55,11 @@ GEM
     shoulda-context (1.1.6)
     shoulda-matchers (2.0.0)
       activesupport (>= 3.0.0)
+    simplecov (0.8.2)
+      docile (~> 1.1.0)
+      multi_json
+      simplecov-html (~> 0.8.0)
+    simplecov-html (0.8.0)
     test-unit (2.5.5)
     thor (0.18.1)
     tilt (2.0.0)
@@ -63,6 +74,7 @@ DEPENDENCIES
   activesupport (< 4.0.0)
   amp!
   bourbon!
+  byebug
   coffee-script (~> 2.2.0)
   eco
   ejs
@@ -76,5 +88,6 @@ DEPENDENCIES
   sass (~> 3.2.12)
   shoulda
   shoulda-matchers (< 2.1.0)
+  simplecov
   test-unit
   uglifier

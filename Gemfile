@@ -23,6 +23,11 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 gem 'rake'
 
+group :development, :test do
+  gem 'simplecov'
+  gem 'byebug'
+end
+
 # group :development, :test do
 #   gem 'aws-s3'
 #   gem 'autotest'

@@ -1,4 +1,5 @@
 require 'rake/testtask'
+import 'lib/hammer/tasks/coverage.rake'
 import 'lib/hammer/tasks/release.rake'
 
 task :default => :test

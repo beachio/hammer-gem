@@ -11,16 +11,30 @@ class TestSCSS < Test::Unit::TestCase
       @hammer_project = Hammer::Project.new
       @parser = Hammer::SASSParser.new :hammer_project => @hammer_project
     end
-    
-    should "parse SASS" do
-      @hammer_file = Hammer::HammerFile.new :filename => 'style.scss'
-      @hammer_file.filename = "style.scss"
-      @parser.hammer_file = @hammer_file
-        
-      @parser.text = "a { b { background: red; } }"
-      assert_includes @parser.parse(), "a b {\n  background: red; }\n"
+
+    context "with a scss file" do
+      setup do
+        @hammer_file = Hammer::HammerFile.new :filename => 'style.scss'
+        @parser.hammer_file = @hammer_file
+      end
+      should "output to css" do
+        @parser.text = "a { b { background: red; } }"
+        assert_includes "a b {\n  background: red; }\n", @parser.to_format(:css)
+        assert_includes "a b {\n  background: red; }\n", @parser.to_css
+      end
+      should "not output to scss" do
+        @parser.text = "a { b { background: red; } }"
+        assert_equal false, @parser.to_format(:sass)
+      end
+      should "output the original text to scss" do
+        @parser.text = "a { b { background: red; } }"
+        assert_equal @parser.text, @parser.to_format(:scss)
+      end
+      should "parse SASS" do
+        @parser.text = "a { b { background: red; } }"
+        assert_includes @parser.parse(), "a b {\n  background: red; }\n"
+      end
     end
-    
     
     context "with other SCSS files" do
       setup do
@@ -42,8 +56,6 @@ class TestSCSS < Test::Unit::TestCase
         assert_includes text, "a {\n  background: red; }\n"
       end
     end
-    
-    
   end
   
   
