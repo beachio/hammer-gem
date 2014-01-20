@@ -1,5 +1,4 @@
 require "digest"
-require 'byebug'
 
 module Hammer
   class HammerFile
@@ -37,8 +36,6 @@ module Hammer
 
     def cache filename, source_path
       FileUtils.cp source_path, cached_path_for(filename)
-    rescue
-      byebug
     end
 
     def cache_contents filename, contents
@@ -46,8 +43,6 @@ module Hammer
       File.open cached_path_for(filename), 'w' do |f|
         f.puts contents
       end
-    rescue
-      byebug
     end
 
     def copy_from_cache filename, destination_path
@@ -196,8 +191,6 @@ module Hammer
     def hash filename
       full_path = File.join(@input_directory, filename)
       md5 = Digest::MD5.file(full_path).hexdigest
-    rescue
-      byebug
     end
 
   end
