@@ -290,7 +290,7 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.text = "<!-- @path $unset_variable -->"
           assert_raises Hammer::Error do |error|
             @parser.parse()
-            assert error.message.include?™ "wasn't set"
+            assert error.message.include? "wasn't set"
           end
         end
 
@@ -298,7 +298,7 @@ class TestHtmlParser < Test::Unit::TestCase
           @parser.text = "<!-- $unset_variable -->"
           assert_raises Hammer::Error do |error|
             @parser.parse()
-            assert error.message.include?™ "wasn't set"
+            assert error.message.include? "wasn't set"
           end
         end
 
