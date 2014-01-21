@@ -66,8 +66,14 @@ class FunctionalTest < Test::Unit::TestCase
       assert File.exist?(b_file_path), "File missing: #{a_file_path} wasn't compiled to Build folder"
 
       if !File.directory? a_file_path    
-        assert FileUtils.compare_file(b_file_path, a_file_path), "Files #{b_file_path} and #{a_file_path} don't match!"
-        assert FileUtils.compare_file(b_file_path, a_file_path), "#{File.open(b_file_path).read} \n #{File.open(a_file_path).read}"
+        match = FileUtils.compare_file(b_file_path, a_file_path)
+        if !match
+          puts "File: #{a_file_path}:"
+          puts "#{File.open(a_file_path).read}"
+          puts "File: #{b_file_path}"
+          puts "#{File.open(b_file_path).read}"
+        end
+        assert match, "Files #{b_file_path} and #{a_file_path} don't match!"
       end
     end
   end

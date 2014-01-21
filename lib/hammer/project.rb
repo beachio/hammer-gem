@@ -72,7 +72,9 @@ module Hammer
         # Check whether we've got a cached file for this
         if cached? hammer_file
           hammer_file.from_cache = true
-          hammer_file.messages = cacher.messages_for(hammer_file.filename)
+          if cacher.messages_for(hammer_file.filename)
+            hammer_file.messages = cacher.messages_for(hammer_file.filename)
+          end
         else
           compile_file(hammer_file)
         end
@@ -135,8 +137,8 @@ module Hammer
         @cacher.clear_cached_contents_for(hammer_file.filename)
       elsif hammer_file.compiled_text
         @cacher.cache_contents(hammer_file.output_filename, hammer_file.compiled_text)
-      else
-        @cacher.cache(hammer_file.output_filename, hammer_file.path)
+      # else
+      #   @cacher.cache(hammer_file.output_filename, hammer_file.path)
       end
     end
 

@@ -141,7 +141,7 @@ module Hammer
       Dir.glob(path).each do |file|
         next if File.directory? file
         path = file[@input_directory.length+1..-1]
-        @hashes[file] = hash(path)
+        @hashes[path] = hash(path)
       end
     end 
 
