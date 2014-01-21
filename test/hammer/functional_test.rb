@@ -15,11 +15,11 @@ class FunctionalTest < Test::Unit::TestCase
     end
   end
 
-  def teardown
-    @options.values.each do |path|
-      FileUtils.rm_rf(path)
-    end
-  end
+  # def teardown
+  #   @options.values.each do |path|
+  #     FileUtils.rm_rf(path)
+  #   end
+  # end
 
   def test_functional_projects
     directories = functional_test_directories
@@ -63,7 +63,11 @@ class FunctionalTest < Test::Unit::TestCase
       relative_file_path = Pathname.new(a_file_path).relative_path_from(Pathname.new(a))
       b_file_path = File.join(b, relative_file_path)
       
-      assert File.exist?(b_file_path), "File missing: #{a_file_path} wasn't compiled to Build folder"
+      exists = File.exist?(b_file_path)
+      unless exists
+        puts "#{b_file_path}"
+      end
+      assert exists, "File missing: #{a_file_path} wasn't compiled to Build folder"
 
       if !File.directory? a_file_path    
         match = FileUtils.compare_file(b_file_path, a_file_path)
