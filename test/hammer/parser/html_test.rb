@@ -5,7 +5,7 @@ class TestHtmlParser < Test::Unit::TestCase
   context "An HTML file parser" do
 
     setup do
-      @parser               = Hammer::HTMLParser.new()
+      @parser = Hammer::HTMLParser.new()
     end
 
     should "replace reload tags" do
@@ -37,6 +37,16 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<html><img src='http://placekitten.com/100/100' width='100' height='100' alt='Meow' /></html>", text
     end
 
+    should "Retrieve variables" do
+      @parser.text = "<!-- $title Here's the title --><!-- $title -->"
+      assert_equal "Here's the title", @parser.parse()
+    end
+    
+    should "retrieve defaults for variables" do
+      @parser.text = "<!-- $title | Here's the title -->"
+      assert_equal "Here's the title", @parser.parse()
+    end
+
     context "with another file" do
       setup do
         @header = Hammer::HammerFile.new(:filename => "_header.html", :text => "header")
@@ -47,7 +57,6 @@ class TestHtmlParser < Test::Unit::TestCase
         @parser.text = "<html><!-- @include _header --></html>"
         assert_equal "<html>header</html>", @parser.parse()
       end
-
     end
 
     should "raise an error when including the wrong file" do
@@ -158,165 +167,88 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "This is a line\nThis is another line", @parser.parse()
     end
     
-    # should "replace script tags" do
-
-  #   context "with script tags" do
-  #     setup do
-  #       @new_file = Hammer::HammerFile.new
-  #       @new_file.raw_text = "I'm an include"
-  #       @new_file.filename = "app.js"
-  #       @hammer_project << @new_file
-      
-  #       @file = Hammer::HammerFile.new
-  #       @file.filename = "index.html"
-  #       @file.raw_text = "<!-- @javascript app -->"
-  #       @hammer_project << @file
-        
-  #       @parser = Hammer::HTMLParser.new(@hammer_project)
-  #       @parser.hammer_file = @file
-  #       @parser.text = @file.raw_text
-  #     end   
-      
-  #     context "single tag" do
-  #       setup do
-  #         @parser.expects(:find_files).returns([@new_file])
-  #       end
-        
-
-        
-  #     end
-      
-
-      context "when referring to multiple script tags" do
-        setup do
-          @parser.stubs(:filename).returns('about/index.html')
-          @app = Hammer::HammerFile.new :filename => "assets/app.js"
-          @x = Hammer::HammerFile.new :filename => "assets/x.js"
-          @parser.stubs(:find_files).returns([@app, @x])
-        end
-      
-        should "create multiple tags with wildcards" do
-          @parser.text = "<!-- @javascript assets/* -->"
-          assert_equal "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>", @parser.parse()
-        end
-      
-        should "create multiple tags without wildcards" do
-          @parser.text = "<!-- @javascript app x -->"
-          assert_equal "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>", @parser.parse()
-        end
-      end
-
-
-      context "when referring to multiple stylesheet tags" do
-        setup do
-          @parser.stubs(:filename).returns('about/index.html')
-          @app = Hammer::HammerFile.new :filename => "assets/app.css"
-          @x = Hammer::HammerFile.new :filename => "assets/x.css"
-          @parser.stubs(:find_files).returns([@app, @x])
-        end
-      
-        should "create multiple tags with wildcards" do
-          @parser.text = "<!-- @stylesheet assets/* -->"
-          assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
-        end
-      
-        should "create multiple tags without wildcards" do
-          @parser.text = "<!-- @stylesheet app x -->"
-          assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
-        end
-
-        should "create a single tag when in production" do
-          @parser.text = "<!-- @stylesheet app x -->"
-          @parser.stubs(:production).returns(true)
-          # assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
-          text = @parser.parse()
-          assert_equal text.scan(/style/).count, 1
-        end
+    context "when referring to multiple script tags" do
+      setup do
+        @parser.stubs(:filename).returns('about/index.html')
+        @app = Hammer::HammerFile.new :filename => "assets/app.js"
+        @x = Hammer::HammerFile.new :filename => "assets/x.js"
+        @parser.stubs(:find_files).returns([@app, @x])
       end
     
-  #   context "with stylesheet tags" do
-
-  #     context "single tag" do
-  #       setup do
-  #         @parser.expects(:find_files).returns([@new_file])
-  #       end
-        
-  #       should "replace @stylesheet tags" do
-  #         assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
-  #       end      
-        
-  #       should "replace @stylesheet tags with correct paths" do
-  #         @new_file.filename = "assets/app.css"
-  #         @parser.hammer_file = @file
-  #         assert_equal "<link rel='stylesheet' href='assets/app.css'>", @parser.parse()
-  #       end
-        
-  #       should "replace @javascript tags with correct paths in another directory" do
-  #         @file.filename = "blog/index.html"
-  #         @new_file.filename = "assets/app.css"
-  #         @parser.hammer_file = @file
-  #         assert_equal "<link rel='stylesheet' href='../assets/app.css'>", @parser.parse()
-  #       end
-  #     end
-
-  #     ## TODO: Re-enable line breaks in tags.
-  #     ## This is quite tricky, though.      
-  #     # should "allow line breaks" do
-  #     #   @third_file = Hammer::HammerFile.new
-  #     #   @third_file.filename = "two.css"
-        
-  #     #   @new_file.filename = "assets/three/fail.scss"
-  #     #   @new_file.raw_text = "<!-- @stylesheet xxxxxxx\nyyyyyyy -->"
-  #     #   @parser.hammer_file = @file
-  #     #   @parser.text = @new_file.raw_text
-  #     #   assert_equal "<link rel='stylesheet' href='assets/three/fail.css'>\n<link rel='stylesheet' href='assets/app.css'>", @parser.parse()
-  #     # end
-      
-  #     should "replace @stylesheet tags with correct paths for SCSS" do
-  #       @new_file.filename = "assets/three/app.scss"
-  #       @new_file.raw_text = "<!-- @stylesheet app.scss -->"
-  #       @parser.hammer_file = @file
-  #       assert_equal "<link rel='stylesheet' href='assets/three/app.css'>", @parser.parse()
-  #     end
-      
-      context "with variables" do
-
-        should "read variables with backups" do
-          @parser.text = "<!-- $variable | yes -->"
-          assert_equal "yes", @parser.parse()
-        end
-
-        should "raise errors for path tags with unset variables" do
-          @parser.text = "<!-- @path $unset_variable -->"
-          assert_raises Hammer::Error do |error|
-            @parser.parse()
-            assert error.message.include? "wasn't set"
-          end
-        end
-
-        should "raise errors for unset variables" do
-          @parser.text = "<!-- $unset_variable -->"
-          assert_raises Hammer::Error do |error|
-            @parser.parse()
-            assert error.message.include? "wasn't set"
-          end
-        end
-
-        should "replace @stylesheet tags" do
-          @parser.text = "<!-- $variable app --><!-- @stylesheet $variable -->"
-          new_file = Hammer::HammerFile.new(:filename => "app.css")
-          @parser.stubs(:find_files).returns([new_file])
-          assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
-        end
-        
-        should "raise an error if the variable isn't set" do
-          @parser.stubs(:find_files).returns([])
-          @parser.text = "<!-- $variable NOTHING --><!-- @stylesheet $variable -->"
-          assert_raises Hammer::Error do
-            @parser.parse()
-          end
-        end 
+      should "create multiple tags with wildcards" do
+        @parser.text = "<!-- @javascript assets/* -->"
+        assert_equal "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>", @parser.parse()
       end
+    
+      should "create multiple tags without wildcards" do
+        @parser.text = "<!-- @javascript app x -->"
+        assert_equal "<script src='../assets/app.js'></script>\n<script src='../assets/x.js'></script>", @parser.parse()
+      end
+    end
+
+    context "when referring to multiple stylesheet tags" do
+      setup do
+        @parser.stubs(:filename).returns('about/index.html')
+        @app = Hammer::HammerFile.new :filename => "assets/app.css"
+        @x = Hammer::HammerFile.new :filename => "assets/x.css"
+        @parser.stubs(:find_files).returns([@app, @x])
+      end
+    
+      should "create multiple tags with wildcards" do
+        @parser.text = "<!-- @stylesheet assets/* -->"
+        assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
+      end
+    
+      should "create multiple tags without wildcards" do
+        @parser.text = "<!-- @stylesheet app x -->"
+        assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
+      end
+
+      should "create a single tag when in production" do
+        @parser.text = "<!-- @stylesheet app x -->"
+        @parser.stubs(:production).returns(true)
+        # assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
+        text = @parser.parse()
+        assert_equal text.scan(/style/).count, 1
+      end
+    end
+    
+    context "with variables" do
+
+      should "read variables with backups" do
+        @parser.text = "<!-- $variable | yes -->"
+        assert_equal "yes", @parser.parse()
+      end
+
+      should "raise errors for variable tags and path tags with unset variables" do
+        [
+          "<!-- @path $unset_variable -->", 
+          "<!-- $unset_variable -->"
+        ].each do |html|
+          @parser.text = html
+          error = assert_raises Hammer::Error do
+            @parser.parse()
+          end
+          assert error
+          assert error.message.to_s.include? "wasn't set"
+        end
+      end
+
+      should "replace @stylesheet tags" do
+        @parser.text = "<!-- $variable app --><!-- @stylesheet $variable -->"
+        new_file = Hammer::HammerFile.new(:filename => "app.css")
+        @parser.stubs(:find_files).returns([new_file])
+        assert_equal "<link rel='stylesheet' href='app.css'>", @parser.parse()
+      end
+      
+      should "raise an error if the variable isn't set" do
+        @parser.stubs(:find_files).returns([])
+        @parser.text = "<!-- $variable NOTHING --><!-- @stylesheet $variable -->"
+        assert_raises Hammer::Error do
+          @parser.parse()
+        end
+      end 
+    end
       
     should "include a file with errors" do
       included_file = Hammer::HammerFile.new(:text => "<!-- $unset_variable -->", :filename => "include.html")
@@ -340,253 +272,114 @@ class TestHtmlParser < Test::Unit::TestCase
       end
     end
 
-    
-    context "with links" do
-      setup do
-        # @file.filename = "index.html"
-        # @parser.hammer_file = @file
-      end
+    should "work with normal variables" do
+      @parser.text = "<!-- $title B -->"
+      assert_equal "", @parser.parse()
+    end
 
-      should "Amp the file" do
-        Amp.expects(:compile).at_least_once
-        @parser.text = "<a href='index.html'></a>"
-        @parser.stubs(:filename).returns "index.html"
-        @parser.parse()
-      end
-      
-  #     should "add a current class to a link to the same page" do
-  #       @file.raw_text = "<a href='index.html'></a>"
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
-  #     end
-      
-  #     should "add a current class to a link to the same page when in a folder and with a path tag" do
-  #       @file.filename = "blog/index.html"
-  #       @file.raw_text = "<a href='<!-- @path index -->'></a>"
-  #       @parser.hammer_file = @file
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
-  #     end
-            
-  #     should "not add a current class to a link to a different page" do
-  #       @file.raw_text = "<a href='_header.html'></a>"
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<a href='_header.html'></a>", @parser.parse()
-  #     end
-      
-  #     should "add a class to the surrounding li" do
-  #       @file.raw_text = "<li><a href='index.html'></a></li>"
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<li class='current'><a class='current' href='index.html'></a></li>", @parser.parse()
-  #     end
-      
-  #     should "not add a class to the surrounding li if the URL is wrong" do
-  #       @file.raw_text = "<li><a href='_header.html'></a></li>"
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<li><a href='_header.html'></a></li>", @parser.parse()
-  #     end
+    should "work with a variable with | in its name" do
+      @parser.text =  "<!-- $title This is my title | I am cool --><!-- $title -->"
+      assert_equal "This is my title | I am cool", @parser.parse()
     end
     
-  #   context "when parsing path tags" do
-  #     setup do
-  #       @file.filename = "blog/index.html"
-  #       @file.raw_text = "<!-- @path logo.png -->"
-  #       logo = Hammer::HammerFile.new
-  #       logo.filename = "images/logo.png"
-  #       @hammer_project << logo
-  #       @parser.hammer_file = @file
-  #     end
-      
-  #     should "replace path tags" do
-  #       text = @parser.parse()
-  #       assert_equal "../images/logo.png", text
-  #     end
-      
-  #     should "replace path tags that are variables" do
-  #       @file.raw_text = "<!-- $file logo.png --> Testing <!-- @path $file -->"
-  #       @parser.text = @file.raw_text
-  #       @parser.hammer_file = @file
-  #       text = @parser.parse()
-  #       assert_equal " Testing ../images/logo.png", text
-  #     end
-      
-  #     should "also replace @path tags inside attributes" do
-  #       @parser.text = "<img src='@path logo.png' />"
-  #       text = @parser.parse()
-  #       assert_equal "<img src='../images/logo.png' />", text
-  #     end
-  #   end
-    
-  #   context "when just parsing variables" do
-  #     setup do
-  #       @parser = Hammer::HTMLParser.new(@hammer_project)
-  #     end
-      
-  #     should "work with normal variables" do
-  #       @file.raw_text = "<!-- $title B -->"
-  #       @parser.hammer_file = @file
+    should "work with a variable with > in its name - getting" do
+      @parser.text = "<!-- $title B> -->"
+      assert_equal "", @parser.parse()
+    end
 
-  #       assert_equal "", @parser.parse()
-  #     end
-
-  #     should "work with a variable with | in its name" do
-  #       @file.raw_text = "<!-- $title This is my title | I am cool --><!-- $title -->"
-  #       @parser.hammer_file = @file
-
-  #       assert_equal "This is my title | I am cool", @parser.parse()
-  #     end
-
-      
-  #     should "work with a variable with > in its name" do
-  #       @file.raw_text = "<!-- $title B> -->"
-  #       @parser.hammer_file = @file
-
-  #       assert_equal "", @parser.parse()
-  #     end
-  #   end
-
-  #   context "when retrieving variables" do
-  #     setup do
-  #       @file.raw_text = "<!-- $title Here's the title --><!-- $title -->"
-  #       @parser.text = @file.raw_text
-  #     end
-      
-  #     should "work" do
-  #       assert_equal "Here's the title", @parser.parse()
-  #     end
-  #   end
-    
-  #   context "when retrieving variables with a default" do
-  #     setup do
-  #       @file.raw_text = "<!-- $title | Here's the title -->"
-  #       @parser.text = @file.raw_text
-  #     end
-      
-  #     should "work" do
-  #       assert_equal "Here's the title", @parser.parse()
-  #     end
-  #   end
-    
-  #   context "when parsing current links" do
-  #     setup do
-  #       @file.filename = "index.html"
-  #       @parser.hammer_file = @file
-  #     end
-  #     should "add a current class to a link to the same page when using a path" do
-  #       @file.raw_text = "<a href='<!-- @path index -->'></a>"
-  #       @parser.text = @file.raw_text
-  #       assert_equal "<a class='current' href='index.html'></a>", @parser.parse()
-  #     end
-  #   end
-  # end
+    should "Work with a variable with > in its value - getting and setting" do
+      @parser.text = "<!-- $title B> --><!-- $title -->"
+      assert_equal "B>", @parser.parse()
+    end
   
-  # context "when including files" do
-  #   setup do
-  #     @hammer_project = Hammer::Project.new
-  #     @file = Hammer::HammerFile.new
-  #     @file.raw_text = "<!-- @include _header -->"
-  #     @file.filename = "index.html"
-  #     @file.hammer_project = @hammer_project
-  #     @hammer_project << @file
-  #   end
-    
-  #   context "in other directories" do
-  #     setup do
-  #       f1 = Hammer::HammerFile.new
-  #       f1.filename = "blog/index.html"
-  #       @hammer_project << f1
-        
-  #       @f2 = Hammer::HammerFile.new
-  #       @f2.filename = "about/index.html"
-  #       @hammer_project << @f2
-        
-  #       @file.raw_text = "<!-- @path about/index.html -->"
-  #     end
+    context "including a HAML file" do
+      setup do
+        @new_file = Hammer::HammerFile.new
+        @new_file.raw_text = "haml file"
+        @new_file.filename = "_header.haml"
+        @new_file.hammer_project = @hammer_project
+      end
       
-  #     should "do path tags right" do
-  #       parser = Hammer::HTMLParser.new(:text => @file.raw_text)
-  #       assert_equal [@f2], parser.find_files('about/index.html', 'html')
-  #       assert_equal "about/index.html", parser.parse()
-  #     end
-  #   end
-    
-  #   context "including a HAML file" do
-  #     setup do
-  #       @new_file = Hammer::HammerFile.new
-  #       @new_file.raw_text = "haml file"
-  #       @new_file.filename = "_header.haml"
-  #       @new_file.hammer_project = @hammer_project
-  #       @hammer_project << @new_file
-  #     end
+      should "include the file" do
+        @parser.text = "<!-- @include _header -->"
+        @parser.stubs(:find_files).with('_header', 'html').returns([@new_file])
+        assert @parser.parse().include? "haml file"
+      end
+    end
+  end
+
+  context "when including files" do
+    setup do
+      @hammer_project = Hammer::Project.new
+      @file = Hammer::HammerFile.new
+      @file.raw_text = "<!-- @include _header -->"
+      @file.filename = "index.html"
+      @file.hammer_project = @hammer_project
+      @hammer_project << @file
+    end
+
+    context "including a file" do
+      setup do
+        @new_file = Hammer::HammerFile.new
+        @new_file.raw_text = "Header"
+        @new_file.filename = "_header.html"
+        @new_file.hammer_project = @hammer_project
+        @hammer_project << @new_file
+        @parser = Hammer::HTMLParser.new()
+      end
       
-  #     should "include the file" do
-  #       parser = Hammer::HTMLParser.new(:text => @file.raw_text)
-  #       assert_equal [@new_file], parser.find_files("_header.haml", 'html')
-  #       assert parser.parse().include? "haml file"
-  #     end
-  #   end
-    
-  #   context "including a file" do
-  #     setup do
-  #       @new_file = Hammer::HammerFile.new
-  #       @new_file.raw_text = "Header"
-  #       @new_file.filename = "_header.html"
-  #       @new_file.hammer_project = @hammer_project
-  #       @hammer_project << @new_file
-  #     end
+      should "include the file" do
+        @parser.text = "<!-- @include _header -->"
+        @parser.expects(:find_files).with('_header', 'html').returns([@new_file])
+        assert_equal "Header", @parser.parse()
+      end
       
-  #     should "include the file" do
-  #       assert @new_file.extension
-  #       assert_equal "Header", Hammer::HTMLParser.new(:text => @file.raw_text).parse()
-  #     end
-      
-  #     should "carry over variables from included files" do
-  #       @file.raw_text = "<!-- @include _header --><!-- $title -->"
-  #       @new_file.raw_text = "<!-- $title A -->"
-  #       parser = Hammer.parser_for_hammer_file(@file)
-  #       assert_equal "A", parser.parse()
-  #       assert_equal({'title' => "A"}, parser.send(:variables))
-  #     end
-      
-  #     should "set variables for included files" do
-  #       @file.raw_text = "<!-- $title A --><!-- @include _header -->"
-  #       @new_file.raw_text = "<!-- $title -->"
-  #       parser = Hammer.parser_for_hammer_file(@file)
-  #       assert_equal "A", parser.parse()
-  #       assert_equal({'title' => "A"}, parser.send(:variables))        
-  #     end
-      
-        should "use variables in include tags" do
-          header = Hammer::HammerFile.new :text => "Header", :filename => "header.html"
-          @file = Hammer::HammerFile.new :text => "<!-- $name _header --><!-- @include $name -->"
-          parser = Hammer::HTMLParser.new :hammer_file => @file, :text => @file.raw_text
-          parser.stubs(:find_files).returns([header])
-          assert_equal "Header", parser.parse()
-          assert_equal({'name' => "_header"}, parser.send(:variables))     
+      should "use variables in include tags" do
+        begin
+          @parser.text = "<!-- $name _header --><!-- @include $name -->"
+          @parser.stubs(:find_files).returns [Hammer::HammerFile.new(:text => "Header", :filename => "_header.html")]
+          assert_equal "Header", @parser.parse()
+          assert_equal({'name' => "_header"}, @parser.send(:variables))
         end
-
-  #   end
-
-    #   context "with an error" do
-  #     setup do
-  #       @parser.text = "<!-- @path nothing -->"
-  #     end
+      end
       
-  #     should "raise an error" do
-  #       assert_raise Hammer::Error do
-  #         @parser.parse
-  #       end
-  #     end
+      should "carry over variables from included files" do
+        begin
+          @parser.text = "<!-- @include _header --><!-- $title -->"
+          @parser.expects(:find_files).with('_header', 'html').returns([Hammer::HammerFile.new(:text => "<!-- $title A -->", :filename => "_header.html")])
+          assert_equal "A", @parser.parse()
+          assert_equal({'title' => "A"}, @parser.send(:variables))
+        end
+      end
       
-  #     should "have an error with the right line number" do
-  #       begin
-  #         @parser.parse
-  #       rescue Hammer::Error => e 
-  #         assert_equal e.line_number, 1
-  #       end
-  #     end
-  #   end
+      should "set variables for included files" do
+        @new_file.raw_text = "<!-- $title -->"
+        @parser.text = "<!-- $title A --><!-- @include _header -->"
+        @parser.expects(:find_files).with('_header', 'html').returns([@new_file])
+        assert_equal "A", @parser.parse()
+        assert_equal({'title' => "A"}, @parser.send(:variables))        
+      end
+    end
+  end
+
+  context "with an error" do
+    setup do
+      @parser = Hammer::HTMLParser.new(:text => "<!-- @path nothing -->")
+    end
     
+    should "raise an error" do
+      assert_raise Hammer::Error do
+        @parser.parse
+      end
+    end
+    
+    should "have an error with the right line number" do
+      begin
+        @parser.parse
+      rescue Hammer::Error => e 
+        assert_equal e.line_number, 1
+      end
+    end
   end
   
 end
