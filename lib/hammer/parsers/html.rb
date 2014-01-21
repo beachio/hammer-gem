@@ -38,13 +38,8 @@ module Hammer
 
     def parse
       @text ||= ""
-
       get_variables()
-      
-      # TODO: Check whether we want to do this first
       path_tags()
-      
-      # Do the parse thing
       includes()
       placeholders()
       get_variables()
@@ -53,12 +48,8 @@ module Hammer
       javascript_tags()
       path_tags()
       output_variables()
-      
       current_tags()
-      
-      # Cleanup
       ensure_text_has_no_leading_blank_lines()
-      
       return @text
     end
     
@@ -71,7 +62,6 @@ module Hammer
     end
 
   private
-
     
     def placeholders
       replace(/<!-- @placeholder (.*?) -->/) do |tag, line_number|
