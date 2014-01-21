@@ -1,13 +1,16 @@
-require 'simplecov'
+begin
+  require "simplecov"
+  SimpleCov.start do
 
-SimpleCov.start do
+    add_group 'Parsers', '/lib/hammer/parsers/*'
+    add_group 'Templates', '/lib/hammer/templates'
+    add_group 'Hammer', '/lib/hammer'
 
-  add_group 'Parsers', '/lib/hammer/parsers/*'
-  add_group 'Templates', '/lib/hammer/templates'
-  add_group 'Hammer', '/lib/hammer'
-
-  ENV['COVERAGE'] = 'true'
-  Rake::Task["test"].execute
+    ENV['COVERAGE'] = 'true'
+    Rake::Task["test"].execute
+  end
+rescue LoadError
+  # not installed
 end
 
 require 'test/unit'
