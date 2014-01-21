@@ -22,7 +22,7 @@ module Hammer
       @hammer_file = options.fetch(:hammer_file) if options.include? :hammer_file
       self.text = options.fetch(:text) if options.include? :text
       @cacher = options.fetch(:cacher) if options.include? :cacher
-      @text = @hammer_file.raw_text.to_s if @hammer_file
+      @text = @hammer_file.raw_text.to_s if @hammer_file and !self.text
     end
 
     def hammer_project=(hammer_project)
