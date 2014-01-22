@@ -137,46 +137,40 @@ module Hammer
     
     def includes
       while text.match /<!-- @include (.*?) -->/
-        lines = []
-        replace(/<!-- @include (.*?) -->/) do |tag, line_number|
-          
-          tags = tag.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
+        
+        replace(/<!-- @include (.*?) -->/) do |tags, line_number|
+          tags = tags.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
           
           tags.map do |tag|
             
             if (tag.start_with? "$")
               variable_value = variables[tag[1..-1]]
-              
-              if !variable_value
-                raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set."
-              end
+              raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set." unless variable_value
               
               tag = variable_value
             end
             
             file = find_file(tag, 'html')
-            if file
-              
-              parser = Hammer::Parser.for_hammer_file(file)
-              
-              next unless parser
-              
-              parser.variables = self.variables
-              
-              begin
-                parser.parse()
-              rescue Hammer::Error => e
-                e.hammer_file = file
-                raise e
-              end
-              
-              parser = Hammer::Parser.for_hammer_file(file)
-              parser.variables = self.variables
-              self.variables = self.variables.merge(parser.variables)
-              parser.to_html()
-            else
-              raise "Includes: File <b>#{h tag}</b> couldn't be found."
+
+            raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
+
+            parser = Hammer::Parser.for_hammer_file(file)
+            next unless parser
+            parser.variables = self.variables
+            
+            begin
+              parser.parse()
+            rescue Hammer::Error => e
+              e.hammer_file = file
+              raise e
             end
+            
+            parser = Hammer::Parser.for_hammer_file(file)
+            parser.variables = self.variables
+
+            self.variables = self.variables.merge(parser.variables)
+            parser.to_html()
+
           end.compact.join("\n")
         end
       end

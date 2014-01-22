@@ -156,9 +156,7 @@ module Hammer
 
     def parse
       
-      if !([:scss, :sass].include?(format))
-        raise "Error in #{@hammer_file.filename}: Wrong format (#{format})"
-      end
+      raise "Error in #{@hammer_file.filename}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
       
       semicolon = format == :scss ? ";\n" : "\n"
       @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
@@ -171,22 +169,15 @@ module Hammer
       begin
         @text = engine.render()
         
-        thread = Thread.new {
-          dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
-          dependencies.each do |dependency|
-            path = dependency #  dependency.options[:filename]
-            next unless path.start_with? @input_directory
-            
-            if path.start_with? @input_directory
-              relative_path = path[@input_directory.length..-1]
-            end
-            
-            # find_file adds a hard dependency for us :)
-            find_file(relative_path)
-          end
-        }
-        thread.join
-        
+        dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
+        dependencies.each do |dependency|
+          path = dependency.options[:filename]
+          next unless path.start_with? @input_directory
+          relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
+          # find_file adds a hard dependency for us :)
+          find_file(relative_path)
+        end
+
       rescue => e
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
           # TODO: Make this nicer.
@@ -197,12 +188,11 @@ module Hammer
           else
             error "Error in #{@error_file}: #{e.message}", e.sass_line - 2
           end
-        else
-          if e.respond_to?(:sass_line) && e.sass_line
-            error e.message, e.sass_line - 2
-          end
+        elsif e.respond_to?(:sass_line) && e.sass_line
+          error e.message, e.sass_line - 2
         end
       end
+      
       @text
     end
     

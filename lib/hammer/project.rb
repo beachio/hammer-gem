@@ -210,6 +210,7 @@ module Hammer
     # Project-wide file finding.
     # TODO: We might want to put this inside a helper object?
     def find_files(filename, extension=nil)
+      
       @cached_files ||= {}
       if @cached_files["#{filename}:#{extension}"]
         return @cached_files["#{filename}:#{extension}"]
@@ -223,12 +224,12 @@ module Hammer
       files = @hammer_files.select { |file|
         
         match = file.filename =~ regex
-        straight_basename = false  # File.basename(file.filename) == filename
+        # straight_basename = false  # File.basename(file.filename) == filename
         
-        no_extension_required = extension.nil?
-        has_extension = File.extname(file.filename) != ""
+        # no_extension_required = extension.nil?
+        # has_extension = File.extname(file.filename) != ""
         
-        (has_extension || no_extension_required) && (match)
+        (File.extname(file.filename) != "" || extension.nil?) && (match)
       }.sort_by {|file| 
         file.filename.to_s
       }.sort_by { |file|
@@ -237,12 +238,14 @@ module Hammer
         match         = basename == [filename, extension].compact.join(".")
         partial_match = basename == ["_"+filename, extension].compact.join(".")
         
+        score = file.filename.split(filename).join.length
+
         if match
-          file.filename.split(filename).join.length
+          score
         elsif partial_match
-          file.filename.split(filename).join.length + 10
+          score + 10
         else
-          file.filename.split(filename).join.length + 100
+          score + 100
         end
         
       }
