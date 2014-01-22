@@ -42,36 +42,31 @@ class ProjectCacherTest < Test::Unit::TestCase
       assert @cacher.valid_cache_for('index.html')
     end
 
-    should "have valid caches when the file hasn't changed" do
-      dir = Dir.mktmpdir
-      File.open(File.join(dir, 'index.html'), 'w') do |f|
-        f.puts "Testing"
+    context "with a directory" do
+      setup do
+        @directory = Dir.mktmpdir
+        File.open(File.join(@directory, 'index.html'), 'w') do |f|
+          f.puts "Testing"
+        end
+        @cacher.input_directory = @directory
+        @cacher.read_from_disk
+        @cacher.create_hashes
+        assert !@cacher.valid_cache_for('index.html')
+        @cacher.write_to_disk
       end
-      @cacher.input_directory = dir
-      @cacher.read_from_disk
-      @cacher.create_hashes
-      assert !@cacher.valid_cache_for('index.html')
-      @cacher.write_to_disk
-      @cacher.read_from_disk
-      assert !@cacher.send(:file_changed, 'index.html')
-    end
 
-    should "have valid caches when the file HAS changed" do
-      dir = Dir.mktmpdir
-      File.open(File.join(dir, 'index.html'), 'w') do |f|
-        f.puts "Testing"
+      should "have valid caches when the file hasn't changed" do
+        @cacher.read_from_disk
+        assert !@cacher.send(:file_changed, 'index.html')
       end
-      @cacher.input_directory = dir
-      @cacher.read_from_disk
-      @cacher.create_hashes
-      assert !@cacher.valid_cache_for('index.html')
-      @cacher.write_to_disk
-      File.open(File.join(dir, 'index.html'), 'w') do |f|
-        f.puts "Testing 123"
+
+      should "have valid caches when the file HAS changed" do
+        File.open(File.join(@directory, 'index.html'), 'w') do |f|
+          f.puts "Testing 123"
+        end
+        @cacher.set_cached_contents_for 'index.html', 'Testing 123'
+        assert @cacher.needs_recompiling?('index.html')
       end
-      @cacher.set_cached_contents_for 'index.html', 'Testing 123'
-      # assert !@cacher.send(:file_changed, 'index.html')
-      assert @cacher.needs_recompiling?('index.html')
     end
   end
 
