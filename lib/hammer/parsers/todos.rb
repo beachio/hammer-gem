@@ -1,27 +1,36 @@
 module Hammer
   class TodoParser < Parser
+
+    CSS_REGEX = /\/* @(?:todo|TODO) (.*?)\*\//
+    SCSS_SASS_REGEX = /\/\/ @(?:todo|TODO) (.*)|\/\* @(?:todo|TODO) (.*) \*\//
+    HTML_REGEX = /<!-- @(?:todo|TODO) (.*?) -->/
+    COFFEE_REGEX = /# @(?:todo|TODO) (.*)/
+    JST_JS_REGEX = /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
+    HAML_REGEX = /\/ @(?:todo|TODO) (.*)/
     
     def regex
-      case @format
+      case format
       when 'css'
-        /\/* @(?:todo|TODO) (.*?)\*\//
+        CSS_REGEX
       when 'scss', 'sass'
-        /\/\/ @(?:todo|TODO) (.*)|\/\* @(?:todo|TODO) (.*) \*\//
+        SCSS_SASS_REGEX
       when 'html', 'md'
-        /<!-- @(?:todo|TODO) (.*?) -->/
+        HTML_REGEX
       when 'coffee'
-        /# @(?:todo|TODO) (.*)/
+        COFFEE_REGEX
       when 'jst', 'js'
-        /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
+        JST_JS_REGEX
       when 'haml'
-        /\/ @(?:todo|TODO) (.*)/
+        HAML_REGEX
       end
+    end
+
+    def format
+      @format ||= File.extname(@hammer_file.filename)[1..-1]
     end
     
     def parse
-      
       @text = @hammer_file.raw_text
-      @format = File.extname(@hammer_file.filename)[1..-1]
       
       results = {}
       return {} if !regex or !@text.match(regex)
@@ -37,9 +46,6 @@ module Hammer
       end
       
       return results
-      
-    rescue
-      []
     end
   end
 end

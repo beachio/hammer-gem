@@ -30,4 +30,18 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
+  def test_protect_against_zombies_works
+    @build.protect_against_zombies
+  end
+
+  def test_hammer_time!
+    @build.hammer_time! do
+      assert true
+    end
+  end
+
+  def test_default_output_directory_is_input_plus_build
+    assert_equal File.join(@input_directory, 'Build'), @build.default_output_directory
+  end
+
 end

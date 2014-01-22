@@ -6,7 +6,7 @@ module Hammer
 
     include Templatey
 
-    attr_accessor :hammer_project, :hammer_file, :variables, :text, :production, :input_directory, :output_directory, :cache_directory
+    attr_accessor :hammer_project, :hammer_file, :variables, :text, :original_text, :production, :input_directory, :output_directory, :cache_directory
 
     extend Forwardable
     # def_delegators :@hammer_file, :filename
@@ -20,17 +20,22 @@ module Hammer
     def initialize(options={})
       @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
       @hammer_file = options.fetch(:hammer_file) if options.include? :hammer_file
-      @text = options.fetch(:text) if options.include? :text
+      self.text = options.fetch(:text) if options.include? :text
       @cacher = options.fetch(:cacher) if options.include? :cacher
+      @text = @hammer_file.raw_text.to_s if @hammer_file and !self.text
     end
 
     def hammer_project=(hammer_project)
-      # @cacher = hammer_project.cacher
+      @cacher = hammer_project.cacher
       @production = hammer_project.production
       @input_directory = hammer_project.input_directory
       @output_directory = hammer_project.output_directory
       @cache_directory = hammer_project.cache_directory
-      @text = @hammer_file.raw_text.to_s
+    end
+
+    def text=(new_text)
+      @text = new_text
+      @original_text = new_text
     end
 
 
@@ -39,15 +44,27 @@ module Hammer
     # We need wildcards when we're looking for folder/* in case there's a new file that matches that path.
     def add_wildcard_dependency(filename, extension=nil)
       # TODO: Cacher.
-      # @cacher.add_wildcard_dependency(@hammer_file.filename, filename, extension)
+      filenames = find_files(filename, extension).collect(&:filename)
+      if @cacher
+        @cacher.add_wildcard_dependency(@hammer_file.filename, filename, extension, filenames)
+      end
     end
 
     # A direct dependency.
     def add_file_dependency(file)
       # TODO: Cacher.
-      # @cacher.add_file_dependency(@filename, file.filename)
+      if @cacher
+        @cacher.add_file_dependency(@filename, file.filename)
+      end
     end
 
+    def add_file(filename, contents)
+      file = Hammer::HammerFile.new(:filename => filename, :raw_text => contents)
+      if @hammer_project
+        @hammer_project << file
+      end
+      file
+    end
 
     ## Finders
     # Find matching files in the current project.
@@ -148,7 +165,6 @@ module Hammer
 
       # Returns an array of parsers that can compile a given extension.
       def for_extension(extension)
-        
         parser = @@default_parser_for[extension]
         if @@parsers_for && @@parsers_for[extension] && !parser
           parser = @@parsers_for[extension][0]
@@ -167,7 +183,7 @@ module Hammer
         while new_extension != parser.finished_extension
           new_extension = parser.finished_extension
           if new_extension != extension
-            parsers << @@parsers_for[extension] # Hammer::Parser.for_extension(new_extension)
+            parsers << @@parsers_for[new_extension] # Hammer::Parser.for_extension(new_extension)
           end
         end
         

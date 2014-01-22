@@ -7,6 +7,8 @@ module Hammer
                   :optimized, :project, :success
 
     def initialize(options)
+      @input_directory = options[:input_directory] if options[:input_directory]
+      options[:output_directory] ||= default_output_directory
       @project = Project.new(options)
     end
 

@@ -85,7 +85,7 @@ task :bundle do
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
-      if File.exists? ("2.0.0")
+      if File.exists?("2.0.0")
         sh_with_clean_env *%w(ln -s 2.0.0/ 1.8)
       else
         sh_with_clean_env *%w(ln -s 1.8/ 2.0.0)

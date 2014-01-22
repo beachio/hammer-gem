@@ -11,10 +11,6 @@ module Hammer
       end
     end
     
-    def format
-      filename.split('.')[-1].to_sym
-    end
-    
     def to_css
       @text || @hammer_file.raw_text
     end
@@ -41,12 +37,10 @@ module Hammer
       replace(/@import "(\S*?)"/) do |url_tag, line_number|
         
         file_path = url_tag.gsub('@import ', '').gsub('"', '').gsub(";", "").strip
-        return url_tag if file_path.start_with? "http"
         
         if ignore_file_path?(file_path)
           url_tag
         else
-          
           add_wildcard_dependency file_path
           file_name = file_path.split(/\?|#/)[0]
           file = find_file_with_dependency(file_name)
@@ -149,7 +143,7 @@ module Hammer
       if new_format == :css
         parse
       elsif new_format == format
-        @hammer_file.raw_text
+        @original_text
       elsif format == :scss and new_format == :sass
         # warn "SCSS to SASS isn't done"
         false
@@ -177,18 +171,21 @@ module Hammer
       begin
         @text = engine.render()
         
-        engine.dependencies.each do |dependency|
-          
-          path = dependency.options[:filename]
-          next unless path.start_with? @input_directory
-          
-          if path.start_with? @input_directory
-            relative_path = path[@input_directory.length..-1]
+        thread = Thread.new {
+          dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
+          dependencies.each do |dependency|
+            path = dependency #  dependency.options[:filename]
+            next unless path.start_with? @input_directory
+            
+            if path.start_with? @input_directory
+              relative_path = path[@input_directory.length..-1]
+            end
+            
+            # find_file adds a hard dependency for us :)
+            find_file(relative_path)
           end
-          
-          # find_file adds a hard dependency for us :)
-          find_file(relative_path)
-        end
+        }
+        thread.join
         
       rescue => e
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
@@ -246,18 +243,21 @@ module Hammer
     end
     
     def load_paths
-      if @hammer_file.path && @input_directory
-        [
-          File.dirname(escape_glob(@hammer_file.path)),
-          File.join(escape_glob(@input_directory)),
-          File.join(escape_glob(@input_directory), "**/*"),
-          File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
-        ].compact
-      else
-        [
-          File.join(File.dirname(__FILE__), "../../../vendor/gems/bourbon-*/app/assets/stylesheets")
-        ].compact
+
+      paths = []
+
+      if @input_directory
+        paths << escape_glob(@input_directory)
+        paths << File.join(escape_glob(@input_directory), "**/*")
       end
+      
+      if @hammer_file.path
+        paths << File.dirname(escape_glob(@hammer_file.path))
+      end
+
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
+
+      paths.compact
     end
     
     def escape_glob(s)

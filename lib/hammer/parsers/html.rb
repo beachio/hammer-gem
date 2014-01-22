@@ -38,13 +38,8 @@ module Hammer
 
     def parse
       @text ||= ""
-
       get_variables()
-      
-      # TODO: Check whether we want to do this first
       path_tags()
-      
-      # Do the parse thing
       includes()
       placeholders()
       get_variables()
@@ -53,12 +48,8 @@ module Hammer
       javascript_tags()
       path_tags()
       output_variables()
-      
       current_tags()
-      
-      # Cleanup
       ensure_text_has_no_leading_blank_lines()
-      
       return @text
     end
     
@@ -71,7 +62,6 @@ module Hammer
     end
 
   private
-
     
     def placeholders
       replace(/<!-- @placeholder (.*?) -->/) do |tag, line_number|
@@ -92,20 +82,14 @@ module Hammer
         
         begin
           "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' alt='#{alt}' />"
-        rescue 
-          tag
         end
       end
       
       replace(/<!-- @kitten (\S*) -->/) do |tag, line_number|
         dimensions = tag.gsub("<!-- @kitten ", "").gsub("-->", "").strip
-        begin
-          x = dimensions.split('x')[0]
-          y = dimensions.split('x')[1]
-          "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
-        rescue 
-          tag
-        end
+        x = dimensions.split('x')[0]
+        y = dimensions.split('x')[1]
+        "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
       end
     end
     
@@ -240,6 +224,9 @@ module Hammer
     end
     
     def get_variable(variable_name)
+
+      @variables ||= {}
+
       if variable_name.split("")[0] == "$"
         variable_name = variable_name.split("")[1..-1].join("")
       end

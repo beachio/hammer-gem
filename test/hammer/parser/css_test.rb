@@ -1,12 +1,5 @@
 require "test_helper"
 
-module AssertCompilation
-  def assert_compilation(pre, post)
-    @parser.text = pre
-    assert_equal post, @parser.parse()
-  end
-end
-
 class CSSParserTest < Test::Unit::TestCase
   include AssertCompilation
   context "A CSS Parser" do
@@ -52,15 +45,31 @@ class CSSParserTest < Test::Unit::TestCase
       end
     end
 
+    should "not replace @path tags where the file doesn't match" do
+      @parser.text = "/* @path abc */"
+      @parser.stubs(:find_files).returns([])
+      assert_equal "/* @path abc */", @parser.parse()
+    end
+
+    should "not replace @import tags where the file doesn't match" do
+      @parser.text = '/* @import "abc" */'
+      @parser.stubs(:find_files).returns([])
+      assert_equal '/* @import "abc" */', @parser.parse()
+    end
+
+    should "not replace @import tags that start with http" do
+      @parser.text = '/* @import "http://abc.com/" */'
+      @parser.stubs(:find_files).returns([])
+      assert_equal '/* @import "http://abc.com/" */', @parser.parse()
+    end
+
     context "parsing clever paths" do
       setup do
         font = Hammer::HammerFile.new(:filename => "images/proximanova-regular.eot")
-        # @hammer_project << font
-      
         @parser.stubs(:find_files).returns([font])
         @parser.stubs(:find_file).returns(font)
       end
-      
+
       should "parse paths with normal comments" do
         @parser.text = "a { background: url(/* @path proximanova-regular.eot */) }"
         assert_equal "a { background: url(images/proximanova-regular.eot) }", @parser.parse()

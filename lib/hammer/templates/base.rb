@@ -22,7 +22,7 @@ module Hammer
       }.sort_by {|file|
         file.from_cache ? 1 : 0
       }.sort_by {|file|
-        file.messages.length > 0 ? 0 : 1
+        file.messages.length > 0 ? 0 : 1 rescue 1
       }.sort_by {|file|
         (file.filename == "index.html") ? 0 : 1
       }.sort_by {|file|

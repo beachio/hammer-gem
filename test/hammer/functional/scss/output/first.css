@@ -3,6 +3,5 @@ a {
 
 a {
   background: red; }
-
-a b {
-  background: blue; }
+  a b {
+    background: blue; }

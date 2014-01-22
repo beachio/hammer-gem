@@ -1,45 +1,60 @@
 #!/usr/bin/env ruby
 require File.join File.dirname(__FILE__), '..', 'test_helper'
 require File.join File.dirname(__FILE__), 'test_helper'
-# require './test_helper'
 require 'hammer/cacher'
 
-class ProjectCacherTest < Test::Unit::TestCase
+class CacherTest < Test::Unit::TestCase
   
-  context "A cacher" do
+  context "given a cacher" do
     setup do
-      @cacher = Hammer::ProjectCacher.new
+      @input_directory = Dir.mktmpdir
+      @directory = Dir.mktmpdir
+      @options = {:input_directory => @input_directory, :directory => @directory}
+      @cacher = Hammer::Cacher.new @options
     end
 
-    def teardown
-      
-    end
-
-    should "be a cacher" do
+    should "have initialized" do
       assert @cacher
     end
 
-    context "with files stubbed out" do
+    context "with a file that exists" do
+
       setup do
-        @cacher.stubs(:find_files).returns([])
-        @cacher.stubs(:hammer_files).returns([])
-      end 
-
-      should "add wildcard dependency" do
-        assert @cacher.add_wildcard_dependency('index.html', 'about', 'html')
+        @file = File.join @input_directory, 'index.html'
+        File.open(@file, 'w') {|f| f.puts "a"}
       end
 
-      should "add file dependency" do
-        @cacher.set_cached_contents_for('about/parent.html', '<h1>Hello</h1>')
-        assert @cacher.add_file_dependency('about/parent.html', 'about/child.html')
-        assert @cacher.valid_cache_for('about/parent.html')
+      should "cache it and copy it back out" do
+        @cacher.cache 'index.html', @file
+        new_path = File.join Dir.mktmpdir, 'index.html'
+        @cacher.copy_from_cache 'index.html', new_path
+        assert_equal File.open(@file).read, File.open(new_path).read
       end
-    end
 
-    should "store the cache" do
-      @cacher.set_cached_contents_for('index.html', '<h1>Hello</h1>')
-      assert_equal @cacher.cached_contents_for('index.html'), '<h1>Hello</h1>'
-      assert @cacher.valid_cache_for('index.html')
+      should "cache it and uncache it" do
+        @cacher.cache 'index.html', @file
+        @cacher.uncache 'index.html'
+        new_path = File.join Dir.mktmpdir, 'index.html'
+
+        assert_raises do
+          @cacher.copy_from_cache 'index.html', new_path
+        end
+      end
+
+      should "save messages for a file" do
+        messages = {'name' => 'Test'}
+        @cacher.add_messages 'index.html', messages
+        assert_equal [messages], @cacher.messages_for('index.html')
+      end
+
+      should "read and write hashes and know when a file has changed" do
+        @cacher.read_files
+        @cacher.write_to_disk
+        File.open(@file, 'w') {|f| f.puts "b"}
+        cacher2 = Hammer::Cacher.new @options
+        assert_equal @cacher.hashes, cacher2.previous_build_hashes
+        assert @cacher.hashes != cacher2.hashes
+      end
     end
 
     context "with a directory" do
@@ -50,24 +65,69 @@ class ProjectCacherTest < Test::Unit::TestCase
         end
         @cacher.input_directory = @directory
         @cacher.read_from_disk
-        @cacher.create_hashes
-        assert !@cacher.valid_cache_for('index.html')
+        # @cacher.create_hashes
+        assert !@cacher.cached?('index.html')
         @cacher.write_to_disk
       end
 
       should "have valid caches when the file hasn't changed" do
         @cacher.read_from_disk
-        assert !@cacher.send(:file_changed, 'index.html')
+        assert !@cacher.send(:file_changed?, 'index.html')
       end
 
-      should "have valid caches when the file HAS changed" do
-        File.open(File.join(@directory, 'index.html'), 'w') do |f|
-          f.puts "Testing 123"
-        end
-        @cacher.set_cached_contents_for 'index.html', 'Testing 123'
-        assert @cacher.needs_recompiling?('index.html')
+      # should "have valid caches when the file HAS changed" do
+      #   File.open(File.join(@directory, 'index.html'), 'w') do |f|
+      #     f.puts "Testing 123"
+      #   end
+      #   # @cacher.cache_contents 'index.html', 'Testing 123'
+      #   assert @cacher.file_changed?('index.html')
+      # end
+
+      should "add a file dependency" do
+        @cacher.add_file_dependency 'index.html', 'include.html'
+        assert_equal({'index.html' => ['include.html']}, @cacher.instance_variable_get('@hard_dependencies'))
+      end
+
+      should "add a wildcard dependency" do
+        object = Object.new
+        @cacher.add_wildcard_dependency 'index.html', 'index', 'html', object
+        assert_equal({'index.html' => {'index' => {'html' => object}}}, @cacher.instance_variable_get('@wildcard_dependencies'))
       end
     end
-  end
 
+    should "read and write to disk" do
+      @cacher.read_files
+      @cacher.write_to_disk
+      cacher2 = Hammer::Cacher.new @options
+      cacher2.read_from_disk
+      # require 'byebug'; byebug
+      assert_equal @cacher.hashes, cacher2.hashes
+      assert_equal @cacher.hashes, cacher2.previous_build_hashes
+    end
+
+    should "use previous_build_hashes and hashes to see when a file's changed" do
+      @cacher.stubs(:previous_build_hashes).returns({'index.html' => 'a'})
+      @cacher.stubs(:hashes).returns({'index.html' => 'b'})
+      assert @cacher.file_changed? 'index.html'
+      assert !@cacher.cached?('index.html')
+    end
+
+    should "know when a dependency has changed" do
+      @cacher.add_file_dependency 'index.html', 'include.html'
+      @cacher.stubs(:file_changed?).with('index.html').returns(false)
+      @cacher.stubs(:file_changed?).with('include.html').returns(true)
+      assert !@cacher.cached?('index.html')
+    end
+
+    should "know when a wildcard dependency has changed" do
+      file = Object.new
+      file.stubs(:filename).returns('include.html')
+      @cacher.add_wildcard_dependency 'index.html', 'include', 'html', []
+      @cacher.write_to_disk
+      @cacher.read_from_disk
+      @cacher.stubs(:find_files).returns [file]
+      assert @cacher.wildcard_dependency_changed?('index.html')
+      assert !@cacher.cached?('index.html')
+    end
+  end
 end
