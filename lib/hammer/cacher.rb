@@ -53,7 +53,10 @@ module Hammer
     end
 
     def uncache filename
-      FileUtils.rm cached_path_for(filename)
+      FileUtils.mkdir_p File.dirname(cached_path_for(filename))
+      if File.exist? cached_path_for(filename)
+        FileUtils.rm cached_path_for(filename)
+      end
     end
 
     def cached? filename

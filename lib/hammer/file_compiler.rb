@@ -31,7 +31,11 @@ module Hammer
         text ||= @hammer_file.raw_text
         parser = parser.new(:hammer_project => @hammer_project, :hammer_file => @hammer_file, :text => text)
         parser.optimized = @optimized
-        text = parser.parse() rescue nil
+        begin
+          text = parser.parse()
+        rescue Hammer::Error => e
+          @hammer_file.error = e
+        end
         @hammer_file.compiled = true
       end
       @hammer_file.output_filename = Hammer::Utils.output_filename_for(@hammer_file.filename)

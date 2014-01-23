@@ -134,7 +134,7 @@ module Hammer
     def cache(hammer_file)
       return unless @cacher
       if hammer_file.error
-        @cacher.clear_cached_contents_for(hammer_file.filename)
+        @cacher.uncache(hammer_file.filename)
       elsif hammer_file.compiled_text
         @cacher.cache_contents(hammer_file.output_filename, hammer_file.compiled_text)
       # else
