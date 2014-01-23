@@ -10,6 +10,11 @@ class FunctionalTest < Test::Unit::TestCase
       :cache_directory => Dir.mktmpdir
     }
     
+    create_directories()
+  end
+
+  def create_directories
+    teardown()
     @options.values.each do |path|
       FileUtils.mkdir_p(path)
     end
@@ -29,13 +34,7 @@ class FunctionalTest < Test::Unit::TestCase
       test_output_directory = File.join directory, 'output'
       optimized_output_directory = File.join directory, 'optimized_output'
       
-      FileUtils.rm_rf @options[:input_directory]
-      FileUtils.rm_rf @options[:output_directory]
-      FileUtils.rm_rf @options[:cache_directory]
-
-      FileUtils.mkdir_p @options[:input_directory]
-      FileUtils.mkdir_p @options[:output_directory]
-      FileUtils.mkdir_p @options[:cache_directory]
+      create_directories()
 
       FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory] rescue true
       build = Hammer::Build.new @options
@@ -46,14 +45,8 @@ class FunctionalTest < Test::Unit::TestCase
 
       if File.exist? optimized_output_directory
 
-        FileUtils.rm_rf @options[:input_directory]
-        FileUtils.rm_rf @options[:output_directory]
-        FileUtils.rm_rf @options[:cache_directory]
-
-        FileUtils.mkdir_p @options[:input_directory]
-        FileUtils.mkdir_p @options[:output_directory]
-        FileUtils.mkdir_p @options[:cache_directory]
-
+        create_directories()
+        
         FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory] rescue true
         optimized_options = @options.merge optimized: true
         build = Hammer::Build.new optimized_options
