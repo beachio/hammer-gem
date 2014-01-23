@@ -15,11 +15,11 @@ class FunctionalTest < Test::Unit::TestCase
     end
   end
 
-  # def teardown
-  #   @options.values.each do |path|
-  #     FileUtils.rm_rf(path)
-  #   end
-  # end
+  def teardown
+    @options.values.each do |path|
+      FileUtils.rm_rf(path)
+    end
+  end
 
   def test_functional_projects
     directories = functional_test_directories
