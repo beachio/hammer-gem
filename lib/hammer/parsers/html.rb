@@ -177,7 +177,7 @@ module Hammer
     end
 
     def reload_tags
-      if production
+      if optimized
         @text = text.gsub(/<!-- @reload -->/, "")
       else
         @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
@@ -266,7 +266,7 @@ module Hammer
           paths << path
         end
         
-        if production
+        if optimized
           file = add_file_from_files(hammer_files_to_tag, :css)
           "<link rel='stylesheet' href='#{path_to_file(file)}'>" if file
         else
@@ -280,7 +280,7 @@ module Hammer
       # return false if files.collect(&:error) != []
       contents = []
       
-      key = files.collect(&:to_s).join(':') + ":#{format}"
+      key = files.collect(&:filename).join(':') + ":#{format}"
       return @@cached_files[key] if @@cached_files[key]
       
       files.each do |file|
@@ -327,7 +327,7 @@ module Hammer
           hammer_files_to_tag << file
           paths << path
         end        
-        if production
+        if optimized
           file = add_file_from_files(hammer_files_to_tag, :js)
           "<script src='#{path_to_file(file)}'></script>" if file
         else

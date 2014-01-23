@@ -33,6 +33,7 @@ module Hammer
       @text = @hammer_file.raw_text
       
       results = {}
+      return {} unless @text
       return {} if !regex or !@text.match(regex)
       
       @text.split("\n").each_with_index do |line, line_number|

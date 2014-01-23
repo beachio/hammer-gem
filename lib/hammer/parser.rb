@@ -6,7 +6,7 @@ module Hammer
 
     include Templatey
 
-    attr_accessor :hammer_project, :hammer_file, :variables, :text, :original_text, :production, :input_directory, :output_directory, :cache_directory
+    attr_accessor :hammer_project, :hammer_file, :variables, :text, :original_text, :optimized, :input_directory, :output_directory, :cache_directory
 
     extend Forwardable
     # def_delegators :@hammer_file, :filename
@@ -18,7 +18,7 @@ module Hammer
     end
 
     def initialize(options={})
-      @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
+      self.hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
       @hammer_file = options.fetch(:hammer_file) if options.include? :hammer_file
       self.text = options.fetch(:text) if options.include? :text
       @cacher = options.fetch(:cacher) if options.include? :cacher
@@ -26,8 +26,9 @@ module Hammer
     end
 
     def hammer_project=(hammer_project)
+      @hammer_project = hammer_project
       @cacher = hammer_project.cacher
-      @production = hammer_project.production
+      @optimized = hammer_project.optimized
       @input_directory = hammer_project.input_directory
       @output_directory = hammer_project.output_directory
       @cache_directory = hammer_project.cache_directory
@@ -59,7 +60,7 @@ module Hammer
     end
 
     def add_file(filename, contents)
-      file = Hammer::HammerFile.new(:filename => filename, :raw_text => contents)
+      file = Hammer::HammerFile.new(:filename => filename, :text => contents)
       if @hammer_project
         @hammer_project << file
       end

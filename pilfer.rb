@@ -14,7 +14,7 @@ profiler.profile('Hammer') do
   cache_directory = Dir.mktmpdir
   output_directory = Dir.mktmpdir
 
-  @production = ARGV.include?('PRODUCTION')
+  @optimized = ARGV.include?('PRODUCTION')
 
   @errors = 0
 

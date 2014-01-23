@@ -155,7 +155,7 @@ module Hammer
     end
 
     def parse
-      
+
       raise "Error in #{@hammer_file.filename}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
       
       semicolon = format == :scss ? ";\n" : "\n"
@@ -170,8 +170,7 @@ module Hammer
         @text = engine.render()
         
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
-        dependencies.each do |dependency|
-          path = dependency.options[:filename]
+        dependencies.each do |path|
           next unless path.start_with? @input_directory
           relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
           # find_file adds a hard dependency for us :)
@@ -245,7 +244,8 @@ module Hammer
         paths << File.dirname(escape_glob(@hammer_file.path))
       end
 
-      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "bundler", "gems", "bourbon-*", "app", "assets", "stylesheets")
 
       paths.compact
     end

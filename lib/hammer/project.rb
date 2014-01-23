@@ -5,14 +5,14 @@ require 'hammer/cacher'
 module Hammer
   class Project
 
-    attr_accessor :hammer_files, :production, :cache_directory, :input_directory, :output_directory
+    attr_accessor :hammer_files, :optimized, :cache_directory, :input_directory, :output_directory
 
     def initialize(options = {})
       @hammer_files = []
-      @production       = options.keys.include? :optimized
-      @input_directory  = options.fetch(:input_directory) if options.include? :input_directory
-      @output_directory = options.fetch(:output_directory) if options.include? :output_directory
-      @cache_directory  = options.fetch(:cache_directory) if options.include? :cache_directory
+      @optimized       = options[:optimized] if options.keys.include? :optimized
+      @input_directory  = Pathname.new(options.fetch(:input_directory)).cleanpath.to_s if options.include? :input_directory
+      @output_directory = Pathname.new(options.fetch(:output_directory)).cleanpath.to_s if options.include? :output_directory
+      @cache_directory  = Pathname.new(options.fetch(:cache_directory)).cleanpath.to_s if options.include? :cache_directory
 
       @output_directory ||= Dir.mktmpdir
       @cache_directory ||= Dir.mktmpdir
@@ -144,7 +144,7 @@ module Hammer
 
     def compile_file(hammer_file)
       # TODO: Compiler.compile() should probably return a new hammer file rather than mutating the hammer_file object!
-      compiler = Hammer::FileCompiler.new(:hammer_file => hammer_file, :hammer_project => self)
+      compiler = Hammer::FileCompiler.new(:hammer_file => hammer_file, :hammer_project => self, :optimized => self.optimized)
       compiler.compile()
       cache(hammer_file)
     end

@@ -27,6 +27,7 @@ class FunctionalTest < Test::Unit::TestCase
     directories.each do |directory|
       test_input_directory = File.join directory, 'input'
       test_output_directory = File.join directory, 'output'
+      optimised_output_directory = File.join directory, 'optimised_output'
       
       FileUtils.rm_rf @options[:input_directory]
       FileUtils.rm_rf @options[:output_directory]
@@ -37,15 +38,22 @@ class FunctionalTest < Test::Unit::TestCase
       FileUtils.mkdir_p @options[:cache_directory]
 
       FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory] rescue true
-
       build = Hammer::Build.new @options
       build.compile
-
       errors = build.project.hammer_files.collect(&:error).compact
       assert_equal [], errors
-
-      # assert Dir.exists? @options[:output_directory]
       compare_directories test_output_directory, @options[:output_directory]
+
+      if File.exist? optimised_output_directory
+        FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory] rescue true
+        optimised_options = @options.merge optimised: true
+        build = Hammer::Build.new @options
+        build.compile
+        errors = build.project.hammer_files.collect(&:error).compact
+        assert_equal [], errors
+        compare_directories optimised_output_directory, @options[:output_directory]        
+      end
+
     end
   end
 

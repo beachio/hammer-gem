@@ -89,11 +89,11 @@ class TestHtmlParser < Test::Unit::TestCase
       assert_equal "<script src='a/b/c/app.js'></script>", @parser.parse()
     end
 
-    should "replace @javascript tags in production" do
+    should "replace @javascript tags in optimized" do
       file = Hammer::HammerFile.new :text => "I'm an include", :filename => 'a/b/c/app.js'
       other_file = Hammer::HammerFile.new :text => "I'm an include", :filename => 'a/b/c/style.js'
       @parser.stubs(:find_files).returns([file, other_file])
-      @parser.stubs(:production).returns(true)
+      @parser.stubs(:optimized).returns(true)
       @parser.text = "<!-- @javascript app style -->"
       assert @parser.parse().include? "script src="
     end
@@ -204,9 +204,9 @@ class TestHtmlParser < Test::Unit::TestCase
         assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
       end
 
-      should "create a single tag when in production" do
+      should "create a single tag when in optimized" do
         @parser.text = "<!-- @stylesheet app x -->"
-        @parser.stubs(:production).returns(true)
+        @parser.stubs(:optimized).returns(true)
         # assert_equal "<link rel='stylesheet' href='../assets/app.css'>\n<link rel='stylesheet' href='../assets/x.css'>", @parser.parse()
         text = @parser.parse()
         assert_equal text.scan(/style/).count, 1

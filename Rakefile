@@ -1,6 +1,5 @@
 require 'rake/testtask'
-import 'lib/hammer/tasks/coverage.rake'
-import 'lib/hammer/tasks/release.rake'
+Dir['lib/hammer/tasks/*.rake'].each do |tasks|; import tasks; end
 
 task :default => :test
 

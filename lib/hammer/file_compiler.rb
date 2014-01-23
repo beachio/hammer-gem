@@ -4,6 +4,7 @@ module Hammer
     def initialize(options)
       @hammer_file = options.fetch(:hammer_file)
       @hammer_project = options.fetch(:hammer_project)
+      @optimized = options.fetch(:optimized)
     end
 
     def compile
@@ -29,6 +30,7 @@ module Hammer
       Hammer::Parser.for_extension(@hammer_file.extension).each do |parser|
         text ||= @hammer_file.raw_text
         parser = parser.new(:hammer_project => @hammer_project, :hammer_file => @hammer_file, :text => text)
+        parser.optimized = @optimized
         text = parser.parse() rescue nil
         @hammer_file.compiled = true
       end
@@ -37,7 +39,7 @@ module Hammer
     end
     
     def after_compile
-      return unless @production
+      return unless @optimized
       return unless @hammer_file.is_a_compiled_file
       
       filename = @hammer_file.output_filename
