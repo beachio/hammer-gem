@@ -1,4 +1,5 @@
 def sh_with_clean_env(*args)
+  puts "B: #{args.join(' ')}"
   if defined?(Bundler)
     Bundler.with_clean_env { sh *args }
   else
@@ -71,10 +72,12 @@ task :bundle do
 
     rm_rf [ 'vendor/cache', 'vendor/production' ]
 
-    puts "bundle install..."
+    puts "bundle cache..."
     
     # bundle-cache has no verbosity option
-    sh_with_clean_env 'bundle cache 1>/dev/null'
+    sh_with_clean_env 'bundle cache'
+
+    puts "bundle install..."
 
     sh_with_clean_env *%w(bundle install
                           --quiet
