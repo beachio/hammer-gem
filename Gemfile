@@ -23,11 +23,11 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
 gem 'rake'
 
-if defined?('RUBY_VERSION') && RUBY_VERSION.to_s[0] == '2'
-  group :development, :test do
-    gem 'simplecov'
-  end
-end
+# if defined?('RUBY_VERSION') && RUBY_VERSION.to_s[0] == '2'
+#   group :development, :test do
+#     gem 'simplecov'
+#   end
+# end
 
 # group :development, :test do
 #   gem 'aws-s3'
