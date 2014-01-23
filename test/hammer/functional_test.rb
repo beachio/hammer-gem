@@ -48,7 +48,7 @@ class FunctionalTest < Test::Unit::TestCase
         create_directories()
         
         FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory] rescue true
-        optimized_options = @options.merge({optimized => true})
+        optimized_options = @options.merge({:optimized => true})
         build = Hammer::Build.new optimized_options
         build.compile
         errors = build.project.hammer_files.collect(&:error).compact
