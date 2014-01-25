@@ -46,13 +46,13 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
   end
 
   def ruby
-    if File.exist? '/usr/bin/ruby'
-      puts "Using /usr/bin/ruby"
-      "/usr/bin/ruby"
-    else
+    # if File.exist? '/usr/bin/ruby'
+      # puts "Using /usr/bin/ruby"
+      # "/usr/bin/ruby"
+    # else
       puts "Using #{which(ruby)}"
       which(ruby)
-    end
+    # end
   end
 
   def which(cmd)
