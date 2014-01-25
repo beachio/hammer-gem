@@ -9,7 +9,7 @@ gem 'ejs'
 gem 'haml',          '~> 4.0.3'
 gem 'json_pure',     '~> 1.8.0'
 gem 'kramdown'
-gem 'mocha'
+gem 'mocha', '0.14.0'
 gem 'plist'
 gem 'sass',          '~> 3.2.12'
 gem 'shoulda'
@@ -21,17 +21,7 @@ gem 'test-unit'
 gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 
-gem 'rake'
-
-# if defined?('RUBY_VERSION') && RUBY_VERSION.to_s[0] == '2'
-#   group :development, :test do
-#     gem 'simplecov'
-#   end
-# end
-
-# group :development, :test do
-#   gem 'aws-s3'
-#   gem 'autotest'
-#   gem 'autotest-fsevent'
-#   gem 'autotest-growl'
-# end
+group 'development' do
+  gem 'aws-s3'
+  gem 'rake'
+end

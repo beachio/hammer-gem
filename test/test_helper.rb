@@ -23,6 +23,7 @@ require 'test/unit'
 require 'sass'
 require 'mathn' if ENV['MATHN'] == 'true'
 require 'tmpdir'
+require 'rubygems'
 require 'mocha/setup'
 require 'shoulda'
 
