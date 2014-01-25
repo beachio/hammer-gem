@@ -50,9 +50,10 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
       # puts "Using /usr/bin/ruby"
       # "/usr/bin/ruby"
     # else
-      puts "Using #{which(ruby)}"
-      which(ruby)
+      # puts "Using #{which(ruby)}"
+      # which(ruby)
     # end
+    File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name']).sub(/.*\s.*/m, '"\&"')
   end
 
   def which(cmd)
