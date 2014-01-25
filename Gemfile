@@ -13,7 +13,7 @@ gem 'mocha'
 gem 'plist'
 gem 'sass',          '~> 3.2.12'
 gem 'shoulda'
-gem 'uglifier'
+gem 'uglifier', '2.1.2'
 gem 'execjs'
 gem 'test-unit'
 
