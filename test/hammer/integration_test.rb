@@ -28,7 +28,7 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
     end
 
     # TODO: check integration does more than just length > 0
-    assert output.length > 0, "#{input_directory} was not correctly copied to #{output_directory}"
+    assert output.length > 0, "The command #{args.join(' ')} had no output."
     return output
   end
 
