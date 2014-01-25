@@ -46,7 +46,7 @@ class HammerGemIntegrationTest < Test::Unit::TestCase
   end
 
   def ruby
-    which('ruby')
+    "/usr/bin/ruby"
   end
 
   def which(cmd)
