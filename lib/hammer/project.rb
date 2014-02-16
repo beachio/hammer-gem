@@ -2,6 +2,8 @@ require 'hammer/file'
 require 'hammer/file_compiler'
 require 'hammer/cacher'
 
+HAMMER_IGNORE_FILENAME = ".hammer-ignore"
+
 module Hammer
   class Project
 
@@ -45,7 +47,7 @@ module Hammer
 
         if ignore_file? hammer_file
           hammer_file.ignored = true
-          @ignored_files << hammer_file
+          # @ignored_files << hammer_file
         else
           files << hammer_file
         end
