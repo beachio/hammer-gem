@@ -150,7 +150,7 @@ module Hammer
               tag = variable_value
             end
             
-            file = find_file(tag, 'html')
+            file = find_file_with_dependency(tag, 'html')
 
             raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
 

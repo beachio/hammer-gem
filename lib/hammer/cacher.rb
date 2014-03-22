@@ -61,9 +61,16 @@ module Hammer
 
     def cached? filename
       return false if file_changed? filename
-      return false if dependency_changed? filename
-      return false if wildcard_dependency_changed? filename
+      if dependency_changed? filename
+        # puts "dependency_changed is true for #{filename} <br />"
+        return false 
+      end
+      if wildcard_dependency_changed? filename
+        # puts "wildcard_dependency_changed is true for #{filename} <br />"
+        return false
+      end
       return false if !File.exists?(cached_path_for(filename))
+
       true
     end
 
@@ -160,6 +167,7 @@ module Hammer
       @hard_dependencies[filename].each do |dependency|
         return true if file_changed?(dependency)
       end
+      return false
     end
 
     extend Forwardable
@@ -177,20 +185,37 @@ module Hammer
           next if query.nil?
           matches.each do |type, filenames|
 
-            if @wildcard_dependencies && @wildcard_dependencies[filename] && @wildcard_dependencies[filename][query] && @wildcard_dependencies[filename][query][type]
-              return true if @wildcard_dependencies[filename][query][type] != filenames
+            if @wildcard_dependencies_from_previous_build && @wildcard_dependencies_from_previous_build[filename] && @wildcard_dependencies_from_previous_build[filename][query] && @wildcard_dependencies_from_previous_build[filename][query][type]
+
+              if @wildcard_dependencies_from_previous_build[filename][query][type] != filenames
+                return true
+              end
+            else
+              if !@wildcard_dependencies_from_previous_build
+                # puts "No wildcard dependencies for #{filename}"
+              end
             end
 
             files = find_files(query, type)
-            return true if files.collect(&:filename) != filenames
+            if files.collect(&:filename) != filenames
+              return true
+            end
 
             # Yes if any dependencies need recompiling. 
             files.each do |file|
-              return true if !cached?(file.filename)
+
+              # next if file.filename == filename
+              # puts file.filename+" cannot be cached in #{filename}" if wildcard_dependency_changed?(file.filename)
+
+              if dependency_changed?(file.filename) or wildcard_dependency_changed?(file.filename)
+                return true 
+              end
             end
           end
         end
       end
+
+      return false
     end
 
     #### Get the contents of a file

@@ -58,7 +58,7 @@ module Hammer
     def add_file_dependency(file)
       # TODO: Cacher.
       if @cacher
-        @cacher.add_file_dependency(@filename, file.filename)
+        @cacher.add_file_dependency(@hammer_file.filename, file.filename)
       end
     end
 
