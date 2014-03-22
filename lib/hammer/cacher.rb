@@ -139,6 +139,7 @@ module Hammer
     end
 
     def read_files
+      return true unless @input_directory
       @hashes ||= {}
       path = File.join(@input_directory, "/**/*")
       Dir.glob(path).each do |file|
@@ -176,14 +177,16 @@ module Hammer
           next if query.nil?
           matches.each do |type, filenames|
 
-            return true if @wildcard_dependencies[filename][query][type] != filenames
+            if @wildcard_dependencies && @wildcard_dependencies[filename] && @wildcard_dependencies[filename][query] && @wildcard_dependencies[filename][query][type]
+              return true if @wildcard_dependencies[filename][query][type] != filenames
+            end
 
             files = find_files(query, type)
             return true if files.collect(&:filename) != filenames
 
             # Yes if any dependencies need recompiling. 
             files.each do |file|
-              return true if needs_recompiling?(file.filename)
+              return true if !cached?(file.filename)
             end
           end
         end

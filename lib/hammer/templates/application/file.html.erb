@@ -25,7 +25,7 @@
     <% messages.each do |message| %>
       <span class="<%= message[:html_class] || 'error' %>">
         <% if message[:line] %>
-          <b>Line #{message[:line]}</b>
+          <b>Line <%= message[:line] %></b>
         <% end %>
         <%= message[:message].to_str %>
       </span>

@@ -104,7 +104,7 @@ module Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         return tag if tag.include? "("
-        
+
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           # add_wildcard_dependency tag
@@ -163,9 +163,9 @@ module Hammer
       
       includes()
       clever_paths()
-      
+
       engine = Sass::Engine.new(@text, options)
-      
+
       begin
         @text = engine.render()
         
@@ -178,7 +178,7 @@ module Hammer
         end
 
       rescue => e
-        if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
+        if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
           # TODO: Make this nicer.
           @error_file = e.sass_filename.gsub(@input_directory + "/", "")
           file = find_file(@error_file, ['css', 'scss', 'sass'])
@@ -263,6 +263,7 @@ module Hammer
         :load_paths => load_paths,
         :relative_assets => true,
         :quiet => true,
+        # :source_encoding => Encoding::UTF_16, # This didn't work
         # :debug_info => !@production,
         :cache_location => @cache_directory,
         :sass => sass_options

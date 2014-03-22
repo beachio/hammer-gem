@@ -62,14 +62,14 @@ module Hammer
       
       # /index.html becomes ^index.html  
       filename = filename.split("")[1..-1].join("") if filename.start_with? "/"
-      
+
       filename = Regexp.escape(filename).gsub('\*','.*?')
       if extensions != []
-        /(^|\/)#{filename}\.(#{extensions.join("|")})/
+        /(^|\/|_)#{filename}\.(#{extensions.join("|")})/
       elsif extension
-        /(^|\/)#{filename}.#{extension}/
+        /(^|\/|_)#{filename}.#{extension}/
       else
-        /(^|\/)#{filename}/
+        /(^|\/|_)#{filename}/
       end
     end
 

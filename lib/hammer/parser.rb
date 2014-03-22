@@ -18,7 +18,8 @@ module Hammer
     end
 
     def initialize(options={})
-      @hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
+      self.hammer_project = options.fetch(:hammer_project) if options.include? :hammer_project
+      
       @hammer_file = options.fetch(:hammer_file) if options.include? :hammer_file
       self.text = options.fetch(:text) if options.include? :text
       @cacher = options.fetch(:cacher) if options.include? :cacher
@@ -26,11 +27,14 @@ module Hammer
     end
 
     def hammer_project=(hammer_project)
-      @cacher = hammer_project.cacher
-      @optimized = hammer_project.optimized
-      @input_directory = hammer_project.input_directory
-      @output_directory = hammer_project.output_directory
-      @cache_directory = hammer_project.cache_directory
+      @hammer_project = hammer_project
+      if hammer_project
+        @optimized = hammer_project.optimized
+        @input_directory = hammer_project.input_directory
+        @output_directory = hammer_project.output_directory
+        @cache_directory = hammer_project.cache_directory
+        @cacher = hammer_project.cacher
+      end
     end
 
     def text=(new_text)
