@@ -41,4 +41,8 @@ class ExtensionsChainTest < Test::Unit::TestCase
     assert_equal [Hammer::ParserOne, Hammer::ParserTwo], Hammer::ParserOne.for_extension(:one)
   end
 
+  def test_returns_last_extension
+    assert_equal 'three', Hammer::ParserOne.final_extension_for(:one)
+  end
+
 end

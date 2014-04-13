@@ -1,0 +1,10 @@
+.sass-cache
+.DS_Store
+*.zip
+vendor
+s3.yml
+test/.sass-cache
+
+coverage
+. bundle
+

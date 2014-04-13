@@ -18,6 +18,11 @@ module Hammer
 
     module ClassMethods
 
+      def final_extension_for(extension)
+        result = for_extension(extension).last
+        return result.finished_extension.to_s if result.respond_to?(:finished_extension)
+      end
+
       # Fetch all extensions for a type of parser
       def extensions_for(parser_class)
         HammerMapper.extensions_for[parser_class]
