@@ -30,13 +30,13 @@ trap('INT', 'DEFAULT')
 if ARGV.include?('PRELOAD') and !interrupted
   build.wait do |project, app_template|
     not_too_fast(start)
-    puts app_template
+    puts app_template unless ARGV.include?('DEBUG')
     exit build.success ? 0 : 1
   end
 else
   build.hammer_time! do |project, app_template|
     not_too_fast(start)
-    puts app_template
+    puts app_template unless ARGV.include?('DEBUG')
     exit build.success ? 0 : 1
   end
 end

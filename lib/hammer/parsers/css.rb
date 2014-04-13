@@ -104,11 +104,11 @@ module Hammer
       lines = []
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         return tag if tag.include? "("
-        
+
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           # add_wildcard_dependency tag
-          file = find_file(tag, 'css')
+          file = find_file_with_dependency(tag, 'css')
           raise "Included file <b>#{tag}</b> couldn't be found." unless file
           Hammer::Parser.for_hammer_file(file).to_css()
         end
@@ -163,9 +163,9 @@ module Hammer
       
       includes()
       clever_paths()
-      
+
       engine = Sass::Engine.new(@text, options)
-      
+
       begin
         @text = engine.render()
         
@@ -174,14 +174,14 @@ module Hammer
           next unless path.start_with? @input_directory
           relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
           # find_file adds a hard dependency for us :)
-          find_file(relative_path)
+          find_file_with_dependency(relative_path)
         end
 
       rescue => e
-        if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename
+        if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
           # TODO: Make this nicer.
           @error_file = e.sass_filename.gsub(@input_directory + "/", "")
-          file = find_file(@error_file, ['css', 'scss', 'sass'])
+          file = find_file_with_dependency(@error_file, ['css', 'scss', 'sass'])
           if file
             error e.message, e.sass_line, file
           else
@@ -212,7 +212,7 @@ module Hammer
         replacement = []
         tags.each do |tag|
 
-          file = find_file(tag, 'scss')
+          file = find_file_with_dependency(tag, 'scss')
           
           raise "Included file <strong>#{tag}</strong> couldn't be found." unless file
           
@@ -263,6 +263,7 @@ module Hammer
         :load_paths => load_paths,
         :relative_assets => true,
         :quiet => true,
+        # :source_encoding => Encoding::UTF_16, # This didn't work
         # :debug_info => !@production,
         :cache_location => @cache_directory,
         :sass => sass_options

@@ -32,7 +32,7 @@ module Hammer
       replace(/\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
-          file = find_file(tag, 'js')
+          file = find_file_with_dependency(tag, 'js')
           
           raise "Included file <strong>#{h tag}</strong> couldn't be found." unless file
           
@@ -93,7 +93,7 @@ module Hammer
       replace(/# @include (.*)/) do |invocation, line_number|
         tags = invocation.gsub("# @include ", "").strip.split(" ")
         a = tags.map do |tag|
-          file = find_file(tag, 'coffee')
+          file = find_file_with_dependency(tag, 'coffee')
           
           raise "File not found: <strong>#{h tag}</strong>" unless file
           

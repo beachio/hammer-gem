@@ -70,7 +70,7 @@ module Hammer
 
           tag = files_from_tag_in_line(line)[0] # line.gsub("/ @include ", "").strip.split(" ")[0]
 
-          file = find_file(tag, 'html')
+          file = find_file_with_dependency(tag, 'html')
           
           raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
           

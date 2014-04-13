@@ -25,12 +25,12 @@ class UtilsTest < Test::Unit::TestCase
     # Stub out the parser's possible_other_extensions_for_extension method
     Hammer::Utils.expects('possible_other_extensions_for_extension').with('html').returns(['a', 'b', 'c']).once
 
-    assert_equal Hammer::Utils.regex_for("index.html"), /(^|\/)index\.(a|b|c)/
+    assert_equal Hammer::Utils.regex_for("index.html"), /(^|\/|_)index\.(a|b|c)/
   end
 
   def test_long_paths
     Hammer::Utils.expects('possible_other_extensions_for_extension').with('html').returns(['a', 'b', 'c']).once
-    assert_equal Hammer::Utils.regex_for("locations/1234567890/index.html").to_s, /(^|\/)locations\/1234567890\/index\.(a|b|c)/.to_s
+    assert_equal Hammer::Utils.regex_for("locations/1234567890/index.html").to_s, /(^|\/|_)locations\/1234567890\/index\.(a|b|c)/.to_s
   end
 
 end

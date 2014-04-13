@@ -12,6 +12,9 @@ $LOAD_PATH.unshift root + 'lib'
 $LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
 $LOAD_PATH.unshift root + 'vendor' + 'bundle'
 
+Encoding.default_internal = Encoding::UTF_8 if defined?(Encoding)
+Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
+
 module Hammer
 
 end

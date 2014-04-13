@@ -149,7 +149,6 @@ def extract_and_test
   puts "Extracting and testing gem..."
   sh 'unzip', '-q', 'dist/Gem.zip'
   sh 'ruby', '-I', 'test:lib', './test/tests.rb'
-  sh 'ruby', 'integration.rb'
 end
 
 desc 'Extract local bundle and run tests'
@@ -185,4 +184,15 @@ end
 task :deploy do
   sh_with_clean_env 'heroku', 'config:set', "LATEST_GEM_VERSION=#{version}",
                     '--app', 'hammerformac'
+end
+
+task :install => 'dist/Gem.zip' do
+  [
+    '~/Library/Containers/com.riot.hammer/Data/Library/Application\\ Support/Riot/Hammer/Gem', 
+    '~/Library/Application\\ Support/Riot/Hammer/Gem
+  '].each do |directory|
+    sh_with_clean_env 'rm', '-rf', directory
+    sh_with_clean_env 'mkdir', '-p', directory
+    sh_with_clean_env 'unzip', 'dist/Gem.zip', '-d', directory
+  end
 end
