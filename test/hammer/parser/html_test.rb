@@ -41,6 +41,11 @@ class TestHtmlParser < Test::Unit::TestCase
       @parser.text = "<!-- $title Here's the title --><!-- $title -->"
       assert_equal "Here's the title", @parser.parse()
     end
+
+    should "Retrieve variables that have :" do
+      @parser.text = "<!-- $variable:name Here's the title --><!-- $variable:name -->"
+      assert_equal "Here's the title", @parser.parse()
+    end
     
     should "retrieve defaults for variables" do
       @parser.text = "<!-- $title | Here's the title -->"

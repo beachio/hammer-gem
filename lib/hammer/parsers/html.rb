@@ -155,6 +155,8 @@ module Hammer
             raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
 
             parser = Hammer::Parser.for_hammer_file(file)
+            parser.optimized = self.optimized
+
             next unless parser
             parser.variables = self.variables
             
@@ -166,6 +168,7 @@ module Hammer
             end
             
             parser = Hammer::Parser.for_hammer_file(file)
+            parser.optimized = self.optimized
             parser.variables = self.variables
 
             self.variables = self.variables.merge(parser.variables)
