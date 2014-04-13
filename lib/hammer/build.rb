@@ -73,8 +73,12 @@ module Hammer
         return EMPTY if parsers.empty?
 
         last_parser = nil
-        parsers.each do |parser|
-          parser.parse(filename, last_parser)
+        parsers.each do |parser_class|
+          parser = parser_class.new
+          if last_parser
+            parser.from_json(last_parser.to_json)
+          end
+          parser.parse(filename)
           last_parser = parser
         end
 

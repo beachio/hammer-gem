@@ -7,7 +7,7 @@ class ExtensionsTest < Test::Unit::TestCase
 
   class Thing
     include Hammer::ExtensionMapper
-    returns_extension :css
+    returns_extension :thing
   end
 
   setup do
@@ -15,8 +15,8 @@ class ExtensionsTest < Test::Unit::TestCase
   end
 
   def test_registration_for_extensions
-    assert @object.class.register_as_default_for_extensions(:css)
-    assert_equal [Thing], @object.class.for_extension(:css)
+    assert @object.class.register_as_default_for_extensions(:thing)
+    assert_equal [Thing], @object.class.for_extension(:thing)
   end
 
 end

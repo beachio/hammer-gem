@@ -9,6 +9,12 @@ module Hammer
     @extensions_for = {}
     @default_parser_for = {}
     @parsers_for = {}
+
+    # TODO: ARRAY!
+    def self.all_parsers_for(extension)
+      @parsers_for[extension] || []
+    end
+
     @parsers = []
   end
 
@@ -29,10 +35,11 @@ module Hammer
       end
 
       def for_filename(filename)
-        for_extension File.extname(filename).gsub(".", "")
+        for_extension File.extname(filename).gsub(".", "").to_sym
       end
 
       def for_extension(extension)
+        
         parsers = [*HammerMapper.default_parser_for[extension]]
         parsers += HammerMapper.parsers_for[extension] if HammerMapper.parsers_for[extension]
         parsers = parsers.compact

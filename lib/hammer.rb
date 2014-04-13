@@ -29,6 +29,7 @@ require 'hammer/build'
 require "hammer/hammer"
 require "hammer/parser"
 
-parsers_path = File.join(File.dirname(__FILE__), 'parsers', '*')
+puts File.join(File.dirname(__FILE__), 'hammer', 'parsers', '*')
+parsers_path = File.join(File.dirname(__FILE__), 'hammer', 'parsers', '*')
 parsers      = Pathname.glob(parsers_path)
 parsers.each { |file| require "hammer/parsers/#{file.basename(file.extname)}" }

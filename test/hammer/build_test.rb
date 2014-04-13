@@ -29,7 +29,8 @@ class BuildTest < Test::Unit::TestCase
     end
 
     should "parse" do
-      assert_equal({}, @build.compile())
+      # assert_equal({}, @build.compile())
+      assert @build.compile.keys.include? 'index.html'
     end
 
     should "have filenames" do
