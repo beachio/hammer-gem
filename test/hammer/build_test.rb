@@ -9,7 +9,6 @@ class BuildTest < Test::Unit::TestCase
   context "A build" do
 
     setup do
-
       @input_directory = Dir.mktmpdir()
 
       @build = Hammer::Build.new(
@@ -18,18 +17,16 @@ class BuildTest < Test::Unit::TestCase
         :cache_directory => Dir.mktmpdir()
       )
 
-      index_file = File.join(@input_directory, "index.html")
-      File.open(index_file, 'w') do |f|
-        f.puts('This is an HTML file')
-        f.close()
+      File.open(File.join(@input_directory, "index.html"), 'w') do |f|
+        f.print('This is an HTML file')
       end
     end
 
     teardown do
+      FileUtils.rm_rf @input_directory
     end
 
     should "parse" do
-      # assert_equal({}, @build.compile())
       assert @build.compile.keys.include? 'index.html'
     end
 
