@@ -1,3 +1,1 @@
-module Hammer
-
-end
+module Hammer; end

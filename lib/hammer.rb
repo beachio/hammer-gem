@@ -21,7 +21,7 @@ end
 
 require 'bundler/setup'
 
-# require 'hammer/build'
+require 'hammer/build'
 # require 'hammer/project'
 # require 'hammer/parser'
 # require 'hammer/file'

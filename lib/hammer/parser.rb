@@ -9,5 +9,17 @@ module Hammer
       return text
     end
 
+    def from_json(json)
+      # ...
+      # TODO: What are we doing here?
+    end
+
+    def to_json
+      {
+        dependencies: [],
+        wildcard_dependencies: []
+      }
+    end
+
   end
 end

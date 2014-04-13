@@ -28,6 +28,10 @@ module Hammer
         HammerMapper.extensions_for[parser_class]
       end
 
+      def for_filename(filename)
+        for_extension File.extname(filename).gsub(".", "")
+      end
+
       def for_extension(extension)
         parsers = [*HammerMapper.default_parser_for[extension]]
         parsers += HammerMapper.parsers_for[extension] if HammerMapper.parsers_for[extension]
