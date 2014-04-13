@@ -6,5 +6,5 @@ s3.yml
 test/.sass-cache
 
 coverage
-. bundle
+.bundle
 

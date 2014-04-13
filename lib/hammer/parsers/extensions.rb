@@ -29,23 +29,16 @@ module Hammer
       end
 
       def for_extension(extension)
-        parser = HammerMapper.default_parser_for[extension]
+        parsers = [*HammerMapper.default_parser_for[extension]]
+        parsers += HammerMapper.parsers_for[extension] if HammerMapper.parsers_for[extension]
+        parsers = parsers.compact
 
-        if HammerMapper.parsers_for && HammerMapper.parsers_for[extension] && !parser
-          parser = HammerMapper.parsers_for[extension][0]
-        end
-        
-        return [] unless parser
-        
-        parsers = [parser]
-        if HammerMapper.parsers_for[extension]
-          parsers += HammerMapper.parsers_for[extension]
-          parser = parsers.last
-        end
-        
+        return [] unless parsers.any?
+
+        parser = parsers.last
         new_extension = nil
-        
         finished_extension = nil
+
         if parser.respond_to? :finished_extension
           finished_extension = parser.finished_extension
         end
