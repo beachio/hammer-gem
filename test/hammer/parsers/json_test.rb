@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require "test_helper"
 require 'lib/hammer/parser'
 
