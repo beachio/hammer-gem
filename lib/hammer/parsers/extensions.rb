@@ -10,7 +10,7 @@ module Hammer
     @default_parser_for = {}
     @parsers_for = {}
 
-    # TODO: ARRAY!
+    # TODO: Make a better way of finding all parsers for an extension.
     def self.all_parsers_for(extension)
       @parsers_for[extension] || []
     end
@@ -22,16 +22,51 @@ module Hammer
 
   module ExtensionMapper
 
+    # Fetches "index.html" for "index.haml"
+    def output_filename_for(filename)
+      extension = File.extname(filename)[1..-1]
+      parser    = for_extension(extension).last
+
+      if parser
+        path      = File.dirname(filename)
+        basename  = File.basename(filename, ".*")
+        extension = parser.finished_extension
+
+        Pathname.new("#{path}/#{basename}.#{extension}").cleanpath.to_s
+      else
+        filename
+      end
+    end
+
+    # Fetches related file extensions - ["css"] for "scss" and ["js"] for "coffee"
+    def possible_other_extensions_for_extension(extension)
+      extensions = []
+      parsers = self.class.for_extension(extension)
+      parsers.each do |parser|
+        extensions_for(parser).each do |extension|
+          extensions << extension
+        end
+      end
+
+      extensions = ExtensionMap.parsers.select {|parser|
+        parser.finished_extension == extension
+      }.map {|parser|
+        extensions_for(parser)
+      }
+
+      extensions.flatten.compact.uniq
+    end
+
+    # Fetch all extensions for a type of parser
+    def extensions_for(parser_class)
+      ExtensionMap.extensions_for[parser_class]
+    end
+
     module ClassMethods
 
       def final_extension_for(extension)
         result = for_extension(extension).last
         return result.finished_extension.to_s if result.respond_to?(:finished_extension)
-      end
-
-      # Fetch all extensions for a type of parser
-      def extensions_for(parser_class)
-        ExtensionMap.extensions_for[parser_class]
       end
 
       def for_filename(filename)
@@ -63,7 +98,7 @@ module Hammer
         
         return parsers.uniq.flatten
       end
-      
+
       attr_accessor :finished_extension
 
       def accepts(extensions)
@@ -100,6 +135,8 @@ module Hammer
       alias_method :register_for_extension, :register_for_extensions
     end
 
+    # Better make these class methods available!
+    extend ClassMethods
     def self.included(base)
       base.send :extend, ClassMethods
     end
