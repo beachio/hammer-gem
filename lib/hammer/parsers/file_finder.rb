@@ -44,10 +44,8 @@ module Hammer
 
       # TODO: Cache this method
 
-      query = clean(query)
-      filename = clean(query)
-
-      regex = regex_for(filename, extension)
+      query = absolute_to_relative(query)
+      regex = regex_for(query, extension)
 
       matches = filenames.select { |filename|
         match = filename =~ regex
@@ -77,9 +75,8 @@ module Hammer
 
       }
 
-      if matches && matches.length > 0 && !filename.include?('*')
-        matches = matches[0..0]
-      end
+      # If we query with a *, return all results. Otherwise, first result only.
+      matches = matches[0..0] unless query.include?('*')
 
       return matches
     end
@@ -92,7 +89,7 @@ module Hammer
 
   private
 
-    def clean(filename)
+    def absolute_to_relative(filename)
       filename = filename[1..-1] if filename.start_with? "/"
       filename
     end

@@ -22,6 +22,9 @@ module Hammer
 
   module ExtensionMapper
 
+    extend Forwardable
+    def_delegator ExtensionMap, :extensions_for
+
     # Fetches "index.html" for "index.haml"
     def output_filename_for(filename)
       extension = File.extname(filename)[1..-1]
@@ -57,18 +60,15 @@ module Hammer
       extensions.flatten.compact.uniq
     end
 
-    # Fetch all extensions for a type of parser
-    def extensions_for(parser_class)
-      ExtensionMap.extensions_for[parser_class]
-    end
-
     module ClassMethods
 
+      # Utility method - find the final extension for this filename.
       def final_extension_for(extension)
         result = for_extension(extension).last
         return result.finished_extension.to_s if result.respond_to?(:finished_extension)
       end
 
+      ## Finders
       def for_filename(filename)
         for_extension File.extname(filename).gsub(".", "").to_sym
       end
@@ -101,13 +101,17 @@ module Hammer
 
       attr_accessor :finished_extension
 
+      # Input extension
       def accepts(extensions)
         register_for_extensions extensions
       end
 
+      # Output extension
       def returns_extension(extension)
         @finished_extension = extension
       end
+
+      ## Parser extension registration
       # Register as being the first parser that can handle an extension.
       def register_as_default_for_extensions(extensions)
         ExtensionMap.default_parser_for ||= {}

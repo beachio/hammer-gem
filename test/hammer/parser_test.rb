@@ -14,6 +14,9 @@ class HammerParserTest < Test::Unit::TestCase
     should "parse" do
       assert_equal "", @parser.parse("")
     end
-  end
 
+    should "be able to be optimized" do
+      assert @parser.optimized = true
+    end
+  end
 end
