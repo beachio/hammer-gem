@@ -1,4 +1,5 @@
 require 'pathname'
+require 'fileutils'
 
 module Hammer
 
@@ -44,7 +45,7 @@ module Hammer
     end
 
     def ignore?(filename)
-      false
+      return true if File.basename(filename).start_with? "_"
     end
 
     def filenames
@@ -52,11 +53,11 @@ module Hammer
 
       files = []
       file_paths.each do |file_path|
-        filename = file_path.to_s.gsub(@input_directory.to_s, "")
-        filename = filename[1..-1] if filename.start_with? "/"
+        # filename = file_path.to_s.gsub(@input_directory.to_s, "")
+        # filename = filename[1..-1] if filename.start_with? "/"
 
-        unless ignore? filename
-          files << filename
+        unless ignore? file_path
+          files << file_path
         end
       end
 
@@ -64,25 +65,24 @@ module Hammer
     end
 
     def compile
+
+      @results = {}
+
       filenames.each do |filename|
-        next if File.basename(filename).start_with? "_" # Skip include files!
+
+        path        = Pathname.new(filename).relative_path_from(Pathname.new(@input_directory)).to_s
+        output_file = File.join(@output_directory, path)
+        data = {}
 
         # TODO: Caching
 
-        parsers = Hammer::Parser.for_filename(filename)
-        return EMPTY if parsers.empty?
-
-        last_parser = nil
-        parsers.each do |parser_class|
-          parser = parser_class.new
-          if last_parser
-            parser.from_json(last_parser.to_json)
+        Hammer::Parser.parse_file(@input_directory, filename, @optimized) do |output, data|
+          FileUtils.mkdir_p(File.dirname(output_file))
+          File.open(output_file, 'w') do |f|
+            f.write(output) if output
           end
-          parser.parse(filename)
-          last_parser = parser
+          @results[path] = data
         end
-
-        @results[filename] = last_parser.to_json
       end
 
       return @results

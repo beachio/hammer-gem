@@ -1,19 +1,19 @@
-#!/usr/bin/env ruby
+# #!/usr/bin/env ruby
 
-require "test_helper"
-require 'lib/hammer/parser'
+# require "test_helper"
+# require 'lib/hammer/parser'
 
-class JsonTest < Test::Unit::TestCase
+# class JsonTest < Test::Unit::TestCase
 
-  setup do
-    @object = Hammer::Parser.new
-  end
+#   setup do
+#     @object = Hammer::Parser.new
+#   end
 
-  def test_serialization_of_variables
-    json = {:variables => {'test' => 'success'}}
+#   def test_serialization_of_variables
+#     json = {:variables => {'test' => 'success'}}
 
-    assert @object.from_json(json)
-    assert_equal json[:variables], @object.to_json[:variables]
-  end
+#     assert @object.from_json(json)
+#     assert_equal json[:variables], @object.to_json[:variables]
+#   end
 
-end
+# end

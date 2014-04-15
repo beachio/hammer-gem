@@ -26,12 +26,8 @@ class BuildTest < Test::Unit::TestCase
       FileUtils.rm_rf @input_directory
     end
 
-    should "parse" do
-      assert @build.compile.keys.include? 'index.html'
-    end
-
-    should "have filenames" do
-       assert_equal(["index.html"], @build.filenames)
+    should "return a hash of filename => data" do
+      assert_equal ['index.html'], @build.compile.keys
     end
   end
 
