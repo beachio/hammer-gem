@@ -64,7 +64,7 @@ module Hammer
   private
     
     def placeholders
-      replace(/<!-- @placeholder (.*?) -->/) do |tag, line_number|
+      @text = replace(@text, /<!-- @placeholder (.*?) -->/) do |tag, line_number|
         options = tag.gsub("<!-- @placeholder ", "").gsub("-->", "").strip.split(" ")
         
         dimensions = options[0]
@@ -85,7 +85,7 @@ module Hammer
         end
       end
       
-      replace(/<!-- @kitten (\S*) -->/) do |tag, line_number|
+      @text = replace(@text, /<!-- @kitten (\S*) -->/) do |tag, line_number|
         dimensions = tag.gsub("<!-- @kitten ", "").gsub("-->", "").strip
         x = dimensions.split('x')[0]
         y = dimensions.split('x')[1]
@@ -94,7 +94,7 @@ module Hammer
     end
     
     def get_variables
-      replace(/<!-- \$(.*?) -->/) do |tag, line_number|
+      @text = replace(@text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
         variable_name = variable_declaration[0]
         variable_value = variable_declaration[1..-1].join(' ')
@@ -110,7 +110,7 @@ module Hammer
     end
     
     def output_variables
-      replace(/<!-- \$(.*?) -->/) do |tag, line_number|
+      @text = replace(@text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
 
         has_spaces = variable_declaration.include?(' ')
@@ -136,9 +136,9 @@ module Hammer
     end
     
     def includes
-      while text.match /<!-- @include (.*?) -->/
+      while @text.match /<!-- @include (.*?) -->/
         
-        replace(/<!-- @include (.*?) -->/) do |tags, line_number|
+        @text = replace(@text, /<!-- @include (.*?) -->/) do |tags, line_number|
           tags = tags.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
           
           tags.map do |tag|
@@ -150,29 +150,36 @@ module Hammer
               tag = variable_value
             end
             
-            file = find_file_with_dependency(tag, 'html')
+            # file = find_file_with_dependency(tag, 'html')
 
-            raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
+            # raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
 
-            parser = Hammer::Parser.for_hammer_file(file)
-            parser.optimized = self.optimized
+            # parser = Hammer::Parser.for_hammer_file(file)
+            # parser.optimized = self.optimized
 
-            next unless parser
-            parser.variables = self.variables
+            # next unless parser
+            # parser.variables = self.variables
             
-            begin
-              parser.parse()
-            rescue Hammer::Error => e
-              e.hammer_file = file
-              raise e
+            # begin
+            #   parser.parse()
+            # rescue Hammer::Error => e
+            #   e.hammer_file = file
+            #   raise e
+            # end
+            
+            # parser = Hammer::Parser.for_hammer_file(file)
+            # parser.optimized = self.optimized
+            # parser.variables = self.variables
+
+            # self.variables = self.variables.merge(parser.variables)
+            # parser.to_html()
+
+            files = find_files(tag, 'html')
+            if files.empty?
+              raise "Includes: File <b>#{h tag}</b> couldn't be found."
+            else
+              File.open(files[0]).read()
             end
-            
-            parser = Hammer::Parser.for_hammer_file(file)
-            parser.optimized = self.optimized
-            parser.variables = self.variables
-
-            self.variables = self.variables.merge(parser.variables)
-            parser.to_html()
 
           end.compact.join("\n")
         end
@@ -188,7 +195,7 @@ module Hammer
     end
     
     def alternative_path_tags
-      replace(/['|"]@path (.*?)['|"]/) do |tag, line_number|
+      @text = replace(@text, /['|"]@path (.*?)['|"]/) do |tag, line_number|
         filename = tag[6..-2]
         
         filename = get_variable(filename) if filename.split("")[0] == "$"
@@ -204,7 +211,7 @@ module Hammer
     end
     
     def path_tags
-      replace(/<!-- @path (.*?) -->/) do |tag, line_number|
+      @text = replace(@text, /<!-- @path (.*?) -->/) do |tag, line_number|
         filename = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
   
         filename = get_variable(filename) if filename.split("")[0] == "$"
@@ -237,7 +244,7 @@ module Hammer
     def stylesheet_tags
       @included_stylesheets ||= []
       
-      self.replace(/<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
+      @text = replace(@text, /<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
         
         filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
@@ -305,7 +312,7 @@ module Hammer
     def javascript_tags
       @included_javascripts ||= []
       
-      self.replace(/<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
+      @text = replace(@text, /<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
         
         filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")

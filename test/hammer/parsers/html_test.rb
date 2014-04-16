@@ -6,76 +6,69 @@ class TestHtmlParser < Test::Unit::TestCase
 
     setup do
       @parser = Hammer::HTMLParser.new()
+      def test_parse(input, expected_output)
+        assert_equal expected_output, @parser.parse(input)
+      end
     end
 
     should "replace reload tags" do
       assert !@parser.parse("<html><!-- @reload --></html>").include?("@reload")
     end
     
-  #   should "replace placeholder tags" do
-  #     @parser.text = "<html><!-- @placeholder 100x100 --></html>"
-  #     text = @parser.parse()
-  #     assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>", text
-  #   end
+    should "replace placeholder tags" do
+      test_parse "<html><!-- @placeholder 100x100 --></html>", "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>"
+    end
     
-  #   should "replace placeholder tags with only one dimension" do
-  #     @parser.text = "<html><!-- @placeholder 100 --></html>"
-  #     text = @parser.parse()
-  #     assert_equal "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>", text
-  #   end
+    should "replace placeholder tags with only one dimension" do
+      test_parse "<html><!-- @placeholder 100 --></html>", "<html><img src='http://placehold.it/100x100' width='100' height='100' alt='Placeholder Image' /></html>"
+    end
     
-  #   should "replace placeholder tags with text" do
-  #     @parser.text = "<html><!-- @placeholder 100x100 I am a teapot --></html>"
-  #     text = @parser.parse()
-  #     assert_equal "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100' height='100' alt='I am a teapot' /></html>", text
-  #   end
+    should "replace placeholder tags with text" do
+      test_parse "<html><!-- @placeholder 100x100 I am a teapot --></html>", "<html><img src='http://placehold.it/100x100&text=I+am+a+teapot' width='100' height='100' alt='I am a teapot' /></html>"
+    end
 
-  #   should "replace kitten tags" do
-  #     @parser.text = "<html><!-- @kitten 100x100 --></html>"
-  #     text = @parser.parse()
-  #     assert_equal "<html><img src='http://placekitten.com/100/100' width='100' height='100' alt='Meow' /></html>", text
-  #   end
+    should "replace kitten tags" do
+      test_parse  "<html><!-- @kitten 100x100 --></html>", "<html><img src='http://placekitten.com/100/100' width='100' height='100' alt='Meow' /></html>"
+    end
 
-  #   should "Retrieve variables" do
-  #     @parser.text = "<!-- $title Here's the title --><!-- $title -->"
-  #     assert_equal "Here's the title", @parser.parse()
-  #   end
+    should "Retrieve variables" do
+      test_parse "<!-- $title Here's the title --><!-- $title -->", "Here's the title"
+    end
 
-  #   should "Retrieve variables that have :" do
-  #     @parser.text = "<!-- $variable:name Here's the title --><!-- $variable:name -->"
-  #     assert_equal "Here's the title", @parser.parse()
-  #   end
+    should "Retrieve variables that have :" do
+      test_parse "<!-- $variable:name Here's the title --><!-- $variable:name -->", "Here's the title"
+    end
     
-  #   should "retrieve defaults for variables" do
-  #     @parser.text = "<!-- $title | Here's the title -->"
-  #     assert_equal "Here's the title", @parser.parse()
-  #   end
+    should "retrieve defaults for variables" do
+      test_parse "<!-- $title | Here's the title -->", "Here's the title"
+    end
 
-  #   context "with another file" do
-  #     setup do
-  #       @header = Hammer::HammerFile.new(:filename => "_header.html", :text => "header")
-  #       @parser.stubs(:find_files).returns([@header])
-  #     end
+    context "with another file" do
+      setup do
+        header = File.join(Dir.mktmpdir, 'header.html')
+        File.open(header, 'w') do |f|
+          f.write("header")
+        end
+        @parser.expects(:find_files).returns([header])
+      end
 
-  #     should "include the file" do
-  #       @parser.text = "<html><!-- @include _header --></html>"
-  #       assert_equal "<html>header</html>", @parser.parse()
-  #     end
-  #   end
+      should "include the file" do
+        test_parse "<html><!-- @include _header --></html>", "<html>header</html>"
+      end
+    end
 
-  #   should "raise an error when including the wrong file" do
-  #     @parser.text = "<html><!-- @include _header --></html>"
-  #     assert_raises Hammer::Error do
-  #       @parser.parse()
-  #     end
-  #   end
+    should "raise an error when including the wrong file" do
+      assert_raises do
+        @parser.expects(:find_files).returns([])
+        @parser.parse("<html><!-- @include _header --></html>")
+      end
+    end
 
-  #   should "raise an error when including an unset variable" do
-  #     @parser.text = "<html><!-- @include $header --></html>"
-  #     assert_raises Hammer::Error do
-  #       @parser.parse()
-  #     end
-  #   end
+    should "raise an error when including an unset variable" do
+      assert_raises do
+        @parser.parse("<html><!-- @include $header --></html>")
+      end
+    end
 
   #   should "do placeholders inside include files" do
   #     @header = Hammer::HammerFile.new(:filename => "_header.html", :text => "header")

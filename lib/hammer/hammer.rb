@@ -1,1 +1,4 @@
-module Hammer; end
+module Hammer
+  class Error < SyntaxError
+  end
+end

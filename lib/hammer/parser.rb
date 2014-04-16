@@ -2,6 +2,7 @@ require 'lib/hammer/parsers/modules/extensions'
 require 'lib/hammer/parsers/modules/variables'
 require 'lib/hammer/parsers/modules/optimizer'
 require 'lib/hammer/parsers/modules/file_adder'
+require 'lib/hammer/parsers/modules/file_finder'
 
 module Hammer
   class Parser
@@ -14,6 +15,11 @@ module Hammer
     include ExtensionMapper
     include Variables
     include FileAdding
+    include FileFinder
+
+    def h(text)
+      text # TODO: HTMLify
+    end
 
     def filename
       path
@@ -75,4 +81,4 @@ module Hammer
 end
 
 parsers_path = File.join(File.dirname(__FILE__), 'parsers', '**/*.rb')
-Dir[parsers_path].each {|file| require file; puts file }
+Dir[parsers_path].each {|file| require file; }
