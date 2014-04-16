@@ -164,7 +164,7 @@ module Hammer
     end
     
   end
-  Hammer::Parser.register_for_extensions HAMLParser, ['haml']
-  Hammer::Parser.register_as_default_for_extensions HAMLParser, ['haml']
+  # Hammer::Parser.register_for_extensions HAMLParser, ['haml']
+  # Hammer::Parser.register_as_default_for_extensions HAMLParser, ['haml']
 
 end

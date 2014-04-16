@@ -7,12 +7,17 @@ module Hammer
   class Parser
 
     #TODO: Do we move dependencies into a module?
+    attr_accessor :text
     attr_accessor :dependencies, :wildcard_dependencies
     attr_accessor :path, :directory, :variables, :messages
     attr_accessor :added_files
     include ExtensionMapper
     include Variables
     include FileAdding
+
+    def filename
+      path
+    end
 
     def parse(text="")
       return text
@@ -68,3 +73,6 @@ module Hammer
 
   end
 end
+
+parsers_path = File.join(File.dirname(__FILE__), 'parsers', '**/*.rb')
+Dir[parsers_path].each {|file| require file; puts file }

@@ -36,8 +36,8 @@ module Hammer
       @text
     end
 
-    def parse
-      @text ||= ""
+    def parse(text)
+      @text = text
       get_variables()
       path_tags()
       includes()
@@ -356,6 +356,6 @@ module Hammer
     end
     
   end
-  Hammer::Parser.register_for_extensions HTMLParser, ['html']
-  Hammer::Parser.register_as_default_for_extensions HTMLParser, ['html']
+  # Hammer::Parser.register_for_extensions HTMLParser, ['html']
+  # Hammer::Parser.register_as_default_for_extensions HTMLParser, ['html']
 end

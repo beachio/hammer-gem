@@ -15,6 +15,10 @@ module Hammer
       @parsers_for[extension] || []
     end
 
+    def extensions_for(what)
+      @extensions_for[what] || []
+    end
+
     @parsers = []
   end
 
@@ -54,7 +58,11 @@ module Hammer
       extensions = ExtensionMap.parsers.select {|parser|
         parser.finished_extension == extension
       }.map {|parser|
-        extensions_for(parser)
+        begin
+          extensions_for[parser]
+        rescue => e
+          raise e
+        end
       }
 
       extensions.flatten.compact.uniq

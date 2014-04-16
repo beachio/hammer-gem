@@ -43,8 +43,9 @@ module Hammer
     end
     
   end
-  Hammer::Parser.register_for_extensions JSParser, ['js']
-  Hammer::Parser.register_as_default_for_extensions JSParser, ['js']
+  
+  # Hammer::Parser.register_for_extensions JSParser, ['js']
+  # Hammer::Parser.register_as_default_for_extensions JSParser, ['js']
 
   class CoffeeParser < Parser
     
@@ -109,7 +110,8 @@ module Hammer
     end
     
   end
-  Hammer::Parser.register_for_extensions CoffeeParser, ['coffee']
-  Hammer::Parser.register_as_default_for_extensions CoffeeParser, ['coffee']
+
+  # Hammer::Parser.register_for_extensions CoffeeParser, ['coffee']
+  # Hammer::Parser.register_as_default_for_extensions CoffeeParser, ['coffee']
 
 end

@@ -8,6 +8,6 @@ module Hammer
     end
   end
 
-  Hammer::Parser.register_for_extensions PHPParser, ['php']
-  Hammer::Parser.register_as_default_for_extensions PHPParser, ['php']
+  # Hammer::Parser.register_for_extensions PHPParser, ['php']
+  # Hammer::Parser.register_as_default_for_extensions PHPParser, ['php']
 end
