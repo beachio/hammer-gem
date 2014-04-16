@@ -91,8 +91,6 @@ class HammerParserClassMethodsTest < Test::Unit::TestCase
         assert_equal output, "Hi"
         assert data.is_a? Hash
       end
-
     end
-
   end
 end

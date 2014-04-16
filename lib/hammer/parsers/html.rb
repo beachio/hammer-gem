@@ -10,5 +10,9 @@ module Hammer
       return text
     end
 
+    def optimize(text)
+      return text
+    end
+
   end
 end

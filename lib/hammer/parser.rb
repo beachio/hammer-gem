@@ -1,20 +1,26 @@
 require 'lib/hammer/parsers/extensions'
+require 'lib/hammer/parsers/modules/variables'
+require 'lib/hammer/parsers/modules/optimizer'
 
 module Hammer
   class Parser
 
     #TODO: Do we move dependencies into a module?
     attr_accessor :dependencies, :wildcard_dependencies
-    attr_accessor :optimized, :path, :directory, :variables, :messages
+    attr_accessor :path, :directory, :variables, :messages
     include ExtensionMapper
+    include Variables
 
-    def parse(text)
+    def parse(text="")
       return text
     end
 
     # Used when creating a parser, to initialize variables from the last parser.
     def from_hash(hash)
       self.variables = hash[:variables]
+      self.messages = hash[:messages]
+      self.wildcard_dependencies = hash[:wildcard_dependencies]
+      self.dependencies = hash[:dependencies]
       return self
     end
 
@@ -50,6 +56,8 @@ module Hammer
         block.call(output, data)
       end
     end
+
+    include Optimizer
 
   end
 end
