@@ -38,6 +38,41 @@ class HammerParserDataTest < Test::Unit::TestCase
 
 end
 
+class HammerParserChainParseTest < Test::Unit::TestCase 
+
+  context "some parsers that are chained together by extensions" do
+
+    module ::Hammer
+      class ParserOne < ::Hammer::Parser
+        include ::Hammer::ExtensionMapper
+        accepts :a
+        returns_extension :b
+        def parse(text)
+          text.gsub('One', 'Two')
+        end
+      end
+
+      class ParserTwo < ::Hammer::Parser
+        include ::Hammer::ExtensionMapper
+        accepts :b
+        returns_extension :c
+        def parse(text)
+          text.gsub('Two', 'Three')
+        end
+      end
+    end
+
+    should "parse the set of parsers correctly" do
+      @file = 'index.a'
+      FileUtils.mkdir_p(@dir = Dir.mktmpdir)
+      File.open(File.join(@dir, @file), 'w') do |f|; f.write "One"; end
+      Hammer::Parser.parse_file(@dir, @file, true) do |output, data|
+        assert_equal "Three", output
+      end
+    end
+  end
+end
+
 class HammerParserClassMethodsTest < Test::Unit::TestCase
   context "a file" do
     setup do
@@ -52,11 +87,12 @@ class HammerParserClassMethodsTest < Test::Unit::TestCase
 
     should "be parsed using a block" do
 
-      Hammer::Parser.parse_file(@dir, File.join(@dir, @file), true) do |output, data|
+      Hammer::Parser.parse_file(@dir, @file, true) do |output, data|
         assert_equal output, "Hi"
         assert data.is_a? Hash
       end
 
     end
+
   end
 end

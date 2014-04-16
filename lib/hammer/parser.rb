@@ -20,8 +20,7 @@ module Hammer
 
     # Used to initialize the next parser when chained.
     def to_hash
-      # TODO: We could do this better.
-      # @data
+      # TODO: We could probably do this more extensibly with a @data attribute.
       {
         dependencies: @dependencies,
         wildcard_dependencies: @wildcard_dependencies,
@@ -35,6 +34,7 @@ module Hammer
         data, output = {}, nil
 
         # Parse here
+        text   = File.open(File.join(directory, filename), 'r').read()
         Hammer::Parser.for_filename(filename).each do |parser_class|
           parser = parser_class.new().from_hash(data)
 
@@ -42,11 +42,11 @@ module Hammer
           parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory))
           parser.optimized = optimized
 
-          text   = File.open(filename, 'r').read()
-          output = parser.parse(text)
+          text = parser.parse(text)
           data   = parser.to_hash
         end
 
+        output = text
         block.call(output, data)
       end
     end

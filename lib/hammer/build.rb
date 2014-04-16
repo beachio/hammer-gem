@@ -72,11 +72,11 @@ module Hammer
 
         path        = Pathname.new(filename).relative_path_from(Pathname.new(@input_directory)).to_s
         output_file = File.join(@output_directory, path)
-        data = {}
+        data        = {}
 
         # TODO: Caching
 
-        Hammer::Parser.parse_file(@input_directory, filename, @optimized) do |output, data|
+        Hammer::Parser.parse_file(@input_directory, path, @optimized) do |output, data|
           FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') do |f|
             f.write(output) if output
