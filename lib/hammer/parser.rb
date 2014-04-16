@@ -1,4 +1,4 @@
-require 'lib/hammer/parsers/extensions'
+require 'lib/hammer/parsers/modules/extensions'
 require 'lib/hammer/parsers/modules/variables'
 require 'lib/hammer/parsers/modules/optimizer'
 require 'lib/hammer/parsers/modules/file_adder'

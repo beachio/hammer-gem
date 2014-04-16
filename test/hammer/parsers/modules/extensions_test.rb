@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require "test_helper"
-# require File.dirname(__FILE__) + '/test_helper'
-require 'lib/hammer/parsers/extensions'
+require 'lib/hammer/parsers/modules/extensions'
 
 class ExtensionsTest < Test::Unit::TestCase
 
