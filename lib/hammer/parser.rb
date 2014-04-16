@@ -1,6 +1,7 @@
 require 'lib/hammer/parsers/extensions'
 require 'lib/hammer/parsers/modules/variables'
 require 'lib/hammer/parsers/modules/optimizer'
+require 'lib/hammer/parsers/modules/file_adder'
 
 module Hammer
   class Parser
@@ -8,8 +9,10 @@ module Hammer
     #TODO: Do we move dependencies into a module?
     attr_accessor :dependencies, :wildcard_dependencies
     attr_accessor :path, :directory, :variables, :messages
+    attr_accessor :added_files
     include ExtensionMapper
     include Variables
+    include FileAdding
 
     def parse(text="")
       return text
@@ -21,6 +24,7 @@ module Hammer
       self.messages = hash[:messages]
       self.wildcard_dependencies = hash[:wildcard_dependencies]
       self.dependencies = hash[:dependencies]
+      self.added_files = hash[:added_files]
       return self
     end
 
@@ -31,12 +35,14 @@ module Hammer
         dependencies: @dependencies,
         wildcard_dependencies: @wildcard_dependencies,
         variables: @variables,
-        messages: @messages
+        messages: @messages,
+        added_files: @added_files
       }
     end
 
     class << self
-      def parse_file(directory, filename, optimized, &block)
+
+      def parse_file(directory, filename, output_directory, optimized, &block)
         data, output = {}, nil
 
         # Parse here
@@ -45,6 +51,7 @@ module Hammer
           parser = parser_class.new().from_hash(data)
 
           parser.directory = directory
+          parser.output_directory = output_directory
           parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory))
           parser.optimized = optimized
 

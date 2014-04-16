@@ -64,9 +64,10 @@ class HammerParserChainParseTest < Test::Unit::TestCase
 
     should "parse the set of parsers correctly" do
       @file = 'index.a'
+      @output_dir = Dir.mktmpdir
       FileUtils.mkdir_p(@dir = Dir.mktmpdir)
       File.open(File.join(@dir, @file), 'w') do |f|; f.write "One"; end
-      Hammer::Parser.parse_file(@dir, @file, true) do |output, data|
+      Hammer::Parser.parse_file(@dir, @file, @output_dir, true) do |output, data|
         assert_equal "Three", output
       end
     end
@@ -87,7 +88,7 @@ class HammerParserClassMethodsTest < Test::Unit::TestCase
 
     should "be parsed using a block" do
 
-      Hammer::Parser.parse_file(@dir, @file, true) do |output, data|
+      Hammer::Parser.parse_file(@dir, @file, Dir.mktmpdir, true) do |output, data|
         assert_equal output, "Hi"
         assert data.is_a? Hash
       end

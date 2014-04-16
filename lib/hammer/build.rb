@@ -76,7 +76,7 @@ module Hammer
 
         # TODO: Caching
 
-        Hammer::Parser.parse_file(@input_directory, path, @optimized) do |output, data|
+        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
           FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') do |f|
             f.write(output) if output
