@@ -35,5 +35,28 @@ class HammerParserDataTest < Test::Unit::TestCase
       assert_equal json[:variables], @object.to_hash[:variables]
     end
   end
-  
+
+end
+
+class HammerParserClassMethodsTest < Test::Unit::TestCase
+  context "a file" do
+    setup do
+      @dir = Dir.mktmpdir
+      @file = 'index.html'
+
+      FileUtils.mkdir_p(@dir)
+      File.open(File.join(@dir, @file), 'w') do |f|
+        f.write "Hi"
+      end
+    end
+
+    should "be parsed using a block" do
+
+      Hammer::Parser.parse_file(@dir, File.join(@dir, @file), true) do |output, data|
+        assert_equal output, "Hi"
+        assert data.is_a? Hash
+      end
+
+    end
+  end
 end
