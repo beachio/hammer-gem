@@ -6,8 +6,5 @@ module Hammer
     accepts :php
     returns :php
 
-    def self.finished_extension
-      'php'
-    end
   end
 end
