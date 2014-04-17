@@ -35,7 +35,7 @@ module Hammer
     end
     
     def import_url_paths
-      replace(/@import "(\S*?)"/) do |url_tag, line_number|
+      @text = replace(@text, /@import "(\S*?)"/) do |url_tag, line_number|
         
         file_path = url_tag.gsub('@import ', '').gsub('"', '').gsub(";", "").strip
         
@@ -47,7 +47,7 @@ module Hammer
           file = find_file_with_dependency(file_name)
           
           if file
-            url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
+            url = path_to(file)
             "@import \"#{url}\";"
           else
             url_tag
@@ -57,7 +57,7 @@ module Hammer
     end
 
     def url_paths
-      replace(/url\((\S*?)\)/) do |url_tag, line_number|
+      @text = replace(@text, /url\((\S*?)\)/) do |url_tag, line_number|
 
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
         
@@ -68,9 +68,11 @@ module Hammer
           add_wildcard_dependency file_path
           file_name = file_path.split(/\?|#/)[0]
           extras = file_path.split(file_name)[1]
-          file = find_file(file_name)
+          
+          file = find_files(file_name)[0]
+
           if file
-            url = Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
+            url = path_to(file)
             "url(#{url}#{extras if extras})"
           else
             url_tag
@@ -80,7 +82,7 @@ module Hammer
     end
     
     def clever_paths
-      replace(/\/\* @path (.*?) \*\//) do |tag, line_number|
+      @text = replace(@text, /\/\* @path (.*?) \*\//) do |tag, line_number|
         
         file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
         
@@ -90,20 +92,16 @@ module Hammer
           
           add_wildcard_dependency file_path
           file_name = file_path.split(/\?|#/)[0]
-          file = find_file(file_name)
+          file = find_files(file_name)[0]
           
-          if file
-            Pathname.new(file.output_filename).relative_path_from Pathname.new(File.dirname(filename))
-          else
-            tag
-          end
+          file ? path_to(file) : tag
         end
       end
     end
     
     def includes
       lines = []
-      replace(/\/\* @include (.*) \*\//) do |tag, line_number|
+      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
         return tag if tag.include? "("
 
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
@@ -111,17 +109,19 @@ module Hammer
           # add_wildcard_dependency tag
           file = find_file_with_dependency(tag, 'css')
           raise "Included file <b>#{tag}</b> couldn't be found." unless file
-          Hammer::Parser.for_hammer_file(file).to_css()
+          @parser = Hammer::Parser.for_filename(file).last.new()
+          @parser.parse(File.open(file).read)
+          @parser.to_css()
         end
         a.compact.join("\n")
       end
     end
-
   end
-  # Hammer::Parser.register_for_extensions CSSParser, ['css']
-  # Hammer::Parser.register_as_default_for_extensions CSSParser, ['css']
 
   class SASSParser < CSSParser
+
+    accepts :sass, :scss
+    returns_extension :css
     
     def format=(format)
       @format = format.to_sym
@@ -204,7 +204,7 @@ module Hammer
     
     def includes
       lines = []
-      replace(/\/\* @include (.*) \*\//) do |tag, line_number|
+      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
         
         return tag if tag.include? "("
         

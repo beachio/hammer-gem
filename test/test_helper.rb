@@ -31,3 +31,12 @@ require 'shoulda'
 
 Sass::RAILS_LOADED = true unless defined?(Sass::RAILS_LOADED)
 Encoding.default_external = 'UTF-8' if defined?(Encoding)
+
+def create_file(filename, contents, directory=nil)
+  file = File.join(directory || Dir.mktmpdir, filename)
+  FileUtils.mkdir_p(File.dirname(file))
+  File.open(file, 'w') do |file|
+    file.print contents
+  end
+  file
+end

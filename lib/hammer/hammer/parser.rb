@@ -3,6 +3,8 @@ require 'parsers/modules/variables'
 require 'parsers/modules/optimizer'
 require 'parsers/modules/file_adder'
 require 'parsers/modules/file_finder'
+require 'parsers/modules/dependency'
+require 'parsers/modules/paths'
 
 module Hammer
   class Parser
@@ -16,6 +18,12 @@ module Hammer
     include Variables
     include FileAdding
     include FileFinder
+    include Dependency
+    include Paths
+
+    def initialize
+      @directory = Dir.mktmpdir
+    end
 
     def h(text)
       text # TODO: HTMLify

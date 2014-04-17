@@ -31,8 +31,9 @@ module Hammer
 
     # Fetches "index.html" for "index.haml"
     def output_filename_for(filename)
+
       extension = File.extname(filename)[1..-1]
-      parser    = for_extension(extension).last
+      parser    = self.class.for_extension(extension).last
 
       if parser
         path      = File.dirname(filename)
@@ -50,7 +51,8 @@ module Hammer
       extensions = []
       parsers = self.class.for_extension(extension)
       parsers.each do |parser|
-        extensions_for(parser).each do |extension|
+        ExtensionMap.extensions_for[parser]
+        ExtensionMap.extensions_for[parser].each do |extension|
           extensions << extension
         end
       end
@@ -83,8 +85,8 @@ module Hammer
 
       def for_extension(extension)
         
-        parsers = [*ExtensionMap.default_parser_for[extension]]
-        parsers += ExtensionMap.parsers_for[extension] if ExtensionMap.parsers_for[extension]
+        parsers = [*ExtensionMap.default_parser_for[extension.to_sym]]
+        parsers += ExtensionMap.parsers_for[extension.to_sym] if ExtensionMap.parsers_for[extension.to_sym]
         parsers = parsers.compact
 
         return [] unless parsers.any?
@@ -104,14 +106,14 @@ module Hammer
           end
         end
         
-        return parsers.uniq.flatten
+        return parsers.uniq.flatten.compact
       end
 
       attr_accessor :finished_extension
 
       # Input extension
-      def accepts(extensions)
-        register_for_extensions extensions
+      def accepts(*extensions)
+        register_for_extensions [*extensions]
       end
 
       # Output extension
