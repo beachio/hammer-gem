@@ -1,67 +1,47 @@
-# require "test_helper"
+require "test_helper"
 
-# class JSParserTest < Test::Unit::TestCase
+class JSParserTest < Test::Unit::TestCase
 #   include AssertCompilation
-#   context "A JS Parser" do
-#     setup do
-#       @options = {
-#         :input_directory => Dir.mktmpdir,
-#         :output_directory => Dir.mktmpdir,
-#         :cache_directory => Dir.mktmpdir
-#       }
-#       # @hammer_project = Hammer::Project.new @options
-#       @parser = Hammer::JSParser.new()
-#       @parser.stubs(:find_file).returns(nil)
-#       @parser.stubs(:find_files).returns([])
+  context "A JS Parser" do
+    setup do
+      @parser = Hammer::JSParser.new()
+      @parser.stubs(:find_files).returns([])
+      @js_file = create_file('app.js', 'testing', @parser.directory)
+    end
 
-#       @js_file = Hammer::HammerFile.new(:filename => 'app.js')
-#       @parser.hammer_file = @js_file
-#     end
-
-#     def stub_out(file)
-#       @parser.stubs(:find_file).returns(file)
-#       @parser.stubs(:find_files).returns([file])
-#     end
+    def stub_out(file)
+      @parser.stubs(:find_files).returns([file])
+    end
     
-#     should "exist" do
-#       assert @parser
-#     end
+    should "return JS for to_format with :js" do
+      assert_equal @parser.to_format(:js), @parser.text
+    end
 
-#     should "return JS for to_format with :js" do
-#       assert_equal @parser.to_format(:js), @parser.text
-#     end
-
-#     context "with a CSS file" do
+    context "with a CSS file" do
       
-#       setup do
-#         @file = Hammer::HammerFile.new
-#         @file.filename = "style.js"
-#         @parser.hammer_file = @file
-#         @file.raw_text = "a {background: red}"
-#       end
+      setup do
+        @file = create_file('style.js', 'var a = function(argument){return true}', @parser.directory)
+      end
       
-#       should "parse JS" do
-#         @parser.text = @file.raw_text
-#         assert_equal "a {background: red}", @parser.parse()
-#       end
+      should "parse JS" do
+        assert_equal 'var a = function(argument){return true}', @parser.parse('var a = function(argument){return true}')
+      end
       
-#       context "with other files" do
-#         setup do
-#           @asset_file = Hammer::HammerFile.new
-#           @asset_file.raw_text = "a { background: orange; }"
-#           @asset_file.filename = "assets/_include.js"
-#         end
+      context "with other files" do
+        setup do
+          @asset_file = create_file "assets/_include.js", "a { background: orange; }", @parser.directory
+        end
 
-#         context "when only looking for this file" do
-#           setup do
-#             @parser.stubs(:find_file).returns(@asset_file)
-#           end
+        context "when only looking for this file" do
+          setup do
+            @parser.stubs(:find_files).returns([@asset_file])
+          end
 
-#           should "do include" do
-#             assert_compilation "/* @include _include */", "a { background: orange; }"
-#           end
-#         end
-#       end
-#     end
-#   end
-# end
+          should "do include" do
+            assert @parser.parse("/* @include _include */").include? "background: orange"
+          end
+        end
+      end
+    end
+  end
+end

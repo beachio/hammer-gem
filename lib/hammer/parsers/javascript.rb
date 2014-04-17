@@ -7,7 +7,8 @@ module Hammer
   class JSParser < Parser
 
     def to_javascript
-      parse
+      parse(@text)
+      @text
     end
     
     def to_format(format)
@@ -16,8 +17,13 @@ module Hammer
       end
     end
 
-    def parse
-      includes()
+    def parse(text)
+      if !@parsed
+        @original_text = text
+        @text = text
+        includes()
+        @parsed = true
+      end
       @text
     end
     
@@ -29,14 +35,17 @@ module Hammer
   
     def includes
       lines = []
-      replace(/\/\* @include (.*) \*\//) do |tag, line_number|
+      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           file = find_file_with_dependency(tag, 'js')
           
           raise "Included file <strong>#{h tag}</strong> couldn't be found." unless file
           
-          Hammer::Parser.for_hammer_file(file).to_javascript()
+          # TODO: Create and parse in tests
+          parser = Hammer::Parser.for_filename(file).last.new()
+          parser.parse(File.open(file).read())
+          parser.to_javascript()
         end
         a.compact.join("\n")
       end
