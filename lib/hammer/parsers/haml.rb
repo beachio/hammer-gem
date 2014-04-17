@@ -24,7 +24,6 @@ class String
   def array_of_lines_indented_by(letters_to_indent_by)
     lines.map { |line| "#{letters_to_indent_by}#{line}" }
   end
-
 end
 
 class HAMLHelper
@@ -43,16 +42,14 @@ module Hammer
     
   class HAMLParser < Parser
 
-    def self.finished_extension
-      "html"
-    end
+    accepts :haml
+    returns_extension :html
 
     def to_html
       parse
     end
     
     def includes
-      return unless @hammer_project
       
       lines = text_as_lines
       
@@ -77,12 +74,12 @@ module Hammer
           if file.extension == "haml"
 
             # Insert the text of this file as an array.
-            lines[line_number] = file.raw_text.array_of_lines_indented_by(line.indentation_string)
+            lines[line_number] = File.open(file).read.array_of_lines_indented_by(line.indentation_string)
 
             # We only have to change stuff if the next line is indented.
             if is_indented_after_this_line
-              last_line = last_line = file.raw_text.lines.to_a.last
-              lines = indent_from_line(last_line, lines, line_number, file.raw_text.indentation_in_last_line)
+              last_line = last_line = File.open(file).read.lines.to_a.last
+              lines = indent_from_line(last_line, lines, line_number, File.open(file).read.indentation_in_last_line)
             end
 
             lines = lines.flatten
@@ -102,16 +99,19 @@ module Hammer
       @raw_text
     end
     
-    def parse
+    def parse(text)
+      @text = text
       includes()
-      @text = convert(text)
-      @text = convert_comments(text)
+      @text = convert(@text)
+      @text = convert_comments(@text)
+      @text = @text[0..-2] if @text.end_with?("\n")
+      @text
     end
     
   private
 
     def text_as_lines
-      @hammer_file.raw_text.split("\n")
+      @text.split("\n")
     end
 
     # This function takes an array of lines, and an original line that has been replaced with input.

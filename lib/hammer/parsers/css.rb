@@ -275,7 +275,4 @@ module Hammer
       { :quiet => true, :logger => nil }
     end
   end
-  
-  # Hammer::Parser.register_for_extensions SASSParser, ['sass', 'scss']
-  # Hammer::Parser.register_as_default_for_extensions SASSParser, ['sass', 'scss']
 end

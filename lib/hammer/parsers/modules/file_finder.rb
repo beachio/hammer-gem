@@ -47,7 +47,7 @@ module Hammer
       query = absolute_to_relative(query)
       regex = regex_for(query, extension)
 
-      matches = filenames.select { |filename|
+      matches = filenames.to_a.select { |filename|
         match = filename =~ regex
 
         # straight_basename = false  # File.basename(file.filename) == filename
