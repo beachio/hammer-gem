@@ -8,6 +8,8 @@ module Hammer
     def to_format(format)
       if format == :css
         to_css
+      else
+        false
       end
     end
     
@@ -128,7 +130,7 @@ module Hammer
     end
     
     def format
-      filename.split('.')[-1].to_sym
+      @path.split('.')[-1].to_sym
     end
     
     def text=(new_text)
@@ -137,12 +139,12 @@ module Hammer
     end
     
     def to_css
-      parse
+      parse(@original_text)
     end
     
     def to_format(new_format)
       if new_format == :css
-        parse
+        parse(@original_text)
       elsif new_format == format
         @original_text
       elsif format == :scss and new_format == :sass
@@ -155,7 +157,9 @@ module Hammer
       end
     end
 
-    def parse
+    def parse(text)
+      @original_text = text
+      @text = text
 
       raise "Error in #{@hammer_file.filename}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
       
@@ -193,6 +197,8 @@ module Hammer
         end
       end
       
+      @text = @text[0..-2] if @text.end_with? "\n"
+
       @text
     end
     
@@ -214,12 +220,18 @@ module Hammer
         tags.each do |tag|
 
           file = find_file_with_dependency(tag, 'scss')
-          
+
           raise "Included file <strong>#{tag}</strong> couldn't be found." unless file
+
+          # TODO: Make a for_filename single method for a file and a directory. Something to generate the path anyway.
+          # Hammer::Parser.convert(directory, file, format)
+          # At the very least, update everywhere we use .for_fileanme in parsers.
           
-          parser = Hammer::Parser.for_hammer_file(file)
+          parser = Hammer::Parser.for_filename(file).first
+          parser = parser.new(:path => file.gsub(@directory, ""))
+          parser.parse(File.open(file).read)
           text = parser.to_format(format)
-          
+
           if !text
             # Go back to CSS.
             replacement << "/* @include #{tag} */"
@@ -241,8 +253,8 @@ module Hammer
         paths << File.join(escape_glob(@input_directory), "**/*")
       end
       
-      if @hammer_file.path
-        paths << File.dirname(escape_glob(@hammer_file.path))
+      if @path
+        paths << File.dirname(escape_glob(@path))
       end
 
       # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")

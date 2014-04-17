@@ -13,12 +13,5 @@ class TestMarkdown < Test::Unit::TestCase
     should "preserve comments" do
       assert_equal @parser.parse("<!-- This is markdown -->"),  "<!-- This is markdown -->"
     end
-    
-    # context "with a hammer file" do
-    #   should "set variables" do
-      
-    #   end
-    # end
-    
   end
 end
