@@ -3,7 +3,7 @@ module Hammer
 
     register_as_default_for_extensions 'eco'
     accepts :eco
-    returns_extension :js
+    returns :js
 
     def parse(text)
       if !@original_text

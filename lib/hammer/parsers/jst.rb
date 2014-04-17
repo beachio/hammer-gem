@@ -6,7 +6,7 @@ module Hammer
 
     register_as_default_for_extensions 'jst'
     accepts :jst
-    returns_extension :js
+    returns :js
 
     def to_format(format)
       if format == :js

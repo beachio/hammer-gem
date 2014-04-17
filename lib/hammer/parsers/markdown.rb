@@ -8,15 +8,19 @@ module Hammer
     end
 
     def to_html
-      parse()
+      # TODO: Make the other to_format calls work like this with setting @text in parse(text)?
+      parse(@text)
     end
     
     def to_markdown
       @raw_text
     end
     
-    def parse
-      convert(text)
+    def parse(text)
+      @text = text
+      text = convert(text)
+      text = text[0..-2] if text.end_with?("\n")
+      text
     end
     
     private

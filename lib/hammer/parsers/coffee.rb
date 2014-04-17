@@ -2,7 +2,7 @@ module Hammer
   class CoffeeParser < Parser
 
     accepts :coffee
-    returns_extension :js
+    returns :js
     register_as_default_for_extensions :js
     
     def to_javascript

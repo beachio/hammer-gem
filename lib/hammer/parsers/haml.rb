@@ -43,7 +43,7 @@ module Hammer
   class HAMLParser < Parser
 
     accepts :haml
-    returns_extension :html
+    returns :html
 
     def to_html
       parse

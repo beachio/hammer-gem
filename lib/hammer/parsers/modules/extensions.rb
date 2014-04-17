@@ -117,7 +117,7 @@ module Hammer
       end
 
       # Output extension
-      def returns_extension(extension)
+      def returns(extension)
         @finished_extension = extension
       end
 

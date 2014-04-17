@@ -26,7 +26,7 @@ module Hammer
     
     register_as_default_for_extension :css
     accepts :css
-    returns_extension :css
+    returns :css
     
   private
   
@@ -121,7 +121,7 @@ module Hammer
   class SASSParser < CSSParser
 
     accepts :sass, :scss
-    returns_extension :css
+    returns :css
     
     def format=(format)
       @format = format.to_sym

@@ -6,7 +6,7 @@ class ExtensionsTest < Test::Unit::TestCase
 
   class Thing
     include Hammer::ExtensionMapper
-    returns_extension :thing
+    returns :thing
   end
 
   setup do
@@ -26,13 +26,13 @@ class ExtensionsChainTest < Test::Unit::TestCase
     class ParserOne
       include ::Hammer::ExtensionMapper
       accepts :one
-      returns_extension :two
+      returns :two
     end
 
     class ParserTwo
       include ::Hammer::ExtensionMapper
       accepts :two
-      returns_extension :three
+      returns :three
     end
   end
 

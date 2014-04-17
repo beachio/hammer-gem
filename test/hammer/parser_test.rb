@@ -46,7 +46,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
       class ParserOne < ::Hammer::Parser
         include ::Hammer::ExtensionMapper
         accepts :a
-        returns_extension :b
+        returns :b
         def parse(text)
           text.gsub('One', 'Two')
         end
@@ -55,7 +55,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
       class ParserTwo < ::Hammer::Parser
         include ::Hammer::ExtensionMapper
         accepts :b
-        returns_extension :c
+        returns :c
         def parse(text)
           text.gsub('Two', 'Three')
         end
