@@ -26,11 +26,11 @@ module Hammer
     end
 
     def format
-      @format ||= File.extname(@hammer_file.filename)[1..-1]
+      @format ||= File.extname(@path)[1..-1]
     end
     
-    def parse
-      @text = @hammer_file.raw_text
+    def parse(text)
+      @text = text
       
       results = {}
       return {} unless @text
