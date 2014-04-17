@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'lib/hammer/parsers/modules/file_finder'
+require 'parsers/modules/file_finder'
 
 class FileFinderTest < Test::Unit::TestCase
 

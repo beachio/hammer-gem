@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'lib/hammer/parser'
-require 'lib/hammer/parsers/modules/replacement'
+require 'hammer/parser'
+require 'parsers/modules/replacement'
 
 class ReplacementTest < Test::Unit::TestCase
 

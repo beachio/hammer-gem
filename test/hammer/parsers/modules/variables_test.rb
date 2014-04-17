@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'lib/hammer/parser'
-require 'lib/hammer/parsers/modules/variables'
+require 'hammer/parser'
+require 'parsers/modules/variables'
 
 class VariablesTest < Test::Unit::TestCase
 

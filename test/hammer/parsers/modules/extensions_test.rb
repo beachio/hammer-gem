@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'lib/hammer/parsers/modules/extensions'
+require 'parsers/modules/extensions'
 
 class ExtensionsTest < Test::Unit::TestCase
 

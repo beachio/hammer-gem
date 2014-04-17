@@ -1,8 +1,8 @@
-require 'lib/hammer/parsers/modules/extensions'
-require 'lib/hammer/parsers/modules/variables'
-require 'lib/hammer/parsers/modules/optimizer'
-require 'lib/hammer/parsers/modules/file_adder'
-require 'lib/hammer/parsers/modules/file_finder'
+require 'parsers/modules/extensions'
+require 'parsers/modules/variables'
+require 'parsers/modules/optimizer'
+require 'parsers/modules/file_adder'
+require 'parsers/modules/file_finder'
 
 module Hammer
   class Parser
@@ -80,5 +80,5 @@ module Hammer
   end
 end
 
-parsers_path = File.join(File.dirname(__FILE__), 'parsers', '**/*.rb')
+parsers_path = File.join(File.dirname(__FILE__), '..', 'parsers', '**/*.rb')
 Dir[parsers_path].each {|file| require file; }

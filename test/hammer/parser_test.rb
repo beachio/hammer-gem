@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'test_helper'
-require 'lib/hammer/parser'
+require 'hammer/parser'
 
 class HammerParserTest < Test::Unit::TestCase
 

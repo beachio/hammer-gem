@@ -19,7 +19,7 @@ require 'fileutils'
 
 lib_dir = File.dirname(__FILE__) + '/../lib'
 $:.unshift lib_dir unless $:.include?(lib_dir)
-require 'hammer'
+require 'hammer/hammer'
 
 require 'test/unit'
 require 'sass'
