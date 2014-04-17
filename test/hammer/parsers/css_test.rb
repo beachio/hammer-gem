@@ -1,26 +1,15 @@
-# require "test_helper"
+require "test_helper"
 
 class CSSParserTest < Test::Unit::TestCase
-#   include AssertCompilation
+
   context "A CSS Parser" do
     setup do
-      @options = {
-        :input_directory => Dir.mktmpdir,
-        :output_directory => Dir.mktmpdir,
-        :cache_directory => Dir.mktmpdir
-      }
-      # @hammer_project = Hammer::Project.new @options
-      @parser = Hammer::CSSParser.new()
-      @parser.path = "style.css"
-      @parser.stubs(:find_file).returns(nil)
-      @parser.stubs(:find_files).returns([])
-
-      # @css_file = Hammer::HammerFile.new(:filename => 'style.css')
-      # @parser.hammer_file = @css_file
+      @parser = Hammer::CSSParser.new(:path => "style.css")
 
       def test(input, output)
         assert_equal output, @parser.parse(input)
       end
+
       def stub_out(file)
         @parser.stubs(:find_files).returns([file])
       end
@@ -34,9 +23,6 @@ class CSSParserTest < Test::Unit::TestCase
       
       should "parse standard filenames or HTTP links" do
         assert_equal '@import "assets/imported.css";', @parser.parse('@import "imported.css"')
-      end
-
-      should "not parse http links" do
         assert_equal '@import "http://google.com/style.css"', @parser.parse('@import "http://google.com/style.css"')
       end
     end
@@ -101,12 +87,7 @@ class CSSParserTest < Test::Unit::TestCase
 
     
     context "with a CSS file" do
-      
       setup do
-        # @file = Hammer::HammerFile.new
-        # @file.filename = "style.css"
-        # @parser.hammer_file = @file
-        # @file.raw_text = "a {background: red}"
         @file = create_file('style.css', 'a {background: red}', @parser.directory)
       end
       
@@ -116,7 +97,7 @@ class CSSParserTest < Test::Unit::TestCase
 
       should "find scss files when including them" do
         scss_file = create_file "assets/scss_include.scss", "a { background: orange; }", @parser.directory
-        @parser.stubs(:find_files).returns([scss_file])
+        stub_out scss_file
         test "url(scss_include.css)", "url(assets/scss_include.css)"
       end
       
@@ -128,20 +109,25 @@ class CSSParserTest < Test::Unit::TestCase
 
         context "when only looking for this file" do
           setup do
-            @parser.stubs(:find_files).returns([@asset_file])
+            stub_out @asset_file
           end
+
           should "replace the correct file correctly" do
             test "url(_include.css)", "url(assets/_include.css)"
           end
+
           should "do include" do
             test "/* @include _include */", "a { background: orange; }"
           end
+
           should "do paths" do
             test "url(_include.css);", "url(assets/_include.css);"
           end
+
           should "do paths with normal comments" do
             test "url(/* @path _include.css */);", "url(assets/_include.css);"
           end
+
           should "work with more than one url() on a line with or without a ;" do
             test "url(../../_include.css)};url(_include.css)", "url(assets/_include.css)};url(assets/_include.css)"
             test "url(/* @path ../../_include.css */)}url(_include.css)", "url(assets/_include.css)}url(assets/_include.css)"
@@ -167,27 +153,18 @@ class CSSParserTest < Test::Unit::TestCase
 
         end
 
-  #   #     # should "do stupid relative paths" do
-  #   #     #   # TODO: WHAT ? This shouldn't pass.
-  #   #     #   # TODO: Make this more logical.
-  #   #     #   assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
-  #   #     #   assert_compilation "url(/* @path things/like/_include.css */);", "url(assets/_include.css);"
-  #   #     # end
-
         context "with multiple paths" do
           setup do
             @file = create_file("something/assets/_include.css", "text", @parser.directory)
           end
 
           should "match files with matching file paths" do
-            @parser.expects(:find_files).returns([@file])
+            @parser.expects(:find_files).with('something/assets/_include.css').returns([@file]).at_least_once
             test "url(something/assets/_include.css);", "url(something/assets/_include.css);"
-            @parser.expects(:find_files).with('ing/assets/_include.css').returns([@file])
+            @parser.expects(:find_files).with('ing/assets/_include.css').returns([@file]).at_least_once
             test "url(/* @path ing/assets/_include.css */);", "url(something/assets/_include.css);"
           end
-
         end
-
       end
 
       should "not do http paths" do
@@ -199,6 +176,7 @@ class CSSParserTest < Test::Unit::TestCase
       end        
 
       should "not change query paths with unknown files" do
+        @parser.stubs(:find_files).returns([])
         test "url(bullshit.png?a);", "url(bullshit.png?a);"          
       end
       
@@ -209,3 +187,10 @@ class CSSParserTest < Test::Unit::TestCase
     end
   end
 end
+
+# should "do stupid relative paths" do
+#   # TODO: WHAT ? This shouldn't pass.
+#   # TODO: Make this more logical.
+#   assert_compilation "url(things/like/_include.css);", "url(assets/_include.css);"
+#   assert_compilation "url(/* @path things/like/_include.css */);", "url(assets/_include.css);"
+# end

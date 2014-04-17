@@ -21,7 +21,8 @@ module Hammer
     include Dependency
     include Paths
 
-    def initialize
+    def initialize(options={})
+      @path ||= options[:path]
       @directory = Dir.mktmpdir
     end
 
