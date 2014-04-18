@@ -71,7 +71,7 @@ class CSSParserTest < Test::Unit::TestCase
       end      
       
       should "not parse css gradients as includes" do
-        test "a/* @include css-gradient(#dfdfdf,#f8f8f8); */", "a/* @include css-gradient(#dfdfdf,#f8f8f8); */"
+        test "/* @include css-gradient(#dfdfdf,#f8f8f8); */", "/* @include css-gradient(#dfdfdf,#f8f8f8); */"
       end
       
       should "parse empty url()" do

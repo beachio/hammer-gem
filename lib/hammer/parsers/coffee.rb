@@ -4,53 +4,48 @@ module Hammer
     accepts :coffee
     returns :js
     register_as_default_for_extensions :js
-    
-    def to_javascript
-      parse(@original_text)
-    end
+    attr_accessor :to_coffeescript
     
     def to_format(format)
-      if format == :js
+      case format
+      when :js
         to_javascript
-      elsif format == :coffee
+      when :coffee
         to_coffeescript
       end
     end
 
-    def to_coffeescript
-      @original_text
-    end
-
-    def parse(text)
+    def parse(text=nil)
+      text ||= @to_coffeescript
+      @to_coffeescript ||= text
       @text = text
-      @original_text = text
-      includes()
-      @text = CoffeeScript.compile @text
-      replace_includes()
-      @text
+
+      text = includes text
+      text = CoffeeScript.compile text
+      text = replace_includes text
+
+      text
     rescue ExecJS::ProgramError, ExecJS::RuntimeError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
       message = error.message.split("Error: ")[1]
       message = "Coffeescript Error: #{message}"
-      # @hammer_file.error = Hammer::Error.new(message, line)
-      # raise @hammer_file.error
+      # TODO: Do something with line!
       raise message
     end
-    
-    def replace_includes
-      @text = replace(@text, /__hammer_include\((.*)\)/) do |invocation, line_number|
+    alias_method :to_javascript, :parse
+
+  private
+
+    def replace_includes(text)
+      return replace(text, /__hammer_include\((.*)\)/) do |invocation, line_number|
         file = invocation.gsub("__hammer_include(", "")[0..-2]
         "/* @include #{file} */"
       end
     end
     
-    def self.finished_extension
-      "js"
-    end
-    
-    def includes
+    def includes(text)
       lines = []
-      @text = replace(@text, /# @include (.*)/) do |invocation, line_number|
+      return replace(text, /# @include (.*)/) do |invocation, line_number|
         tags = invocation.gsub("# @include ", "").strip.split(" ")
         a = tags.map do |tag|
 

@@ -19,11 +19,12 @@ module Hammer
 
     def parse(text)
       @text = text
-      includes
-      clever_paths
-      url_paths
-      import_url_paths
-      return @text
+
+      text = includes(text)
+      text = clever_paths(text)
+      text = url_paths(text)
+      text = import_url_paths(text)
+      return text
     end
     
     register_as_default_for_extension :css
@@ -36,8 +37,8 @@ module Hammer
       file_path == "" || file_path[0..3] == "http" || file_path[0..1] == "//" || file_path[0..4] == "data:" || file_path[0..0] == "/"
     end
     
-    def import_url_paths
-      @text = replace(@text, /@import "(\S*?)"/) do |url_tag, line_number|
+    def import_url_paths(text)
+      replace(text, /@import "(\S*?)"/) do |url_tag, line_number|
         
         file_path = url_tag.gsub('@import ', '').gsub('"', '').gsub(";", "").strip
         
@@ -58,8 +59,8 @@ module Hammer
       end
     end
 
-    def url_paths
-      @text = replace(@text, /url\((\S*?)\)/) do |url_tag, line_number|
+    def url_paths(text)
+      replace(text, /url\((\S*?)\)/) do |url_tag, line_number|
 
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
         
@@ -83,8 +84,8 @@ module Hammer
       end
     end
     
-    def clever_paths
-      @text = replace(@text, /\/\* @path (.*?) \*\//) do |tag, line_number|
+    def clever_paths(text)
+      replace(text, /\/\* @path (.*?) \*\//) do |tag, line_number|
         
         file_path = tag.gsub('/* @path ', '').gsub("*/", "").strip
         
@@ -101,9 +102,9 @@ module Hammer
       end
     end
     
-    def includes
+    def includes(text)
       lines = []
-      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
+      replace(text, /\/\* @include (.*) \*\//) do |tag, line_number|
         return tag if tag.include? "("
 
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
@@ -125,17 +126,8 @@ module Hammer
     accepts :sass, :scss
     returns :css
     
-    def format=(format)
-      @format = format.to_sym
-    end
-    
     def format
       @path.split('.')[-1].to_sym
-    end
-    
-    def text=(new_text)
-      super
-      @raw_text = new_text
     end
     
     def to_css
@@ -164,15 +156,14 @@ module Hammer
       raise "Error in #{@path}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
       
       semicolon = format == :scss ? ";\n" : "\n"
-      @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)
+      text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", text].join(semicolon)
       
-      includes()
-      clever_paths()
-
-      engine = Sass::Engine.new(@text, options)
+      text = includes(text)
+      text = clever_paths(text)
 
       begin
-        @text = engine.render()
+        engine = Sass::Engine.new(text, options)
+        text = engine.render()
         
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
         dependencies.each do |path|
@@ -197,20 +188,15 @@ module Hammer
         end
       end
       
-      @text = @text[0..-2] if @text.end_with? "\n"
-
-      @text
+      text = text[0..-2] if text.end_with? "\n"
+      text
     end
     
-    def self.finished_extension
-      "css"
-    end
+  private
     
-    private
-    
-    def includes
+    def includes(text)
       lines = []
-      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
+      replace(text, /\/\* @include (.*) \*\//) do |tag, line_number|
         
         return tag if tag.include? "("
         
