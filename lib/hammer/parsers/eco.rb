@@ -6,21 +6,16 @@ module Hammer
     returns :js
 
     def parse(text)
-      if !@original_text
-        @original_text = text
-        @text = text
-        @text = Eco.compile(@text)
-        raise "Parse called without @path!" unless @path
-        name = File.basename(@path, '.*')
-        @text = "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{@text}"
-      end
-      @text
+      @original_text ||= text
+      text = Eco.compile(text)
+      raise "Parse called without path! Nothing to name the template." unless @path
+      name = File.basename(@path, '.*')
+      text = "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{text}"
+      text
     end
 
     def to_format(format)
-      if format == :js
-        parse(@original_text)
-      end
+      parse(@original_text) if format == :js
     end
   end
 end
