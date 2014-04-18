@@ -3,6 +3,16 @@ module Hammer
 
     attr_accessor :filenames
 
+    def filenames
+      if @filenames.any?
+        @filenames
+      else
+        Dir.glob(File.join(@directory, "**/*")).map {|file|
+          file.gsub(@directory+"/", "")
+        }
+      end
+    end
+
     def regex_for(filename, extension=nil)
       
       require "uri"

@@ -6,5 +6,9 @@ module Hammer
     def find_file_with_dependency(tag, extension=nil)
       find_files(tag, extension)[0]
     end
+
+    def find_files_with_dependency(tag, extension=nil)
+      find_files(tag, extension)
+    end
   end
 end

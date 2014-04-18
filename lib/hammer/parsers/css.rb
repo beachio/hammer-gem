@@ -161,7 +161,7 @@ module Hammer
       @original_text = text
       @text = text
 
-      raise "Error in #{@hammer_file.filename}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
+      raise "Error in #{@path}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
       
       semicolon = format == :scss ? ";\n" : "\n"
       @text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", @text].join(semicolon)

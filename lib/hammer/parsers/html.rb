@@ -3,6 +3,9 @@ require "amp"
 module Hammer
   class HTMLParser < Parser
 
+    accepts :html
+    returns :html
+
     RELOADER_SCRIPT = "
         <!-- Hammer reload -->
           <script>
@@ -50,6 +53,9 @@ module Hammer
       output_variables()
       current_tags()
       ensure_text_has_no_leading_blank_lines()
+
+      @text = @text[0..-2] if @text.end_with? "\n"
+
       return @text
     end
     
@@ -57,10 +63,6 @@ module Hammer
       @variables ||= {}
     end
     
-    def self.finished_extension
-      'html'
-    end
-
   private
     
     def placeholders
@@ -178,7 +180,9 @@ module Hammer
             if files.empty?
               raise "Includes: File <b>#{h tag}</b> couldn't be found."
             else
-              File.open(files[0]).read()
+              file = files[0]
+              file = File.join @directory, file.gsub(@directory, "")
+              File.open(file).read()
             end
 
           end.compact.join("\n")
@@ -205,7 +209,7 @@ module Hammer
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          [tag.split("")[0], path_to_file(file), tag.split("")[-1]].join()
+          [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
         end
       end
     end
@@ -216,12 +220,12 @@ module Hammer
   
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-        file = find_file(filename)
+        file = find_files(filename, 'html')[0]
 
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
         else
-          path_to_file(file)
+          path_to(file)
         end
       end
       alternative_path_tags
@@ -265,10 +269,9 @@ module Hammer
         hammer_files_to_tag = []
         hammer_files.each do |file|
           
-          next if file.is_a_compiled_file
-          next if File.basename(file.filename).start_with?("_")
-          
-          path = path_to_file(file)
+          # next if file.is_a_compiled_file # TODO
+          next if File.basename(file).start_with?("_")
+          path = path_to(file)
           
           next if @included_stylesheets.include?(path) 
           @included_stylesheets << path
@@ -278,7 +281,7 @@ module Hammer
         
         if optimized
           file = add_file_from_files(hammer_files_to_tag, :css)
-          "<link rel='stylesheet' href='#{path_to_file(file)}'>" if file
+          "<link rel='stylesheet' href='#{path_to(file)}'>" if file
         else
           paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
         end
@@ -290,11 +293,15 @@ module Hammer
       # return false if files.collect(&:error) != []
       contents = []
       
-      key = files.collect(&:filename).join(':') + ":#{format}"
+      key = files.join(':') + ":#{format}"
       return @@cached_files[key] if @@cached_files[key]
       
       files.each do |file|
-        contents << Hammer::Parser.for_hammer_file(file).to_format(format)
+        # TODO: We need a better way of getting the compiled contents of a file.
+        parser = Hammer::Parser.for_filename(file).last.new()
+        parser.parse(File.open(File.join @directory, file).read)
+        contents << parser.to_format(format)
+
         if format == :js
           contents << ";"
         end
@@ -302,7 +309,7 @@ module Hammer
       contents = contents.join("\n\n\n\n")
       filename = Digest::MD5.hexdigest(contents)
       file = add_file("#{filename}.#{format}", contents)
-      file.source_files = files
+      # file.source_files = files # TODO
       
       @@cached_files[key] = file
       
@@ -327,10 +334,9 @@ module Hammer
         hammer_files_to_tag = []
         hammer_files.each do |file|
           
-          next if file.is_a_compiled_file
-          next if File.basename(file.filename).start_with?("_")
-          
-          path = path_to_file(file)
+          # next if file.is_a_compiled_file # TODO
+          next if File.basename(file).start_with?("_")
+          path = path_to(file)
           
           next if @included_javascripts.include?(path) 
           @included_javascripts << path
@@ -339,7 +345,7 @@ module Hammer
         end        
         if optimized
           file = add_file_from_files(hammer_files_to_tag, :js)
-          "<script src='#{path_to_file(file)}'></script>" if file
+          "<script src='#{path_to(file)}'></script>" if file
         else
           paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
         end

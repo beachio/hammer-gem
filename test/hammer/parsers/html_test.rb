@@ -45,10 +45,7 @@ class TestHtmlParser < Test::Unit::TestCase
 
     context "with another file" do
       setup do
-        header = File.join(Dir.mktmpdir, 'header.html')
-        File.open(header, 'w') do |f|
-          f.write("header")
-        end
+        header = create_file 'header.html', 'header', @parser.directory
         @parser.expects(:find_files).returns([header])
       end
 

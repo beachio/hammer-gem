@@ -71,8 +71,10 @@ module Hammer
           
           raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
           
-          if file.extension == "haml"
+          if file.end_with? ".haml"
 
+            file = File.join(@directory, file)
+            
             # Insert the text of this file as an array.
             lines[line_number] = File.open(file).read.array_of_lines_indented_by(line.indentation_string)
 
@@ -164,7 +166,5 @@ module Hammer
     end
     
   end
-  # Hammer::Parser.register_for_extensions HAMLParser, ['haml']
-  # Hammer::Parser.register_as_default_for_extensions HAMLParser, ['haml']
-
+  #
 end

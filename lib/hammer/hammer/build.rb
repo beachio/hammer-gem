@@ -56,9 +56,9 @@ module Hammer
         # filename = file_path.to_s.gsub(@input_directory.to_s, "")
         # filename = filename[1..-1] if filename.start_with? "/"
 
-        unless ignore? file_path
+        # unless ignore? file_path
           files << file_path
-        end
+        # end
       end
 
       @hammer_files = files
@@ -83,6 +83,11 @@ module Hammer
           end
           @results[path] = data
         end
+
+        if output_file != Hammer::Parser.new.output_filename_for(output_file)
+          FileUtils.move(output_file, Hammer::Parser.new.output_filename_for(output_file))
+        end
+
       end
 
       return @results

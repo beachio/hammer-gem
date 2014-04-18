@@ -3,6 +3,9 @@ require 'kramdown'
 module Hammer
   class MarkdownParser < Parser
 
+    accepts :md
+    returns :html
+
     def self.finished_extension
       "html"
     end

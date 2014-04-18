@@ -57,9 +57,11 @@ module Hammer
         end
       end
 
-      extensions = ExtensionMap.parsers.select {|parser|
-        parser.finished_extension == extension
-      }.map {|parser|
+      parsers = ExtensionMap.parsers.select {|parser|
+        parser.finished_extension.to_s == extension.to_s
+      }
+      
+      extensions = parsers.map {|parser|
         begin
           extensions_for[parser]
         rescue => e

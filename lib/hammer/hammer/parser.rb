@@ -34,6 +34,12 @@ module Hammer
       path
     end
 
+    def path=(new_path)
+      raise "New path was a Pathname" if new_path.is_a? Pathname
+      @path = new_path
+      @filenames = Dir.glob(File.join(@path, "**/*"))
+    end
+    
     def parse(text="")
       return text
     end
@@ -72,7 +78,7 @@ module Hammer
 
           parser.directory = directory
           parser.output_directory = output_directory
-          parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory))
+          parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = optimized
 
           text = parser.parse(text)
