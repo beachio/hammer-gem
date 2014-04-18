@@ -19,8 +19,8 @@ class EcoParserTest < Test::Unit::TestCase
     end
 
     should "return JS for to_format with :js" do
-      @parser.parse('<span><%= title %></span>')
-      assert_equal @parser.to_format(:js), @parser.text
+      text = @parser.parse('<span><%= title %></span>')
+      assert_equal @parser.to_format(:js), text
       assert @parser.to_format(:js).include? "<span>"
       assert @parser.to_format(:js).include? "window.JST[\"app\"]"
     end

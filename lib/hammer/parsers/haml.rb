@@ -49,9 +49,9 @@ module Hammer
       parse
     end
     
-    def includes
+    def includes(text)
       
-      lines = text_as_lines
+      lines = text_as_lines(text)
       
       line_number = 0
       # lines.each_with_index do |line, line_number|
@@ -94,26 +94,26 @@ module Hammer
         line_number += 1
       end
       
-      @text = lines.join("\n")
+      lines.join("\n")
     end
      
     def to_haml
-      @raw_text
+      @text
     end
     
     def parse(text)
       @text = text
-      includes()
-      @text = convert(@text)
-      @text = convert_comments(@text)
-      @text = @text[0..-2] if @text.end_with?("\n")
-      @text
+      text = includes(text)
+      text = convert(text)
+      text = convert_comments(text)
+      text = text[0..-2] if text.end_with?("\n")
+      text
     end
     
   private
 
-    def text_as_lines
-      @text.split("\n")
+    def text_as_lines(text)
+      text.split("\n")
     end
 
     # This function takes an array of lines, and an original line that has been replaced with input.
