@@ -8,34 +8,27 @@ module Hammer
 
     def to_javascript
       parse(@text)
-      @text
     end
     
     def to_format(format)
       if format == :js
-        @text
+        parse(@text)
       end
     end
 
     def parse(text)
-      if !@parsed
-        @original_text = text
-        @text = text
-        includes()
-        @parsed = true
-      end
-      @text
-    end
-    
-    def self.finished_extension
-      "js"
+      @text = text
+
+      text = includes(text)
+      text
     end
     
   private
   
-    def includes
+    def includes(text)
       lines = []
-      @text = replace(@text, /\/\* @include (.*) \*\//) do |tag, line_number|
+      
+      replace(text, /\/\* @include (.*) \*\//) do |tag, line_number|
         tags = tag.gsub("/* @include ", "").gsub("*/", "").strip.split(" ")
         a = tags.map do |tag|
           file = find_file_with_dependency(tag, 'js')
@@ -53,7 +46,4 @@ module Hammer
     
   end
   
-  # Hammer::Parser.register_for_extensions JSParser, ['js']
-  # Hammer::Parser.register_as_default_for_extensions JSParser, ['js']
-
 end
