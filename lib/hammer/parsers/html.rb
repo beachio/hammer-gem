@@ -33,30 +33,34 @@ module Hammer
     @@cached_files = {}
     
     def to_html
-      @text = @hammer_file.raw_text
-      get_variables()
-      includes()
-      @text
+      text = @text
+      get_variables(@text)
+      text = includes(@text)
+      text
     end
 
     def parse(text)
       @text = text
-      get_variables()
-      path_tags()
-      includes()
-      placeholders()
-      get_variables()
-      reload_tags()
-      stylesheet_tags()
-      javascript_tags()
-      path_tags()
-      output_variables()
-      current_tags()
-      ensure_text_has_no_leading_blank_lines()
 
-      @text = @text[0..-2] if @text.end_with? "\n"
+      get_variables(text)
 
-      return @text
+      text = path_tags(text)
+      text = includes(text)
+      text = placeholders(text)
+
+      get_variables(text)
+
+      text = reload_tags(text)
+      text = stylesheet_tags(text)
+      text = javascript_tags(text)
+      text = path_tags(text)
+      text = output_variables(text)
+      text = current_tags(text)
+      text = ensure_text_has_no_leading_blank_lines(text)
+
+      text = text[0..-2] if text.end_with? "\n"
+
+      return text
     end
     
     def variables
@@ -65,8 +69,8 @@ module Hammer
     
   private
     
-    def placeholders
-      @text = replace(@text, /<!-- @placeholder (.*?) -->/) do |tag, line_number|
+    def placeholders(text)
+      text = replace(text, /<!-- @placeholder (.*?) -->/) do |tag, line_number|
         options = tag.gsub("<!-- @placeholder ", "").gsub("-->", "").strip.split(" ")
         
         dimensions = options[0]
@@ -87,32 +91,32 @@ module Hammer
         end
       end
       
-      @text = replace(@text, /<!-- @kitten (\S*) -->/) do |tag, line_number|
+      text = replace(text, /<!-- @kitten (\S*) -->/) do |tag, line_number|
         dimensions = tag.gsub("<!-- @kitten ", "").gsub("-->", "").strip
         x = dimensions.split('x')[0]
         y = dimensions.split('x')[1]
         "<img src='http://placekitten.com/#{x}/#{y}' width='#{x}' height='#{y}' alt='Meow' />"
       end
+
+      text
     end
     
-    def get_variables
-      @text = replace(@text, /<!-- \$(.*?) -->/) do |tag, line_number|
+    def get_variables(text)
+      replace(text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
         variable_name = variable_declaration[0]
         variable_value = variable_declaration[1..-1].join(' ')
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
-        if variable_value.start_with?("|") || variable_value == ""
-          tag
-        else
+        if variable_value.start_with?("|") && variable_value == ""
           self.variables[variable_name] = variable_value
-          tag
         end
+        tag
       end
     end
     
-    def output_variables
-      @text = replace(@text, /<!-- \$(.*?) -->/) do |tag, line_number|
+    def output_variables(text)
+      replace(text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
 
         has_spaces = variable_declaration.include?(' ')
@@ -137,10 +141,10 @@ module Hammer
       end
     end
     
-    def includes
-      while @text.match /<!-- @include (.*?) -->/
+    def includes(text)
+      while text.match /<!-- @include (.*?) -->/
         
-        @text = replace(@text, /<!-- @include (.*?) -->/) do |tags, line_number|
+        text = replace(text, /<!-- @include (.*?) -->/) do |tags, line_number|
           tags = tags.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
           
           tags.map do |tag|
@@ -188,18 +192,19 @@ module Hammer
           end.compact.join("\n")
         end
       end
+      text
     end
 
-    def reload_tags
+    def reload_tags(text)
       if optimized
-        @text = text.gsub(/<!-- @reload -->/, "")
+        return text.gsub(/<!-- @reload -->/, "")
       else
-        @text = text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
+        return text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
       end
     end
     
-    def alternative_path_tags
-      @text = replace(@text, /['|"]@path (.*?)['|"]/) do |tag, line_number|
+    def alternative_path_tags(text)
+      replace(text, /['|"]@path (.*?)['|"]/) do |tag, line_number|
         filename = tag[6..-2]
         
         filename = get_variable(filename) if filename.split("")[0] == "$"
@@ -214,8 +219,8 @@ module Hammer
       end
     end
     
-    def path_tags
-      @text = replace(@text, /<!-- @path (.*?) -->/) do |tag, line_number|
+    def path_tags(text)
+      text = replace(text, /<!-- @path (.*?) -->/) do |tag, line_number|
         filename = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
   
         filename = get_variable(filename) if filename.split("")[0] == "$"
@@ -228,7 +233,8 @@ module Hammer
           path_to(file)
         end
       end
-      alternative_path_tags
+      text = alternative_path_tags(text)
+      text
     end
     
     def get_variable(variable_name)
@@ -245,10 +251,10 @@ module Hammer
       return variable_value
     end
 
-    def stylesheet_tags
+    def stylesheet_tags(text)
       @included_stylesheets ||= []
       
-      @text = replace(@text, /<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
+      replace(text, /<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
         
         filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
@@ -316,10 +322,10 @@ module Hammer
       file
     end
         
-    def javascript_tags
+    def javascript_tags(text)
       @included_javascripts ||= []
       
-      @text = replace(@text, /<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
+      replace(text, /<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
         
         filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")
@@ -352,23 +358,21 @@ module Hammer
       end
     end
     
-    def current_tags
-      # Otherwise, let's Amp it.
-      # if @hammer_file
+    def current_tags(text)
       if filename
-        @text = Amp.compile(@text, File.basename(filename), 'current')
+        Amp.compile(text, File.basename(filename), 'current')
+      else
+        text
       end
-      # end
     end
     
-    def ensure_text_has_no_leading_blank_lines
-      @text ||= ""
+    def ensure_text_has_no_leading_blank_lines(text)
+      text ||= ""
       while text.split(/\n|\t|\r/)[0] == ""
-        @text = text[1..-1]
+        text = text[1..-1]
       end
+      text
     end
     
   end
-  # Hammer::Parser.register_for_extensions HTMLParser, ['html']
-  # Hammer::Parser.register_as_default_for_extensions HTMLParser, ['html']
 end
