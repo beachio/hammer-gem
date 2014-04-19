@@ -112,9 +112,7 @@ module Hammer
           # add_wildcard_dependency tag
           file = find_file_with_dependency(tag, 'css')
           raise "Included file <b>#{tag}</b> couldn't be found." unless file
-          @parser = Hammer::Parser.for_filename(file).last.new()
-          @parser.parse(File.open(file).read)
-          @parser.to_css()
+          parse_file(file, :css)
         end
         a.compact.join("\n")
       end

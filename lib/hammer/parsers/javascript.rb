@@ -36,9 +36,7 @@ module Hammer
           raise "Included file <strong>#{h tag}</strong> couldn't be found." unless file
           
           # TODO: Create and parse in tests
-          parser = Hammer::Parser.for_filename(file).last.new()
-          parser.parse(File.open(file).read())
-          parser.to_javascript()
+          parse_file(file, :js)
         end
         a.compact.join("\n")
       end

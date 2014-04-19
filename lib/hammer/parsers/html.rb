@@ -304,9 +304,7 @@ module Hammer
       
       files.each do |file|
         # TODO: We need a better way of getting the compiled contents of a file.
-        parser = Hammer::Parser.for_filename(file).last.new()
-        parser.parse(File.open(File.join @directory, file).read)
-        contents << parser.to_format(format)
+        parse_file(file, format)
 
         if format == :js
           contents << ";"

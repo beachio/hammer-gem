@@ -157,5 +157,12 @@ module Hammer
       base.send :extend, ClassMethods
     end
 
+    def parse_file(file, destination_extension)
+      # TODO: This should loop through the parsers for this file until we're at the right extension.
+      parser = Hammer::Parser.for_filename(file).last.new()
+      parser.parse(File.open(file).read())
+      parser.to_format(destination_extension.to_sym)
+    end
+
   end
 end
