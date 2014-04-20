@@ -26,7 +26,6 @@ $LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
 $LOAD_PATH.unshift root + 'vendor' + 'bundle'
 
 module Hammer; end
-require 'rubygems'
 require 'bundler/setup'
 # require 'hammer/build'
 # require "hammer/hammer"
