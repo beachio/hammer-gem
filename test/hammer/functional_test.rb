@@ -16,6 +16,7 @@ class FunctionalTest < Test::Unit::TestCase
   def create_directories
     teardown()
     @options.values.each do |path|
+      FileUtils.rm_rf(path)
       FileUtils.mkdir_p(path)
     end
   end
