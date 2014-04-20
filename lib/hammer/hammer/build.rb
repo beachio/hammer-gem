@@ -1,5 +1,6 @@
 require 'pathname'
 require 'fileutils'
+require 'lib/hammer/templates/html'
 
 module Hammer
 
@@ -99,9 +100,7 @@ module Hammer
 
     def to_html
       compile() unless @results
-
-      
-
+      HTMLTemplate.new(@results).to_s
     end
   end
 

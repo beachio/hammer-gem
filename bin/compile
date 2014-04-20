@@ -35,6 +35,7 @@ trap('INT', 'DEFAULT')
 if ARGV.include?('PRELOAD') and !interrupted
   build.wait do |project, app_template|
     results = build.compile()
+    puts build.to_html()
     exit build.error ? 1 : 0
   #   not_too_fast(start)
   #   puts app_template unless ARGV.include?('DEBUG')
@@ -42,6 +43,7 @@ if ARGV.include?('PRELOAD') and !interrupted
   end
 else
   results = build.compile()
+  puts build.to_html()
   exit build.error ? 1 : 0
 
   # build.compile do |project, app_template|

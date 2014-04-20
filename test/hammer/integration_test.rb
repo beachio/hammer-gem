@@ -1,4 +1,6 @@
-require 'test_helper'
+#!/usr/bin/env ruby
+
+require 'test/hammer/test_helper'
 require "tmpdir"
 # Larry told me to use open3 instead of backticks.
 require "open3"
@@ -7,8 +9,6 @@ include Open3
 class TestIntegration < Test::Unit::TestCase
 
   def test_failure(optimized=false)
-
-    puts "Test failure time"
 
     input_directory  = File.join('test', 'integration', 'missingdirectory')
     output_directory = Dir.mktmpdir('Build')
@@ -30,8 +30,6 @@ class TestIntegration < Test::Unit::TestCase
     end
     
     assert error == ""
-    puts "Output length: #{output.length}"
-    puts "Output: #{error}" if output.length <= 0
     assert output.length > 0
     assert output.include? "build-error" 
 
