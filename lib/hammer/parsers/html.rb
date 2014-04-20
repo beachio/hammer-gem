@@ -307,6 +307,7 @@ module Hammer
       end
     end
     
+    # Take a bunch of CSS or JS files and combine them into one 10981cd72e39481a723.js digest file.
     def add_file_from_files(files, format)
       return false if files == []
       # return false if files.collect(&:error) != []

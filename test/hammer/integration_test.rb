@@ -10,7 +10,7 @@ class TestIntegration < Test::Unit::TestCase
 
   def test_failure(optimized=false)
 
-    input_directory  = File.join('test', 'integration', 'missingdirectory')
+    input_directory  = File.join('test', 'hammer', 'integration', 'missingdirectory')
     output_directory = Dir.mktmpdir('Build')
     cache_directory  = Dir.mktmpdir('cache')
     
@@ -37,7 +37,7 @@ class TestIntegration < Test::Unit::TestCase
   end
 
   def test_compilation(optimized=false)
-    input_directory  = File.join('test', 'integration', 'case1')
+    input_directory  = File.join('test', 'hammer', 'integration', 'case1')
     output_directory = Dir.mktmpdir('Build')
     cache_directory  = Dir.mktmpdir('cache')
 
@@ -53,10 +53,6 @@ class TestIntegration < Test::Unit::TestCase
       output = stdout.read
       error = stderr.read
     end
-
-    assert error == ""
-    assert output.length > 0
-    assert !output.include?("build-error")
 
     file = File.join output_directory, 'index.html'
     assert File.open(file).read.include? "<html>"

@@ -160,9 +160,13 @@ module Hammer
     end
 
     def parse_file(file, destination_extension)
-      # TODO: This should loop through the parsers for this file until we're at the right extension.
       parser = Hammer::Parser.for_filename(file).last.new()
-      parser.parse(File.open(file).read())
+      # TODO: This should loop through the parsers for this file until we're at the right extension.
+      path = file
+      if !path.include? @directory
+        path = File.join(@directory, file)
+      end
+      parser.parse(File.open(path).read())
       parser.to_format(destination_extension.to_sym)
     end
 

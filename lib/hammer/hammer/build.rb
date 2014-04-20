@@ -88,11 +88,16 @@ module Hammer
           @results[path] = data
 
           @error = true if data[:error] 
+
+          @results[path][:filename] = path
+          @results[path][:output_filename] = path
+
+          if output_file != Hammer::Parser.new.output_filename_for(output_file)
+            @results[path][:output_filename] = Hammer::Parser.new.output_filename_for(path)
+            FileUtils.move(output_file, Hammer::Parser.new.output_filename_for(output_file))
+          end
         end
 
-        if output_file != Hammer::Parser.new.output_filename_for(output_file)
-          FileUtils.move(output_file, Hammer::Parser.new.output_filename_for(output_file))
-        end
       end
 
       return @results

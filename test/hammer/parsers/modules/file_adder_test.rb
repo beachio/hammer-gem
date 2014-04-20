@@ -18,6 +18,7 @@ class VariablesTest < Test::Unit::TestCase
 
       @object = AddingFilesTestParser.new
       @object.directory = Dir.mktmpdir
+      @object.output_directory = Dir.mktmpdir
     end
 
     should "be able to create a file" do
