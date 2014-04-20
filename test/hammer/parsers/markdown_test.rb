@@ -13,5 +13,12 @@ class TestMarkdown < Test::Unit::TestCase
     should "preserve comments" do
       assert_equal @parser.parse("<!-- This is markdown -->"),  "<!-- This is markdown -->"
     end
+
+    should "markdown includes" do
+      input = "<!-- @include include -->"
+      @parser.parse(input)
+      assert_equal input, @parser.to_format(:md)
+      assert_equal @parser.parse(input), @parser.to_format(:html)
+    end
   end
 end

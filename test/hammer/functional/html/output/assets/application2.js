@@ -1,4 +1,1 @@
-(function() {
-
-
-}).call(this);
+var a = "That";

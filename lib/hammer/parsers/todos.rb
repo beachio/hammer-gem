@@ -33,20 +33,32 @@ module Hammer
       @text = text
       
       results = {}
-      return {} unless @text
-      return {} if !regex or !@text.match(regex)
+      # return "" unless @text
+      return @text if !regex or !@text.match(regex)
       
-      @text.split("\n").each_with_index do |line, line_number|
-        line_number += 1
-        line.scan(regex).each do |messages|
-          messages.flatten.compact.each do |message|
-            results[line_number] ||= []
-            results[line_number] << message.strip
-          end
-        end
+      text = replace(text, regex) do |message, line_number|
+        message = message.scan(regex).flatten.first
+        (results[line_number] ||= []) << message.strip
+        message
+      end
+
+      # @text.split("\n").each_with_index do |line, line_number|
+      #   line_number += 1
+      #   line.scan(regex).each do |messages|
+      #     messages.flatten.compact.each do |message|
+      #       results[line_number] ||= []
+      #       results[line_number] << message.strip
+      #     end
+      #   end
+      # end
+
+      results.each do |line, message|
+        @todos ||= {}
+        @todos[line] ||= []
+        @todos[line] = message
       end
       
-      return results
+      return @text
     end
   end
 end

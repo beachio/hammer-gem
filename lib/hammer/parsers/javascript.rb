@@ -6,6 +6,10 @@ module Hammer
   
   class JSParser < Parser
 
+    accepts :js
+    returns :js
+    register_as_default_for_extensions :js
+
     def to_javascript
       parse(@text)
     end

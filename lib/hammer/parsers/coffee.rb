@@ -3,7 +3,7 @@ module Hammer
 
     accepts :coffee
     returns :js
-    register_as_default_for_extensions :js
+    register_as_default_for_extensions :coffee
     attr_accessor :to_coffeescript
     
     def to_format(format)

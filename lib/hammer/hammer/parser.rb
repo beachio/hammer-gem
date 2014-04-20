@@ -12,7 +12,7 @@ module Hammer
     #TODO: Do we move dependencies into a module?
     attr_accessor :text
     attr_accessor :dependencies, :wildcard_dependencies
-    attr_accessor :path, :directory, :variables, :messages
+    attr_accessor :path, :directory, :variables, :messages, :todos
     attr_accessor :added_files
     include ExtensionMapper
     include Variables
@@ -75,7 +75,11 @@ module Hammer
 
         # Parse here
         text   = File.open(File.join(directory, filename), 'r').read()
-        Hammer::Parser.for_filename(filename).each do |parser_class|
+
+        parsers = [Hammer::TodoParser]
+        parsers += Hammer::Parser.for_filename(filename)
+
+        parsers.each do |parser_class|
           parser = parser_class.new().from_hash(data)
 
           parser.directory = directory

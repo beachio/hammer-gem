@@ -6,21 +6,16 @@ module Hammer
     accepts :md
     returns :html
 
-    def self.finished_extension
-      "html"
-    end
-
-    def to_html
-      # TODO: Make the other to_format calls work like this with setting @text in parse(text)?
-      parse(@text)
-    end
-    
-    def to_markdown
-      @raw_text
+    def to_format(format)
+      if format == :html
+        parse(@markdown)
+      elsif format == :md
+        @markdown
+      end
     end
     
     def parse(text)
-      @text = text
+      @markdown = text
       text = convert(text)
       text = text[0..-2] if text.end_with?("\n")
       text
