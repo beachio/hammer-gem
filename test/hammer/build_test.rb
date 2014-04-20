@@ -3,6 +3,7 @@
 require 'rake'
 require 'test_helper'
 require 'tmpdir'
+require 'hammer/build'
 
 class BuildTest < Test::Unit::TestCase
 

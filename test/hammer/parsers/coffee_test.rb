@@ -30,7 +30,7 @@ class CoffeeParserTest < Test::Unit::TestCase
     end
 
     should "Raise an error with bad Coffee" do
-      assert_raises RuntimeError do |e|
+      assert_raises RuntimeError do |e, whatever|
         @parser.parse("a = function(){};")
       end
     end

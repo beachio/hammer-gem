@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/hammer/test_helper'
+require 'hammer/test_helper'
 require "tmpdir"
 # Larry told me to use open3 instead of backticks.
 require "open3"
@@ -29,7 +29,7 @@ class TestIntegration < Test::Unit::TestCase
       error = stderr.read
     end
     
-    assert error == ""
+    assert_equal "", error
     assert output.length > 0
     assert output.include? "build-error" 
 

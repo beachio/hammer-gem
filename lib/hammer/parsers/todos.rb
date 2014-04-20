@@ -1,12 +1,14 @@
 module Hammer
   class TodoParser < Parser
 
-    CSS_REGEX = /\/* @(?:todo|TODO) (.*?)\*\//
-    SCSS_SASS_REGEX = /\/\/ @(?:todo|TODO) (.*)|\/\* @(?:todo|TODO) (.*) \*\//
-    HTML_REGEX = /<!-- @(?:todo|TODO) (.*?) -->/
-    COFFEE_REGEX = /# @(?:todo|TODO) (.*)/
-    JST_JS_REGEX = /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
-    HAML_REGEX = /\/ @(?:todo|TODO) (.*)/
+    if !defined? CSS_REGEX
+      CSS_REGEX = /\/* @(?:todo|TODO) (.*?)\*\//
+      SCSS_SASS_REGEX = /\/\/ @(?:todo|TODO) (.*)|\/\* @(?:todo|TODO) (.*) \*\//
+      HTML_REGEX = /<!-- @(?:todo|TODO) (.*?) -->/
+      COFFEE_REGEX = /# @(?:todo|TODO) (.*)/
+      JST_JS_REGEX = /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
+      HAML_REGEX = /\/ @(?:todo|TODO) (.*)/
+    end
     
     def regex
       case format

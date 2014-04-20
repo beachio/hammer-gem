@@ -26,5 +26,7 @@ gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers
 group 'development' do
 #   gem 'aws-s3'
 #   gem 'rake'
-  gem 'simplecov'
+  if RUBY_VERSION == "2.0.0"
+    gem 'simplecov'
+  end
 end

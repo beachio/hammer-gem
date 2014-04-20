@@ -6,7 +6,8 @@ module Hammer
     accepts :html
     returns :html
 
-    RELOADER_SCRIPT = "
+    if !defined? RELOADER_SCRIPT
+      RELOADER_SCRIPT = "
         <!-- Hammer reload -->
           <script>
             setInterval(function(){
@@ -30,6 +31,7 @@ module Hammer
           </script>
         <!-- /Hammer reload -->
       "
+    end
     @@cached_files = {}
     
     #This was the old way we called .to_html - just doing the get_variables and includes. This means the includes are done and the includes with variables as input are all done recursively.
