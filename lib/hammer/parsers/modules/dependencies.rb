@@ -1,4 +1,3 @@
-require 'hammer/parsers/modules/extensions'
 require 'hammer/parsers/modules/finding_files'
 
 module Hammer

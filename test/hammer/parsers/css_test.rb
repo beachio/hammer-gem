@@ -1,4 +1,6 @@
 require "test_helper"
+require "hammer/parser"
+require "hammer/parsers/css"
 
 class CSSParserTest < Test::Unit::TestCase
 
@@ -96,8 +98,8 @@ class CSSParserTest < Test::Unit::TestCase
       end
 
       should "find scss files when including them" do
-        scss_file = create_file "assets/scss_include.scss", "a { background: orange; }", @parser.directory
-        stub_out scss_file
+        # scss_file = create_file "assets/scss_include.scss", "a { background: orange; }", @parser.directory
+        stub_out "assets/scss_include.css"
         test "url(scss_include.css)", "url(assets/scss_include.css)"
       end
       

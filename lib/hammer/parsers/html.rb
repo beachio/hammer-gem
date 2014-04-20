@@ -53,12 +53,17 @@ module Hammer
     end
 
     def parse(text)
-      @text = text
-
+      if text.scan('current').length == 1
+        laksdjflkasdjflkjasdfjklasjdf # second time around!
+      end
+      @text ||= text
       get_variables(text)
 
       text = path_tags(text)
+
       text = includes(text)
+
+      get_variables(text)
       text = placeholders(text)
 
       get_variables(text)

@@ -1,3 +1,5 @@
+require 'hammer/parser'
+
 module Hammer
   class CoffeeParser < Parser
 

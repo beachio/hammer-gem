@@ -8,9 +8,10 @@ module Hammer
     include Singleton
     class << self; attr_accessor :parsers, :extensions_for, :default_parser_for, :parsers_for; end
     
-    @extensions_for = {}
-    @default_parser_for = {}
-    @parsers_for = {}
+    @extensions_for ||= {}
+    @default_parser_for ||= {}
+    @parsers_for ||= {}
+    @parsers ||= []
 
     # TODO: Make a better way of finding all parsers for an extension.
     def self.all_parsers_for(extension)
@@ -21,7 +22,6 @@ module Hammer
       @extensions_for[what] || []
     end
 
-    @parsers = []
   end
 
   ## Allows a class to be registered for an extension.
@@ -131,7 +131,7 @@ module Hammer
         ExtensionMap.default_parser_for ||= {}
         extensions = [*extensions]
         extensions.each do |extension|
-          ExtensionMap.default_parser_for[extension] = self
+          ExtensionMap.default_parser_for[extension.to_sym] = self
         end
       end
       alias_method :register_as_default_for_extension, :register_as_default_for_extensions

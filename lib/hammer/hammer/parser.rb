@@ -80,7 +80,7 @@ module Hammer
 
         parsers = [Hammer::TodoParser]
         parsers += Hammer::Parser.for_filename(filename)
-
+        
         parsers.each do |parser_class|
           parser = parser_class.new().from_hash(data)
 

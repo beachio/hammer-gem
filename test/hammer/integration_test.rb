@@ -47,7 +47,6 @@ class TestIntegration < Test::Unit::TestCase
     status = nil
 
     ruby = `which ruby`.gsub("\n", "")
-    puts "Using #{ruby}"
     args = [ruby, 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
 

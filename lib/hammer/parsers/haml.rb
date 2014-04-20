@@ -44,9 +44,10 @@ module Hammer
 
     accepts :haml
     returns :html
+    register_as_default_for_extensions :haml
 
     def to_html
-      parse
+      parse(@text)
     end
     
     def includes(text)
@@ -67,8 +68,8 @@ module Hammer
 
           tag = files_from_tag_in_line(line)[0] # line.gsub("/ @include ", "").strip.split(" ")[0]
 
-          file = find_file_with_dependency(tag, 'html')
-          
+          file = find_file_with_dependency(tag, 'haml')
+
           raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
           
           if file.end_with? ".haml"

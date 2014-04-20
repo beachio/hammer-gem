@@ -2,7 +2,7 @@ module Hammer
   module FindingFiles
 
     def regex_for(filename, extension=nil)
-      
+
       require "uri"
       filename = URI.parse(filename).path
       
@@ -19,6 +19,7 @@ module Hammer
       extensions = extensions.flatten
       
       extensions.each do |extension|
+        extension = extension.to_s
         # If they're finding (index.html, html) we need to remove the .html from the tag.
         if extension && filename[-extension.length-1..-1] == ".#{extension}" 
           filename = filename[0..-extension.length-2]

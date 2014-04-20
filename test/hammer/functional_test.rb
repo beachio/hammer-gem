@@ -9,14 +9,7 @@ class FunctionalTest < Test::Unit::TestCase
       :output_directory => Dir.mktmpdir,
       :cache_directory => Dir.mktmpdir
     }
-    
-    create_directories()
-  end
-
-  def create_directories
-    teardown()
     @options.values.each do |path|
-      FileUtils.rm_rf(path)
       FileUtils.mkdir_p(path)
     end
   end
@@ -28,7 +21,7 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def functional_test_directories
-    Dir.glob(File.join(File.  dirname(__FILE__), 'functional', '*'))
+    Dir.glob(File.join(File.dirname(__FILE__), 'functional', '*'))
   end
 
   def test_functional_projects
@@ -36,37 +29,47 @@ class FunctionalTest < Test::Unit::TestCase
 
     directories.each do |directory|
 
+      setup()
+
       test_input_directory = File.join directory, 'input'
       test_output_directory = File.join directory, 'output'
       optimized_output_directory = File.join directory, 'optimized_output'
       
-      create_directories()
-
       FileUtils.mkdir @options[:input_directory] rescue true
-      FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory]
-      build = Hammer::Build.new @options
 
-      build.compile()
+      # FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory]
 
-      # errors = build.project.hammer_files.collect(&:error).compact
-      errors = []
+      build = Hammer::Build.new({
+        :input_directory => test_input_directory,
+        :output_directory => @options[:output_directory],
+        :cache_directory => Dir.mktmpdir
+      })
+      results = build.compile()
+
+      errors = results.values.select {|value|; value[:error]}
       assert_equal [], errors
-      compare_directories test_output_directory, @options[:output_directory]
 
-      # if File.exist? optimized_output_directory
+      compare_directories @options[:output_directory], test_output_directory
 
-      #   create_directories()
+      if File.exist? optimized_output_directory
+
+        teardown()
+        setup()
         
-      #   FileUtils.mkdir @options[:input_directory] rescue true
-      #   FileUtils.cp_r Dir[File.join(test_input_directory, "*")], @options[:input_directory]
-      #   optimized_options = @options.merge({:optimized => true})
-      #   build = Hammer::Build.new optimized_options
-      #   puts build.compile()
+        build = Hammer::Build.new({
+          :input_directory => test_input_directory,
+          :output_directory => @options[:output_directory],
+          :cache_directory => Dir.mktmpdir,
+          :optimized => true
+        })
+        results = build.compile()
 
-      #   # errors = build.project.hammer_files.collect(&:error).compact
-      #   assert_equal [], errors
-      #   compare_directories optimized_output_directory, @options[:output_directory]        
-      # end
+        errors = results.values.select {|value|; value[:error]}
+        assert_equal [], errors
+        compare_directories optimized_output_directory, @options[:output_directory]        
+      end
+
+      teardown()
 
     end
   end

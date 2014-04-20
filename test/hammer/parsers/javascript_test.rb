@@ -1,3 +1,5 @@
+require "hammer/parser"
+require "hammer/parsers/javascript"
 require "test_helper"
 
 class JSParserTest < Test::Unit::TestCase

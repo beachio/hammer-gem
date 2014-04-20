@@ -28,35 +28,24 @@ else
                             :output_directory  => ARGV[2],
                             :optimized   => ARGV.include?('PRODUCTION'))
 end
-start = Time.now
 
+@start = Time.now
 trap('INT', 'DEFAULT')
 
 def run
   results = @build.compile()
+  not_too_fast(@start)
   if ARGV.include? 'DEBUG'
     puts Hammer::CommandLineTemplate.new(results)
   else
     puts Hammer::HTMLTemplate.new(results)
   end
-  # puts @build.to_html()
   exit @build.error ? 1 : 0
-  # build.compile do |project, app_template|
-  #   not_too_fast(start)
-  #   puts app_template unless ARGV.include?('DEBUG')
-  #   exit build.success ? 0 : 1
-  # end
 end
 
 if ARGV.include?('PRELOAD') and !interrupted
   @build.wait do |project, app_template|
     run()
-  #   results = build.compile()
-  #   puts build.to_html()
-  #   exit build.error ? 1 : 0
-  # #   not_too_fast(start)
-  # #   puts app_template unless ARGV.include?('DEBUG')
-  # #   exit build.success ? 0 : 1
   end
 else
   run()

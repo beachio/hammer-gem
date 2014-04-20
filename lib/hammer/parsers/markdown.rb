@@ -4,6 +4,7 @@ module Hammer
   class MarkdownParser < Parser
 
     accepts :md
+    register_as_default_for_extensions :md
     returns :html
 
     def to_format(format)
