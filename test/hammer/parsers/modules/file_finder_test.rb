@@ -13,7 +13,7 @@ class FileFinderTest < Test::Unit::TestCase
   end
 
   def test_find_files
-    @object.filenames = ['index.html', 'index.js', '_include.html']
+    @object.stubs(:filenames).returns(['index.html', 'index.js', '_include.html'])
     {
       ['index', 'html'] => ['index.html'],
       ['index', 'js'] => ['index.js'],

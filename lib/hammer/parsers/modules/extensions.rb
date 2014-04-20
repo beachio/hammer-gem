@@ -49,7 +49,7 @@ module Hammer
     # Fetches related file extensions - ["css"] for "scss" and ["js"] for "coffee"
     def possible_other_extensions_for_extension(extension)
       extensions = []
-      parsers = self.class.for_extension(extension)
+      parsers = Hammer::Parser.for_extension(extension)
       parsers.each do |parser|
         ExtensionMap.extensions_for[parser]
         ExtensionMap.extensions_for[parser].each do |extension|

@@ -1,18 +1,6 @@
 module Hammer
   module FileFinder
 
-    attr_accessor :filenames
-
-    def filenames
-      if @filenames.any?
-        @filenames
-      else
-        Dir.glob(File.join(@directory, "**/*")).map {|file|
-          file.gsub(@directory+"/", "")
-        }
-      end
-    end
-
     def regex_for(filename, extension=nil)
       
       require "uri"
@@ -59,11 +47,6 @@ module Hammer
 
       matches = filenames.to_a.select { |filename|
         match = filename =~ regex
-
-        # straight_basename = false  # File.basename(file.filename) == filename
-        # no_extension_required = extension.nil?
-        # has_extension = File.extname(file.filename) != ""
-
         (File.extname(filename) != "" || extension.nil?) && (match)
       }.sort_by {|filename|
         filename.to_s
@@ -102,6 +85,26 @@ module Hammer
     end
 
   private
+
+    # Get all the filenames for the current build. 
+    # This involves @directory if we have one, or @filenames if we don't.
+    def filenames
+
+      # This checks for it being an array and not nil!
+      return @filenames unless @filenames.empty?
+
+      # This means we can add files to the output 
+      if @directory
+        @filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
+          file.gsub(@directory+"/", "")
+        }
+      else
+        @filenames = []
+      end
+
+      @filenames
+
+    end
 
     def absolute_to_relative(filename)
       filename = filename[1..-1] if filename.start_with? "/"
