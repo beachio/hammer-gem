@@ -6,6 +6,7 @@ Things to do:
 - Add an IO-caching module and replace the File.open(path).read() methods called in includes.
 - Improve adding dependencies with find_files() - currently using find_file_with_dependency wrapper in Dependencies module which is gross.
 - Add Caching
+- Improve the way file-ignores are handled. Maybe we just want a parser for that.
 - HTMLify (in error messages for template)
 - Integration tests
 - Markdown Extra
