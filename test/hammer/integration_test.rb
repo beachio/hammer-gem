@@ -48,10 +48,12 @@ class TestIntegration < Test::Unit::TestCase
 
     # ruby = `which ruby`.gsub("\n", "")
 
-    require 'rbconfig'
-    bin = RbConfig::CONFIG["RUBY_INSTALL_NAME"] || RbConfig::CONFIG["ruby_install_name"]
-    bin += (RbConfig::CONFIG['EXEEXT'] || RbConfig::CONFIG['exeext'] || '')
-    ruby = File.join(RbConfig::CONFIG['bindir'], bin)
+    # require 'rbconfig'
+    # bin = RbConfig::CONFIG["RUBY_INSTALL_NAME"] || RbConfig::CONFIG["ruby_install_name"]
+    # bin += (RbConfig::CONFIG['EXEEXT'] || RbConfig::CONFIG['exeext'] || '')
+    # ruby = File.join(RbConfig::CONFIG['bindir'], bin)
+
+    ruby = "/usr/bin/ruby"
 
     args = [ruby, 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
