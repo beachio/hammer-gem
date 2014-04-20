@@ -87,7 +87,6 @@ class HammerParserClassMethodsTest < Test::Unit::TestCase
     end
 
     should "be parsed using a block" do
-
       Hammer::Parser.parse_file(@dir, @file, Dir.mktmpdir, true) do |output, data|
         assert_equal output, "Hi"
         assert data.is_a? Hash

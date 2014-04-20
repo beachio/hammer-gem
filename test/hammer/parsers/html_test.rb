@@ -11,6 +11,11 @@ class TestHtmlParser < Test::Unit::TestCase
       end
     end
 
+    should "return to_format(:html) version that only replaces variables and includes (for when it's included in another file)" do
+      assert_equal "", @parser.parse("<!-- $name Elliott -->")
+      assert_equal "", @parser.to_format(:html)
+    end
+
     should "replace reload tags" do
       assert !@parser.parse("<html><!-- @reload --></html>").include?("@reload")
     end

@@ -32,11 +32,24 @@ module Hammer
       "
     @@cached_files = {}
     
-    def to_html
-      text = @text
-      get_variables(@text)
-      text = includes(@text)
-      text
+    #This was the old way we called .to_html - just doing the get_variables and includes. This means the includes are done and the includes with variables as input are all done recursively.
+    #The downside of not doing this recursively is that we will probably have some problems with relative paths.
+    # If you write <!-- @include a --> in an include, verify b/a.html gets used for index.html and a.html gets used for b/index.html
+    #We now just File.open(file).read() when we do the include so this method is kind of irrelevant.
+    # So we should check whether we should be using a different method for including includes than File.open(file).read for path reasons. 
+    # These files may also have to be partially-compiled before including, so their relative path tags are accurately ranked! That sort of thing.
+
+    # if format == :html
+    #   text = @text
+    #   text = get_variables(text)
+    #   text = includes(text)
+    #   text
+    # end
+
+    def to_format(format)
+      if format == :html
+        parse(@text)
+      end
     end
 
     def parse(text)
@@ -111,7 +124,7 @@ module Hammer
         if variable_value.start_with?("|") && variable_value == ""
           self.variables[variable_name] = variable_value
         end
-        tag
+        ""
       end
     end
     
