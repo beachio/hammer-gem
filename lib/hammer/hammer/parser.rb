@@ -62,11 +62,11 @@ module Hammer
     def to_hash
       # TODO: We could probably do this more extensibly with a @data attribute.
       {
-        dependencies: @dependencies,
-        wildcard_dependencies: @wildcard_dependencies,
-        variables: @variables,
-        messages: @messages,
-        added_files: @added_files
+        :dependencies => @dependencies,
+        :wildcard_dependencies => @wildcard_dependencies,
+        :variables => @variables,
+        :messages => @messages,
+        :added_files => @added_files
       }
     end
 
