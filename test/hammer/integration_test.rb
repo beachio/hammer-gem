@@ -37,6 +37,7 @@ class TestIntegration < Test::Unit::TestCase
   end
 
   def test_compilation(optimized=false)
+
     input_directory  = File.join('test', 'hammer', 'integration', 'case1')
     output_directory = Dir.mktmpdir('Build')
     cache_directory  = Dir.mktmpdir('cache')
@@ -45,8 +46,9 @@ class TestIntegration < Test::Unit::TestCase
     error = nil
     status = nil
 
-    args = ['/usr/bin/ruby', 'hammer_time.rb', cache_directory,
-            input_directory, output_directory]
+    ruby = `which ruby`.gsub("\n", "")
+    puts "Using #{ruby}"
+    args = [ruby, 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
 
     Open3.popen3(*args) do |stdin, stdout, stderr, wait_thread|
