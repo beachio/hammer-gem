@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Hammer
 
   # This class manages the extensions and parsers we're setting.

@@ -4,8 +4,13 @@ require 'fileutils'
 module Hammer
 
   class Build
+
+    attr_accessor :error
+
     def initialize(options = {})
       @hammer_files = []
+      @error = false
+
       @optimized        = options[:optimized] if options.keys.include? :optimized
       @input_directory  = Pathname.new(options.fetch(:input_directory)).cleanpath.to_s if options.include? :input_directory
       @output_directory = Pathname.new(options.fetch(:output_directory)).cleanpath.to_s if options.include? :output_directory
@@ -65,11 +70,9 @@ module Hammer
     end
 
     def compile
-
       @results = {}
 
       filenames.each do |filename|
-
         path        = Pathname.new(filename).relative_path_from(Pathname.new(@input_directory)).to_s
         output_file = File.join(@output_directory, path)
         data        = {}
@@ -82,15 +85,23 @@ module Hammer
             f.write(output) if output
           end
           @results[path] = data
+
+          @error = true if data[:error] 
         end
 
         if output_file != Hammer::Parser.new.output_filename_for(output_file)
           FileUtils.move(output_file, Hammer::Parser.new.output_filename_for(output_file))
         end
-
       end
 
       return @results
+    end
+
+    def to_html
+      compile() unless @results
+
+      
+
     end
   end
 
