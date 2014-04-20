@@ -53,15 +53,18 @@ class TestIntegration < Test::Unit::TestCase
     # bin += (RbConfig::CONFIG['EXEEXT'] || RbConfig::CONFIG['exeext'] || '')
     # ruby = File.join(RbConfig::CONFIG['bindir'], bin)
 
-    ruby = "/usr/bin/ruby"
-
-    args = [ruby, 'hammer_time.rb', cache_directory, input_directory, output_directory]
+    args = ["/usr/bin/ruby", 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
+    puts args.join(' ')
 
     Open3.popen3(*args) do |stdin, stdout, stderr, wait_thread|
       output = stdout.read
       error = stderr.read
     end
+
+    assert_equal "", error
+    assert output.length > 0
+    assert !output.include?("build-error")
 
     file = File.join output_directory, 'index.html'
     assert File.open(file).read.include? "<html>"
