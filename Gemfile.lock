@@ -4,21 +4,15 @@ GIT
   specs:
     amp (0.1)
 
-GIT
-  remote: git@github.com:robwierzbowski/bourbon.git
-  revision: a199a965ef9a690583ed6acfbac16677228a0ba0
-  ref: a199a965ef9a690583ed6acfbac16677228a0ba0
-  specs:
-    bourbon (3.1.8)
-      sass (>= 3.2.0)
-      thor
-
 GEM
   remote: https://rubygems.org/
   specs:
     activesupport (3.2.16)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    bourbon (3.1.8)
+      sass (>= 3.2.0)
+      thor
     coffee-script (2.2.0)
       coffee-script-source
       execjs
@@ -67,7 +61,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport (< 4.0.0)
   amp!
-  bourbon!
+  bourbon
   coffee-script (~> 2.2.0)
   eco
   ejs
