@@ -95,6 +95,9 @@ module Hammer
 
         output = text
         block.call(output, data)
+      rescue => e
+        data = {:error => e.to_s}
+        block.call(output, data)
       end
     end
 

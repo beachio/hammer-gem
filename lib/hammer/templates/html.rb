@@ -13,6 +13,23 @@ module Hammer
 
     attr_accessor :files
 
+    def sort_files(files)
+      return [] if files.nil?
+      # This sorts the files into the correct order for display
+      files.sort_by { |path, file|
+        extension = File.extname(file[:output_filename]).downcase
+        file[:filename]
+      }.sort_by {|path, file|
+        (file.include? :from_cache) ? 1 : 0
+      }.sort_by {|path, file|
+        file[:messages].to_a.length > 0 ? 0 : 1
+      }.sort_by {|path, file|
+        (file[:filename] == "index.html") ? 0 : 1
+      }.sort_by {|path, file|
+        file[:is_include?] ? 1 : 0
+      }
+    end
+
     def initialize(files)
       @files = sort_files(files)
     end
@@ -247,23 +264,6 @@ module Hammer
       []
     end
     
-    def sort_files(files)
-      return [] if files.nil?
-      # This sorts the files into the correct order for display
-      files.sort_by { |path, file|
-        extension = File.extname(file[:output_filename]).downcase
-        file[:filename]
-      }.sort_by {|path, file|
-        (file.include? :from_cache) ? 1 : 0
-      }.sort_by {|path, file|
-        file[:messages].to_a.length > 0 ? 0 : 1
-      }.sort_by {|path, file|
-        (file[:filename] == "index.html") ? 0 : 1
-      }.sort_by {|path, file|
-        file[:is_include?] ? 1 : 0
-      }
-    end
-
     class TemplateLine
       
       include Templatey

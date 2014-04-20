@@ -1,6 +1,7 @@
 require 'pathname'
 require 'fileutils'
 require 'lib/hammer/templates/html'
+require 'lib/hammer/templates/commandline'
 
 module Hammer
 

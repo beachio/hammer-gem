@@ -21,9 +21,9 @@ def not_too_fast(start, minimum_duration = 0.5)
 end
 
 if ARGV.length < 3
-  build = Hammer::Build.new(:input_directory => ARGV[0], :optimized => ARGV.include?('PRODUCTION'))
+  @build = Hammer::Build.new(:input_directory => ARGV[0], :optimized => ARGV.include?('PRODUCTION'))
 else
-  build = Hammer::Build.new(:cache_directory   => ARGV[0],
+  @build = Hammer::Build.new(:cache_directory   => ARGV[0],
                             :input_directory => ARGV[1],
                             :output_directory  => ARGV[2],
                             :optimized   => ARGV.include?('PRODUCTION'))
@@ -32,23 +32,32 @@ start = Time.now
 
 trap('INT', 'DEFAULT')
 
-if ARGV.include?('PRELOAD') and !interrupted
-  build.wait do |project, app_template|
-    results = build.compile()
-    puts build.to_html()
-    exit build.error ? 1 : 0
-  #   not_too_fast(start)
-  #   puts app_template unless ARGV.include?('DEBUG')
-  #   exit build.success ? 0 : 1
+def run
+  results = @build.compile()
+  if ARGV.include? 'DEBUG'
+    puts Hammer::CommandLineTemplate.new(results)
+  else
+    puts Hammer::HTMLTemplate.new(results)
   end
-else
-  results = build.compile()
-  puts build.to_html()
-  exit build.error ? 1 : 0
-
+  # puts @build.to_html()
+  exit @build.error ? 1 : 0
   # build.compile do |project, app_template|
   #   not_too_fast(start)
   #   puts app_template unless ARGV.include?('DEBUG')
   #   exit build.success ? 0 : 1
   # end
+end
+
+if ARGV.include?('PRELOAD') and !interrupted
+  @build.wait do |project, app_template|
+    run()
+  #   results = build.compile()
+  #   puts build.to_html()
+  #   exit build.error ? 1 : 0
+  # #   not_too_fast(start)
+  # #   puts app_template unless ARGV.include?('DEBUG')
+  # #   exit build.success ? 0 : 1
+  end
+else
+  run()
 end
