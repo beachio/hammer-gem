@@ -1,5 +1,5 @@
 module Hammer
-  module FileFinder
+  module FindingFiles
 
     def regex_for(filename, extension=nil)
       
@@ -80,8 +80,8 @@ module Hammer
 
     def self.included(base)
       # Dependency tree alert!
-      # TODO: Figure out a way to bring FileFinder and ExtensionMapper closer together, if possible.
-      base.send :include, Hammer::ExtensionMapper
+      # TODO: Figure out a way to bring FindingFiles and Extensions closer together, if possible.
+      base.send :include, Hammer::Extensions
     end
 
   private

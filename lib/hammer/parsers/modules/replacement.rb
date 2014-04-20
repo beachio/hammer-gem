@@ -1,5 +1,3 @@
-# TODO all over this.
-
 module Hammer
   module Replacement
     def replace(text, regex, &block)
@@ -17,11 +15,5 @@ module Hammer
       return result
     end
 
-  end
-end
-
-module Hammer
-  class Parser
-    include Hammer::Replacement
   end
 end

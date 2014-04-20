@@ -1,9 +1,10 @@
 require 'parsers/modules/extensions'
 require 'parsers/modules/variables'
 require 'parsers/modules/optimizer'
-require 'parsers/modules/file_adder'
-require 'parsers/modules/file_finder'
-require 'parsers/modules/dependency'
+require 'parsers/modules/adding_files'
+require 'parsers/modules/finding_files'
+require 'parsers/modules/dependencies'
+require 'parsers/modules/replacement'
 require 'parsers/modules/paths'
 
 module Hammer
@@ -14,10 +15,11 @@ module Hammer
     attr_accessor :dependencies, :wildcard_dependencies
     attr_accessor :path, :directory, :variables, :messages, :todos
     attr_accessor :added_files
-    include ExtensionMapper
+    include Replacement
+    include Extensions
     include Variables
-    include FileAdding
-    include FileFinder
+    include AddingFiles
+    include FindingFiles
     include Dependency
     include Paths
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'parsers/modules/file_finder'
+require 'parsers/modules/finding_files'
 
-class FileFinderTest < Test::Unit::TestCase
+class FindingFilesTest < Test::Unit::TestCase
 
   class Thing
-    include Hammer::FileFinder
+    include Hammer::FindingFiles
   end
 
   setup do

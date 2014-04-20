@@ -1,11 +1,11 @@
 require 'hammer/parsers/modules/extensions'
-require 'hammer/parsers/modules/file_finder'
+require 'hammer/parsers/modules/finding_files'
 
 module Hammer
   module Dependency
 
-    include Hammer::FileFinder
-    include Hammer::ExtensionMapper # needed for FileFInder. It's dumb.
+    include Hammer::FindingFiles
+    include Hammer::Extensions # needed for FindingFiles. It's dumb.
 
     attr_accessor :dependencies, :wildcard_dependencies
 

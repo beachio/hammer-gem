@@ -44,7 +44,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
 
     module ::Hammer
       class ParserOne < ::Hammer::Parser
-        include ::Hammer::ExtensionMapper
+        include ::Hammer::Extensions
         accepts :a
         returns :b
         def parse(text)
@@ -53,7 +53,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
       end
 
       class ParserTwo < ::Hammer::Parser
-        include ::Hammer::ExtensionMapper
+        include ::Hammer::Extensions
         accepts :b
         returns :c
         def parse(text)

@@ -1,5 +1,5 @@
 module Hammer
-  module FileAdding
+  module AddingFiles
 
     # At the moment, we give a parser :output_directory.
     # In future this could be actually made functional with a parser!

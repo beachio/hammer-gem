@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 require "test_helper"
 require 'hammer/parser'
-require 'parsers/modules/file_adder'
+require 'parsers/modules/adding_files'
 
 class VariablesTest < Test::Unit::TestCase
 
   context "A parser" do
     setup do
-      class FileAddingTestParser < Hammer::Parser
-        include Hammer::FileAdding
+      class AddingFilesTestParser < Hammer::Parser
+        include Hammer::AddingFiles
 
         def parse(text)
           add_file('created.html', 'Created!')
@@ -16,7 +16,7 @@ class VariablesTest < Test::Unit::TestCase
         end
       end
 
-      @object = FileAddingTestParser.new
+      @object = AddingFilesTestParser.new
       @object.directory = Dir.mktmpdir
     end
 

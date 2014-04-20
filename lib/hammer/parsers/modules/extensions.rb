@@ -24,7 +24,7 @@ module Hammer
 
   ## Allows a class to be registered for an extension.
 
-  module ExtensionMapper
+  module Extensions
 
     extend Forwardable
     def_delegator ExtensionMap, :extensions_for

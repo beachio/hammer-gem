@@ -5,7 +5,7 @@ require 'parsers/modules/extensions'
 class ExtensionsTest < Test::Unit::TestCase
 
   class Thing
-    include Hammer::ExtensionMapper
+    include Hammer::Extensions
     returns :thing
   end
 
@@ -24,13 +24,13 @@ class ExtensionsChainTest < Test::Unit::TestCase
 
   module Hammer
     class ParserOne
-      include ::Hammer::ExtensionMapper
+      include ::Hammer::Extensions
       accepts :one
       returns :two
     end
 
     class ParserTwo
-      include ::Hammer::ExtensionMapper
+      include ::Hammer::Extensions
       accepts :two
       returns :three
     end

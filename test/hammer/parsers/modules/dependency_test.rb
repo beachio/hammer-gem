@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require "test_helper"
-require 'parsers/modules/dependency'
+require 'parsers/modules/dependencies'
 
 class DependencyTest < Test::Unit::TestCase
 
