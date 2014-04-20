@@ -56,6 +56,7 @@ DEPENDENCIES
   activesupport (< 4.0.0)
   amp!
   bourbon
+  bundler
   coffee-script (~> 2.2.0)
   eco
   ejs

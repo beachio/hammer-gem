@@ -18,7 +18,7 @@ class TestIntegration < Test::Unit::TestCase
     error = nil
     status = nil
     
-    args = ['/usr/bin/ruby', 'hammer_time.rb', cache_directory,
+    args = ['/usr/bin/ruby', '-rubygems', 'hammer_time.rb', cache_directory,
             input_directory, output_directory]
     args << 'PRODUCTION' if optimized
 
@@ -53,7 +53,7 @@ class TestIntegration < Test::Unit::TestCase
     # bin += (RbConfig::CONFIG['EXEEXT'] || RbConfig::CONFIG['exeext'] || '')
     # ruby = File.join(RbConfig::CONFIG['bindir'], bin)
 
-    args = ["/usr/bin/ruby", 'hammer_time.rb', cache_directory, input_directory, output_directory]
+    args = ["/usr/bin/ruby", '-rubygems', 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
     puts args.join(' ')
 
