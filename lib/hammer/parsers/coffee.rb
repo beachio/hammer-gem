@@ -9,16 +9,15 @@ module Hammer
     def to_format(format)
       case format
       when :js
-        to_javascript
+        parse(@text)
       when :coffee
-        to_coffeescript
+        @text
       end
     end
 
     def parse(text=nil)
-      text ||= @to_coffeescript
-      @to_coffeescript ||= text
-      @text = text
+      text ||= @text
+      @text ||= text
 
       text = includes text
       text = CoffeeScript.compile text
@@ -49,8 +48,8 @@ module Hammer
         tags = invocation.gsub("# @include ", "").strip.split(" ")
         a = tags.map do |tag|
 
-          file = find_files(tag, 'coffee')[0]
-          # file = find_file_with_dependency(tag, 'coffee')
+          file = find_file(tag, 'coffee')
+          add_dependency(file)
           
           raise "File not found: <strong>#{h tag}</strong>" unless file
           

@@ -10,14 +10,15 @@ module Hammer
 
     def to_format(format)
       if format == :js
-        parse()
+        parse(@text)
       end
     end
     
-    def parse
-      @text = EJS.compile(@text)
-      name = File.basename(@hammer_file.filename, '.*')
-      @text = "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{@text}"
+    def parse(text)
+      @text ||= text
+      text = EJS.compile(text)
+      name = File.basename(@path, '.*')
+      "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{text}"
     end
   end
 end

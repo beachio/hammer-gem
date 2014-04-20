@@ -91,6 +91,10 @@ module Hammer
       return matches
     end
 
+    def find_file(*args)
+      find_files(*args)[0]
+    end
+
     def self.included(base)
       # Dependency tree alert!
       # TODO: Figure out a way to bring FileFinder and ExtensionMapper closer together, if possible.
