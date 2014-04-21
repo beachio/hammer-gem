@@ -111,6 +111,13 @@ module Hammer
       compile() unless @results
       HTMLTemplate.new(@results).to_s
     end
+
+    def wait(&complete)
+      protect_against_zombies
+      sleep 0.1 while true
+    rescue SystemExit, Interrupt
+      compile(&complete)
+    end
   end
 
   EMPTY = {}
