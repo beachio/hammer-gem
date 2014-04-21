@@ -1,5 +1,4 @@
 #! /usr/bin/ruby
-
 # encoding: utf-8
 $LANG = "UTF-8"
 
