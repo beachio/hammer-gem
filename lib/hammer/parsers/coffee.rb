@@ -57,7 +57,7 @@ module Hammer
           
           parser = Hammer::Parser.for_filename(file).last
           if parser.respond_to? :to_coffeescript
-            parser.to_coffeescript(File.open(file).read)
+            parser.to_coffeescript(read(file))
           else
             "__hammer_include(#{tag})"
           end

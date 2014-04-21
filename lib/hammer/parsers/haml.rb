@@ -46,8 +46,12 @@ module Hammer
     returns :html
     register_as_default_for_extensions :haml
 
-    def to_html
-      parse(@text)
+    def to_format(format)
+      if format == :haml
+        @text # Variables?
+      else
+        parse(@text)
+      end
     end
     
     def includes(text)

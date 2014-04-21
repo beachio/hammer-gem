@@ -27,6 +27,7 @@ module Hammer
       @path ||= options[:path]
       @wildcard_dependencies = {}
       @filenames = []
+      @variables = {}
       @directory = Dir.mktmpdir
     end
 
@@ -50,7 +51,7 @@ module Hammer
 
     # Used when creating a parser, to initialize variables from the last parser.
     def from_hash(hash)
-      self.variables = hash[:variables]
+      self.variables = hash[:variables] if hash[:variables]
       self.messages = hash[:messages]
       self.wildcard_dependencies = hash[:wildcard_dependencies]
       self.dependencies = hash[:dependencies]

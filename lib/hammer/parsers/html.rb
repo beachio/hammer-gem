@@ -41,23 +41,20 @@ module Hammer
     # So we should check whether we should be using a different method for including includes than File.open(file).read for path reasons. 
     # These files may also have to be partially-compiled before including, so their relative path tags are accurately ranked! That sort of thing.
 
-    # if format == :html
-    #   text = @text
-    #   text = get_variables(text)
-    #   text = includes(text)
-    #   text
-    # end
 
     def to_format(format)
       if format == :html
-        parse(@text)
+        text = @text
+        text = get_variables(text)
+        text = includes(text)
+        text
       end
+    #   if format == :html
+    #     parse(@text)
+    #   end
     end
 
     def parse(text)
-      if text.scan('current').length == 1
-        laksdjflkasdjflkjasdfjklasjdf # second time around!
-      end
       @text ||= text
       get_variables(text)
 
@@ -163,52 +160,19 @@ module Hammer
     
     def includes(text)
       while text.match /<!-- @include (.*?) -->/
-        
         text = replace(text, /<!-- @include (.*?) -->/) do |tags, line_number|
           tags = tags.gsub("<!-- @include ", "").gsub("-->", "").strip.split(" ")
-          
-          tags.map do |tag|
-            
-            if (tag.start_with? "$")
-              variable_value = variables[tag[1..-1]]
-              raise "Includes: Can't include <b>#{h tag}</b> because <b>#{h tag}</b> isn't set." unless variable_value
-              
-              tag = variable_value
+          tags.map do |query|
+            if (query.start_with? "$")
+              variable_value = variables[query[1..-1]]
+              raise "Includes: Can't include <b>#{h query}</b> because <b>#{h query}</b> isn't set." unless variable_value
+              query = variable_value
             end
             
-            # file = find_file_with_dependency(tag, 'html')
+            file = find_file(query, 'html')
+            raise "Includes: File <b>#{h query}</b> couldn't be found." unless file
 
-            # raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
-
-            # parser = Hammer::Parser.for_hammer_file(file)
-            # parser.optimized = self.optimized
-
-            # next unless parser
-            # parser.variables = self.variables
-            
-            # begin
-            #   parser.parse()
-            # rescue Hammer::Error => e
-            #   e.hammer_file = file
-            #   raise e
-            # end
-            
-            # parser = Hammer::Parser.for_hammer_file(file)
-            # parser.optimized = self.optimized
-            # parser.variables = self.variables
-
-            # self.variables = self.variables.merge(parser.variables)
-            # parser.to_html()
-
-            files = find_files(tag, 'html')
-            if files.empty?
-              raise "Includes: File <b>#{h tag}</b> couldn't be found."
-            else
-              file = files[0]
-              file = File.join @directory, file.gsub(@directory, "")
-              File.open(file).read()
-            end
-
+            parse_file(file, :html)
           end.compact.join("\n")
         end
       end

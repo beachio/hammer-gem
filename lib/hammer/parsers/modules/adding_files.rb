@@ -28,7 +28,8 @@ module Hammer
     def read(filename)
       if File.exist? File.join(@directory, filename)
         File.open(File.join(@directory, filename)).read()
-      elsif File.exist? File.join(@output_directory, filename)
+      elsif @output_directory && File.exist?(File.join(@output_directory, filename))
+        # elsif @output_directory && File.exist?(File.join(@output_directory, filename))
         File.open(File.join(@output_directory, filename)).read()
       else
         File.open(filename).read()

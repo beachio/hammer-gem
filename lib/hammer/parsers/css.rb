@@ -207,13 +207,9 @@ module Hammer
 
           raise "Included file <strong>#{tag}</strong> couldn't be found." unless file
 
-          # TODO: Make a for_filename single method for a file and a directory. Something to generate the path anyway.
-          # Hammer::Parser.convert(directory, file, format)
-          # At the very least, update everywhere we use .for_fileanme in parsers.
-          
           parser = Hammer::Parser.for_filename(file).first
           parser = parser.new(:path => file.gsub(@directory, ""))
-          parser.parse(File.open(file).read)
+          parser.parse(read(file))
           text = parser.to_format(format)
 
           if !text

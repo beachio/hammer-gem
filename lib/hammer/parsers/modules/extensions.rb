@@ -160,14 +160,39 @@ module Hammer
     end
 
     def parse_file(file, destination_extension)
-      parser = Hammer::Parser.for_filename(file).last.new()
-      # TODO: This should loop through the parsers for this file until we're at the right extension.
-      path = file
-      if !path.include? @directory
-        path = File.join(@directory, file)
+
+      # TODO: Ensure this isn't parsing includes when we use parse_file.
+      # Careful now! This is the include() method, remember.
+      # This method calls to_format(:format) to avoid any final parse stuff.
+      # For instance, relative URLs don't want to be parsed inside an include!
+
+      text = ""
+      Hammer::Parser.for_filename(file).each do |parser_class|
+        parser = parser_class.new().from_hash(self.to_hash)
+
+        if parser_class.respond_to?(:finished_extension) && parser_class.finished_extension == destination_extension
+          parser.directory = @directory
+          parser.output_directory = @output_directory
+          parser.path      = Pathname.new(File.join(directory, file)).relative_path_from(Pathname.new(directory)).to_s
+          parser.optimized = @optimized
+          parser.variables = @variables
+          output = parser.parse(read(file))
+          text = parser.to_format(destination_extension)
+          data = parser.to_hash
+          @variables = @variables.merge(parser.variables)
+        end
       end
-      parser.parse(File.open(path).read())
-      parser.to_format(destination_extension.to_sym)
+
+      text
+
+      # parser = Hammer::Parser.for_filename(file).last.new()
+      # # TODO: This should loop through the parsers for this file until we're at the right extension.
+      # path = file
+      # if !path.include? @directory
+      #   path = File.join(@directory, file)
+      # end
+      # parser.parse(File.open(path).read())
+      # parser.to_format(destination_extension.to_sym)
     end
 
   end
