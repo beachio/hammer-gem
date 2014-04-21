@@ -81,12 +81,12 @@ module Hammer
             file = File.join(@directory, file)
             
             # Insert the text of this file as an array.
-            lines[line_number] = File.open(file).read.array_of_lines_indented_by(line.indentation_string)
+            lines[line_number] = read(file).array_of_lines_indented_by(line.indentation_string)
 
             # We only have to change stuff if the next line is indented.
             if is_indented_after_this_line
-              last_line = last_line = File.open(file).read.lines.to_a.last
-              lines = indent_from_line(last_line, lines, line_number, File.open(file).read.indentation_in_last_line)
+              last_line = read(file).lines.to_a.last
+              lines = indent_from_line(last_line, lines, line_number, read(file).indentation_in_last_line)
             end
 
             lines = lines.flatten

@@ -25,6 +25,8 @@ module Hammer
       filename
     end
 
+    # Read the contents of a file.
+    # This is meant to replace File.open(file).open
     def read(filename)
       if File.exist? File.join(@directory, filename)
         File.open(File.join(@directory, filename)).read()
