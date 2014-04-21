@@ -11,19 +11,21 @@ module Hammer
 
     attr_accessor :error
 
+    def clean_input(input)
+      Pathname.new(input).cleanpath.to_s
+    end
+
     def initialize(options = {})
       @hammer_files = []
       @error = false
 
       @optimized        = options[:optimized] if options.keys.include? :optimized
-      @input_directory  = Pathname.new(options.fetch(:input_directory)).cleanpath.to_s if options.include? :input_directory
-      @output_directory = Pathname.new(options.fetch(:output_directory)).cleanpath.to_s if options.include? :output_directory
-      @cache_directory  = Pathname.new(options.fetch(:cache_directory)).cleanpath.to_s if options.include? :cache_directory
+
+      @input_directory  = clean_input(options.fetch(:input_directory))
+      @output_directory = clean_input(options.fetch(:output_directory)) || Dir.mktmpdir
+      @cache_directory  = clean_input(options.fetch(:cache_directory))  || Dir.mktmpdir
 
       @results = EMPTY
-
-      @output_directory ||= Dir.mktmpdir
-      @cache_directory  ||= Dir.mktmpdir
     end
 
     # Let's create a list of filenames in the Hammer project.
@@ -112,12 +114,6 @@ module Hammer
       HTMLTemplate.new(@results).to_s
     end
 
-    def wait(&complete)
-      protect_against_zombies
-      sleep 0.1 while true
-    rescue SystemExit, Interrupt
-      compile(&complete)
-    end
   end
 
   EMPTY = {}

@@ -15,4 +15,6 @@ require "hammer/hammer"
 require 'hammer/build'
 require 'hammer/command_line'
 
-Hammer::Invocation.new().compile()
+invocation = Hammer::Invocation.new()
+invocation.template = Hammer::CommandLineTemplate
+invocation.compile()
