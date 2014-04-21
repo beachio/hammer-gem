@@ -9,8 +9,18 @@ trap('INT') { interrupted = true }
 dir = File.dirname(File.dirname(__FILE__))
 $LOAD_PATH.unshift dir unless $LOAD_PATH.include?(dir)
 $LOAD_PATH.unshift File.join(dir, 'lib')
+
 require "hammer/hammer"
 require 'hammer/build'
+
+@build = Hammer::Build.new(:cache_directory   => ARGV[0],
+                          :input_directory => ARGV[1],
+                          :output_directory  => ARGV[2],
+                          :optimized   => ARGV.include?('PRODUCTION'))
+
+trap('INT', 'DEFAULT')
+
+@start = Time.now
 
 # Pause to prevent the UI from returning too quickly and wreaking havoc with
 # FSEvents.
@@ -19,33 +29,19 @@ def not_too_fast(start, minimum_duration = 0.5)
   sleep minimum_duration - duration if duration < minimum_duration
 end
 
-if ARGV.length < 3
-  @build = Hammer::Build.new(:input_directory => ARGV[0], :optimized => ARGV.include?('PRODUCTION'))
-else
-  @build = Hammer::Build.new(:cache_directory   => ARGV[0],
-                            :input_directory => ARGV[1],
-                            :output_directory  => ARGV[2],
-                            :optimized   => ARGV.include?('PRODUCTION'))
-end
-
-@start = Time.now
-trap('INT', 'DEFAULT')
-
 def run
   results = @build.compile()
   not_too_fast(@start)
-  if ARGV.include? 'DEBUG'
-    puts Hammer::CommandLineTemplate.new(results)
-  else
-    puts Hammer::HTMLTemplate.new(results)
-  end
+  
+  template = Hammer::HTMLTemplate
+  template = Hammer::CommandLineTemplate if ARGV.include? 'DEBUG'
+
+  puts template.new(results)
   exit @build.error ? 1 : 0
 end
 
 if ARGV.include?('PRELOAD') and !interrupted
-  @build.wait do |project, app_template|
-    run()
-  end
+  @build.wait { |project, app_template| run() }
 else
   run()
 end
