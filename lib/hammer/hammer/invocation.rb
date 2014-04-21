@@ -8,17 +8,14 @@ module Hammer
     def initialize
       @template = Hammer::HTMLTemplate
       @start = Time.now
-      @interrupted = false
       build
     end
 
     def compile
-      if ARGV.include?('PRELOAD') and !@interrupted
-        wait { run() }
-      else
-        run()
-      end
+      run()
     end
+
+  private
 
     def input_directory
       @input_directory ||= ARGV[1] if ARGV[1]
@@ -32,34 +29,13 @@ module Hammer
                                     :optimized   => ARGV.include?('PRODUCTION'))
     end
 
-    def wait(&complete)
-      protect_against_zombies
-      sleep 0.1 while true
-    rescue SystemExit, Interrupt
-      complete.call(self)
-    end
+    def run
+      results = build.compile()
 
-    # This process kills the build if this process's parent process exits.
-    def protect_against_zombies
-      Thread.new do
-        while true
-          exit if Process.ppid == 1
-          sleep 1
-        end
-      end
-    end
-
-    def delay
       # # Pause to prevent the UI from returning too quickly and wreaking havoc with FSEvents.
       # # 0.5 minimum script time.
       runtime = Time.now - @start
       sleep(0.5 - runtime) if runtime < 0.5
-    end
-
-    def run
-      results = build.compile()
-
-      delay()
       
       # @template = Hammer::CommandLineTemplate if ARGV.include? 'DEBUG'
       puts @template.new(results)
@@ -68,3 +44,5 @@ module Hammer
     end
   end
 end
+
+require 'hammer/utils/preload'

@@ -1,18 +1,3 @@
 #! /usr/bin/ruby
-# encoding: utf-8
-$LANG = "UTF-8"
-
-# Catch interrupts received before app is loaded.
-
-trap('INT') { interrupted = true }
-trap('INT', 'DEFAULT')
-
-dir = File.dirname(File.dirname(__FILE__))
-# $LOAD_PATH.unshift dir unless $LOAD_PATH.include?(dir)
-$LOAD_PATH.unshift File.join(dir, 'lib')
-
-require "hammer/hammer"
-require 'hammer/build'
-require 'hammer/command_line'
-
+load File.join(File.dirname(__FILE__), '_setup')
 Hammer::Invocation.new().compile()
