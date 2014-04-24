@@ -50,28 +50,9 @@ module Hammer
 
     # Fetches related file extensions - ["css"] for "scss" and ["js"] for "coffee"
     def possible_other_extensions_for_extension(extension)
-      extensions = []
-      parsers = Hammer::Parser.for_extension(extension)
-      parsers.each do |parser|
-        ExtensionMap.extensions_for[parser]
-        ExtensionMap.extensions_for[parser].each do |extension|
-          extensions << extension
-        end
-      end
-
-      parsers = ExtensionMap.parsers.select {|parser|
-        parser.finished_extension.to_s == extension.to_s
-      }
-
-      extensions = parsers.map {|parser|
-        begin
-          extensions_for[parser]
-        rescue => e
-          raise e
-        end
-      }
-
-      extensions.flatten.compact.uniq.sort
+      extensions = ExtensionMap.parsers.map {|parser|
+        extensions_for[parser] if parser.finished_extension.to_s == extension.to_s
+      }.flatten.compact.uniq.sort
     end
 
     module ClassMethods
