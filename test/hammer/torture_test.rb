@@ -5,7 +5,7 @@ require "tmpdir"
 require "open3"
 include Open3
 
-class TestIntegration < Test::Unit::TestCase
+class TestInvalidStuff < Test::Unit::TestCase
 
   def ruby
     require 'rbconfig'
@@ -33,23 +33,21 @@ class TestIntegration < Test::Unit::TestCase
     return output, error
   end
 
-  def test_compilation(optimized=false)
-    output_directory = Dir.mktmpdir('Build')
-    output, error = build(File.join('test', 'hammer', 'integration', 'case1'), output_directory, optimized)
+  def test_empty_directory(optimized=false)
+    output, error = build(Dir.mktmpdir('input'), Dir.mktmpdir('Build'), optimized)
+    self.test_empty_directory(true) unless optimized
     assert_equal "", error
-    assert !output.include?("build-error")
-    file = File.join output_directory, 'index.html'
-    assert File.open(file).read.include? "<html>"
-    FileUtils.remove_entry output_directory
-    self.test_compilation(true) unless optimized
   end
 
-def test_failure(optimized=false)
-    input_directory  = File.join('test', 'hammer', 'integration', 'missingdirectory')
-    output, error = build(input_directory, Dir.mktmpdir('Build'), optimized)
+  def test_missing_directory(optimized=false)
+    dir = Dir.mktmpdir("deleteme")
+    FileUtils.rm_rf(dir)
+
+    output, error = build(dir, Dir.mktmpdir('Build'), optimized)
     assert_equal "", error
-    assert output.include? "build-error"
-    self.test_failure(true) unless optimized
+
+    # assert output.include? "No file" # or something like that
+    self.test_empty_directory(true) unless optimized
   end
 
 end

@@ -44,7 +44,7 @@ module Hammer
       @path = new_path
       @filenames = Dir.glob(File.join(@path, "**/*"))
     end
-    
+
     def parse(text="")
       return text
     end
@@ -81,7 +81,7 @@ module Hammer
 
         parsers = [Hammer::TodoParser]
         parsers += Hammer::Parser.for_filename(filename)
-        
+
         parsers.each do |parser_class|
           parser = parser_class.new().from_hash(data)
 
@@ -90,8 +90,13 @@ module Hammer
           parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = optimized
 
-          text = parser.parse(text)
-          data   = parser.to_hash
+          begin
+            text = parser.parse(text)
+          rescue => e
+            data.merge({:error => e.to_s})
+          ensure
+            data.merge(parser.to_hash)
+          end
         end
 
         output = text

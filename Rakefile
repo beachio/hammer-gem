@@ -10,4 +10,5 @@ end
 Rake::TestTask.new do |t|
   t.libs << 'test'
   t.test_files = FileList[scope('test/**/*_test.rb')]
+  # t.verbose = true
 end

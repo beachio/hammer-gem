@@ -1,3 +1,5 @@
+# The class called by the bin stubs. Handles everything to do with creating a new build given arguments.
+
 module Hammer
   class Invocation
 
@@ -5,42 +7,50 @@ module Hammer
       @template = template
     end
 
-    def initialize
+    def initialize(arguments)
+      @cache_directory  = arguments[0]
+      @input_directory  = arguments[1]
+      @output_directory = arguments[2]
+      @success = nil
+
+      @optimized = arguments.include?('PRODUCTION')
+
       @template = Hammer::HTMLTemplate
+      @template = Hammer::CommandLineTemplate if ARGV.include? 'DEBUG'
+
       @start = Time.now
-      build
+      @debug = arguments.include? "DEBUG"
     end
 
     def compile
-      run()
+      options = {
+        :cache_directory => @cache_directory,
+        :input_directory => @input_directory,
+        :output_directory => @output_directory,
+        :optimized => @optimized
+      }
+
+      build = Hammer::Build.new(options)
+      results = run(build)
+
+      puts @template.new(results)
+      exit @success ? 0 : 1
     end
 
   private
 
-    def input_directory
-      @input_directory ||= ARGV[1] if ARGV[1]
-      @input_directory
-    end
-
-    def build
-      @build ||= Hammer::Build.new(:cache_directory   => ARGV[0],
-                                    :input_directory => input_directory,
-                                    :output_directory  => ARGV[2],
-                                    :optimized   => ARGV.include?('PRODUCTION'))
-    end
-
-    def run
-      results = build.compile()
-
+    def ensure_minimum_half_second
       # # Pause to prevent the UI from returning too quickly and wreaking havoc with FSEvents.
       # # 0.5 minimum script time.
       runtime = Time.now - @start
       sleep(0.5 - runtime) if runtime < 0.5
-      
-      # @template = Hammer::CommandLineTemplate if ARGV.include? 'DEBUG'
-      puts @template.new(results)
+    end
 
-      exit build.error ? 1 : 0
+    def run(build)
+      results = build.compile()
+      ensure_minimum_half_second()
+      @success = build.error
+      return results
     end
   end
 end

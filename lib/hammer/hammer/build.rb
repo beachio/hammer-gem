@@ -86,18 +86,12 @@ module Hammer
         # TODO: Caching
 
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
-
           FileUtils.mkdir_p(File.dirname(output_file))
-          File.open(output_file, 'w') do |f|
-            f.write(output) if output
-          end
+          File.open(output_file, 'w') { |f| f.write(output) if output }
           @results[path] = data
-
           @error = true if data[:error]
-
           @results[path][:filename] = path
           @results[path][:output_filename] = path
-
           if path != Hammer::Parser.new.output_filename_for(path)
             @results[path][:output_filename] = Hammer::Parser.new.output_filename_for(path)
             FileUtils.move(output_file, File.join(@output_directory, Hammer::Parser.new.output_filename_for(path)))
