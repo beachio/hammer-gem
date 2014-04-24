@@ -33,26 +33,18 @@ module Hammer
 
     # Fetches "index.html" for "index.haml"
     def output_filename_for(filename)
-
       extension = File.extname(filename)[1..-1]
       parser    = self.class.for_extension(extension).last
-
-      if parser
-        path      = File.dirname(filename)
-        basename  = File.basename(filename, ".*")
-        extension = parser.finished_extension
-
-        Pathname.new("#{path}/#{basename}.#{extension}").cleanpath.to_s
-      else
-        filename
-      end
+      return filename unless parser
+      Pathname.new("#{File.dirname(filename)}/#{File.basename(filename, ".*")}.#{parser.finished_extension}").cleanpath.to_s
     end
 
     # Fetches related file extensions - ["css"] for "scss" and ["js"] for "coffee"
     def possible_other_extensions_for_extension(extension)
       extensions = ExtensionMap.parsers.map {|parser|
         extensions_for[parser] if parser.finished_extension.to_s == extension.to_s
-      }.flatten.compact.uniq.sort
+      }.flatten.compact.uniq
+      extensions = extensions.map {|extension| extension.to_s }.sort.map {|extension| extension.to_sym }
     end
 
     module ClassMethods
