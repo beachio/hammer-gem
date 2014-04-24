@@ -29,6 +29,7 @@ class TestIntegration < Test::Unit::TestCase
     FileUtils.remove_entry cache_directory
 
     assert output.length > 0
+    assert_equal "", error
 
     return output, error
   end

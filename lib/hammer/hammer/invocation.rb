@@ -34,7 +34,8 @@ module Hammer
       results = run(build)
 
       puts @template.new(results, @output_directory)
-      exit @success ? 0 : 1
+      # return @success
+      return @success ? 0 : 1
     end
 
   private

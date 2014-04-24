@@ -28,6 +28,7 @@ class TestInvalidStuff < Test::Unit::TestCase
 
     FileUtils.remove_entry cache_directory
 
+    assert_equal "", error
     assert output.length > 0
 
     return output, error
