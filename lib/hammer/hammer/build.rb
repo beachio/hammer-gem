@@ -17,7 +17,7 @@ module Hammer
 
     def initialize(options = {})
       @hammer_files = []
-      @error = false
+      @error        = false
 
       @optimized        = options[:optimized] if options.keys.include? :optimized
 
@@ -86,14 +86,14 @@ module Hammer
         # TODO: Caching
 
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
-          
+
           FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') do |f|
             f.write(output) if output
           end
           @results[path] = data
 
-          @error = true if data[:error] 
+          @error = true if data[:error]
 
           @results[path][:filename] = path
           @results[path][:output_filename] = path
