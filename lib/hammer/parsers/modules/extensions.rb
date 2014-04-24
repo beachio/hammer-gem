@@ -71,7 +71,7 @@ module Hammer
         end
       }
 
-      extensions.flatten.compact.uniq
+      extensions.flatten.compact.uniq.sort
     end
 
     module ClassMethods
