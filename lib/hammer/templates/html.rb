@@ -51,7 +51,7 @@ module Hammer
     end
 
     def html_includes
-      files.select {|file| (['.php', '.html'].include? File.extname(file[:output_filename])) && !file[:error] && file[:include] }.compact
+      files.select {|file| (['.php', '.html'].include? File.extname(file[:output_filename])) && !file[:error] && File.basename(file[:output_filename]).start_with?("_") }.compact
     end
 
     def todo_files
