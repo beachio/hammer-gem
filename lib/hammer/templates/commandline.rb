@@ -8,9 +8,11 @@ module Hammer
       end
     end
 
-    def line(path, file)
-      puts "#{path}: #{" " * (14 - path.length.to_i)} #{file[:error] if file[:error]}"
-      file.keys.each do |key|
+    def line(path, data)
+      puts "#{path}: compiled to #{data[:output_filename]}"
+      puts data
+      puts data[:error] if data[:error]
+      data.keys.each do |key|
         puts "  #{key}: #{file[:key]}" if file[:key]
       end
     end

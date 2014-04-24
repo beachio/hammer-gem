@@ -33,7 +33,7 @@ module Hammer
       build = Hammer::Build.new(options)
       results = run(build)
 
-      puts @template.new(results)
+      puts @template.new(results, @output_directory)
       exit @success ? 0 : 1
     end
 
@@ -49,7 +49,7 @@ module Hammer
     def run(build)
       results = build.compile()
       ensure_minimum_half_second()
-      @success = build.error
+      @success = !build.error
       return results
     end
   end
