@@ -5,17 +5,16 @@ module Hammer
 
     def to_s
       "Command line results:"
-      files.each do |path, file|
-        line(path, file)
+      files.each do |file|
+        line(file)
       end
     end
 
-    def line(path, data)
-      puts "#{path}: compiled to #{data[:output_filename]}"
-      puts data
-      puts data[:error] if data[:error]
+    def line(data)
+      puts "#{data[:filename]}: compiled to #{data[:output_filename]}"
+      # puts data
       data.keys.each do |key|
-        puts "  #{key}: #{file[:key]}" if file[:key]
+        puts "  #{key}: #{data[key]}" if data[key]
       end
     end
 

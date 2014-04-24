@@ -17,11 +17,11 @@ module Hammer
                 ws.onopen = function(){ws.onclose = function(){document.location.reload()}}
                 window.onbeforeunload = function() { ws = nil }
                 ws.onmessage = function(){
-                  var links = document.getElementsByTagName('link'); 
-                    for (var i = 0; i < links.length;i++) { 
-                    var link = links[i]; 
-                    if (link.rel === 'stylesheet' && !link.href.match(/typekit/)) { 
-                      href = link.href.replace(/((&|\\?)hammer=)[^\&]+/,''); 
+                  var links = document.getElementsByTagName('link');
+                    for (var i = 0; i < links.length;i++) {
+                    var link = links[i];
+                    if (link.rel === 'stylesheet' && !link.href.match(/typekit/)) {
+                      href = link.href.replace(/((&|\\?)hammer=)[^\&]+/,'');
                       link.href = href + (href.indexOf('?')>=0?'&':'?') + 'hammer='+(new Date().valueOf());
                     }
                   }
@@ -33,12 +33,12 @@ module Hammer
       "
     end
     @@cached_files = {}
-    
+
     #This was the old way we called .to_html - just doing the get_variables and includes. This means the includes are done and the includes with variables as input are all done recursively.
     #The downside of not doing this recursively is that we will probably have some problems with relative paths.
     # If you write <!-- @include a --> in an include, verify b/a.html gets used for index.html and a.html gets used for b/index.html
     #We now just File.open(file).read() when we do the include so this method is kind of irrelevant.
-    # So we should check whether we should be using a different method for including includes than File.open(file).read for path reasons. 
+    # So we should check whether we should be using a different method for including includes than File.open(file).read for path reasons.
     # These files may also have to be partially-compiled before including, so their relative path tags are accurately ranked! That sort of thing.
 
 
@@ -55,6 +55,7 @@ module Hammer
     end
 
     def parse(text)
+
       @text ||= text
       get_variables(text)
 
@@ -79,35 +80,35 @@ module Hammer
 
       return text
     end
-    
+
     def variables
       @variables ||= {}
     end
-    
+
   private
-    
+
     def placeholders(text)
       text = replace(text, /<!-- @placeholder (.*?) -->/) do |tag, line_number|
         options = tag.gsub("<!-- @placeholder ", "").gsub("-->", "").strip.split(" ")
-        
+
         dimensions = options[0]
         text = ""
         alt = 'Placeholder Image'
-        
+
         if options[1]
           text = options[1..-1].join(" ")
           alt = text.gsub('"', '')
           text = "&text=#{CGI.escape(text)}"
         end
-        
+
         x = dimensions.split('x')[0]
         y = dimensions.split('x')[1] || x
-        
+
         begin
           "<img src='http://placehold.it/#{x}x#{y}#{text}' width='#{x}' height='#{y}' alt='#{alt}' />"
         end
       end
-      
+
       text = replace(text, /<!-- @kitten (\S*) -->/) do |tag, line_number|
         dimensions = tag.gsub("<!-- @kitten ", "").gsub("-->", "").strip
         x = dimensions.split('x')[0]
@@ -117,7 +118,7 @@ module Hammer
 
       text
     end
-    
+
     def get_variables(text)
       replace(text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub("-->", "").strip.split(" ")
@@ -131,7 +132,7 @@ module Hammer
         ""
       end
     end
-    
+
     def output_variables(text)
       replace(text, /<!-- \$(.*?) -->/) do |tag, line_number|
         variable_declaration = tag.gsub("<!-- $", "").gsub(" -->", "").strip
@@ -145,7 +146,7 @@ module Hammer
         if is_a_getter_with_a_default
           default = variable_declaration.split("|")[1..-1].join("|").strip rescue false
         end
-        
+
         if has_spaces && !is_a_getter_with_a_default
           # Oh god it's a setter why are you still here
           self.variables[variable_name] = variable_declaration.split(" ")[1..-1].join(' ')
@@ -157,7 +158,7 @@ module Hammer
         end
       end
     end
-    
+
     def includes(text)
       while text.match /<!-- @include (.*?) -->/
         text = replace(text, /<!-- @include (.*?) -->/) do |tags, line_number|
@@ -168,7 +169,7 @@ module Hammer
               raise "Includes: Can't include <b>#{h query}</b> because <b>#{h query}</b> isn't set." unless variable_value
               query = variable_value
             end
-            
+
             file = find_file(query, 'html')
             raise "Includes: File <b>#{h query}</b> couldn't be found." unless file
 
@@ -186,14 +187,14 @@ module Hammer
         return text.gsub(/<!-- @reload -->/, RELOADER_SCRIPT)
       end
     end
-    
+
     def alternative_path_tags(text)
       replace(text, /['|"]@path (.*?)['|"]/) do |tag, line_number|
         filename = tag[6..-2]
-        
+
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-        
+
         file = find_file(filename)
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
@@ -202,14 +203,14 @@ module Hammer
         end
       end
     end
-    
+
     def path_tags(text)
       text = replace(text, /<!-- @path (.*?) -->/) do |tag, line_number|
         filename = tag.gsub("<!-- @path ", "").gsub("-->", "").strip
-  
+
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-        file = find_files(filename, 'html')[0]
+        file = find_files(filename)[0]
 
         if !file
           raise "Path tags: <b>#{h filename}</b> couldn't be found."
@@ -220,7 +221,7 @@ module Hammer
       text = alternative_path_tags(text)
       text
     end
-    
+
     def get_variable(variable_name)
 
       @variables ||= {}
@@ -237,38 +238,38 @@ module Hammer
 
     def stylesheet_tags(text)
       @included_stylesheets ||= []
-      
+
       replace(text, /<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
-        
+
         filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
-        
+
         filenames.each do |filename|
           filename = get_variable(filename) if filename.split("")[0] == "$"
-          
+
           matching_files = find_files_with_dependency(filename, 'css')
-          
+
           # if !filename.include? "*"
           #   matching_files = [matching_files[0]]
           # end
-          
+
           raise "Stylesheet tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
 
         hammer_files_to_tag = []
         hammer_files.each do |file|
-          
+
           # next if file.is_a_compiled_file # TODO
           next if File.basename(file).start_with?("_")
           path = path_to(file)
-          
-          next if @included_stylesheets.include?(path) 
+
+          next if @included_stylesheets.include?(path)
           @included_stylesheets << path
           hammer_files_to_tag << file
           paths << path
         end
-        
+
         if optimized
           file = add_file_from_files(hammer_files_to_tag, :css)
           "<link rel='stylesheet' href='#{path_to(file)}'>" if file
@@ -277,16 +278,16 @@ module Hammer
         end
       end
     end
-    
+
     # Take a bunch of CSS or JS files and combine them into one 10981cd72e39481a723.js digest file.
     def add_file_from_files(files, format)
       return false if files == []
       # return false if files.collect(&:error) != []
       contents = []
-      
+
       key = files.join(':') + ":#{format}"
       return @@cached_files[key] if @@cached_files[key]
-      
+
       files.each do |file|
         # TODO: We need a better way of getting the compiled contents of a file.
         parse_file(file, format)
@@ -299,39 +300,39 @@ module Hammer
       filename = Digest::MD5.hexdigest(contents)
       file = add_file("#{filename}.#{format}", contents)
       # file.source_files = files # TODO
-      
+
       @@cached_files[key] = file
-      
+
       file
     end
-        
+
     def javascript_tags(text)
       @included_javascripts ||= []
-      
+
       replace(text, /<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
-        
+
         filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")
-        
-        filenames.each do |filename| 
+
+        filenames.each do |filename|
           filename = get_variable(filename) if filename.split("")[0] == "$"
           matching_files = find_files_with_dependency(filename, 'js')
           raise "Javascript tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
-                
+
         hammer_files_to_tag = []
         hammer_files.each do |file|
-          
+
           # next if file.is_a_compiled_file # TODO
           next if File.basename(file).start_with?("_")
           path = path_to(file)
-          
-          next if @included_javascripts.include?(path) 
+
+          next if @included_javascripts.include?(path)
           @included_javascripts << path
           hammer_files_to_tag << file
           paths << path
-        end        
+        end
         if optimized
           file = add_file_from_files(hammer_files_to_tag, :js)
           "<script src='#{path_to(file)}'></script>" if file
@@ -340,7 +341,7 @@ module Hammer
         end
       end
     end
-    
+
     def current_tags(text)
       if filename
         Amp.compile(text, File.basename(filename), 'current')
@@ -348,7 +349,7 @@ module Hammer
         text
       end
     end
-    
+
     def ensure_text_has_no_leading_blank_lines(text)
       text ||= ""
       while text.split(/\n|\t|\r/)[0] == ""
@@ -356,6 +357,6 @@ module Hammer
       end
       text
     end
-    
+
   end
 end

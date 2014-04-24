@@ -33,7 +33,7 @@
 
     <% if reveal %><a target="blank" href="reveal://<%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
     <% if output_filename.end_with? 'html' %><a target="blank" href="<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
-    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %><a target="blank" href="edit://<%= path %>" class="edit" title="Edit Original">Edit Original</a><% end %>
+    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %><a target="blank" href="edit://<%= directory %>/<%= filename %>" class="edit" title="Edit Original">Edit Original</a><% end %>
 
   <% end %>
 </article>

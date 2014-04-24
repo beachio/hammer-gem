@@ -93,9 +93,9 @@ module Hammer
           begin
             text = parser.parse(text)
           rescue => e
-            data.merge({:error => e.to_s})
+            data.merge!({:error => e.to_s})
           ensure
-            data.merge(parser.to_hash)
+            data.merge!(parser.to_hash)
           end
         end
 
