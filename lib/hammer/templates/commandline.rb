@@ -1,3 +1,5 @@
+require 'hammer/templates/base'
+
 module Hammer
   class CommandLineTemplate < Template
 
