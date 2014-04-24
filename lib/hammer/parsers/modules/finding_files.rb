@@ -6,6 +6,7 @@ module Hammer
       require "uri"
       filename = URI.parse(filename).path
 
+      extension = extension.to_sym if extension
       extensions = [*extension].compact
 
       if !extension
@@ -28,7 +29,7 @@ module Hammer
           filename = filename[0..-extension.length-2]
         end
       end
-      extensions = extensions.compact
+      extensions = extensions.compact.uniq
 
       # /index.html becomes ^index.html
       filename = filename.split("")[1..-1].join("") if filename.start_with? "/"
