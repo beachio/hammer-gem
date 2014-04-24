@@ -1,6 +1,12 @@
 require 'erb'
 require 'ostruct'
 
+module Templatey
+  def h(text)
+    CGI.escapeHTML(text.to_s)
+  end
+end
+
 class ToErb < OpenStruct
   def render(template)
     ERB.new(template).result(binding)

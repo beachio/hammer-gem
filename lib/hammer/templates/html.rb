@@ -1,13 +1,7 @@
 # encoding: utf-8
-require 'lib/hammer/templates/application/application_template_line_template'
-require 'lib/hammer/templates/base'
 $LANG = "UTF-8"
-
-module Templatey
-  def h(text)
-    CGI.escapeHTML(text.to_s)
-  end
-end
+require 'lib/hammer/templates/base'
+require 'lib/hammer/templates/application/line'
 
 module Hammer
 
@@ -118,7 +112,6 @@ module Hammer
     rescue
       []
     end
-
 
   end
 end
