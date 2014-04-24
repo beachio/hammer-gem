@@ -1,4 +1,4 @@
-require File.join File.dirname(__FILE__), "test_helper"
+require 'hammer/test_helper'
 require 'hammer/parser'
 require 'hammer/parsers/jst'
 

@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "test_helper.rb")
+require 'hammer/test_helper'
 require 'hammer/parsers/todos'
 
 class TestTodoParser < Test::Unit::TestCase

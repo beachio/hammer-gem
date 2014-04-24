@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/test_helper'
+require 'hammer/test_helper'
 require 'hammer/build'
 
 class FunctionalTest < Test::Unit::TestCase
