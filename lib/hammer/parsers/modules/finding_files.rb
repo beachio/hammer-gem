@@ -5,8 +5,9 @@ module Hammer
 
       require "uri"
       filename = URI.parse(filename).path
-      
+
       extensions = [*extension].compact
+
       if !extension
         extension =  File.extname(filename)[1..-1]
         # filename = File.basename(filename, ".*")
@@ -15,18 +16,21 @@ module Hammer
         end
       end
 
-      extensions = extensions + possible_other_extensions_for_extension(extension)
-      extensions = extensions.flatten
-      
+      if extension
+        extensions = extensions + possible_other_extensions_for_extension(extension)
+        extensions = extensions.flatten
+      end
+
       extensions.each do |extension|
         extension = extension.to_s
         # If they're finding (index.html, html) we need to remove the .html from the tag.
-        if extension && filename[-extension.length-1..-1] == ".#{extension}" 
+        if extension && filename[-extension.length-1..-1] == ".#{extension}"
           filename = filename[0..-extension.length-2]
         end
       end
-      
-      # /index.html becomes ^index.html  
+      extensions = extensions.compact
+
+      # /index.html becomes ^index.html
       filename = filename.split("")[1..-1].join("") if filename.start_with? "/"
 
       filename = Regexp.escape(filename).gsub('\*','.*?')
@@ -87,14 +91,14 @@ module Hammer
 
   private
 
-    # Get all the filenames for the current build. 
+    # Get all the filenames for the current build.
     # This involves @directory if we have one, or @filenames if we don't.
     def filenames
 
       # This checks for it being an array and not nil!
       return @filenames unless @filenames.empty?
 
-      # This means we can add files to the output 
+      # This means we can add files to the output
       if @directory
         @filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
           file.gsub(@directory+"/", "")

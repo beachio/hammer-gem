@@ -26,4 +26,9 @@ class FindingFilesTest < Test::Unit::TestCase
     end
   end
 
+  def test_regex_for
+    assert_equal(/(^|\/|_)index\.(html|haml|html|md)/, @object.regex_for('index', 'html'))
+    assert_equal(/(^|\/|_)index/, @object.regex_for('index', nil))
+  end
+
 end

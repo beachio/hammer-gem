@@ -90,13 +90,13 @@ module Hammer
           parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = optimized
 
-          begin
+          # begin
             text = parser.parse(text)
-          rescue => e
-            data.merge!({:error => e.to_s})
-          ensure
-            data.merge!(parser.to_hash)
-          end
+          # rescue => e
+          #   data.merge!({:error => e.to_s})
+          # ensure
+          #   data.merge!(parser.to_hash)
+          # end
         end
 
         output = text
@@ -104,6 +104,7 @@ module Hammer
       rescue => e
         data = {:error => e.to_s}
         block.call(output, data)
+        raise e
       end
     end
 

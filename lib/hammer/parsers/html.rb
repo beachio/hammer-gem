@@ -194,13 +194,10 @@ module Hammer
 
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-
         file = find_file(filename)
-        if !file
-          raise "Path tags: <b>#{h filename}</b> couldn't be found."
-        else
-          [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
-        end
+        raise "Path tags: <b>#{h filename}</b> couldn't be found." if !file
+
+        [tag.split("")[0], path_to(file), tag.split("")[-1]].join()
       end
     end
 
@@ -211,12 +208,9 @@ module Hammer
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
         file = find_files(filename)[0]
+        raise "Path tags: <b>#{h filename}</b> couldn't be found." if !file
 
-        if !file
-          raise "Path tags: <b>#{h filename}</b> couldn't be found."
-        else
-          path_to(file)
-        end
+        path_to(file)
       end
       text = alternative_path_tags(text)
       text

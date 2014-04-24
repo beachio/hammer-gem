@@ -7,7 +7,7 @@ module Hammer
   class ExtensionMap
     include Singleton
     class << self; attr_accessor :parsers, :extensions_for, :default_parser_for, :parsers_for; end
-    
+
     @extensions_for ||= {}
     @default_parser_for ||= {}
     @parsers_for ||= {}
@@ -62,7 +62,7 @@ module Hammer
       parsers = ExtensionMap.parsers.select {|parser|
         parser.finished_extension.to_s == extension.to_s
       }
-      
+
       extensions = parsers.map {|parser|
         begin
           extensions_for[parser]
@@ -88,7 +88,9 @@ module Hammer
       end
 
       def for_extension(extension)
-        
+
+        raise "Nil extension!" if extension.nil?
+
         parsers = [*ExtensionMap.default_parser_for[extension.to_sym]]
         parsers += ExtensionMap.parsers_for[extension.to_sym] if ExtensionMap.parsers_for[extension.to_sym]
         parsers = parsers.compact
@@ -109,7 +111,7 @@ module Hammer
             parsers << ExtensionMap.parsers_for[new_extension] # Hammer::Parser.for_extension(new_extension)
           end
         end
-        
+
         return parsers.uniq.flatten.compact
       end
 
