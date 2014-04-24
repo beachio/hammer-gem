@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'hammer/parser'
 require 'hammer/parsers/jst'
 
 class EcoParserTest < Test::Unit::TestCase
@@ -13,7 +14,7 @@ class EcoParserTest < Test::Unit::TestCase
       @parser.stubs(:find_file).returns(file)
       @parser.stubs(:find_files).returns([file])
     end
-    
+
     should "exist" do
       assert @parser
     end

@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/test_helper'
+require 'hammer/build'
 
 class FunctionalTest < Test::Unit::TestCase
 
@@ -15,9 +16,9 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def teardown
-    # @options.values.each do |path|
-      # FileUtils.rm_rf(path)
-    # end
+    @options.values.each do |path|
+      FileUtils.rm_rf(path)
+    end
   end
 
   def functional_test_directories

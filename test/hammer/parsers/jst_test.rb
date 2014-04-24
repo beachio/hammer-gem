@@ -1,4 +1,5 @@
 require File.join File.dirname(__FILE__), "test_helper"
+require 'hammer/parser'
 require 'hammer/parsers/jst'
 
 class JSTParserTest < Test::Unit::TestCase

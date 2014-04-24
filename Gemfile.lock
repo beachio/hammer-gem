@@ -39,6 +39,9 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.8.4)
+    parallel (1.0.0)
+    parallel_tests (0.16.10)
+      parallel
     plist (3.1.0)
     rake (10.1.1)
     sass (3.2.14)
@@ -71,6 +74,7 @@ DEPENDENCIES
   json_pure (~> 1.8.0)
   kramdown
   mocha (= 0.14.0)
+  parallel_tests
   plist
   rake
   sass (~> 3.2.12)

@@ -1,4 +1,6 @@
 require File.join File.dirname(__FILE__), "test_helper"
+require 'hammer/parser'
+require 'hammer/parsers/coffee'
 require 'coffee-script'
 
 class CoffeeParserTest < Test::Unit::TestCase
@@ -11,7 +13,7 @@ class CoffeeParserTest < Test::Unit::TestCase
         :cache_directory => Dir.mktmpdir
       }
       @parser = Hammer::CoffeeParser.new()
-      
+
       @parser.stubs(:find_files).returns([])
       @parser.parse("a = -> b")
     end
@@ -20,7 +22,7 @@ class CoffeeParserTest < Test::Unit::TestCase
       @parser.stubs(:find_file).returns(file)
       @parser.stubs(:find_files).returns([file])
     end
-    
+
     should "return JS for to_format with :js" do
       assert_equal @parser.to_format(:js), "(function() {\n  var a;\n\n  a = function() {\n    return b;\n  };\n\n}).call(this);\n"
     end
