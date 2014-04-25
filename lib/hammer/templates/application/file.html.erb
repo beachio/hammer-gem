@@ -11,14 +11,14 @@
         <% if error_line %>
           <b>Line <%= error_line %>:</b>
         <% end %>
-        <%= error_message.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
+        <%= error.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
         </span>
       <% elsif include? %>
         Include only - not compiled
       <% elsif from_cache %>
-        Copied to <b><a target="_blank" href="<%= directory %>/<%= output_filename %>"><%= output_filename %></a></b> <span class='from-cache'>from&nbsp;cache</span>
+        Copied to <b><a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a></b> <span class='from-cache'>from&nbsp;cache</span>
       <% else %>
-        Compiled into <a target="_blank" href="<%= directory %>/<%= output_filename %>"><%= output_filename %></a>
+        Compiled into <a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a>
       <% end %>
     </small>
 
@@ -31,9 +31,9 @@
       </span>
     <% end %>
 
-    <% if reveal %><a target="blank" href="reveal://<%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
-    <% if output_filename.end_with? 'html' %><a target="blank" href="<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
-    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %><a target="blank" href="edit://<%= directory %>/<%= filename %>" class="edit" title="Edit Original">Edit Original</a><% end %>
+    <% if reveal %><a target="blank" href="reveal://<%= output_directory %><%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
+    <% if output_filename.end_with? 'html' %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
+    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %><a target="blank" href="edit://<%= input_directory %>/<%= filename %>" class="edit" title="Edit Original">Edit Original</a><% end %>
 
   <% end %>
 </article>

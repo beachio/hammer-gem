@@ -36,7 +36,8 @@ module Hammer
       build = Hammer::Build.new(options)
       results = run(build)
 
-      puts @template.new(results, @output_directory)
+      template = @template.new(results, options)
+      puts template
       return @success ? 0 : 1
     end
 

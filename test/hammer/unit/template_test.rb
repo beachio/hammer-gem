@@ -10,7 +10,7 @@ class HammerTemplateTest < Test::Unit::TestCase
       @output = {'index.html' => {:filename => 'index.html', :output_filename => "index.html"}}
       @directory = Dir.mktmpdir
 
-      @parser = Hammer::Template.new(@output, @directory)
+      @parser = Hammer::Template.new(@output, {:input_directory => @directory})
     end
 
     should "be successful" do

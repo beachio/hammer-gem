@@ -24,13 +24,12 @@ module Hammer
       }
     end
 
-    def initialize(files, output_directory)
-      # ['index.html' => {}, ...]
-      @files = sort_files(files)
-      # [{}, {}]
-      @files = @files.map {|path, data| data }
+    def initialize(files, options={})
+      @input_directory = options[:input_directory]
+      @output_directory = options[:output_directory]
 
-      @output_directory = output_directory
+      @files = sort_files(files) # ['index.html' => {}, ...]
+      @files = @files.map {|path, data| data } # [{}, {}]
     end
 
     def success?

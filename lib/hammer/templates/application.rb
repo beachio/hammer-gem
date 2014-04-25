@@ -6,6 +6,8 @@ module Hammer
 
   class ApplicationTemplate < Template
 
+    attr_accessor :files, :input_directory, :output_directory
+
     def to_s
       return @text if @text
       application_template_path = File.join(File.dirname(__FILE__), "application", "application.html.erb")
