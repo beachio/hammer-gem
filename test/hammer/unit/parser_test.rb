@@ -4,7 +4,6 @@ require 'test_helper'
 require 'hammer/parser'
 
 class HammerParserTest < Test::Unit::TestCase
-
   context "A parser" do
     setup do
       @parser = Hammer::Parser.new
@@ -18,11 +17,9 @@ class HammerParserTest < Test::Unit::TestCase
       assert @parser.optimized = true
     end
   end
-
 end
 
 class HammerParserDataTest < Test::Unit::TestCase
-
   context "a parser" do
     setup do
       @object = Hammer::Parser.new
@@ -35,13 +32,10 @@ class HammerParserDataTest < Test::Unit::TestCase
       assert_equal json[:variables], @object.to_hash[:variables]
     end
   end
-
 end
 
-class HammerParserChainParseTest < Test::Unit::TestCase 
-
+class HammerParserChainParseTest < Test::Unit::TestCase
   context "some parsers that are chained together by extensions" do
-
     module ::Hammer
       class ParserOne < ::Hammer::Parser
         include ::Hammer::Extensions

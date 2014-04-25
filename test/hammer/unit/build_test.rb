@@ -28,7 +28,6 @@ class BuildTest < Test::Unit::TestCase
     end
 
     should "return a hash of filename => data" do
-      puts @build.compile().keys
       assert_equal ['index.html'], @build.compile.keys
     end
   end
