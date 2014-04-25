@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "test_helper"
+require 'test_helper'
 require 'parsers/modules/extensions'
 
 class ExtensionsTest < Test::Unit::TestCase

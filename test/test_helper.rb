@@ -1,3 +1,5 @@
+require 'rake'
+
 begin
   require "simplecov"
   SimpleCov.start do

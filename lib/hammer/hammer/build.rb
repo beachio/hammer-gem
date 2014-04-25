@@ -2,10 +2,10 @@ require 'pathname'
 require 'fileutils'
 require 'shellwords'
 require 'hammer/parser'
-require 'hammer/templates/html'
-require 'hammer/templates/commandline'
 
 module Hammer
+
+  EMPTY = {}
 
   class Build
 
@@ -83,33 +83,37 @@ module Hammer
         output_file = File.join(@output_directory, path)
         data        = {}
 
+        FileUtils.mkdir_p(File.dirname(output_file))
+
         # TODO: Caching
 
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
-          FileUtils.mkdir_p(File.dirname(output_file))
+
+          raise "Something went wrong" if data.empty?
+
+          # output_filename = Hammer::Parser.new.output_filename_for(path)
+          # output_filename = data[:output_filename] || Hammer::Parser.new.output_filename_for(data[:filename])
+          output_filename = Hammer::Parser.new.output_filename_for(data[:filename])
+          output_file = File.join(@output_directory, output_filename)
+
           File.open(output_file, 'w') { |f| f.write(output) if output }
+
           @results[path] = data
           @error = true if data[:error]
           @results[path][:filename] = path
           @results[path][:output_filename] = path
-          if path != Hammer::Parser.new.output_filename_for(path)
-            @results[path][:output_filename] = Hammer::Parser.new.output_filename_for(path)
-            FileUtils.move(output_file, File.join(@output_directory, Hammer::Parser.new.output_filename_for(path)))
-          end
+
+          # Move the file to its correct path.
+          # TODO: Calculate this before File.open().write above!
+          # if path != Hammer::Parser.new.output_filename_for(path)
+          #   @results[path][:output_filename] = Hammer::Parser.new.output_filename_for(path)
+          #   FileUtils.move(output_file, File.join(@output_directory, Hammer::Parser.new.output_filename_for(path)))
+          # end
         end
 
       end
 
       return @results
     end
-
-    def to_html
-      compile() unless @results
-      HTMLTemplate.new(@results).to_s
-    end
-
   end
-
-  EMPTY = {}
-
 end

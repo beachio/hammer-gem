@@ -33,6 +33,7 @@ module Hammer
 
     # Fetches "index.html" for "index.haml"
     def output_filename_for(filename)
+      raise "Filename not given" unless filename
       extension = File.extname(filename)[1..-1]
       parser    = self.class.for_extension(extension).last
       return filename unless parser

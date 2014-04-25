@@ -76,6 +76,8 @@ module Hammer
       def parse_file(directory, filename, output_directory, optimized, &block)
         data, output = {}, nil
 
+        data = {:filename => filename}
+
         # Parse here
         text   = File.open(File.join(directory, filename), 'r').read()
 
@@ -95,14 +97,14 @@ module Hammer
           # rescue => e
           #   data.merge!({:error => e.to_s})
           # ensure
-          #   data.merge!(parser.to_hash)
+            data.merge!(parser.to_hash)
           # end
         end
 
         output = text
         block.call(output, data)
       rescue => e
-        data = {:error => e.to_s}
+        data.merge!({:error => e.to_s})
         block.call(output, data)
         raise e
       end

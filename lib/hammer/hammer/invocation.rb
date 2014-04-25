@@ -1,5 +1,7 @@
 # The class called by the bin stubs. Handles everything to do with creating a new build given arguments.
 
+require 'hammer/templates/application'
+
 module Hammer
   class Invocation
 
@@ -8,15 +10,16 @@ module Hammer
     end
 
     def initialize(arguments)
-      @cache_directory  = arguments[0]
-      @input_directory  = arguments[1]
-      @output_directory = arguments[2]
       @success = nil
-
+      @cache_directory, @input_directory, @output_directory = arguments
       @optimized = arguments.include?('PRODUCTION')
 
-      @template = Hammer::HTMLTemplate
-      @template = Hammer::CommandLineTemplate if ARGV.include? 'DEBUG'
+      if ARGV.include? 'DEBUG'
+        require 'hammer/templates/commandline'
+        @template = Hammer::CommandLineTemplate
+      else
+        @template = Hammer::ApplicationTemplate
+      end
 
       @start = Time.now
       @debug = arguments.include? "DEBUG"
@@ -34,7 +37,6 @@ module Hammer
       results = run(build)
 
       puts @template.new(results, @output_directory)
-      # return @success
       return @success ? 0 : 1
     end
 

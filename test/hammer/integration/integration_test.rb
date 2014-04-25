@@ -28,8 +28,13 @@ class TestIntegration < Test::Unit::TestCase
 
     FileUtils.remove_entry cache_directory
 
-    assert output.length > 0
+    if error != ""
+      "[Integration tests] Error parsing the command:"
+      puts "    #{args.join(' ')}"
+    end
+
     assert_equal "", error
+    assert output.length > 0
 
     return output, error
   end
