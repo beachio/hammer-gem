@@ -19,7 +19,8 @@ module Hammer
     def line_for(options)
       template_html = File.new(File.join(File.dirname(__FILE__), "application", "file.html.erb")).read
       options[:span_class] = span_class(options)
-      options[:directory] = @directory
+      options[:output_directory] = @output_directory
+      options[:input_directory] = @input_directory
       html = ToErb.new(options).render(template_html)
       "\n#{html}"
     end
