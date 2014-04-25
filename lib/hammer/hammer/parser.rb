@@ -106,7 +106,7 @@ module Hammer
       rescue => e
         data.merge!({:error => e.to_s})
         block.call(output, data)
-        raise e
+        # raise e
       end
     end
 

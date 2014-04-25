@@ -63,7 +63,7 @@ module Hammer
       files.select {|file|
         file[:error]
       }.compact.sort_by{|file|
-          (file[:error] && file[:error][:hammer_file] != path) ? 100 : 10
+          (file[:error] && file[:error_file] != file[:filename]) ? 100 : 10
       }.compact
     end
 
