@@ -57,10 +57,12 @@ module Hammer
         end
 
       rescue => e
+        # Something's gone wrong. This is most likely to be a SASS error.
+        # TODO: Rescue only a certain kind of error here and use finally/ensure!
 
         message = e.message
         message = message.split("Load paths:\n")[0] if message.include? 'Load paths:'
-        @error_line = e.sass_line
+        @error_line = e.sass_line if e.respond_to?(:sass_line))
 
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
           @error_file = e.sass_filename.gsub(@input_directory + "/", "")
