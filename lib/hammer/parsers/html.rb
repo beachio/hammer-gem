@@ -337,11 +337,7 @@ module Hammer
     end
 
     def current_tags(text)
-      if filename
-        Amp.compile(text, File.basename(filename), 'current')
-      else
-        text
-      end
+      Amp.compile(text, File.basename(filename), 'current')
     end
 
     def ensure_text_has_no_leading_blank_lines(text)

@@ -55,9 +55,9 @@ module Hammer
       paths
     end
 
-    def ignore?(filename)
-      return true if File.basename(filename).start_with? "_"
-    end
+    # def ignore?(filename)
+    #   return true if File.basename(filename).start_with? "_"
+    # end
 
     def filenames
       return @hammer_files if @hammer_files != []

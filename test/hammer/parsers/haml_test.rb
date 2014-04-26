@@ -48,6 +48,12 @@ class TestHaml < Test::Unit::TestCase
     	assert_equal "Hello, world!", @parser.to_format(:haml)
     end
 
+    should "include an HTML file" do
+      file = create_file('include.html', "My File!", @parser.directory)
+      @parser.stubs(:find_file).returns(file)
+      assert_equal "<!-- @include include -->", @parser.parse("/ @include include")
+    end
+
     context "when parsing path tags" do
       setup do
         file = create_file('blog/index.haml', "<img src='<!-- @path logo.png -->' />", @parser.directory)

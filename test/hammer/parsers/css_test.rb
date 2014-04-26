@@ -22,7 +22,7 @@ class CSSParserTest < Test::Unit::TestCase
         file = create_file('assets/imported.css', "a { background: red; }", @parser.directory)
         stub_out file
       end
-      
+
       should "parse standard filenames or HTTP links" do
         assert_equal '@import "assets/imported.css";', @parser.parse('@import "imported.css"')
         assert_equal '@import "http://google.com/style.css"', @parser.parse('@import "http://google.com/style.css"')
@@ -51,35 +51,35 @@ class CSSParserTest < Test::Unit::TestCase
       should "parse paths with normal comments" do
         test "a { background: url(/* @path proximanova-regular.eot */) }", "a { background: url(images/proximanova-regular.eot) }"
       end
-      
+
       should "parse paths on one line" do
         test "a { background: url(/* @path proximanova-regular.eot */) }", "a { background: url(images/proximanova-regular.eot) }"
       end
-      
+
       should "parse paths two to a line" do
         test "a { background: url(/* @path proximanova-regular.eot */) url(/* @path proximanova-regular.eot */)}", "a { background: url(images/proximanova-regular.eot) url(images/proximanova-regular.eot)}"
       end
-      
+
       should "parse paths with queries" do
         test "a { background: url(proximanova-regular.eot?#iefix) }", "a { background: url(images/proximanova-regular.eot?#iefix) }"
       end
-      
+
       should "parse URL images with queries that are just hashes" do
         test "a { background: url(proximanova-regular.eot#iefix) }", "a { background: url(images/proximanova-regular.eot#iefix) }"
       end
-      
+
       should "not parse css gradients" do
         test "a { background: css-gradient(#dfdfdf,#f8f8f8); }", "a { background: css-gradient(#dfdfdf,#f8f8f8); }"
-      end      
-      
+      end
+
       should "not parse css gradients as includes" do
         test "/* @include css-gradient(#dfdfdf,#f8f8f8); */", "/* @include css-gradient(#dfdfdf,#f8f8f8); */"
       end
-      
+
       should "parse empty url()" do
         test "a {background: url()}", "a {background: url()}"
       end
-      
+
       should "parse multiple url() on one line" do
         image = create_file("button_bg_over.png", "nothing", @parser.directory)
         @parser.stubs(:find_files).returns([image])
@@ -87,12 +87,12 @@ class CSSParserTest < Test::Unit::TestCase
       end
     end
 
-    
+
     context "with a CSS file" do
       setup do
         @file = create_file('style.css', 'a {background: red}', @parser.directory)
       end
-      
+
       should "parse CSS" do
         test "a {background: red}", @parser.parse("a {background: red}")
       end
@@ -102,7 +102,7 @@ class CSSParserTest < Test::Unit::TestCase
         stub_out "assets/scss_include.css"
         test "url(scss_include.css)", "url(assets/scss_include.css)"
       end
-      
+
       context "with other files" do
 
         setup do
@@ -170,22 +170,21 @@ class CSSParserTest < Test::Unit::TestCase
       end
 
       should "not do http paths" do
-        test "url(http://bullshit.png);", "url(http://bullshit.png);"          
+        test "url(http://bullshit.png);", "url(http://bullshit.png);"
+        test "@import http://google.com", "@import http://google.com"
+        test "/* @path http://google.com */", "/* @path http://google.com */"
+        test "url(https://bullshit.png);", "url(https://bullshit.png);"
       end
-
-      should "not do https paths" do
-        test "url(https://bullshit.png);", "url(https://bullshit.png);"          
-      end        
 
       should "not change query paths with unknown files" do
         @parser.stubs(:find_files).returns([])
-        test "url(bullshit.png?a);", "url(bullshit.png?a);"          
+        test "url(bullshit.png?a);", "url(bullshit.png?a);"
       end
-      
+
       should "do data:png paths" do
         test "url(data:image/png;base64,123)", "url(data:image/png;base64,123)"
       end
-      
+
     end
   end
 end

@@ -328,14 +328,12 @@ class TestHtmlParser < Test::Unit::TestCase
   #       assert_equal "Header", @parser.parse()
   #     end
 
-  #     should "use variables in include tags" do
-  #       begin
-  #         @parser.text = "<!-- $name _header --><!-- @include $name -->"
-  #         @parser.stubs(:find_files).returns [Hammer::HammerFile.new(:text => "Header", :filename => "_header.html")]
-  #         assert_equal "Header", @parser.parse()
-  #         assert_equal({'name' => "_header"}, @parser.send(:variables))
-  #       end
-  #     end
+      should "use variables in include tags" do
+        file = create_file '_header.html', 'Header', @parser.directory
+          @parser.stubs(:find_files).returns [file]
+          assert_equal "Header", @parser.parse("<!-- $name _header --><!-- @include $name -->")
+          assert_equal({'name' => "_header"}, @parser.send(:variables))
+      end
 
   #     should "carry over variables from included files" do
   #       begin
