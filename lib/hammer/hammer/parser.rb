@@ -13,6 +13,7 @@ module Hammer
     #TODO: Do we move dependencies into a module?
     attr_accessor :text
     attr_accessor :dependencies, :wildcard_dependencies
+    attr_accessor :error_line, :error_file
     attr_accessor :path, :directory, :variables, :messages, :todos, :input_directory
     attr_accessor :added_files
     include Replacement
@@ -106,6 +107,9 @@ module Hammer
         block.call(output, data)
       rescue => e
         data.merge!({:error => e.to_s})
+        data.merge!({:error_line => parser.error_line}) if parser.error_line
+        data.merge!({:error_file => parser.error_file}) if parser.error_line
+
         block.call(output, data)
         # raise e
       end

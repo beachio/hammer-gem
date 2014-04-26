@@ -13,10 +13,6 @@ module Hammer
       @path.split('.')[-1].to_sym
     end
 
-    def to_css
-      parse(@original_text)
-    end
-
     def to_format(new_format)
       if new_format == :css
         parse(@original_text)
@@ -50,26 +46,33 @@ module Hammer
 
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
         dependencies.each do |path|
-          # Add a file dependency for each SASS dependency!
-          # find_file adds a hard dependency for us :)
-          next unless path.start_with? @input_directory
-          relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
+          relative_path = path
+          if @input_directory
+            # skip all these Bourbon and Bourbon accessories
+            next unless path.start_with? @input_directory
+            # Add a file dependency for each SASS dependency!
+            relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
+          end
           add_dependency(relative_path)
         end
 
       rescue => e
+
+        message = e.message
+        message = message.split("Load paths:\n")[0] if message.include? 'Load paths:'
+        @error_line = e.sass_line
+
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
-          # TODO: Make this nicer.
           @error_file = e.sass_filename.gsub(@input_directory + "/", "")
           file = find_file_with_dependency(@error_file, ['css', 'scss', 'sass'])
-          if file
-            error e.message, e.sass_line, file
-          else
-            error "Error in #{@error_file}: #{e.message}", e.sass_line - 2
-          end
+          raise "Error in #{@error_file}: #{e.message}" unless file
+          @error_file = file
+          raise message
         elsif e.respond_to?(:sass_line) && e.sass_line
-          error e.message, e.sass_line - 2
+          # The error is in this file, so we'd better take off the two lines for Bourbon.
+          @error_line -= 2
         end
+        raise message
       end
 
       text = text[0..-2] if text.end_with? "\n"
