@@ -1,4 +1,6 @@
 require 'hammer/parser'
+require 'hammer/parsers/css'
+require 'hammer/parsers/sass'
 require 'bourbon'
 
 module Hammer
