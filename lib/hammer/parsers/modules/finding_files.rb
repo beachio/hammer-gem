@@ -6,8 +6,8 @@ module Hammer
       require "uri"
       filename = URI.parse(filename).path
 
-      extension = extension.to_sym if extension
       extensions = [*extension].compact
+      extensions = extensions.map {|e| e.to_sym}
 
       if !extension
         extension =  File.extname(filename)[1..-1]
