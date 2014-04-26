@@ -117,6 +117,8 @@ class TestSCSS < Test::Unit::TestCase
     end
 
     should "raise an error when including a file that has an error in it" do
+      file = create_file('error.scss', "@import 'does-not-exist-included-in-an-include.scss'", @parser.directory)
+      @parser.stubs(:find_files).returns([file])
       error = assert_raises do
         @parser.parse("@import 'error';")
       end

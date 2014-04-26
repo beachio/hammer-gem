@@ -21,10 +21,9 @@ module Hammer
       elsif format == :scss and new_format == :sass
         # warn "SCSS to SASS isn't done"
         false
-      elsif format == :sass and new_format == :scss
-        # warn "SASS to SCSS isn't done"
-        false
-      else
+      # elsif format == :sass and new_format == :scss
+      #   # warn "SASS to SCSS isn't done"
+      #   false
       end
     end
 

@@ -93,13 +93,16 @@ module Hammer
 
           begin
             text = parser.parse(text)
-          rescue => e
+          rescue RuntimeError => e
             # Set the error up and then get out of here!
             # This doesn't get saved to the parser, but that doesn't really matter.
             data.merge!({:error_line => parser.error_line}) if parser.error_line
             data.merge!({:error_file => parser.error_file}) if parser.error_file
             data.merge!({:error => e.to_s})
-            raise e
+
+            # No, we don't raise this error here. We just put it in :data.
+            # raise e
+            # TODO: Maybe a DEBUG would help with this!
           ensure
             data.merge!(parser.to_hash)
           end

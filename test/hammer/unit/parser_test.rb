@@ -105,12 +105,27 @@ end
 class HammerParserErrorsTest < Test::Unit::TestCase
   context "A parser that raises an error" do
     setup do
-      dir = Dir.mktmpdir
-      file = create_file 'index.html', 'Content', dir
-      Hammer::Parser.any_instance.stubs(:parse).raises("Nothing")
-      Hammer::Parser.parse_file(dir, 'index.html', Dir.mktmpdir, false) do |output, data|
+      @dir = Dir.mktmpdir
+      @filename = 'index.html'
+      @file = create_file 'index.html', 'Content', @dir
+      Hammer::HTMLParser.any_instance.stubs(:parse).raises("Nothing")
+    end
+
+    should "Add the error to data[:error]" do
+      Hammer::Parser.parse_file(@dir, 'index.html', Dir.mktmpdir, false) do |output, data|
         assert_equal "Nothing", data[:error]
       end
+    end
+  end
+end
+
+class HammerBaseParserTest < Test::Unit::TestCase
+  context "A standard parser"  do
+    setup do
+      @parser = Hammer::Parser.new(:filename => "index.html")
+    end
+    should "parse" do
+      assert_equal "text", @parser.parse("text")
     end
   end
 end
