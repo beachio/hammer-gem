@@ -32,15 +32,18 @@ class CoffeeParserTest < Test::Unit::TestCase
       end
     end
 
+    should "do includes" do
+      file = create_file "test.coffee", "a -> 'abc'", @parser.directory
+      @parser.stubs(:find_file).returns(file)
+      # assert_equal "a -> true", @parser.parse("# @include test")
+      assert @parser.parse("# @include test").include? 'abc'
+    end
+
     should "transfer includes through to JavaScript" do
-
       file = create_file('other.js', "alert('a')")
-
       @parser.expects(:find_files).with('other', 'coffee').returns([file])
       text = @parser.parse("# @include other")
       assert text.include? "/* @include other */"
     end
   end
 end
-
-# TODO: Including a coffeescript file!

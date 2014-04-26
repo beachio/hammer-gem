@@ -55,13 +55,19 @@ module Hammer
 
           raise "File not found: <strong>#{h tag}</strong>" unless file
 
-          parser = Hammer::Parser.for_filename(file).last
+          # p file
+          # p Hammer::Parser.for_filename(file).last
+          # parser = Hammer::Parser.for_filename(file).last
 
           # TODO: to_format(:coffee)
-          if parser.respond_to? :to_format
-            parser.parse(read(file))
+          # puts "Parsing! #{parser}"
+          # if parser.respond_to? :to_format
+          if file.end_with? '.coffee'
+            # parser.parse(read(file))
             # parser.to_coffeescript(read(file))
-            parser.to_format(:coffee)
+            # parser.to_format(:coffee)
+            parse_file(file, :coffee)
+            # require 'byebug'; byebug
           else
             "__hammer_include(#{tag})"
           end

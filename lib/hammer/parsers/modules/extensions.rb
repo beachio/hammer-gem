@@ -13,15 +13,14 @@ module Hammer
     @parsers_for ||= {}
     @parsers ||= []
 
-    # TODO: Make a better way of finding all parsers for an extension.
-    def self.all_parsers_for(extension)
-      @parsers_for[extension] || []
-    end
+    # # TODO: Make a better way of finding all parsers for an extension.
+    # def self.all_parsers_for(extension)
+    #   @parsers_for[extension] || []
+    # end
 
-    def extensions_for(what)
-      @extensions_for[what] || []
-    end
-
+    # def extensions_for(what)
+    #   @extensions_for[what] || []
+    # end
   end
 
   ## Allows a class to be registered for an extension.
@@ -143,17 +142,23 @@ module Hammer
       # For instance, relative URLs don't want to be parsed inside an include!
 
       text = ""
+      output = read(file)
       Hammer::Parser.for_filename(file).each do |parser_class|
         parser = parser_class.new().from_hash(self.to_hash)
 
-        if parser_class.respond_to?(:finished_extension) && parser_class.finished_extension == destination_extension
+        # p parser_class
+        # can_output_to_this_extension = parser.to_format(:coffee) rescue false
+
+        if parser_class.respond_to?(:finished_extension) # && parser_class.finished_extension == destination_extension
           parser.directory = @directory
           parser.output_directory = @output_directory
           parser.path      = Pathname.new(File.join(directory, file)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = @optimized
           parser.variables = @variables
-          output = parser.parse(read(file))
-          text = parser.to_format(destination_extension)
+          output = parser.parse(output)
+          if parser.to_format(destination_extension)
+            text = parser.to_format(destination_extension)
+          end
           data = parser.to_hash
           @variables = @variables.merge(parser.variables)
         end
