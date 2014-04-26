@@ -26,11 +26,11 @@ module Hammer
     end
 
     def add_wildcard_dependency(*args)
-      if args[1].is_a? Array
-        results = {args[0] => args[1]}
-      else
+      # if args[1].is_a? Array
+      #   results = {args[0] => args[1]}
+      # else
         results = find_files(*args)
-      end
+      # end
       @wildcard_dependencies ||= {}
       @wildcard_dependencies[args[0]] = [*results]
     end

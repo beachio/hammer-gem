@@ -126,7 +126,7 @@ module Hammer
         variable_value = variable_declaration[1..-1].join(' ')
         # If there's a |, this is a getter with a default!
         # TODO: Update the regex to disallow | characters.
-        if variable_value.start_with?("|") && variable_value == ""
+        if !variable_value.start_with?("|") && variable_value != ""
           self.variables[variable_name] = variable_value
         end
         ""
@@ -207,7 +207,7 @@ module Hammer
 
         filename = get_variable(filename) if filename.split("")[0] == "$"
         filename = filename.strip
-        file = find_files(filename)[0]
+        file = find_file(filename)
         raise "Path tags: <b>#{h filename}</b> couldn't be found." if !file
 
         path_to(file)
@@ -225,7 +225,7 @@ module Hammer
       end
       variable_value = @variables[variable_name]
       if !variable_value
-        raise "Variable #{variable_name} wasn't set!"
+        raise "Variable <b>#{variable_name}</b> wasn't set!"
       end
       return variable_value
     end

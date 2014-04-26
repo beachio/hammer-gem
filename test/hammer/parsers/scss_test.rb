@@ -1,11 +1,12 @@
 require "test_helper.rb"
+require "hammer/parsers/sass"
 
 class TestSCSS < Test::Unit::TestCase
-  
+
   def assert_includes(a, b)
     assert a.include? b
   end
-  
+
   context "A SCSS Parser" do
     setup do
       @parser = Hammer::SASSParser.new(:path => "style.scss")
@@ -32,27 +33,27 @@ class TestSCSS < Test::Unit::TestCase
         assert_equal "a b {\n  background: red; }", @parser.parse("a { b { background: red; } }")
       end
     end
-    
+
     context "with other SCSS files" do
       setup do
         file = create_file('style.scss', 'a { background: red; }', @parser.directory)
         @parser.expects(:find_files).returns([file])
       end
-      
+
       should "include SCSS files" do
         text = @parser.parse("/* @include style */")
         assert_includes "a {\n  background: red; }", text
       end
     end
   end
-  
-  
+
+
   context "A SCSS parser" do
     setup do
       @parser = Hammer::SASSParser.new(:path => "style.scss")
     end
     context "with an SCSS file" do
-      
+
       setup do
         @file = create_file "normalize.css", "* {normalize: true}", @parser.directory
       end
@@ -61,20 +62,20 @@ class TestSCSS < Test::Unit::TestCase
         setup do
           @parser.expects(:find_files).with('normalize', 'scss').returns([@file])
         end
-      
+
         should "Be able to include the CSS file" do
           # assert_equal "* {normalize: true}", @parser.parse("/* @include normalize */")
           # TODO: Check that this change is right. SCSS shouldn't be able to include CSS, right?
           assert_equal "/* @include normalize */", @parser.parse("/* @include normalize */")
         end
-      end      
-      
+      end
+
       context "that has an include of a SASS file" do
         setup do
           create_file "normalize.sass", "* \n  normalize: true", @parser.directory
           @parser.expects(:find_files).with('normalize', 'scss').returns([@file])
         end
-      
+
         should "Be able to include the normalize" do
           assert_equal "/* @include normalize */", @parser.parse("/* @include normalize */")
         end

@@ -10,10 +10,6 @@ module Hammer
 
     attr_accessor :output_directory, :added_files
 
-    def cache_directory
-      @cache_directory ||= Dir.mktmpdir
-    end
-
     def add_file(filename, text)
       path = File.join(@output_directory, filename)
       FileUtils.mkdir_p(File.dirname(path))
@@ -30,9 +26,9 @@ module Hammer
     def read(filename)
       if File.exist? File.join(@directory, filename)
         File.open(File.join(@directory, filename)).read()
-      elsif @output_directory && File.exist?(File.join(@output_directory, filename))
-        # elsif @output_directory && File.exist?(File.join(@output_directory, filename))
-        File.open(File.join(@output_directory, filename)).read()
+      # elsif @output_directory && File.exist?(File.join(@output_directory, filename))
+      #   # elsif @output_directory && File.exist?(File.join(@output_directory, filename))
+      #   File.open(File.join(@output_directory, filename)).read()
       else
         File.open(filename).read()
       end

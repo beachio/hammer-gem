@@ -1,3 +1,5 @@
+require 'hammer/parser'
+
 module Hammer
   class TodoParser < Parser
 
@@ -9,7 +11,7 @@ module Hammer
       JST_JS_REGEX = /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
       HAML_REGEX = /\/ @(?:todo|TODO) (.*)/
     end
-    
+
     def regex
       case format
       when 'css'
@@ -30,14 +32,14 @@ module Hammer
     def format
       @format ||= File.extname(@path)[1..-1]
     end
-    
+
     def parse(text)
       @text = text
-      
+
       results = {}
       # return "" unless @text
       return @text if !regex or !@text.match(regex)
-      
+
       text = replace(text, regex) do |message, line_number|
         message = message.scan(regex).flatten.first
         (results[line_number] ||= []) << message.strip
@@ -59,7 +61,7 @@ module Hammer
         @todos[line] ||= []
         @todos[line] = message
       end
-      
+
       return @text
     end
   end

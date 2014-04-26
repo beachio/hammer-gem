@@ -60,7 +60,7 @@ module Hammer
 
         basename      = File.basename(filename)
         match         = basename == [filename, extension].compact.join(".")
-        partial_match = basename == ["_"+filename, extension].compact.join(".")
+        partial_match = basename == ["_"+query, extension].compact.join(".")
 
         score = filename.split(query).join.length
 
@@ -97,7 +97,7 @@ module Hammer
     def filenames
 
       # This checks for it being an array and not nil!
-      return @filenames unless @filenames.empty?
+      return @filenames if @filenames && !@filenames.empty?
 
       # This means we can add files to the output
       if @directory

@@ -7,7 +7,7 @@ class TestHtmlParser < Test::Unit::TestCase
   context "An HTML file parser" do
 
     setup do
-      @parser = Hammer::HTMLParser.new()
+      @parser = Hammer::HTMLParser.new(:path => "index.html")
       def test_parse(input, expected_output)
         assert_equal expected_output, @parser.parse(input)
       end
@@ -99,26 +99,25 @@ class TestHtmlParser < Test::Unit::TestCase
   #     assert @parser.parse().include? "script src="
   #   end
 
-  #   should "replace @javascript tags with $variable filenames." do
-  #     new_file = Hammer::HammerFile.new :filename => "assets/app.js"
-  #     @parser.stubs(:find_files).returns([new_file])
-  #     @parser.text = "<!-- $variable app --><!-- @javascript $variable -->"
-  #     assert_equal "<script src='assets/app.js'></script>", @parser.parse()
-  #   end
+    should "replace @javascript tags with $variable filenames." do
+      @parser.path = "index.html"
+      new_file = create_file "assets/app.js", 'js();', @parser.directory
+      #TODO: this should be app/assets, and should only be called once. Fix it!
+      @parser.expects(:find_files).with('app', 'js').returns([new_file]).at_least_once
+      assert_equal "<script src='assets/app.js'></script>", @parser.parse("<!-- $variable app --><!-- @javascript $variable -->")
+    end
 
-  #   should "work with Clever Paths" do
-  #     image = Hammer::HammerFile.new :filename => "assets/logo.png"
-  #     @parser.expects(:find_file).returns(image)
-  #     @parser.text = "<!-- $variable logo.png --><!-- @path $variable -->"
-  #     assert_equal "assets/logo.png", @parser.parse()
-  #   end
+    should "work with Clever Paths" do
+      image = create_file 'assets/logo.png', '(image)', @parser.directory
+      @parser.path = "index.html"
+      test_parse "<!-- $variable logo.png --><!-- @path $variable -->", "assets/logo.png"
+    end
 
-  #   should "raise an error if the variable isn't set" do
-  #     @parser.text = "<!-- $variable NOTHING --><!-- @javascript $variable -->"
-  #     assert_raises Hammer::Error do
-  #       @parser.parse()
-  #     end
-  #   end
+    should "raise an error if the variable isn't set" do
+      assert_raises do
+        @parser.parse("<!-- $variable NOTHING --><!-- @javascript $variable -->")
+      end
+    end
 
   #   should "correctly match Clever Paths" do
   #     @parser.text = "<!-- @path location/index.html -->"
@@ -156,17 +155,15 @@ class TestHtmlParser < Test::Unit::TestCase
   #     end
   #   end
 
-  #   should "correctly match Clever Paths with alternative syntax with doublequotes" do
-  #     @parser.text = '"@path location/index.html"'
-  #     b = Hammer::HammerFile.new(:text => "I'm the right file.", :filename => "1234567890/location/index.html")
-  #     @parser.stubs(:find_files).returns([b])
-  #     assert_equal '"1234567890/location/index.html"', @parser.parse()
-  #   end
+    should "correctly match Clever Paths with alternative syntax with doublequotes" do
+      file = create_file "1234567890/location/index.html", "Correct", @parser.directory
+      @parser.stubs(:find_files).returns([file])
+      assert_equal '"1234567890/location/index.html"', @parser.parse('"@path location/index.html"')
+    end
 
-  #   should "remove empty lines from the start of a page" do
-  #     @parser.text = "<!-- $title ABC -->\nThis is a line\nThis is another line"
-  #     assert_equal "This is a line\nThis is another line", @parser.parse()
-  #   end
+    should "remove empty lines from the start of a page" do
+      test_parse "<!-- $title ABC -->\nThis is a line\nThis is another line", "This is a line\nThis is another line"
+    end
 
   #   context "when referring to multiple script tags" do
   #     setup do
@@ -221,19 +218,15 @@ class TestHtmlParser < Test::Unit::TestCase
   #       assert_equal "yes", @parser.parse()
   #     end
 
-  #     should "raise errors for variable tags and path tags with unset variables" do
-  #       [
-  #         "<!-- @path $unset_variable -->",
-  #         "<!-- $unset_variable -->"
-  #       ].each do |html|
-  #         @parser.text = html
-  #         error = assert_raises Hammer::Error do
-  #           @parser.parse()
-  #         end
-  #         assert error
-  #         assert error.message.to_s.include? "wasn't set"
-  #       end
-  #     end
+      should "raise errors for variable tags and path tags with unset variables" do
+        [ "<!-- @path $unset_variable -->",
+          "<!-- $unset_variable -->"].each do |html|
+          error = assert_raises do |e|
+            @parser.parse html
+          end
+          assert_equal "Variable <b>unset_variable</b> wasn't set!", error.message
+        end
+      end
 
   #     should "replace @stylesheet tags" do
   #       @parser.text = "<!-- $variable app --><!-- @stylesheet $variable -->"

@@ -14,7 +14,7 @@ module Hammer
   end
 end
 
-module Hamemr
+module Hammer
   class Parser
     include Hammer::Paths
   end

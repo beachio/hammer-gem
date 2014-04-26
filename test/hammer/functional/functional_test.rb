@@ -21,7 +21,7 @@ class FunctionalTest < Test::Unit::TestCase
   end
 
   def functional_test_directories
-    Dir.glob(File.join(File.dirname(__FILE__), 'functional', '*'))
+    Dir.glob(File.join(File.dirname(__FILE__), '*'))
   end
 
   def test_functional_projects

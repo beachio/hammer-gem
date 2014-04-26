@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 require "test_helper"
+require 'parsers/modules/extensions'
 require 'parsers/modules/finding_files'
+
+parsers_path = File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'lib', 'hammer', 'parsers', '**/*.rb')
+Dir[parsers_path].each {|file| require file; }
 
 class FindingFilesTest < Test::Unit::TestCase
 
@@ -10,6 +14,7 @@ class FindingFilesTest < Test::Unit::TestCase
 
   setup do
     @object = Thing.new
+    assert_equal @object.send(:filenames) , []
   end
 
   def test_find_files
@@ -19,6 +24,7 @@ class FindingFilesTest < Test::Unit::TestCase
       ['index', 'js'] => ['index.js'],
       ['index', 'css'] => [],
       ['*', 'html'] => ['index.html', '_include.html'],
+      ['include.html', 'html'] => ['_include.html'],
       ['include', 'html'] => ['_include.html']
     }.each do |set, result|
       query, extension = set

@@ -13,3 +13,5 @@ Things to do:
 - Markdown Extra
 - Implement alias_method_chain - it's just lying around there.
 - Add tests for all the binstubs
+- Add tests for marking SCSS dependencies
+- TAKE TEST COVERAGE TO 110%

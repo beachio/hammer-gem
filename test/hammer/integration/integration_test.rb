@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'capture'
 require 'hammer/test_helper'
 require "tmpdir"
 require "open3"
@@ -20,6 +21,16 @@ class TestIntegration < Test::Unit::TestCase
     cache_directory  = Dir.mktmpdir('cache')
     args = [ruby, 'hammer_time.rb', cache_directory, input_directory, output_directory]
     args << 'PRODUCTION' if optimized
+
+    text = capture_stdout do
+      assert Hammer::Build.new(
+        :input_directory => input_directory,
+        :output_directory => output_directory,
+        :cache_directory => cache_directory,
+        :optimized => optimized
+      ).compile()
+    end.string
+    assert_equal "", text
 
     Open3.popen3(*args) do |stdin, stdout, stderr, wait_thread|
       output = stdout.read

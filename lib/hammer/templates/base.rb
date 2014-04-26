@@ -33,18 +33,14 @@ module Hammer
     end
 
     def success?
-      @files != nil and @files.length > 0 and @files.select {|file| file[:error]} == []
+      error_files.length == 0
     end
 
   private
 
-    def total_errors
-      error_files.length rescue 0
-    end
-
-    def total_todos
-      files.collect(&:messages).flatten.compact.length
-    end
+    # def total_todos
+    #   files.collect(&:messages).flatten.compact.length
+    # end
 
     def html_includes
       files_of_type(['.php', '.html']).select {|file|

@@ -13,7 +13,7 @@ module Hammer
     #TODO: Do we move dependencies into a module?
     attr_accessor :text
     attr_accessor :dependencies, :wildcard_dependencies
-    attr_accessor :path, :directory, :variables, :messages, :todos
+    attr_accessor :path, :directory, :variables, :messages, :todos, :input_directory
     attr_accessor :added_files
     include Replacement
     include Extensions
@@ -88,6 +88,7 @@ module Hammer
           parser = parser_class.new().from_hash(data)
 
           parser.directory = directory
+          parser.input_directory = directory
           parser.output_directory = output_directory
           parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = optimized

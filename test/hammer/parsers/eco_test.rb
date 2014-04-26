@@ -10,11 +10,6 @@ class EcoParserTest < Test::Unit::TestCase
       @js_file = create_file 'app.eco', '<span><%= title %></span>', @parser.directory
     end
 
-    def stub_out(file)
-      @parser.stubs(:find_file).returns(file)
-      @parser.stubs(:find_files).returns([file])
-    end
-
     should "exist" do
       assert @parser
     end

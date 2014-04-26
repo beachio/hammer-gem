@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'capture'
 require 'rake'
 require 'test_helper'
 require 'tmpdir'
@@ -30,6 +31,9 @@ class BuildTest < Test::Unit::TestCase
     should "return a hash of filename => data" do
       assert_equal ['index.html'], @build.compile.keys
     end
-  end
 
+    should "not print ANYTHING when compiling!" do
+      assert_equal "", capture_stdout { @build.compile() }.string
+    end
+  end
 end

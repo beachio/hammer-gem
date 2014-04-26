@@ -43,10 +43,15 @@ module Hammer
       if extension == "html" || extension == "php"
         classes << "html"
       else
-        classes << "success" if file[:compiled]
-        classes << "copied"
+        # This isn't right! We may need a way of showing which files were compiled and which weren't.
+        #TODO: Check whether the stylesheet references 'copied'
+        # if file[:output_filename] == file[:filename]
+          # classes << "copied"
+        # else
+          # classes << "success"
+        # end
       end
-      classes.join(" ")
+      classes.uniq.join(" ")
     end
 
   end

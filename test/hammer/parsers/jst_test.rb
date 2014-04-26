@@ -10,11 +10,6 @@ class JSTParserTest < Test::Unit::TestCase
       @parser.parse("<span><%= title %></span>")
     end
 
-    def stub_out(file)
-      @parser.stubs(:find_file).returns(file)
-      @parser.stubs(:find_files).returns([file])
-    end
-
     should "return JS for to_format with :js" do
       assert @parser.to_format(:js).include? "<span>"
       assert @parser.to_format(:js).include? "window.JST[\"app\"]"
