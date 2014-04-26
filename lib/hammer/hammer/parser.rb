@@ -75,43 +75,37 @@ module Hammer
     class << self
 
       def parse_file(directory, filename, output_directory, optimized, &block)
-        data, output = {}, nil
 
-        data = {:filename => filename}
-
-        # Parse here
-        text   = File.open(File.join(directory, filename), 'r').read()
-
-        parsers = [Hammer::TodoParser]
-        parsers += Hammer::Parser.for_filename(filename)
+        # We return a hash and some text!
+        data    = {:filename => filename}
+        text    = File.open(File.join(directory, filename), 'r').read()
+        parsers = [Hammer::TodoParser] + Hammer::Parser.for_filename(filename)
 
         parsers.each do |parser_class|
-          parser = parser_class.new().from_hash(data)
 
-          parser.directory = directory
-          parser.input_directory = directory
+          # Parser initialization
+          parser                  = parser_class.new().from_hash(data)
+          parser.directory        = directory
+          parser.input_directory  = directory
           parser.output_directory = output_directory
-          parser.path      = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
-          parser.optimized = optimized
+          parser.path             = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
+          parser.optimized        = optimized
 
-          # begin
+          begin
             text = parser.parse(text)
-          # rescue => e
-          #   data.merge!({:error => e.to_s})
-          # ensure
+          rescue => e
+            # Set the error up and then get out of here!
+            # This doesn't get saved to the parser, but that doesn't really matter.
+            data.merge!({:error_line => parser.error_line}) if parser.error_line
+            data.merge!({:error_file => parser.error_file}) if parser.error_file
+            data.merge!({:error => e.to_s})
+            raise e
+          ensure
             data.merge!(parser.to_hash)
-          # end
+          end
         end
 
-        output = text
-        block.call(output, data)
-      rescue => e
-        data.merge!({:error => e.to_s})
-        data.merge!({:error_line => parser.error_line}) if parser.error_line
-        data.merge!({:error_file => parser.error_file}) if parser.error_line
-
-        block.call(output, data)
-        # raise e
+        block.call(text, data)
       end
     end
 

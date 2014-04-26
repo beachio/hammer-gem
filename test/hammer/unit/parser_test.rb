@@ -88,3 +88,47 @@ class HammerParserClassMethodsTest < Test::Unit::TestCase
     end
   end
 end
+
+module Hammer
+  class ErrorParser < Parser
+    def parse(text)
+      # Setting error_line and raising is the way we report errors.
+      # Should this have a new method? raise_error message, line?
+      @error_line = 1
+      raise "This is a simulated error."
+    end
+  end
+end
+
+# Test that the parse_file class method correctly returns data[:error]
+# data = {:error => "This message was sent from the compiler."}
+class HammerParserErrorsTest < Test::Unit::TestCase
+  context "A parser that raises an error" do
+    setup do
+      dir = Dir.mktmpdir
+      file = create_file 'index.html', 'Content', dir
+      Hammer::Parser.any_instance.stubs(:parse).raises("Nothing")
+      Hammer::Parser.parse_file(dir, 'index.html', Dir.mktmpdir, false) do |output, data|
+        assert_equal "Nothing", data[:error]
+      end
+    end
+  end
+end
+
+# class HammerParserErrorsTest < Test::Unit::TestCase
+
+#   context "A parser that raises an error" do
+#     setup do
+#       @parser = Hammer::Parser.new(:path => "index.html")
+#       @parser.stubs(:parse).raises("A simulated error")
+#     end
+
+#     should "raise an error on parse" do
+#       assert_raise do
+#         @parser.parse("never seen again")
+#       end
+#       assert_equal @parser.data[:error], "A simulated error"
+#     end
+#   end
+
+# end
