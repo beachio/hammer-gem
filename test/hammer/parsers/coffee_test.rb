@@ -42,3 +42,5 @@ class CoffeeParserTest < Test::Unit::TestCase
     end
   end
 end
+
+# TODO: Including a coffeescript file!

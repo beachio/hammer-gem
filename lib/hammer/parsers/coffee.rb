@@ -7,7 +7,7 @@ module Hammer
     returns :js
     register_as_default_for_extensions :coffee
     attr_accessor :to_coffeescript
-    
+
     def to_format(format)
       case format
       when :js
@@ -43,7 +43,7 @@ module Hammer
         "/* @include #{file} */"
       end
     end
-    
+
     def includes(text)
       lines = []
       return replace(text, /# @include (.*)/) do |invocation, line_number|
@@ -52,12 +52,16 @@ module Hammer
 
           file = find_file(tag, 'coffee')
           add_dependency(file)
-          
+
           raise "File not found: <strong>#{h tag}</strong>" unless file
-          
+
           parser = Hammer::Parser.for_filename(file).last
-          if parser.respond_to? :to_coffeescript
-            parser.to_coffeescript(read(file))
+
+          # TODO: to_format(:coffee)
+          if parser.respond_to? :to_format
+            parser.parse(read(file))
+            # parser.to_coffeescript(read(file))
+            parser.to_format(:coffee)
           else
             "__hammer_include(#{tag})"
           end
@@ -65,6 +69,6 @@ module Hammer
         a.compact.join("\n")
       end
     end
-    
+
   end
 end
