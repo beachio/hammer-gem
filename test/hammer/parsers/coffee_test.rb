@@ -18,11 +18,6 @@ class CoffeeParserTest < Test::Unit::TestCase
       @parser.parse("a = -> b")
     end
 
-    def stub_out(file)
-      @parser.stubs(:find_file).returns(file)
-      @parser.stubs(:find_files).returns([file])
-    end
-
     should "return JS for to_format with :js" do
       assert_equal @parser.to_format(:js), "(function() {\n  var a;\n\n  a = function() {\n    return b;\n  };\n\n}).call(this);\n"
     end
