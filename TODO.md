@@ -7,6 +7,7 @@ Things to do:
 - parse_file() is now in place. Be careful with HTML files and includes and parsing order.
 - Improve adding dependencies with find_files() - currently using find_file_with_dependency wrapper in Dependencies module which is gross.
 - Add Caching
+- Actually add ignores
 - Improve the way file-ignores are handled. Maybe we just want a parser for that.
 - HTMLify (in error messages for template)
 - Integration tests
