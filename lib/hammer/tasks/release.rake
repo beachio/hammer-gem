@@ -1,5 +1,5 @@
 def sh_with_clean_env(*args)
-  puts "B: #{args.join(' ')}"
+  puts "$: #{args.join(' ')}"
   if defined?(Bundler)
     Bundler.with_clean_env { sh *args }
   else
@@ -61,30 +61,27 @@ task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
 
-    puts "Deleting existing file..."
-    begin
-      Dir.chdir('vendor/production/bundle/ruby') do
-        sh_with_clean_env *%w(rm -rf *)
-      end
-    rescue => e
-      puts "Existing files weren't found: #{e}"
-    end
+    sh_with_clean_env "git checkout .bundle/config"
 
-    rm_rf [ 'vendor/cache', 'vendor/production' ]
+    puts "Deleting existing files in vendor/production/bundle/ruby/* ..."
+    sh_with_clean_env *%w(rm -rf vendor/production/bundle/ruby/*)
 
-    puts "bundle cache..."
-    
-    # bundle-cache has no verbosity option
+    puts "Deleting vendor/production ..."
+    rm_rf [ 'vendor/production', 'vendor/cache' ]
+    # we can delete 'vendor/cache', if we want to re-download
+
+    # puts "Runnning bundle cache..."
     sh_with_clean_env 'bundle cache'
 
     puts "bundle install..."
 
+                          # --quiet
     sh_with_clean_env *%w(bundle install
-                          --quiet
-                          --local
                           --path=vendor/production/bundle
+                          --local
                           --standalone
                           --without=development)
+
     sh_with_clean_env *%w(git checkout .bundle/config)
 
     Dir.chdir('vendor/production/bundle/ruby') do
@@ -130,7 +127,7 @@ task :upload_gem => 'dist/Gem.zip' do
 
   require 'aws/s3'
   AWS::S3::Base.establish_connection!(
-    :access_key_id     => s3_config['access_key_id'], 
+    :access_key_id     => s3_config['access_key_id'],
     :secret_access_key => s3_config['secret_access_key']
   )
 
@@ -188,7 +185,7 @@ end
 
 task :install => 'dist/Gem.zip' do
   [
-    '~/Library/Containers/com.riot.hammer/Data/Library/Application\\ Support/Riot/Hammer/Gem', 
+    '~/Library/Containers/com.riot.hammer/Data/Library/Application\\ Support/Riot/Hammer/Gem',
     '~/Library/Application\\ Support/Riot/Hammer/Gem
   '].each do |directory|
     sh_with_clean_env 'rm', '-rf', directory
