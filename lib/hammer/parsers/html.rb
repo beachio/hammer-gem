@@ -230,49 +230,6 @@ module Hammer
       return variable_value
     end
 
-    def stylesheet_tags(text)
-      @included_stylesheets ||= []
-
-      replace(text, /<!-- @stylesheet (.*?) -->/) do |tagged_path, line_number|
-        results, tags, hammer_files, paths = [], [], [], [], []
-
-        filenames = tagged_path.gsub("<!-- @stylesheet ", "").gsub("-->", "").strip.split(" ")
-
-        filenames.each do |filename|
-          filename = get_variable(filename) if filename.split("")[0] == "$"
-
-          matching_files = find_files_with_dependency(filename, 'css')
-
-          # if !filename.include? "*"
-          #   matching_files = [matching_files[0]]
-          # end
-
-          raise "Stylesheet tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
-          hammer_files += matching_files
-        end
-
-        hammer_files_to_tag = []
-        hammer_files.each do |file|
-
-          # next if file.is_a_compiled_file # TODO
-          next if File.basename(file).start_with?("_")
-          path = path_to(file)
-
-          next if @included_stylesheets.include?(path)
-          @included_stylesheets << path
-          hammer_files_to_tag << file
-          paths << path
-        end
-
-        if optimized
-          file = add_file_from_files(hammer_files_to_tag, :css)
-          "<link rel='stylesheet' href='#{path_to(file)}'>" if file
-        else
-          paths.map {|path| "<link rel='stylesheet' href='#{path}'>"}.compact.join("\n")
-        end
-      end
-    end
-
     # Take a bunch of CSS or JS files and combine them into one 10981cd72e39481a723.js digest file.
     def add_file_from_files(files, format)
       return false if files == []
@@ -300,39 +257,55 @@ module Hammer
       file
     end
 
-    def javascript_tags(text)
-      @included_javascripts ||= []
+    # Used for both Javascript and stylesheet tags!
+    def replace_header_tags(text, regex, format, &block)
+      @header_tags ||= {}
+      @header_tags[regex] ||= []
 
-      replace(text, /<!-- @javascript (.*?) -->/) do |tagged_path, line_number|
+      replace(text, regex) do |tagged_path, line_number|
         results, tags, hammer_files, paths = [], [], [], [], []
-
-        filenames = tagged_path.gsub("<!-- @javascript ", "").gsub("-->", "").strip.split(" ")
+        filenames = tagged_path.gsub(regex.to_s[/<!-- (.*?) /], "").gsub("-->", "").strip.split(" ")
 
         filenames.each do |filename|
-          filename = get_variable(filename) if filename.split("")[0] == "$"
-          matching_files = find_files_with_dependency(filename, 'js')
-          raise "Javascript tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
+          filename        = get_variable(filename) if filename.split("")[0] == "$"
+          matching_files  = find_files_with_dependency(filename, format.to_s)
+          name            = regex.to_s[/ (.*?) /].strip.gsub("@", "").capitalize
+          raise "#{name} tags: <b>#{h filename}</b> couldn't be found." if matching_files.empty?
           hammer_files += matching_files
         end
 
         hammer_files_to_tag = []
         hammer_files.each do |file|
-
+          # We don't want this if it's a compiled file, or if it's only an include!
           # next if file.is_a_compiled_file # TODO
           next if File.basename(file).start_with?("_")
-          path = path_to(file)
 
-          next if @included_javascripts.include?(path)
-          @included_javascripts << path
-          hammer_files_to_tag << file
+          path = path_to(file)
+          next if @header_tags[regex].include?(path)
+          @header_tags[regex] << path
+
           paths << path
+          hammer_files_to_tag << file
         end
+
         if optimized
-          file = add_file_from_files(hammer_files_to_tag, :js)
-          "<script src='#{path_to(file)}'></script>" if file
-        else
-          paths.map {|path| "<script src='#{path}'></script>"}.compact.join("\n")
+          file = add_file_from_files(hammer_files_to_tag, format)
+          paths = [path_to(file)]
         end
+
+        paths.map { |path| block.call(path) }.compact.join("\n")
+      end
+    end
+
+    def stylesheet_tags(text)
+      replace_header_tags(text, /<!-- @stylesheet (.*?) -->/, :css) do |path|
+        "<link rel='stylesheet' href='#{path}'>"
+      end
+    end
+
+    def javascript_tags(text)
+      replace_header_tags(text, /<!-- @javascript (.*?) -->/, :js) do |path|
+        "<script src='#{path}'></script>"
       end
     end
 
