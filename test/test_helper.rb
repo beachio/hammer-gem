@@ -4,9 +4,11 @@ begin
   require "simplecov"
   SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
   SimpleCov.start do
+    add_filter 'test'
     add_group 'Hammer', '/lib/hammer'
     add_group 'Parsers', '/lib/hammer/parsers/*'
     add_group 'Templates', '/lib/hammer/templates'
+    add_group 'Utilities', '/lib/hammer/templates'
     ENV['COVERAGE'] = 'true'
     Rake::Task["test"].execute
   end
