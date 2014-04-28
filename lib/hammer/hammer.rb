@@ -27,6 +27,3 @@ $LOAD_PATH.unshift root + 'vendor' + 'bundle'
 
 module Hammer; end
 require 'bundler/setup'
-# require 'hammer/build'
-# require "hammer/hammer"
-# require "hammer/parser"
