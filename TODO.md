@@ -17,5 +17,6 @@ Things to do:
 - Implement alias_method_chain - it's just lying around there.
 - Add tests for all the binstubs
 - Add tests for marking SCSS dependencies
-- TAKE TEST COVERAGE TO 110%
 - Add tests for multi-JS optimized-mode scripts
+- Add test coverage for asset paths in optimized mode
+- Figure out a better way of setting input directory, output directory and cache directory on every bloody parser.

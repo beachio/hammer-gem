@@ -13,10 +13,6 @@ module Hammer
       end
     end
 
-    def to_css
-      @text || @hammer_file.raw_text
-    end
-
     def parse(text)
       @text = text
 
@@ -61,7 +57,6 @@ module Hammer
 
     def url_paths(text)
       replace(text, /url\((\S*?)\)/) do |url_tag, line_number|
-
         file_path = url_tag.gsub('"', '').gsub("url(", "").gsub(")", "").strip.gsub("'", "")
 
         if ignore_file_path?(file_path)

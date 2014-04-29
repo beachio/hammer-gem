@@ -152,6 +152,7 @@ module Hammer
         if parser_class.respond_to?(:finished_extension) # && parser_class.finished_extension == destination_extension
           parser.directory = @directory
           parser.output_directory = @output_directory
+          parser.input_directory = @input_directory
           parser.path      = Pathname.new(File.join(directory, file)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized = @optimized
           parser.variables = @variables

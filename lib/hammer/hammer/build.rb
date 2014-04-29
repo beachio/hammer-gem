@@ -64,10 +64,11 @@ module Hammer
 
       files = []
       file_paths.each do |file_path|
-        # filename = file_path.to_s.gsub(@input_directory.to_s, "")
+        filename = file_path.to_s.gsub(@input_directory.to_s, "")
         # filename = filename[1..-1] if filename.start_with? "/"
 
         # Filename with no extension
+        next if file_path.include?(@output_directory)
         next unless File.basename(file_path).include? "."
         next if file_path.include? ".sass-cache"
 

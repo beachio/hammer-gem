@@ -49,6 +49,7 @@ module Hammer
       # TODO: Cache this method
 
       query = absolute_to_relative(query)
+      query = query.gsub("../", "")
       regex = regex_for(query, extension)
 
       matches = filenames.to_a.select { |filename|

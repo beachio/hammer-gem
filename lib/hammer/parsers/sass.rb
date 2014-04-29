@@ -99,6 +99,7 @@ module Hammer
 
           parser = Hammer::Parser.for_filename(file).first
           parser = parser.new(:path => file.gsub(@directory, ""))
+          parser.optimized        = optimized
           parser.parse(read(file))
           text = parser.to_format(format)
 
