@@ -12,12 +12,17 @@ task :use do
   puts "Installing this version of Hammer into your Hammer executable!"
   puts "Copying #{dev_path} to #{hammer_path}"
 
-  Open3.popen3("rsync -az --delete --exclude=\".sass-cache\" --exclude=\"dist/\" --exclude=\".git/\" \"#{dev_path}\" \"#{hammer_path}\"") do |stdin, stdout, stderr, wait_thread|
-    puts stdout.read
-    puts stderr.read
+  Open3.popen3("rsync -az --delete --exclude=\".sass-cache\" --exclude=\"dist/\" --exclude=\"coverage\" --exclude=\".git/\" \"#{dev_path}\" \"#{hammer_path}\"") do |stdin, stdout, stderr, wait_thread|
+    if ((stdout_read = stdout.read).length > 0)
+      puts stdout_read
+    end
+    if ((sterr_read = stderr.read).length > 0)
+      puts sterr_read
+    end
   end
 
-  puts "Done."
+  version = "#{File.open(File.join(dev_path, 'VERSION')).read()}"
+  puts "Success. Hammer is now running #{version}"
 end
 
 task :revert do
