@@ -7,7 +7,7 @@ module Hammer
 
     def to_format(format)
       if format == :css
-        to_css
+        parse(@text)
       else
         false
       end

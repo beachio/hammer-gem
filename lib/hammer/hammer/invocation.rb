@@ -9,17 +9,14 @@ module Hammer
       @template = template
     end
 
+    attr_accessor :cache_directory, :input_directory, :output_directory, :template
+
     def initialize(arguments)
       @success = nil
       @cache_directory, @input_directory, @output_directory = arguments
       @optimized = arguments.include?('PRODUCTION')
 
-      if ARGV.include? 'DEBUG'
-        require 'hammer/templates/commandline'
-        @template = Hammer::CommandLineTemplate
-      else
-        @template = Hammer::ApplicationTemplate
-      end
+      @template = Hammer::ApplicationTemplate
 
       @start = Time.now
       @debug = arguments.include? "DEBUG"

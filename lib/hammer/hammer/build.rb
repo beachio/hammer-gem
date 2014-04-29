@@ -12,7 +12,7 @@ module Hammer
     attr_accessor :error
 
     def clean_input(input)
-      Pathname.new(input).cleanpath.to_s
+      Pathname.new(input.to_s).cleanpath.to_s
     end
 
     def initialize(options = {})
@@ -67,6 +67,10 @@ module Hammer
         # filename = file_path.to_s.gsub(@input_directory.to_s, "")
         # filename = filename[1..-1] if filename.start_with? "/"
 
+        # Filename with no extension
+        next unless File.basename(file_path).include? "."
+        next if file_path.include? ".sass-cache"
+
         # unless ignore? file_path
           files << file_path
         # end
@@ -86,6 +90,8 @@ module Hammer
         FileUtils.mkdir_p(File.dirname(output_file))
 
         # TODO: Caching
+
+        next if File.basename(filename).start_with? "_"
 
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
 

@@ -241,7 +241,7 @@ module Hammer
 
       files.each do |file|
         # TODO: We need a better way of getting the compiled contents of a file.
-        parse_file(file, format)
+        contents << parse_file(file, format)
 
         if format == :js
           contents << ";"

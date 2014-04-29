@@ -18,3 +18,4 @@ Things to do:
 - Add tests for all the binstubs
 - Add tests for marking SCSS dependencies
 - TAKE TEST COVERAGE TO 110%
+- Add tests for multi-JS optimized-mode scripts

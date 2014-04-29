@@ -60,7 +60,7 @@ module Hammer
         # TODO: Rescue only a certain kind of error here and use finally/ensure!
 
         message = e.message
-        message = message.split("Load paths:\n")[0] if message.include? 'Load paths:'
+        # message = message.split("Load paths:\n")[0] if message.include? 'Load paths:'
         @error_line = e.sass_line if e.respond_to?(:sass_line)
 
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
@@ -123,8 +123,8 @@ module Hammer
         paths << File.join(escape_glob(@input_directory), "**/*")
       end
 
-      if @path
-        paths << File.dirname(escape_glob(@path))
+      if @input_directory && @path
+        paths << File.dirname(escape_glob(File.join(@input_directory, @path)))
       end
 
       # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")

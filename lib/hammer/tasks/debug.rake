@@ -1,8 +1,9 @@
+require 'pathname'
+require 'fileutils'
+require 'tmpdir'
+require 'open3'
+
 task :use do
-  require 'pathname'
-  require 'fileutils'
-  require 'tmpdir'
-  require 'open3'
 
   dev_path = Pathname.new(File.join(File.dirname(__FILE__), "..", "..", "..")).expand_path.to_s+"/"
   hammer_path = Pathname.new("~/Library/Containers/com.riot.hammer/Data/Library/Application Support/Riot/Hammer/Gem/").expand_path.to_s+"/"
@@ -17,4 +18,9 @@ task :use do
   end
 
   puts "Done."
+end
+
+task :revert do
+  hammer_path = Pathname.new("~/Library/Containers/com.riot.hammer/Data/Library/Application Support/Riot/Hammer/Gem/").expand_path.to_s+"/"
+  FileUtils.rm_rf(hammer_path)
 end
