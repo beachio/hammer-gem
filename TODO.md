@@ -25,7 +25,7 @@ A day
 An hour
 - Add tests for all the binstubs
 - HTMLify (in error messages for template)
-
+- Parser#from_parser(parser) should transfer all the information.
 
 
 

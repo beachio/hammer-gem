@@ -1,4 +1,5 @@
-require 'kramdown'
+require 'rdiscount'
+require 'parsers/html'
 
 module Hammer
   class MarkdownParser < Parser
@@ -14,23 +15,23 @@ module Hammer
         @markdown
       end
     end
-    
+
     def parse(text)
       @markdown = text
+      parser = Hammer::HTMLParser.new(:path => @path)
+      parser.directory = @directory
+      text = parser.parse(text) # beforehand
       text = convert(text)
-      text = text[0..-2] if text.end_with?("\n")
+      text = text[0..-2] while text.end_with?("\n")
       text
     end
-    
+
     private
-    
-    def options
-      {:auto_ids => false}
-    end
-    
+
     def convert(markdown)
-      doc = Kramdown::Document.new(markdown, options).to_html
+      # doc = Kramdown::Document.new(markdown, options).to_html
+      RDiscount.new(markdown, :smart).to_html
     end
-    
+
   end
 end

@@ -1,1 +1,0 @@
-![Alt text](<!-- @path about.html -->)

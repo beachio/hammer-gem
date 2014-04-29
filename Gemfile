@@ -17,7 +17,7 @@ gem 'shoulda'
 gem 'uglifier', '2.1.2'
 gem 'execjs'
 gem 'test-unit'
-
+gem 'rdiscount'
 gem 'rake'
 
 # Dependencies which dropped support for ruby 1.8.
