@@ -30,5 +30,6 @@ An hour
 
 
 A few minutes
-- Markdown Extra
 - Uncomment a few tests
+- Check TODOs are working
+- right-click and edit in the UI isn't working

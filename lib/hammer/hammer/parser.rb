@@ -74,6 +74,42 @@ module Hammer
 
     class << self
 
+      def parse_added_file(input_directory, temporary_directory, filename, output_directory, optimized, &block)
+        # We return a hash and some text!
+        data    = {:filename => filename}
+        text    = File.open(File.join(temporary_directory, filename), 'r').read()
+        parsers = [Hammer::TodoParser] + Hammer::Parser.for_filename(filename)
+
+        parsers.each do |parser_class|
+
+          # Parser initialization
+          parser                  = parser_class.new().from_hash(data)
+          parser.directory        = input_directory
+          parser.input_directory  = input_directory
+          parser.output_directory = output_directory
+          parser.path             = Pathname.new(File.join(input_directory, filename)).relative_path_from(Pathname.new(input_directory)).to_s
+          parser.optimized        = optimized
+
+          begin
+            text = parser.parse(text)
+          rescue RuntimeError => e
+            # Set the error up and then get out of here!
+            # This doesn't get saved to the parser, but that doesn't really matter.
+            data.merge!({:error_line => parser.error_line}) if parser.error_line
+            data.merge!({:error_file => parser.error_file}) if parser.error_file
+            data.merge!({:error => e.to_s})
+
+            # No, we don't raise this error here. We just put it in :data.
+            # raise e
+            # TODO: Maybe a DEBUG would help with this!
+          ensure
+            data.merge!(parser.to_hash)
+          end
+        end
+
+        block.call(text, data)
+      end
+
       def parse_file(directory, filename, output_directory, optimized, &block)
 
         # We return a hash and some text!

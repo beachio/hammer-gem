@@ -5,12 +5,12 @@ module Hammer
     def to_s
       text = []
       files.each do |data|
-        if data[:error]
+        # if data[:error]
           text << "#{data[:filename]}: compiled to #{data[:output_filename]}"
           data.keys.each do |key|
             text << "  #{key}: #{data[key]}" if data[key]
           end
-        end
+        # end
       end
       text.join("\n")
     end

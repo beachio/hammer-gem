@@ -11,19 +11,21 @@ module Hammer
     attr_accessor :output_directory, :added_files
 
     def add_file(filename, text)
-      path = File.join(@input_directory, filename)
+      @cache_directory ||= Dir.mktmpdir()
+
+      path = File.join(@cache_directory, filename)
       FileUtils.mkdir_p(File.dirname(path))
       File.open(path, 'w') do |file|
         file.write(text)
       end
 
-      Hammer::Parser.parse_file(@input_directory, filename, @output_directory, @optimized) do |text, data|
+      Hammer::Parser.parse_added_file(@input_directory, @cache_directory, filename, @output_directory, @optimized) do |text, data|
         File.open(path, 'w') do |file|
           file.write(text)
         end
       end
 
-      FileUtils.mv(File.join(@input_directory, filename), File.join(@output_directory, filename))
+      FileUtils.mv(File.join(@cache_directory, filename), File.join(@output_directory, filename))
 
       @added_files ||= {}
       @added_files[filename] = File.join(@output_directory, filename)

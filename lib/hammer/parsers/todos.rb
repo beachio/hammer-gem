@@ -57,9 +57,13 @@ module Hammer
       # end
 
       results.each do |line, message|
-        @todos ||= {}
-        @todos[line] ||= []
-        @todos[line] = message
+        # @todos ||= {}
+        # @todos[line] ||= []
+        # @todos[line] = message
+        @messages ||= []
+        message.each do |message|
+          @messages.push({:line => line, :message => message, :html_class => 'todo'})
+        end
       end
 
       return @text

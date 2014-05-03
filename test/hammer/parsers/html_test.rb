@@ -119,12 +119,11 @@ class TestHtmlParser < Test::Unit::TestCase
       end
     end
 
-  #   should "correctly match Clever Paths" do
-  #     @parser.text = "<!-- @path location/index.html -->"
-  #     b = Hammer::HammerFile.new(:text => "I'm the right file.", :filename => "1234567890/location/index.html")
-  #     @parser.stubs(:find_files).returns([b])
-  #     assert_equal "1234567890/location/index.html", @parser.parse()
-  #   end
+    should "correctly match path tags" do
+      file = create_file('1234567890/location/index.html', "I'm the right file", @parser.directory)
+      @parser.stubs(:find_files).returns([file])
+      assert_equal "1234567890/location/index.html", @parser.parse("<!-- @path location/index.html -->")
+    end
 
   #   should "correctly match Clever Paths with alternative syntax" do
   #     @parser.text = "'@path location/index.html'"

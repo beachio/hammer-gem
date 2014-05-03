@@ -1,4 +1,5 @@
-require 'rdiscount'
+# require 'rdiscount'
+require 'kramdown'
 require 'parsers/html'
 
 module Hammer
@@ -16,6 +17,10 @@ module Hammer
       end
     end
 
+    def options
+      {:auto_ids => false}
+    end
+
     def parse(text)
       @markdown = text
       parser = Hammer::HTMLParser.new(:path => @path)
@@ -29,8 +34,8 @@ module Hammer
     private
 
     def convert(markdown)
-      # doc = Kramdown::Document.new(markdown, options).to_html
-      RDiscount.new(markdown, :smart).to_html
+      # RDiscount.new(markdown, :smart).to_html
+      Kramdown::Document.new(markdown, options).to_html
     end
 
   end

@@ -6,13 +6,15 @@ class TestTodoParser < Test::Unit::TestCase
     should "parse html todos" do
       @parser = Hammer::TodoParser.new :path => "index.html"
       @parser.parse("<!-- @todo This -->")
-      assert_equal({1 => ["This"]}, @parser.todos)
+      # assert_equal({1 => ["This"]}, @parser.messages)
+      assert_equal "This", @parser.messages.first[:message]
     end
 
     should "parse coffee todos" do
       @parser = Hammer::TodoParser.new :path => "index.coffee"
       @parser.parse("# @todo This")
-      assert_equal({1 => ["This"]}, @parser.todos)
+      # assert_equal({1 => ["This"]}, @parser.messages)
+      assert_equal "This", @parser.messages.first[:message]
     end
 
     should "give the right regex" do
