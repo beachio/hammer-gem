@@ -21,7 +21,7 @@
         <% if filenames %>
           Compiled from
           <% filenames.each do |filename| %>
-            <a target="_blank" href='<%= input_directory %>/<%= filename %>'><%= filename %></a>
+            <a target="_blank" href='<%= input_directory %>/<%= filename %>'><%= filename %></a><% if filename != filenames[-1] %>,<% end %>
           <% end %>
         <% else %>
           Compiled into <a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a>
@@ -40,7 +40,11 @@
 
     <% if output_filename %><a target="blank" href="reveal://<%= output_directory %>/<%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
     <% if output_filename.end_with? 'html' %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
-    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %><a target="blank" href="edit://<%= input_directory %><%= filename %>" class="edit" title="Edit Original">Edit Original</a><% end %>
+    <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %>
+      <% if !filenames %>
+        <a target="blank" href="edit://<%= input_directory %><%= filename %>" class="edit" title="Edit Original">Edit Original</a>
+      <% end %>
+    <% end %>
 
   <% end %>
 </article>

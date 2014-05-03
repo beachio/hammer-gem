@@ -11,7 +11,7 @@ class VariablesTest < Test::Unit::TestCase
         include Hammer::AddingFiles
 
         def parse(text)
-          add_file('created.html', 'Created!')
+          add_file('created.html', 'Created!', ['one.html', 'two.html'])
           return text
         end
       end
@@ -24,10 +24,13 @@ class VariablesTest < Test::Unit::TestCase
 
     should "be able to create a file" do
       @object.parse('text')
-      assert @object.to_hash[:added_files].keys.include? 'created.html'
-      contents = File.open(@object.to_hash[:added_files]['created.html']).read
-      assert_equal contents, 'Created!'
-      assert File.exist? File.join(@object.output_directory, 'created.html')
+
+      assert_equal ['one.html', 'two.html'], @object.added_files[0][:filenames]
+      assert_equal 'created.html', @object.added_files[0][:filename]
+
+      created_file = File.join(@object.output_directory, 'created.html')
+      assert File.exist?(created_file)
+      assert_equal File.open(created_file).read, 'Created!'
     end
   end
 
