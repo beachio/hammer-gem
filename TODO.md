@@ -25,9 +25,8 @@ A day
 An hour
 - Add tests for all the binstubs
 - HTMLify (in error messages for template)
-- Parser#from_parser(parser) should transfer all the information.
-
-
+- Parser#from_parser(parser) should transfer all the information, but maybe not in a hash
+- Fix the duplication of Parsers's parse_file class method!
 
 A few minutes
 - Uncomment a few tests
