@@ -82,6 +82,7 @@ module Hammer
 
     def compile
       @results = {}
+      added_files = []
 
       filenames.each do |filename|
         path        = Pathname.new(filename).relative_path_from(Pathname.new(@input_directory)).to_s
@@ -110,6 +111,8 @@ module Hammer
           @results[path][:filename] = path
           @results[path][:output_filename] = path
 
+          added_files += data[:added_files] if data[:added_files]
+
           # Move the file to its correct path.
           # TODO: Calculate this before File.open().write above!
           # if path != Hammer::Parser.new.output_filename_for(path)
@@ -117,9 +120,12 @@ module Hammer
           #   FileUtils.move(output_file, File.join(@output_directory, Hammer::Parser.new.output_filename_for(path)))
           # end
         end
-
       end
 
+      added_files.each do |file|
+        filename = file[:filenames].join(', ')
+        @results[filename] = file
+      end
       return @results
     end
   end

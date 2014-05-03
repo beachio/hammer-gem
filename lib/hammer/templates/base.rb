@@ -11,8 +11,8 @@ module Hammer
       return [] if files.nil?
       # This sorts the files into the correct order for display
       files.sort_by { |path, file|
-        extension = File.extname(file[:output_filename]).downcase
-        file[:filename]
+        extension = File.extname(file[:output_filename].to_s).downcase
+        file[:filename].to_s
       }.sort_by {|path, file|
         (file.include? :from_cache) ? 1 : 0
       }.sort_by {|path, file|

@@ -34,7 +34,7 @@ module Hammer
       results = run(build)
 
       template = @template.new(results, options)
-      puts template
+      puts template unless ARGV.include? "-q"
       return @success ? 0 : 1
     end
 

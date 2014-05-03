@@ -249,7 +249,7 @@ module Hammer
       end
       contents = contents.join("\n\n\n\n")
       filename = Digest::MD5.hexdigest(contents)
-      file = add_file("#{filename}.#{format}", contents)
+      file = add_file("#{filename}.#{format}", contents, files)
       # file.source_files = files # TODO
 
       @@cached_files[key] = file

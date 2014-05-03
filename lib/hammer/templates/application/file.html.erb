@@ -18,7 +18,14 @@
       <% elsif from_cache %>
         Copied to <b><a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a></b> <span class='from-cache'>from&nbsp;cache</span>
       <% else %>
-        Compiled into <a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a>
+        <% if filenames %>
+          Compiled from
+          <% filenames.each do |filename| %>
+            <a target="_blank" href='<%= input_directory %>/<%= filename %>'><%= filename %></a>
+          <% end %>
+        <% else %>
+          Compiled into <a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a>
+        <% end %>
       <% end %>
     </small>
 

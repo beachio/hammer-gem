@@ -10,7 +10,7 @@ module Hammer
 
     attr_accessor :output_directory, :added_files
 
-    def add_file(filename, text)
+    def add_file(filename, text, filenames)
       @cache_directory ||= Dir.mktmpdir()
 
       path = File.join(@cache_directory, filename)
@@ -27,8 +27,8 @@ module Hammer
 
       FileUtils.mv(File.join(@cache_directory, filename), File.join(@output_directory, filename))
 
-      @added_files ||= {}
-      @added_files[filename] = File.join(@output_directory, filename)
+      @added_files ||= []
+      @added_files.push({:filenames => filenames, :output_filename => filename, :filename => filename, :is_a_compiled_file => true})
       filename
     end
 
