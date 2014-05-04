@@ -27,6 +27,7 @@ An hour
 - HTMLify (in error messages for template)
 - Parser#from_parser(parser) should transfer all the information, but maybe not in a hash
 - Fix the duplication of Parsers's parse_file class method!
+- Create a Project object that just contains the input_, cache_, and output_directory paths, use this everywhere instead of hashes
 
 A few minutes
 - Uncomment a few tests
