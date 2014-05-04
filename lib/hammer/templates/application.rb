@@ -2,6 +2,22 @@
 $LANG = "UTF-8"
 require 'lib/hammer/templates/base'
 
+# module Hammer
+#   class ErrorTemplate < Template
+#     def initialize(object)
+#       @object = object
+#     end
+#     def to_s(error_object)
+#       "<div class='build-error'>
+#         <span>Error while building!</span>
+#         <span>Error details:</span>
+#         <p>#{error_object}</p>
+#         <p>#{error_object && error_object.backtrace}</p>
+#       </div>"
+#     end
+#   end
+# end
+
 module Hammer
 
   class ApplicationTemplate < Template

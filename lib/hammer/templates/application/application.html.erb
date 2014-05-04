@@ -9,10 +9,13 @@
 
     <% if error %>
       <div class='build-error'>
-         <span>Error while building!</span>
-         <span>Error details:</span>
-         <p>#{error}</p>
-         <p><%= error && error_object.backtrace %></p>
+         <h1>Build error!</h1>
+         <p><strong><%= error %></strong></p>
+         <p>
+            <% error.backtrace.each do |line| %>
+              <%= CGI.escapeHTML line %><br />
+            <% end %>
+          </p>
       </div>
     <% else %>
       <% if files.empty? %>

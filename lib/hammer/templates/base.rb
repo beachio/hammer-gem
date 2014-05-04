@@ -5,7 +5,7 @@ require 'toerb'
 
 module Hammer
   class Template
-    attr_accessor :files
+    attr_accessor :files, :error
 
     def sort_files(files)
       return [] if files.nil?
@@ -85,7 +85,7 @@ module Hammer
     end
 
     def error
-      nil
+      @error
     end
 
     def other_files

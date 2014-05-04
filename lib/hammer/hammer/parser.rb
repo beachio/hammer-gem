@@ -6,6 +6,7 @@ require 'parsers/modules/finding_files'
 require 'parsers/modules/dependencies'
 require 'parsers/modules/replacement'
 require 'parsers/modules/paths'
+require 'parsers/modules/loading'
 
 module Hammer
   class Parser

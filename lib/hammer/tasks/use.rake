@@ -3,7 +3,7 @@ require 'fileutils'
 require 'tmpdir'
 require 'open3'
 
-task :use do
+task :use => [:bump_version] do
 
   dev_path = Pathname.new(File.join(File.dirname(__FILE__), "..", "..", "..")).expand_path.to_s+"/"
   hammer_path = Pathname.new("~/Library/Containers/com.riot.hammer/Data/Library/Application Support/Riot/Hammer/Gem/").expand_path.to_s+"/"

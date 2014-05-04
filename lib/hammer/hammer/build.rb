@@ -25,6 +25,7 @@ module Hammer
       @output_directory = clean_input(options.fetch(:output_directory)) || Dir.mktmpdir
       @cache_directory  = clean_input(options.fetch(:cache_directory))  || Dir.mktmpdir
 
+      Hammer::Parser.load_parsers_from_directory(@input_directory)
       @results = EMPTY
     end
 

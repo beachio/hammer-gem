@@ -414,9 +414,13 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
 }
 
 .build-error {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  padding-top: 50px;
+  text-align: center;
+  width: 90%;
+  top: 80px;
+  margin: 80px auto 0;
+  display: block;
+  background: url(MissingFolder.png) top center no-repeat;
 }
 
 .build-error span {
@@ -430,6 +434,18 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
   padding-top: 60px;
   color: #aaa;
   text-align: center;
+}
+
+.build-error h1 {
+  font-size: 20px;
+}
+
+.build-error p {
+  width: 100%;
+  margin: 10px auto;
+  background: #efefef;
+  padding: 5px;
+  text-align: left;
 }
 
 .not-found span {
@@ -455,132 +471,132 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-image: url(IconHTML@2x.png);
     background-size: 35px 28px;
   }
-  
+
   section article.html.include {
     background-image: url(IconHTMLInclude@2x.png);
     background-size: 29px 28px;
   }
-  
+
   section article.haml {
     background-image: url(IconHAML@2x.png);
     background-size: 35px 28px;
   }
-  
+
   section article.haml.include {
     background-image: url(IconHAMLInclude@2x.png);
     background-size: 29px 28px;
   }
-  
+
   section article.md {
     background-image: url(IconMD@2x.png);
     background-size: 35px 28px;
   }
-  
+
   section article.md.include {
     background-image: url(IconMDInclude@2x.png);
     background-size: 29px 28px;
   }
-  
+
   section article.css {
     background-image: url(IconCSS@2x.png);
     background-size: 24px 28px;
   }
-  
+
   section article.css.optimized {
     background-image: url(IconCSSOptimized@2x.png);
     background-size: 32px 28px;
   }
-  
+
   section article.sass {
     background-image: url(IconSASS@2x.png);
     background-size: 24px 28px;
   }
-  
+
   section article.scss {
     background-image: url(IconSCSS@2x.png);
     background-size: 24px 28px;
   }
-  
+
   section article.sass.optimized {
     background-image: url(IconSASSOptimized@2x.png);
     background-size: 32px 28px;
   }
-  
+
   section article.scss.optimized {
     background-image: url(IconSCSSOptimized@2x.png);
     background-size: 32px 28px;
   }
-  
+
   section article.js, section article.jst {
     background-image: url(IconJS@2x.png);
     background-size: 24px 28px;
   }
-  
+
   section article.js.optimized, section article.jst.optimized {
     background-image: url(IconJSOptimized@2x.png);
     background-size: 32px 28px;
   }
-  
+
   section article.coffee {
     background-image: url(IconCoff@2x.png);
     background-size: 24px 28px;
   }
-  
+
   section article.coffee.optimized {
     background-image: url(IconCoffOptimized@2x.png);
     background-size: 32px 28px;
   }
-  
+
   section article.image {
     background-image: url(IconImage@2x.png);
     background-size: 18px 16px;
   }
-  
+
   section article.ignored {
     background-image: url(IconIgnored@2x.png);
     background-size: 12px 15px;
   }
-  
+
   section article small.compiled {
     background-image: url(IconCompiled@2x.png);
     background-size: 15px 13px;
   }
-  
+
   section article span.todo {
     background-image: url(IconNote@2x.png);
     background-size: 12px 13px;
   }
-  
+
   article a.edit {
     background-image: url(IconEdit@2x.png);
     background-size: 32px 15px;
   }
-  
+
   article a.edit:active {
     background-image: url(IconEditPushed@2x.png);
     background-size: 32px 15px;
   }
-    
+
   article a.reveal {
     background-image: url(IconReveal@2x.png);
     background-size: 14px 15px;
   }
-  
+
   article a.reveal:active {
     background-image: url(IconRevealPushed@2x.png);
     background-size: 14px 15px;
   }
-  
+
   article a.browser {
     background-image: url(IconBrowser@2x.png);
     background-size: 14px 15px;
   }
-  
+
   article a.browser:active {
     background-image: url(IconBrowserPushed@2x.png);
     background-size: 14px 15px;
   }
-  
+
   section article span.error::after {
     background-image: url(IconError@2x.png);
     background-size: 14px 13px;
@@ -590,17 +606,17 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background: url(MissingFolder@2x.png) top center no-repeat;
     background-size: 65px 50px;
   }
-  
+
   .no-files span {
     background: url(NoFiles@2x.png) top center no-repeat;
     background-size: 54px 56px;
   }
-  
+
   .too-big span {
     background: url(WarningStatus@2x.png) top center no-repeat;
     background-size: 60px 53px;
   }
-  
+
 }
 
 /* Missing messages */

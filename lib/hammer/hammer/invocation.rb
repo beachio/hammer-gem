@@ -35,6 +35,12 @@ module Hammer
 
       template = @template.new(results, options)
       puts template unless ARGV.include? "-q"
+    rescue => e
+      template = @template.new([], {})
+      template.error = e
+      puts template
+      @success = false
+    ensure
       return @success ? 0 : 1
     end
 
