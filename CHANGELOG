@@ -1,6 +1,7 @@
 4.1
-In-project parsers! You can now create parsers that work inside your project.
+• Workaround for the Dropbox LiveReload bug
+• In-project parsers! You can now create parsers that work inside your project.
 Visit http://hammerformac.com/ to read more.
 
 4.0.0
-Rewritten compiler with better test coverage
+• Rewritten compiler with better test coverage
