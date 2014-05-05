@@ -1,5 +1,6 @@
+4.1
+In-project parsers! You can now create parsers that work inside your project.
+Visit http://hammerformac.com/ to read more.
+
 4.0.0
 Rewritten compiler with better test coverage
-
-Added in 4.0.1
-Markdown Extra
