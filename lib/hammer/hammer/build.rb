@@ -99,13 +99,15 @@ module Hammer
 
         # next if File.basename(filename).start_with? "_"
 
-        output_filename = Hammer::Parser.new.output_filename_for(path)
+        output_path = Hammer::Parser.new.output_filename_for(path)
+        input_file = File.join(@input_directory, path)
+        output_file = File.join(@output_directory, output_path)
 
         # TODO: Caching
-        file_data = {:filename => path, :output_filename => path}
+        file_data = {:filename => path, :output_filename => output_path}
 
         if @cacher.cached? path
-          @cacher.copy_to(output_filename, @output_directory, path)
+          @cacher.copy_to(output_path, @output_directory, path)
           if @cacher.data[path]
             @results[path] = @cacher.data[path]
           else
@@ -117,22 +119,24 @@ module Hammer
         else
           Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
 
-            output_file = File.join(@output_directory, output_filename)
-
-            File.open(output_file, 'w') { |f| f.write(output) if output }
+            if !File.basename(path).start_with?("_") && !path.end_with?(".rb")
+              File.open(output_file, 'w') { |f| f.write(output) if output }
+            end
 
             @results[path] = data
             @error = true if data[:error]
             @results[path][:filename] = path
-            @results[path][:output_filename] = path
+            @results[path][:output_filename] = output_path
 
             added_files += data[:added_files] if data[:added_files]
 
             file_data = file_data.merge(data)
           end
 
-          @cacher.cache(path, File.join(@output_directory, output_filename), file_data)
+          @cacher.cache(path, output_path, file_data)
         end
+
+        FileUtils.touch output_file, :mtime => File.mtime(input_file)
       end
 
       @cacher.write_to_disk()

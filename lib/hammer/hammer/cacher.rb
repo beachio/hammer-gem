@@ -40,8 +40,10 @@ module Hammer
       return true
     end
 
-    def cache(path, original_filename, data=nil)
-      @new_hashes[path] = hash(@input_directory, path)
+    # def cache(path, original_filename, output_filename, data=nil)
+    def cache(input_path, output_path, data)
+      path = input_path
+      @new_hashes[input_path] = hash(@input_directory, input_path)
 
       if data
         @data[path] = data if data
@@ -50,7 +52,12 @@ module Hammer
       end
 
       FileUtils.mkdir_p(File.dirname(cached_path_for(path)))
-      FileUtils.cp(original_filename, cached_path_for(path))
+
+      if File.exist? File.join(@output_directory, output_path)
+        FileUtils.cp(File.join(@output_directory, output_path), cached_path_for(path))
+      else
+        FileUtils.cp(File.join(@input_directory, input_path), cached_path_for(input_path))
+      end
     end
 
     def copy_to(input_path, output_directory, path)
