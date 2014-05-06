@@ -11,7 +11,8 @@ module Hammer
       return [] if files.nil?
       # This sorts the files into the correct order for display
       files.sort_by { |path, file|
-        extension = File.extname(file[:output_filename].to_s).downcase
+        filename = file[:output_filename] || ""
+        extension = File.extname(filename).downcase
         file[:filename].to_s
       }.sort_by {|path, file|
         (file.include? :from_cache) ? 1 : 0
@@ -64,7 +65,7 @@ module Hammer
 
     def html_files
       files_of_type(['.html', '.php']).select { |file|
-        !file[:error]
+        !file[:error] && !File.basename(file[:filename]).start_with?("_")
       }.compact
     end
 

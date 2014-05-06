@@ -6,10 +6,13 @@ module Hammer
       text = []
       files.each do |data|
         # if data[:error]
-          text << "#{data[:filename]}: compiled to #{data[:output_filename]}"
-          data.keys.each do |key|
-            text << "  #{key}: #{data[key]}" if data[key]
-          end
+          # text << "#{data[:filename]}: compiled to #{data[:output_filename]}"
+
+          text << "#{data[:filename]} From cache!" if data[:from_cache]
+          # text << "#{data[:filename]}: #{data}"
+          # data.keys.each do |key|
+          #   text << "  #{key}: #{data[key]}" if data[key]
+          # end
         # end
       end
       text.join("\n")

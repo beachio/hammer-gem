@@ -30,7 +30,7 @@ module Hammer
       @wildcard_dependencies = {}
       @filenames = []
       @variables = {}
-      @directory = Dir.mktmpdir
+      @directory = options[:directory] || Dir.mktmpdir()
     end
 
     def h(text)

@@ -69,35 +69,35 @@ class HammerApplicationTemplateTest < Test::Unit::TestCase
     should "have HTML files" do
       template = Hammer::ApplicationTemplate.new(@files)
       assert_equal [@files['index.html']], template.send(:html_files)
-      assert_equal [], template.send(:other_files)
+      # assert_equal [], template.send(:other_files)
     end
 
     should "have error files" do
       @files['index.html'][:error] = "An error!"
       template = Hammer::ApplicationTemplate.new(@files)
       assert_equal [@files['index.html']], template.send(:error_files)
-      assert_equal [], template.send(:other_files)
+      # assert_equal [], template.send(:other_files)
     end
 
     should "have HTML includes" do
       @files['_index.html'] = {:filename => "_index.html", :output_filename => "_index.html"}
       template = Hammer::ApplicationTemplate.new(@files)
       assert_equal [@files['_index.html']], template.send(:html_includes)
-      assert_equal [], template.send(:other_files)
+      # assert_equal [], template.send(:other_files)
     end
 
     should "have todo files" do
       @files['_index.html'] = {:filename => "_index.html", :output_filename => "_index.html", :messages => {1 => 'TODO: EVERYTHING', :html_class => 'todo'}}
       template = Hammer::ApplicationTemplate.new(@files)
       assert_equal [@files['_index.html']], template.send(:todo_files)
-      assert_equal [], template.send(:other_files)
+      # assert_equal [], template.send(:other_files)
     end
 
     should "have css_js_files" do
       @files['index.js'] = {:filename => "index.js", :output_filename => "index.js", :messages => {1 => 'TODO: EVERYTHING', :html_class => 'todo'}}
       template = Hammer::ApplicationTemplate.new(@files)
       assert_equal [@files['index.js']], template.send(:css_js_files)
-      assert_equal [], template.send(:other_files)
+      # assert_equal [], template.send(:other_files)
     end
   end
 end

@@ -2,6 +2,7 @@ require 'pathname'
 require 'fileutils'
 require 'shellwords'
 require 'hammer/parser'
+require 'hammer/cacher'
 
 module Hammer
 
@@ -9,7 +10,7 @@ module Hammer
 
   class Build
 
-    attr_accessor :error
+    attr_accessor :error, :cacher
 
     def clean_input(input)
       Pathname.new(input.to_s).cleanpath.to_s
@@ -83,6 +84,10 @@ module Hammer
 
     def compile
       @results = {}
+
+      # TODO: Read
+      @cacher = Hammer::Cacher.new @input_directory, @cache_directory, @output_directory
+
       added_files = []
 
       filenames.each do |filename|
@@ -92,36 +97,45 @@ module Hammer
 
         FileUtils.mkdir_p(File.dirname(output_file))
 
+        # next if File.basename(filename).start_with? "_"
+
+        output_filename = Hammer::Parser.new.output_filename_for(path)
+
         # TODO: Caching
+        file_data = {:filename => path, :output_filename => path}
 
-        next if File.basename(filename).start_with? "_"
+        if @cacher.cached? path
+          @cacher.copy_to(output_filename, @output_directory, path)
+          if @cacher.data[path]
+            @results[path] = @cacher.data[path]
+          else
+            @results[path] = file_data
+          end
+          @results[path][:from_cache] = true
+          data = @cacher.data[path]
 
-        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
+        else
+          Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, data|
 
-          raise "Something went wrong" if data.empty?
+            output_file = File.join(@output_directory, output_filename)
 
-          # output_filename = Hammer::Parser.new.output_filename_for(path)
-          # output_filename = data[:output_filename] || Hammer::Parser.new.output_filename_for(data[:filename])
-          output_filename = Hammer::Parser.new.output_filename_for(data[:filename])
-          output_file = File.join(@output_directory, output_filename)
+            File.open(output_file, 'w') { |f| f.write(output) if output }
 
-          File.open(output_file, 'w') { |f| f.write(output) if output }
+            @results[path] = data
+            @error = true if data[:error]
+            @results[path][:filename] = path
+            @results[path][:output_filename] = path
 
-          @results[path] = data
-          @error = true if data[:error]
-          @results[path][:filename] = path
-          @results[path][:output_filename] = path
+            added_files += data[:added_files] if data[:added_files]
 
-          added_files += data[:added_files] if data[:added_files]
+            file_data = file_data.merge(data)
+          end
 
-          # Move the file to its correct path.
-          # TODO: Calculate this before File.open().write above!
-          # if path != Hammer::Parser.new.output_filename_for(path)
-          #   @results[path][:output_filename] = Hammer::Parser.new.output_filename_for(path)
-          #   FileUtils.move(output_file, File.join(@output_directory, Hammer::Parser.new.output_filename_for(path)))
-          # end
+          @cacher.cache(path, File.join(@output_directory, output_filename), file_data)
         end
       end
+
+      @cacher.write_to_disk()
 
       added_files.each do |file|
         filename = file[:filenames].join(', ')

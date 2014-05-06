@@ -1,6 +1,7 @@
 # The class called by the bin stubs. Handles everything to do with creating a new build given arguments.
 
 require 'hammer/templates/application'
+require 'hammer/templates/commandline'
 
 module Hammer
   class Invocation
@@ -19,7 +20,9 @@ module Hammer
       @template = Hammer::ApplicationTemplate
 
       @start = Time.now
-      @debug = arguments.include? "DEBUG"
+      if ARGV.include? "DEBUG"
+        @template = Hammer::CommandLineTemplate
+      end
     end
 
     def compile

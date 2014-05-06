@@ -44,6 +44,7 @@ module Hammer
       end
     end
 
+    # TODO: Pass filenames into find_files
     def find_files(query, extension=nil)
 
       # TODO: Cache this method
@@ -89,6 +90,7 @@ module Hammer
       # Dependency tree alert!
       # TODO: Figure out a way to bring FindingFiles and Extensions closer together, if possible.
       base.send :include, Hammer::Extensions
+
     end
 
   private

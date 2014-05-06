@@ -171,6 +171,8 @@ module Hammer
             end
 
             file = find_file(query, 'html')
+            add_dependency(file)
+
             raise "Includes: File <b>#{h query}</b> couldn't be found." unless file
 
             parse_file(file, :html)

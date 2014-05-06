@@ -12,13 +12,13 @@ begin
     ENV['COVERAGE'] = 'true'
     Rake::Task["test"].execute
   end
-rescue LoadError
+rescue #LoadError
   # not installed
 end
 
 require 'fileutils'
 
-lib_dir = File.dirname(__FILE__) + '/../lib'
+lib_dir = File.dirname(__FILE__) + '/../../lib'
 $:.unshift lib_dir unless $:.include?(lib_dir)
 require 'hammer/hammer'
 

@@ -32,3 +32,4 @@ An hour
 A few minutes
 - Uncomment a few tests
 - right-click and edit in the UI isn't working
+- Ignore with .hammer-ignore
