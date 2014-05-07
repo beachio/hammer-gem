@@ -423,6 +423,11 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
   background: url(MissingFolder.png) top center no-repeat;
 }
 
+.build-error.no-files span {
+  margin-top: -20px;
+  background: none;
+}
+
 .build-error span {
   position: absolute;
   left: 50%;
