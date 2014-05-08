@@ -41,7 +41,7 @@ module Hammer
     end
 
     # def cache(path, original_filename, output_filename, data=nil)
-    def cache(input_path, output_path, data)
+    def cache(input_path, output_path, data=nil)
       path = input_path
       @new_hashes[input_path] = hash(@input_directory, input_path)
 

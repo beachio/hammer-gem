@@ -33,3 +33,4 @@ A few minutes
 - Uncomment a few tests
 - right-click and edit in the UI isn't working
 - Ignore with .hammer-ignore
+- Check that installing updates doesn't make Hammer build all projects

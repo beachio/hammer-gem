@@ -44,6 +44,7 @@ module Hammer
         paths.reject! { |a| a =~ /\/\.git\// }
         paths.reject! { |a| a =~ /\/\.svn\// }
         paths.reject! { |a| a =~ /\.DS_Store/ }
+        paths.reject! { |file| File.basename(file).start_with? "_" }
         paths.reject! {|file| file.include?(@output_directory)}
         paths.reject! {|file| File.directory?(file)}
 
@@ -138,7 +139,9 @@ module Hammer
           @cacher.cache(path, output_path, file_data)
         end
 
-        FileUtils.touch output_file, :mtime => File.mtime(input_file)
+        if File.exist? output_file
+          FileUtils.touch output_file, :mtime => File.mtime(input_file)
+        end
       end
 
       @cacher.write_to_disk()

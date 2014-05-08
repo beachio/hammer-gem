@@ -1,6 +1,8 @@
-<article class="<%= span_class %>" hammer-original-filename="<%= filename %>" <% if output_filename && !include? %>hammer-final-filename="<%= output_filename %>"<% end %>>
+<% isInclude = File.basename(filename).start_with?("_") %>
+<article class="<%= span_class %>" hammer-original-filename="<%= filename %>" <% if output_filename && !isInclude %>hammer-final-filename="<%= output_filename %>"<% end %>>
 
   <span class="filename"><%= filename %></span>
+
 
   <% if !ignored %>
     <small class="<%= span_class %>">
@@ -13,7 +15,7 @@
         <% end %>
         <%= error.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
         </span>
-      <% elsif include? %>
+      <% elsif isInclude %>
         Include only - not compiled
       <% elsif from_cache %>
         Copied to <b><a target="_blank" href="<%= output_directory %>/<%= output_filename %>"><%= output_filename %></a></b> <span class='from-cache'>from&nbsp;cache</span>
@@ -39,7 +41,7 @@
     <% end %>
 
     <% if output_filename %><a target="blank" href="reveal://<%= output_directory %>/<%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
-    <% if output_filename.end_with? 'html' %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
+    <% if !isInclude && output_filename.end_with?('html') %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
     <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee"].include?(File.extname(filename)) %>
       <% if !filenames %>
         <a target="blank" href="edit://<%= input_directory %><%= filename %>" class="edit" title="Edit Original">Edit Original</a>
