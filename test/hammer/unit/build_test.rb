@@ -2,7 +2,7 @@
 
 require 'capture'
 require 'rake'
-require 'test_helper'
+# require 'test_helper'
 require 'tmpdir'
 require 'hammer/build'
 

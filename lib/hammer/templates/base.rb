@@ -31,6 +31,7 @@ module Hammer
 
       @files = sort_files(files) # ['index.html' => {}, ...]
       @files = @files.map {|path, data| data } # [{}, {}]
+      @files = @files.compact
     end
 
     def success?
@@ -100,7 +101,7 @@ module Hammer
 
     def files_of_type(extension)
       extensions = [*extension]
-      files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact
+      @files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact
     end
   end
 end
