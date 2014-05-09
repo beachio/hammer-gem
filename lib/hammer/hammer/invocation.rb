@@ -36,7 +36,9 @@ module Hammer
       results = run(build)
 
       template = @template.new(results, options)
-      puts template unless ARGV.include? "-q"
+      output = template.to_s
+      output = output.each_line.reject{|x| x.strip == ""}.join
+      puts output unless ARGV.include? "-q"
     rescue => e
       template = @template.new([], {})
       template.error = e
@@ -52,7 +54,7 @@ module Hammer
       # # Pause to prevent the UI from returning too quickly and wreaking havoc with FSEvents.
       # # 0.5 minimum script time.
       runtime = Time.now - @start
-      sleep(0.5 - runtime) if runtime < 0.5
+      # sleep(0.5 - runtime) if runtime < 0.5
     end
 
     def run(build)

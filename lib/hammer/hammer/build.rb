@@ -59,6 +59,7 @@ module Hammer
       # We don't want to parse includes!
       if File.basename(filename).start_with? "_"
         @cacher.cache(path, path, data)
+        return data
       end
 
       # Now we'll need where this file is coming from, and where it's going to.
