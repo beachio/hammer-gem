@@ -1,7 +1,5 @@
-4.1
-• Workaround for the Dropbox LiveReload bug
-• In-project parsers! You can now create parsers that work inside your project.
-Visit http://hammerformac.com/ to read more.
-
-4.0.0
-• Rewritten compiler with better test coverage
+New in 5.0.0
+• You can now create custom parsers - visit http://hammerformac.com/ to read more.
+• Fully rewritten compiler with better test coverage
+• SLIM support
+• SASS 3.3.7 and Bourbon 4.0.1
