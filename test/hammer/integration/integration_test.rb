@@ -54,6 +54,7 @@ class TestIntegration < Test::Unit::TestCase
     output_directory = Dir.mktmpdir('Build')
     output, error = build(File.join('test', 'hammer', 'integration', 'case1'), output_directory, optimized)
     assert_equal "", error
+    puts output if output.include? "build-error"
     assert !output.include?("build-error")
     file = File.join output_directory, 'index.html'
     assert File.open(file).read.include? "<html>"

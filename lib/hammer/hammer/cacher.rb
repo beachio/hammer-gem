@@ -144,7 +144,7 @@ module Hammer
       if wildcard_dependencies = @wildcard_dependencies[path]
         wildcard_dependencies.each do |query, results|
           o = Hammer::HTMLParser.new(:path => path, :directory => @input_directory)
-          return true if o.find_files(query) != results
+          return true if o.find_files(*query) != results
         end
         return false
       end

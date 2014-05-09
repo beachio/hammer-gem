@@ -161,9 +161,9 @@ class CSSParserTest < Test::Unit::TestCase
           end
 
           should "match files with matching file paths" do
-            @parser.expects(:find_files).with('something/assets/_include.css').returns([@file]).at_least_once
+            @parser.expects(:find_files).with('something/assets/_include.css', nil).returns([@file]).at_least_once
             test "url(something/assets/_include.css);", "url(something/assets/_include.css);"
-            @parser.expects(:find_files).with('ing/assets/_include.css').returns([@file]).at_least_once
+            @parser.expects(:find_files).with('ing/assets/_include.css', nil).returns([@file]).at_least_once
             test "url(/* @path ing/assets/_include.css */);", "url(something/assets/_include.css);"
           end
         end

@@ -48,7 +48,6 @@ module Hammer
     def find_files(query, extension=nil)
 
       # TODO: Cache this method
-
       query = absolute_to_relative(query)
       query = query.gsub("../", "")
       regex = regex_for(query, extension)
@@ -100,7 +99,7 @@ module Hammer
     def filenames
 
       # This checks for it being an array and not nil!
-      return @filenames if @filenames && !@filenames.empty?
+      # return @filenames if @filenames && !@filenames.empty?
 
       # This means we can add files to the output
       if @directory
@@ -111,7 +110,7 @@ module Hammer
         @filenames = []
       end
 
-      @filenames
+      # @filenames
 
     end
 

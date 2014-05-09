@@ -25,14 +25,15 @@ module Hammer
       @dependencies.push(file)
     end
 
-    def add_wildcard_dependency(*args)
+    def add_wildcard_dependency(query, extension=nil)
       # if args[1].is_a? Array
       #   results = {args[0] => args[1]}
       # else
-        results = find_files(*args)
       # end
+
+      results = find_files(query, extension)
       @wildcard_dependencies ||= {}
-      @wildcard_dependencies[args[0]] = [*results]
+      @wildcard_dependencies[[query, extension]] = [*results]
     end
 
   end
