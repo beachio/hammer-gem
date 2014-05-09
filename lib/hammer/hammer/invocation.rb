@@ -32,7 +32,6 @@ module Hammer
         :output_directory => @output_directory,
         :optimized => @optimized
       }
-
       build = Hammer::Build.new(options)
       results = run(build)
 

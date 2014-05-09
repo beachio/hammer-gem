@@ -11,6 +11,7 @@ gem 'haml', :git => "git@github.com:haml/haml.git", :branch => "stable" #,      
 gem 'json_pure',     '~> 1.8.0'
 gem 'kramdown'
 gem 'mocha', '0.14.0'
+gem 'slim'
 gem 'plist'
 gem 'sass'
 gem 'shoulda'

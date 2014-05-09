@@ -24,6 +24,7 @@ require 'hammer/hammer'
 
 require 'test/unit'
 require 'sass'
+require 'slim'
 require 'mathn' if ENV['MATHN'] == 'true'
 require 'tmpdir'
 require 'mocha/setup'

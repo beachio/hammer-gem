@@ -56,7 +56,7 @@ module Hammer
       classes << extension
       classes << 'image' if ['png', 'gif', 'svg', 'jpg', 'gif'].include? extension
 
-      if extension == "html" || extension == "php"
+      if extension == "html" || extension == "php" || extension == "slim"
         classes << "html"
       else
         # This isn't right! We may need a way of showing which files were compiled and which weren't.
