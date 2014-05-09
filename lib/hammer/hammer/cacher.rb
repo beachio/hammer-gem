@@ -112,6 +112,7 @@ module Hammer
   private
 
     def file_changed?(path)
+      # path = path[1..-1] if path.start_with?("/")
       hash(@input_directory, path) != @hashes[path]
     end
 

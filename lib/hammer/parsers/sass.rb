@@ -51,6 +51,7 @@ module Hammer
             next unless path.start_with? @input_directory
             # Add a file dependency for each SASS dependency!
             relative_path = path[@input_directory.length..-1] if path.start_with? @input_directory
+            relative_path = relative_path[1..-1] if relative_path.start_with?("/")
           end
           add_dependency(relative_path)
         end

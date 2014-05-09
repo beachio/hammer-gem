@@ -8,7 +8,7 @@ module Hammer
         # if data[:error]
           # text << "#{data[:filename]}: compiled to #{data[:output_filename]}"
 
-          text << "#{data[:filename]} From cache!" if data[:from_cache]
+          text << "#{data[:filename]} not rom cache!" unless data[:from_cache]
           # text << "#{data[:filename]}: #{data}"
           # data.keys.each do |key|
           #   text << "  #{key}: #{data[key]}" if data[key]

@@ -57,7 +57,9 @@ module Hammer
       data = {:filename => path, :output_filename => path}
 
       # We don't want to parse includes!
-      return data if File.basename(filename).start_with? "_"
+      if File.basename(filename).start_with? "_"
+        @cacher.cache(path, path, data)
+      end
 
       # Now we'll need where this file is coming from, and where it's going to.
       output_path = Hammer::Parser.new.output_filename_for(path)
