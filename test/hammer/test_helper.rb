@@ -12,7 +12,7 @@ begin
     ENV['COVERAGE'] = 'true'
     Rake::Task["test"].execute
   end
-rescue #LoadError
+rescue LoadError
   # not installed
 end
 
