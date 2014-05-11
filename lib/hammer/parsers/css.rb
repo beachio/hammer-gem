@@ -1,5 +1,6 @@
 require 'hammer/parser'
 require 'bourbon'
+require 'neat'
 
 module Hammer
 

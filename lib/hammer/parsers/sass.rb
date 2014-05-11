@@ -34,7 +34,7 @@ module Hammer
       raise "Error in #{@path}: Wrong format (#{format})" unless ([:scss, :sass].include?(format))
 
       semicolon = format == :scss ? ";\n" : "\n"
-      text = ["@import 'bourbon'", "@import 'bourbon-deprecated-upcoming'", text].join(semicolon)
+      text = ["@import 'bourbon'", text].join(semicolon)
 
       text = includes(text)
       text = clever_paths(text)
@@ -72,7 +72,7 @@ module Hammer
           raise message
         elsif e.respond_to?(:sass_line) && e.sass_line
           # The error is in this file, so we'd better take off the two lines for Bourbon.
-          @error_line -= 2
+          @error_line -= 1
         end
         raise message
       end
@@ -130,7 +130,8 @@ module Hammer
       end
 
       # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
-      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "bundler", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "neat-*", "app", "assets", "stylesheets")
 
       paths.compact
     end
