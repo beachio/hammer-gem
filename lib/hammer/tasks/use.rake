@@ -21,6 +21,17 @@ task :use do
     end
   end
 
+  hammer_path = Pathname.new("~/Library/Application Support/Riot/Hammer/Gem").expand_path.to_s+"/"
+
+  Open3.popen3("rsync -az --delete --exclude=\".sass-cache\" --exclude=\"dist/\" --exclude=\"coverage\" --exclude=\".git/\" \"#{dev_path}\" \"#{hammer_path}\"") do |stdin, stdout, stderr, wait_thread|
+    if ((stdout_read = stdout.read).length > 0)
+      puts stdout_read
+    end
+    if ((sterr_read = stderr.read).length > 0)
+      puts sterr_read
+    end
+  end
+
   version = "#{File.open(File.join(dev_path, 'VERSION')).read()}"
   puts "Success. Hammer is now running #{version}"
 end
