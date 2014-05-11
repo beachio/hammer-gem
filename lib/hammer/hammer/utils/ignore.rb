@@ -5,7 +5,7 @@ module Hammer
       @ignore_regexes = []
       return true unless File.exist? file
       lines = File.open(file).read.split("\n")
-      @ignore_regexes = lines.map {|line| ignore(line)}.compact
+      @ignore_regexes = lines.map {|line| regex_for(line)}.compact
     end
 
     def ignore? path
