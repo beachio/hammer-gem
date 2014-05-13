@@ -61,7 +61,10 @@ module Hammer
     end
 
     def copy_to(input_path, output_directory, path)
+      # TODO: Why is this cached_path_for(path) and not cached_path_for(input_path)?
       FileUtils.cp(cached_path_for(path), File.join(output_directory, path))
+      output_file = File.join(output_directory, path)
+      FileUtils.touch(output_file, :mtime => File.mtime(cached_path_for(path)))
     end
 
     def read_from_disk
