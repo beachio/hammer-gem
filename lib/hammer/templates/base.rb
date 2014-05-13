@@ -90,6 +90,10 @@ module Hammer
       @error
     end
 
+    def missing?
+      !File.exist? @input_directory
+    end
+
     def other_files
       files - image_files - css_js_files - compilation_files - html_files - error_files
     end

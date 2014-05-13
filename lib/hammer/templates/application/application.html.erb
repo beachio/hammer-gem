@@ -19,7 +19,11 @@
       </div>
     <% else %>
       <% if files.empty? %>
-        <div class='build-error no-files'><span>No files to build</span></div>
+        <% if missing? %>
+          <div class='build-error no-files'><span>Directory missing.</span></div>
+        <% else %>
+          <div class='build-error no-files'><span>No files to build</span></div>
+        <% end %>
       <% else %>
         <section id="all">
           <div class="error set">
