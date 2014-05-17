@@ -11,7 +11,7 @@ module Hammer
       return [] if files.nil?
       # This sorts the files into the correct order for display
       files.sort_by { |path, file|
-        filename = airfile[:output_filename] || ""
+        filename = file[:output_filename] || ""
         extension = File.extname(filename).downcase
         file[:filename].to_s
       }.sort_by {|path, file|
@@ -24,7 +24,11 @@ module Hammer
         file[:is_include?] ? 1 : 0
       }.sort_by {|path, file|
         full_path = File.join(@input_directory, file[:filename])
-        0 - File.mtime(full_path).to_iair
+        if File.exist? full_path
+          0 - File.mtime(full_path).to_i
+        else
+          0
+        end
       }
     end
 
