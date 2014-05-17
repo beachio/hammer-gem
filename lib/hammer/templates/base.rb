@@ -102,7 +102,7 @@ module Hammer
     end
 
     def other_files
-      files - image_files - css_js_files - compilation_files - html_files - error_files
+      files - image_files - css_js_files - compilation_files - html_files - error_files - html_includes
     end
 
     def ignored_files
