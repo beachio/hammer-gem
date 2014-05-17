@@ -23,7 +23,7 @@ module Hammer
       }.sort_by {|path, file|
         file[:is_include?] ? 1 : 0
       }.sort_by {|path, file|
-        full_path = File.join(@input_directory, file[:filename])
+        full_path = File.join(@input_directory.to_s, file[:filename])
         if File.exist? full_path
           0 - File.mtime(full_path).to_i
         else
