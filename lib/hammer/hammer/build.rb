@@ -43,6 +43,10 @@ module Hammer
         @results[filename] = file
       end
 
+      @ignored_files.each do |ignored_file|
+        @results[ignored_file[:filename]] = ignored_file
+      end
+
       return @results
     end
 
@@ -76,6 +80,7 @@ module Hammer
         data[:from_cache] = true
       else
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, file_data|
+          FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') { |f| f.write(output)} if output
           data.merge!(file_data) if data
           @cacher.cache(path, output_path, data)
@@ -90,8 +95,15 @@ module Hammer
     def filenames
       return [] unless @input_directory
       read_ignore_file(File.join(@input_directory, '.hammer-ignore'))
-      Dir.glob(File.join(Shellwords.escape(@input_directory), "/**/*"), File::FNM_DOTMATCH).reject { |path|
-        ignore? path.gsub(@input_directory+"/", "")
+      @ignored_files = []
+      Dir.glob(File.join(Shellwords.escape(@input_directory), "/**/*"), File::FNM_DOTMATCH).reject { |filename|
+        path = filename.gsub(@input_directory+"/", "")
+        if ignore?(path)
+          if !File.directory?(filename) && !filename.start_with?(@output_directory)
+            @ignored_files << {:filename => path, :output_filename => output_path = Hammer::Parser.new.output_filename_for(path), :ignored => true}
+          end
+          true
+        end
       }
     end
 
