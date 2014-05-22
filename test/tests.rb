@@ -3,6 +3,7 @@
 # TODO: Remove "ruby test/tests.rb" from the XCode app and replace with "rake test"
 # and release it and make sure everybody's using it before removing this.
 
+require 'rubygems'
 require 'rake'
 app = Rake.application
 app.init

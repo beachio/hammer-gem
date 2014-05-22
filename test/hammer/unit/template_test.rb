@@ -37,10 +37,6 @@ class HammerApplicationTemplateTest < Test::Unit::TestCase
       assert_equal [], @template.send(:error_files)
     end
 
-    should "have 'no files' somewhere in its to_s" do
-      assert @template.to_s.include? 'No files'
-    end
-
     should "Create the right classes for a file" do
       # TODO: output_filename should be optional in a file JSON.
       def classes_for(filename)

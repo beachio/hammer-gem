@@ -4,9 +4,11 @@
   <span class="filename"><%= filename %></span>
 
 
-  <% if !ignored %>
+
     <small class="<%= span_class %>">
-      <% if error_filename %>
+      <% if ignored %>
+        Ignored
+      <% elsif error_filename %>
         Error in <%= error_filename %>
       <% elsif error %>
         <span class="error">
@@ -48,5 +50,4 @@
       <% end %>
     <% end %>
 
-  <% end %>
 </article>

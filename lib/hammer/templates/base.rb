@@ -22,6 +22,13 @@ module Hammer
         (file[:filename] == "index.html") ? 0 : 1
       }.sort_by {|path, file|
         file[:is_include?] ? 1 : 0
+      }.sort_by {|path, file|
+        full_path = File.join(@input_directory.to_s, file[:filename])
+        if File.exist? full_path
+          0 - File.mtime(full_path).to_i
+        else
+          0
+        end
       }
     end
 
@@ -40,10 +47,6 @@ module Hammer
 
   private
 
-    # def total_todos
-    #   files.collect(&:messages).flatten.compact.length
-    # end
-
     def html_includes
       files_of_type(['.php', '.html']).select {|file|
         File.basename(file[:output_filename]).start_with?("_") && !file[:error]
@@ -53,7 +56,7 @@ module Hammer
     def todo_files
       files.select {|file|
         file[:messages].to_a.length > 0
-      }.compact
+      }.compact - ignored_files
     end
 
     def error_files
@@ -61,19 +64,19 @@ module Hammer
         file[:error]
       }.compact.sort_by{|file|
           (file[:error] && file[:error_file] != file[:filename]) ? 100 : 10
-      }.compact
+      }.compact - ignored_files
     end
 
     def html_files
       files_of_type(['.html', '.php']).select { |file|
         !file[:error] && !File.basename(file[:filename]).start_with?("_")
-      }.compact
+      }.compact - ignored_files
     end
 
     def compilation_files
       files.select {|file|
         file[:is_a_compiled_file] # && file.source_files.collect(&:error) == []
-      }.compact
+      }.compact - ignored_files
     end
 
     def css_js_files
@@ -90,18 +93,22 @@ module Hammer
       @error
     end
 
+    def missing?
+      !File.exist? @input_directory
+    end
+
     def other_files
-      files - image_files - css_js_files - compilation_files - html_files - error_files
+      files - image_files - css_js_files - compilation_files - html_files - error_files - html_includes - ignored_files
     end
 
     def ignored_files
       # TODO: Ignored files in the template
-      []
+      files.select {|file| file[:ignored]} || []
     end
 
     def files_of_type(extension)
       extensions = [*extension]
-      @files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact
+      @files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact - ignored_files
     end
   end
 end

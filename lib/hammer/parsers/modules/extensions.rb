@@ -37,6 +37,8 @@ module Hammer
       parser    = self.class.for_extension(extension).last
       return filename unless parser
       Pathname.new("#{File.dirname(filename)}/#{File.basename(filename, ".*")}.#{parser.finished_extension}").cleanpath.to_s
+    rescue => e
+      filename
     end
 
     # Fetches related file extensions - ["css"] for "scss" and ["js"] for "coffee"

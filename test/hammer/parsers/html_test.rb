@@ -220,7 +220,7 @@ class TestHtmlParser < Test::Unit::TestCase
       should "raise errors for variable tags and path tags with unset variables" do
         [ "<!-- @path $unset_variable -->",
           "<!-- $unset_variable -->"].each do |html|
-          error = assert_raises do |e|
+          error = assert_raises do
             @parser.parse html
           end
           assert_equal "Variable <b>unset_variable</b> wasn't set!", error.message
