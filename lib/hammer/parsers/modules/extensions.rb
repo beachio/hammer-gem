@@ -62,7 +62,8 @@ module Hammer
 
       def for_extension(extension)
 
-        raise "Nil extension!" if extension.nil?
+        return [] if extension.nil?
+        # raise "Nil extension!" if extension.nil?
 
         parsers = [*ExtensionMap.default_parser_for[extension.to_sym]]
         parsers += ExtensionMap.parsers_for[extension.to_sym] if ExtensionMap.parsers_for[extension.to_sym]
