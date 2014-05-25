@@ -43,15 +43,16 @@ module Hammer
 
 
     def to_format(format)
+      # if format == :html
+        # text = @text
+        # text = get_variables(text)
+        # text = includes(text)
+        # text
+      # end
+
       if format == :html
-        text = @text
-        text = get_variables(text)
-        text = includes(text)
-        text
+        parse(@text)
       end
-    #   if format == :html
-    #     parse(@text)
-    #   end
     end
 
     def parse(text)
