@@ -30,11 +30,17 @@ module Hammer
     def compile
       @results = {}
       @cacher = Hammer::Cacher.new @input_directory, @cache_directory, @output_directory
+
+      ignore_file   = File.join(@input_directory, '.hammer-ignore')
+      filenames     = files_from_directory(@input_directory, ignore_file)
+      ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
+
       filenames.each do |filename|
         data = parse_file(filename)
         @results[data[:output_filename]] = data
         @error = true if data[:error]
       end
+
       @cacher.write_to_disk()
 
       added_files = @results.values.collect {|data| data[:added_files]}.flatten.compact
@@ -43,7 +49,9 @@ module Hammer
         @results[filename] = file
       end
 
-      @ignored_files.each do |ignored_file|
+      ignored_files.each do |ignored_file|
+        path = ignored_file.gsub(@input_directory+"/", "")
+        ignored_file = {:filename => path, :output_filename => Hammer::Parser.new.output_filename_for(path), :ignored => true}
         @results[ignored_file[:filename]] = ignored_file
       end
 
@@ -90,21 +98,6 @@ module Hammer
       # Now touch the output file to the same time as the input file. Nice.
       FileUtils.touch(output_file, :mtime => File.mtime(input_file)) if File.exist? output_file
       return data
-    end
-
-    def filenames
-      return [] unless @input_directory
-      read_ignore_file(File.join(@input_directory, '.hammer-ignore'))
-      @ignored_files = []
-      Dir.glob(File.join(Shellwords.escape(@input_directory), "/**/*"), File::FNM_DOTMATCH).reject { |filename|
-        path = filename.gsub(@input_directory+"/", "")
-        if ignore?(path)
-          if !File.directory?(filename) && !filename.start_with?(@output_directory)
-            @ignored_files << {:filename => path, :output_filename => output_path = Hammer::Parser.new.output_filename_for(path), :ignored => true}
-          end
-          true
-        end
-      }
     end
 
   end
