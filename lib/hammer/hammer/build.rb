@@ -16,7 +16,7 @@ module Hammer
       @results = {}
       @error = false
 
-      @optimized        = options[:optimized] if options.keys.include? :optimized
+      @optimized        = !options[:optimized].nil?
 
       @input_directory  = clean_input(options.fetch(:input_directory))
       @output_directory = clean_input(options.fetch(:output_directory)) || Dir.mktmpdir
@@ -24,7 +24,8 @@ module Hammer
 
       @error = true if !File.exist? @input_directory
 
-      Hammer::Parser.load_parsers_from_directory(@input_directory)
+      # Load in any *_parser.rb files in the directory.
+      Hammer::Parser.load_parsers_from_directory(@input_directory, "*_parser.rb")
     end
 
     def compile
