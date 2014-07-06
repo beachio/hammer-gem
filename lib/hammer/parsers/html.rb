@@ -43,16 +43,15 @@ module Hammer
 
 
     def to_format(format)
-      # if format == :html
-        # text = @text
-        # text = get_variables(text)
-        # text = includes(text)
-        # text
-      # end
-
       if format == :html
-        parse(@text)
+        text = @text
+        get_variables(text)
+        text = includes(text)
+        text = output_variables(text)
+        text
       end
+
+      # Second way: #{parse(@text)}
     end
 
     def parse(text)
@@ -284,6 +283,7 @@ module Hammer
           next if File.basename(file).start_with?("_")
 
           path = path_to(file)
+          # TODO: WTF do these do
           next if @header_tags[regex].include?(path)
           @header_tags[regex] << path
 
