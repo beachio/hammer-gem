@@ -16,7 +16,7 @@ module Hammer
       @results = {}
       @error = false
 
-      @optimized        = !options[:optimized].nil?
+      @optimized        = options[:optimized] if options[:optimized]
 
       @input_directory  = clean_input(options.fetch(:input_directory))
       @output_directory = clean_input(options.fetch(:output_directory)) || Dir.mktmpdir
