@@ -52,6 +52,11 @@ module Hammer
     end
 
     def ignore? path
+      @ignore_paths ||= {}
+      @ignore_paths[path] ||= _ignore? path
+    end
+
+    def _ignore? path
 
       return true if path.include?(".git")
       return true if path.include?(".esproj")
@@ -59,19 +64,21 @@ module Hammer
       return true if path.end_with? '.rb'
       return true if path.start_with? "Build"
 
-      return true if !!(path =~ /\.git\//)
-      return true if !!(path =~ /\/\.svn\//)
-      return true if !!(path =~ /\.DS_Store/)
-      return true if !!(path =~ /\.sass-cache/)
-
       # return true if File.basename(path).start_with? "_"
       return true if File.directory?(path)
 
       # .ht files are Apache!
-      return true if File.basename(path).start_with?('.') && !File.basename(path).start_with?('.ht')
+      basename = File.basename(path)
+      return true if basename.start_with?('.') && !basename.start_with?('.ht')
 
       # File without extension
-      return true if !File.basename(path).include? "."
+      return true if !basename.include? "."
+
+      return true if !!(path =~ /\.git\/|\/\.svn\/|\.DS_Store|\.sass-cache/)
+      # return true if !!(path =~ /\.git\//)
+      # return true if !!(path =~ /\/\.svn\//)
+      # return true if !!(path =~ /\.DS_Store/)
+      # return true if !!(path =~ /\.sass-cache/)
 
       # This is where I tried to ignore directories which start with a .
       # TODO: ignore directories which start with a .

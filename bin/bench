@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+# require 'method_profiler'
+
+load File.join(File.dirname(__FILE__), '_setup')
+
+# profiler = MethodProfiler.observe(Hammer::Cacher)
+# Hammer::Invocation.new(ARGV).compile()
+# puts profiler.report
+
+require 'ruby-prof'
+
+# Profile the code
+RubyProf.start
+Hammer::Invocation.new(ARGV).compile()
+result = RubyProf.stop
+
+# Print a flat profile to text
+printer = RubyProf::FlatPrinter.new(result)
+printer.print(STDOUT)
