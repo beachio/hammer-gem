@@ -649,3 +649,16 @@ section .message code {
   font-family: Monaco, monospace;
   padding-left: 5px;
 }
+
+#version:hover {
+  opacity: 0.5;
+}
+
+#version {
+  width: 100%;
+  opacity: 0.1;
+  text-align: center;
+  position: relative;
+  padding-right: 15px;
+  bottom: 20px;
+}

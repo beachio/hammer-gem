@@ -2,6 +2,13 @@ require 'pathname'
 
 module Hammer
   class Error < SyntaxError; end
+
+  def self.version
+    File.open(File.join File.dirname(File.dirname(File.dirname(__FILE__))), "VERSION").read || "?"
+    # File.open(File.join(__FILE__ , "..", "..", "VERSION")).read || "?"
+  rescue => e
+    "??: #{e}"
+  end
 end
 
 dir = File.dirname(__FILE__)
