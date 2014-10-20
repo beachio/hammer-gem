@@ -14,7 +14,13 @@ module Hammer
 
     def initialize(arguments)
       @success = nil
-      @cache_directory, @input_directory, @output_directory = arguments
+      if arguments.length > 1
+        @cache_directory, @input_directory, @output_directory = arguments
+      else
+        @input_directory = arguments[0]
+        @cache_directory = Dir.mktmpdir
+        @output_directory = File.join @input_directory, "Build"
+      end
       @optimized = arguments.include?('PRODUCTION')
 
       @template = Hammer::ApplicationTemplate
