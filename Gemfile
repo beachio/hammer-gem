@@ -16,7 +16,7 @@ gem 'plist'
 gem 'sass'
 gem 'shoulda'
 gem 'uglifier', '2.1.2'
-gem 'execjs'
+gem 'execjs', '2.0.2'
 gem 'test-unit'
 gem 'rake'
 
