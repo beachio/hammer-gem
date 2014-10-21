@@ -11,3 +11,4 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
       )
       @build.compile()
       
+![Build status](https://travis-ci.org/RiotHQ/hammer-gem.svg?branch=v2)
