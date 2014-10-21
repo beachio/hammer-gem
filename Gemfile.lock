@@ -1,16 +1,16 @@
 GIT
-  remote: git@github.com:elliottkember/amp.git
-  revision: 3874a729fd61b00287b3ac897fd7e7080518f737
-  specs:
-    amp (0.11)
-
-GIT
   remote: git@github.com:haml/haml.git
   revision: 0f7d01a036973c6b21cca655170545353347565c
   branch: stable
   specs:
     haml (4.0.5)
       tilt
+
+GIT
+  remote: https://github.com/elliottkember/amp.git
+  revision: 3874a729fd61b00287b3ac897fd7e7080518f737
+  specs:
+    amp (0.11)
 
 GEM
   remote: https://rubygems.org/
