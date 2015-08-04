@@ -1,31 +1,31 @@
 GIT
   remote: https://github.com/elliottkember/amp.git
-  revision: 3874a729fd61b00287b3ac897fd7e7080518f737
+  revision: fe4b91828c99ec172b667f7638b6eb617d500c04
   specs:
     amp (0.11)
 
 GIT
   remote: https://github.com/haml/haml.git
-  revision: 0f7d01a036973c6b21cca655170545353347565c
+  revision: 2cb6d9d1a4f85528fbf801b52e6eeb34a52b22cb
   branch: stable
   specs:
-    haml (4.0.5)
+    haml (4.0.6)
       tilt
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (3.2.16)
+    activesupport (3.2.22)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    bourbon (4.0.2)
-      sass (~> 3.3)
+    bourbon (4.2.3)
+      sass (~> 3.4)
       thor
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.8.0)
-    docile (1.1.3)
+    coffee-script-source (1.9.1.1)
+    docile (1.1.5)
     eco (1.0.0)
       coffee-script
       eco-source
@@ -33,35 +33,38 @@ GEM
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
     execjs (2.0.2)
-    i18n (0.6.9)
-    json_pure (1.8.1)
-    kramdown (1.3.1)
-    metaclass (0.0.2)
+    i18n (0.7.0)
+    json (1.8.3)
+    json_pure (1.8.2)
+    kramdown (1.8.0)
+    metaclass (0.0.4)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.10.0)
-    neat (1.7.0)
+    multi_json (1.11.2)
+    neat (1.7.2)
       bourbon (>= 4.0)
       sass (>= 3.3)
     plist (3.1.0)
-    rake (10.1.1)
-    sass (3.4.6)
+    power_assert (0.2.4)
+    rake (10.4.2)
+    sass (3.4.16)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
       shoulda-matchers (>= 1.4.1, < 3.0)
-    shoulda-context (1.1.6)
+    shoulda-context (1.2.1)
     shoulda-matchers (2.0.0)
       activesupport (>= 3.0.0)
-    simplecov (0.8.2)
+    simplecov (0.10.0)
       docile (~> 1.1.0)
-      multi_json
-      simplecov-html (~> 0.8.0)
-    simplecov-html (0.8.0)
-    slim (2.0.2)
-      temple (~> 0.6.6)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
+    slim (3.0.6)
+      temple (~> 0.7.3)
       tilt (>= 1.3.3, < 2.1)
-    temple (0.6.7)
-    test-unit (2.5.5)
+    temple (0.7.6)
+    test-unit (3.1.3)
+      power_assert
     thor (0.19.1)
     tilt (2.0.1)
     uglifier (2.1.2)
@@ -94,3 +97,6 @@ DEPENDENCIES
   slim
   test-unit
   uglifier (= 2.1.2)
+
+BUNDLED WITH
+   1.10.5
