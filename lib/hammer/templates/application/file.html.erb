@@ -46,7 +46,7 @@
     <% if !isInclude && output_filename.end_with?('html') %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
     <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee", '.slim'].include?(File.extname(filename)) %>
       <% if !filenames %>
-        <a target="blank" href="edit://<%= input_directory %><%= filename %>" class="edit" title="Edit Original">Edit Original</a>
+        <a target="blank" href="edit://<%= input_directory %>/<%= filename %>" class="edit" title="Edit Original">Edit Original</a>
       <% end %>
     <% end %>
 
