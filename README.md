@@ -18,4 +18,5 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
       $ git clone git@github.com:RiotHQ/hammer-gem.git
       $ cd hammer-gem
       $ bundle install
+      $ rake bundle
       $ bundle exec rake use
