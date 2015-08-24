@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'bundler'
 gem 'amp', :git => "https://github.com/elliottkember/amp.git"
 gem 'bourbon'
-gem 'neat'
+gem 'neat', '1.7.0'
 gem 'coffee-script', '~> 2.2.0'
 gem 'eco'
 gem 'ejs'
