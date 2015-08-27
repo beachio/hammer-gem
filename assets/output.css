@@ -111,6 +111,21 @@ section article.haml.include {
   padding-bottom: 10px;
 }
 
+section article.slim {
+  background: url(IconHAML.png) no-repeat 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
+section article.slim.include {
+  background-image: url(IconHAMLInclude.png);
+  background-position: 14px 12px;
+  padding-left: 57px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
+
 section article.md {
   background: url(IconMD.png) no-repeat 14px 12px;
   padding-left: 57px;
