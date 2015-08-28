@@ -507,6 +507,16 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
     background-size: 29px 28px;
   }
 
+  section article.slim {
+    background-image: url(IconSLIM@2x.png);
+    background-size: 35px 28px;
+  }
+
+  section article.slim.include {
+    background-image: url(IconSLIMInclude@2x.png);
+    background-size: 29px 28px;
+  }
+
   section article.md {
     background-image: url(IconMD@2x.png);
     background-size: 35px 28px;
