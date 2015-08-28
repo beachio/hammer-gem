@@ -112,14 +112,14 @@ section article.haml.include {
 }
 
 section article.slim {
-  background: url(Slim.png) no-repeat 14px 12px;
+  background: url(IconSLIM.png) no-repeat 14px 12px;
   padding-left: 57px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.slim.include {
-  background-image: url(Slim-Slice.png);
+  background-image: url(IconSLIMInclude.png);
   background-position: 14px 12px;
   padding-left: 57px;
   padding-top: 8px;

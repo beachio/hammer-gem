@@ -8,3 +8,4 @@ test/.sass-cache
 coverage
 .bundle
 .rake_tasks
+tmp*
