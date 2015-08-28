@@ -112,14 +112,14 @@ section article.haml.include {
 }
 
 section article.slim {
-  background: url(Slim.png) no-repeat 14px 12px;
+  background: url(IconSLIM.png) no-repeat 14px 12px;
   padding-left: 57px;
   padding-top: 8px;
   padding-bottom: 10px;
 }
 
 section article.slim.include {
-  background-image: url(Slim-Slice.png);
+  background-image: url(IconSLIMInclude.png);
   background-position: 14px 12px;
   padding-left: 57px;
   padding-top: 8px;
@@ -504,6 +504,16 @@ article:hover a.edit, article:hover a.reveal, article:hover a.browser {
 
   section article.haml.include {
     background-image: url(IconHAMLInclude@2x.png);
+    background-size: 29px 28px;
+  }
+
+  section article.slim {
+    background-image: url(IconSLIM@2x.png);
+    background-size: 35px 28px;
+  }
+
+  section article.slim.include {
+    background-image: url(IconSLIMInclude@2x.png);
     background-size: 29px 28px;
   }
 
