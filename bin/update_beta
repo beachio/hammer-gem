@@ -9,7 +9,7 @@ go_to_gem_root = 'cd hammer-gem'
 checkout_beta_branch = 'git checkout beta'
 install_gem = 'bundle exec rake use'
 # go_to_installed_gem_root = 'cd "~/Library/Containers/com.riot.hammer/Data/Library/Application Support/Riot/Hammer/Gem/"'
-install_dependencies = 'rake bundle'
+install_dependencies = 'bundle install && rake bundle'
 clean_up = "rm -rf #{tmp_directory}"
 
 system [
