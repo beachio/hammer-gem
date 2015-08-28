@@ -76,5 +76,45 @@ module Hammer
     def convert_comments(text)
       text.gsub("&lt;!--", "<!--").gsub("--&gt;", "-->")
     end
+
+    private
+
+    # This function takes an array of lines, and an original line that has been replaced with input.
+    # From there, it indents any line after the inserted line, by the same amount of indentation as
+    # the last line that was inserted.
+    def indent_from_line(line, lines, line_number, number_of_indents)
+
+      indents_at_this_line = line.to_s.number_of_tab_or_space_indents
+
+      # Here we have an include that's followed by an indented line.
+      # Since we're including HAML inside HAML, we have to shuffle everything downwards until things fit.
+      # So we skip forward until we find a line with the same number of indents,
+      # and indent these lines as we go.
+
+      i = line_number+1
+
+      while i < lines.length
+
+        future_line = lines[i]
+        indents_at_the_future_line = future_line.to_s.number_of_tab_or_space_indents
+
+        next_line_is_indented = indents_at_the_future_line > indents_at_this_line
+
+        break unless next_line_is_indented
+
+        # Tabs or spaces?
+        indent_character = future_line.indentation_character
+        # Indent the line by the
+        letters_to_indent_by = indent_character * number_of_indents
+
+        # Replace the line!
+        # future_line = "#{letters_to_indent_by}#{future_line}"
+        lines[i] = letters_to_indent_by + lines[i]
+
+        i += 1
+      end
+
+      return lines
+    end
   end
 end
