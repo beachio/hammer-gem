@@ -1,4 +1,5 @@
 ---
 BUNDLE_BIN: vendor/bundle/bin
-BUNDLE_PATH: vendor/bundle
+BUNDLE_PATH: vendor/production/bundle
 BUNDLE_DISABLE_SHARED_GEMS: '1'
+BUNDLE_WITHOUT: development
