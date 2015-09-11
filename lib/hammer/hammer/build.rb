@@ -37,8 +37,9 @@ module Hammer
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
       filenames.each do |filename|
-        data = parse_file(filename)
+        data, map = parse_file(filename)
         @results[data[:output_filename]] = data
+        @results["#{data[:output_filename]}.map"] = map if map
         @error = true if data[:error]
       end
 
