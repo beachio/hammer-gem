@@ -33,7 +33,7 @@ module Hammer
       @format ||= File.extname(@path)[1..-1]
     end
 
-    def parse(text)
+    def parse(text, filename=nil)
       @text = text
 
       results = {}

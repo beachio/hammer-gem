@@ -47,7 +47,7 @@ module Hammer
       @filenames = Dir.glob(File.join(@path, "**/*"))
     end
 
-    def parse(text="")
+    def parse(text="", filename=nil)
       return text
     end
 
@@ -92,7 +92,7 @@ module Hammer
           parser.optimized        = optimized
 
           begin
-            text = parser.parse(text)
+            text = parser.parse(text, filename)
           rescue RuntimeError => e
             # Set the error up and then get out of here!
             # This doesn't get saved to the parser, but that doesn't really matter.
@@ -129,7 +129,7 @@ module Hammer
           parser.optimized        = optimized
 
           begin
-            text = parser.parse(text)
+            text = parser.parse(text, filename)
           rescue RuntimeError => e
             # Set the error up and then get out of here!
             # This doesn't get saved to the parser, but that doesn't really matter.

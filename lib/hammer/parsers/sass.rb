@@ -2,6 +2,7 @@ require 'hammer/parser'
 require 'hammer/parsers/css'
 require 'hammer/parsers/sass'
 require 'bourbon'
+require 'fileutils'
 
 module Hammer
   class SASSParser < CSSParser
@@ -27,7 +28,8 @@ module Hammer
       end
     end
 
-    def parse(text)
+    def parse(text, filename=nil)
+      @filename = filename
       @original_text = text
       @text = text
 
@@ -41,7 +43,20 @@ module Hammer
 
       begin
         engine = Sass::Engine.new(text, options)
-        text = engine.render()
+        if @filename
+          text, map = engine.render_with_sourcemap(@input_directory)
+          map_filepath = @output_directory + '/' + @filename.gsub(/sc?a?ss$/, 'css') + '.map'
+          map_dir = File.dirname(map_filepath)
+          FileUtils.mkdir_p(map_dir) unless File.directory?(map_dir)
+          File.open(map_filepath, 'w') do |f| 
+            f.write map.to_json(
+              css_path: "#{@input_directory}/#{@filename}",
+              sourcemap_path: "#{@input_directory}/#{@filename}.map"
+            ).gsub(/\.\.[\w\W\s]+?bourbon[^\/]+/, 'https://raw.githubusercontent.com/thoughtbot/bourbon/master')
+          end
+        else
+          text = engine.render()
+        end
 
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
         dependencies.each do |path|
@@ -151,13 +166,14 @@ module Hammer
         :quiet => true,
         # :source_encoding => Encoding::UTF_16, # This didn't work
         # :debug_info => !@production,
+        :filename => @filename,
         :cache_location => @cache_directory,
         :sass => sass_options
       }
     end
 
     def sass_options
-      { :quiet => true, :logger => nil }
+      { :quiet => true, :logger => nil, :sourcemap => :auto }
     end
   end
 end

@@ -21,7 +21,7 @@ module Hammer
       {:auto_ids => false}
     end
 
-    def parse(text)
+    def parse(text, filename=nil)
       @markdown = text
       parser = Hammer::HTMLParser.new(:path => @path)
       parser.directory = @directory

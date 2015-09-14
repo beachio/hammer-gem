@@ -5,7 +5,7 @@ module Hammer
     accepts :eco
     returns :js
 
-    def parse(text)
+    def parse(text, filename=nil)
       @original_text ||= text
       text = Eco.compile(text)
       raise "Parse called without path! Nothing to name the template." unless @path
