@@ -1,6 +1,7 @@
 module Hammer
   module Paths
     def path_to(other_path)
+      return false unless other_path
       if other_path.include?(directory)
         me = Pathname.new(File.join(directory, File.dirname(path)))
       else

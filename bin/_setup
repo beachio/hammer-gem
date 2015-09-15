@@ -2,14 +2,6 @@
 # encoding: utf-8
 $LANG = "UTF-8"
 
-# Catch interrupts received before app is loaded.
-
-ruby_version = RUBY_VERSION.to_f >= 2.0 ? '2.0.0' : '1.8'
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/vendor/*/bundle/ruby/#{ruby_version}/gems/*/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/vendor/*/bundle/ruby/#{ruby_version}/bundler/gems/*/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/bin")
-
-require "hammer/hammer"
-require 'hammer/build'
-require 'hammer/invocation'
+require "#{$root_dir}/lib/hammer/hammer"
+require "#{$root_dir}/lib/hammer/hammer/build"
+require "#{$root_dir}/lib/hammer/hammer/invocation"
