@@ -61,13 +61,13 @@ task :bundle do
   puts 'Updating bundle...'
   Rake::FileUtilsExt.verbose false do
 
-    sh_with_clean_env "git checkout .bundle/config"
+    # sh_with_clean_env "git checkout .bundle/config"
 
-    puts "Deleting existing files in vendor/production/bundle/ruby/* ..."
-    sh_with_clean_env *%w(rm -rf vendor/production/bundle/ruby/*)
+    # puts "Deleting existing files in vendor/production/bundle/ruby/* ..."
+    # sh_with_clean_env *%w(rm -rf vendor/production/bundle/ruby/*)
 
-    puts "Deleting vendor/production ..."
-    rm_rf [ 'vendor/production', 'vendor/cache' ]
+    puts "Deleting cache ..."
+    rm_rf [ 'vendor/production/cache', 'vendor/cache' ]
     # we can delete 'vendor/cache', if we want to re-download
 
     # puts "Runnning bundle cache..."
