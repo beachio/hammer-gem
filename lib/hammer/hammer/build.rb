@@ -4,6 +4,7 @@ require 'shellwords'
 require 'hammer/parser'
 require 'hammer/utils/ignore'
 require 'hammer/cacher'
+require 'parallel'
 
 module Hammer
 
@@ -36,21 +37,20 @@ module Hammer
       filenames     = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
-      filenames.each do |filename|
-        data = parse_file(filename)
-        @results[data[:output_filename]] = data
+      Parallel.each(filenames, in_threads: 5) do |filename|
+        @results[data[:output_filename]] = parse_file(filename)
         @error = true if data[:error]
       end
 
       @cacher.write_to_disk()
 
       added_files = @results.values.collect {|data| data[:added_files]}.flatten.compact
-      added_files.each do |file|
+      Parallel.each(added_files, in_threads: 5) do |file|
         filename = file[:filenames].join(', ')
         @results[filename] = file
       end
 
-      ignored_files.each do |ignored_file|
+      Parallel.each(ignored_files, in_threads: 5) do |ignored_file|
         path = ignored_file.gsub(@input_directory+"/", "")
         ignored_file = {:filename => path, :output_filename => Hammer::Parser.new.output_filename_for(path), :ignored => true}
         @results[ignored_file[:filename]] = ignored_file
