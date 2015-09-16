@@ -83,7 +83,7 @@ module Hammer
 
       data = {:filename => path, :output_filename => output_path}
 
-      if @cacher.cached? path && @cacher.data[path]
+      if @cacher.cached?(path) && @cacher.data[path]
         @cacher.copy_to output_path, @output_directory, path
         data.merge! @cacher.data[path]
         data[:from_cache] = true

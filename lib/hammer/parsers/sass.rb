@@ -43,7 +43,11 @@ module Hammer
 
       begin
         engine = Sass::Engine.new(text, options)
-        text = @filename ? render_with_sourcemap(engine) : engine.render
+        text = if !optimized && @filename
+                 render_with_sourcemap(engine)
+               else
+                 engine.render
+               end
 
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
         dependencies.each do |path|
@@ -143,7 +147,7 @@ module Hammer
     end
 
     def render_with_sourcemap(engine)
-      map_filename = File.basename(@filename,File.extname(@filename)) + '.map'
+      map_filename = @filename.gsub(/[^\.]+$/, '') + 'css.map'
       map_filepath = @output_directory + '/' + map_filename
 
       text, map = engine.render_with_sourcemap(File.basename(map_filename))
