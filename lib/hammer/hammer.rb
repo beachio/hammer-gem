@@ -26,4 +26,3 @@ $LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
 
 module Hammer; end
 require 'bundler/setup'
-require 'slim'
