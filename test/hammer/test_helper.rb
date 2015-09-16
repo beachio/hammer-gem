@@ -1,29 +1,5 @@
 require 'rake'
 
-ruby_version = RUBY_VERSION.to_f >= 2.0 ? '2.0.0' : '1.8'
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/vendor/*/bundle/ruby/#{ruby_version}/gems/*/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/vendor/*/bundle/ruby/#{ruby_version}/bundler/gems/*/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/lib")
-$LOAD_PATH.concat Dir.glob("#{Dir.pwd}/bin")
-
-if RUBY_VERSION.to_f >= 2.0
-  begin
-    require "simplecov"
-    SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
-    SimpleCov.start do
-      add_filter 'test'
-      add_group 'Hammer', '/lib/hammer'
-      add_group 'Parsers', '/lib/hammer/parsers/*'
-      add_group 'Templates', '/lib/hammer/templates'
-      add_group 'Utilities', '/lib/hammer/templates'
-      ENV['COVERAGE'] = 'true'
-      Rake::Task["test"].execute
-    end
-  rescue => e
-    p "There was an issue with SimpleCov: #{e}"
-  end
-end
-
 require 'fileutils'
 
 lib_dir = File.dirname(__FILE__) + '/../../lib'

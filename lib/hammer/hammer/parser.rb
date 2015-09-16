@@ -154,5 +154,9 @@ module Hammer
   end
 end
 
-parsers_path = File.join(File.dirname(__FILE__), '..', 'parsers', '**/*.rb')
+if $root_dir
+  parsers_path = File.join($root_dir, 'lib', 'hammer', 'parsers', '**/*.rb')
+else
+  parsers_path = File.join(File.dirname(__FILE__), '..', 'parsers', '**/*.rb')
+end
 Dir[parsers_path].each {|file| require file; }

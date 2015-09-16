@@ -144,8 +144,8 @@ end
 
 def extract_and_test
   puts "Extracting and testing gem..."
-  sh 'unzip', '-q', 'dist/Gem.zip'
-  sh 'ruby', '-I', 'test:lib', './test/tests.rb'
+  sh_with_clean_env 'unzip', '-q', 'dist/Gem.zip'
+  sh_with_clean_env 'ruby', '-I', 'test:lib', './test/tests.rb'
 end
 
 desc 'Extract local bundle and run tests'

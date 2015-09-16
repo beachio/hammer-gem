@@ -23,3 +23,11 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
       $ rake bundle
       # Copy the ready-to-go gem into Hammer's Application Support directory so the Mac app uses it
       $ bundle exec rake use
+
+# If bundle install failed (could not find ruby/config.h)
+
+```
+      cd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/include/ruby-2.0.0/ruby
+      sudo ln -s ../universal-darwin13/ruby/config.h ./config.h
+```
+http://stackoverflow.com/questions/26434642/yosemite-upgrade-broke-ruby-h
