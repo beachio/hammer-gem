@@ -38,7 +38,8 @@ module Hammer
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
       Parallel.each(filenames, in_threads: 5) do |filename|
-        @results[data[:output_filename]] = parse_file(filename)
+        data = parse_file(filename)
+        @results[data[:output_filename]] = data
         @error = true if data[:error]
       end
 
