@@ -24,6 +24,10 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
       # Copy the ready-to-go gem into Hammer's Application Support directory so the Mac app uses it
       $ bundle exec rake use
 
+# Auto-update script for this branch
+
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/parallel-processing/scripts/update.rb)"
+      
 # If bundle install failed (could not find ruby/config.h)
 
 ```
