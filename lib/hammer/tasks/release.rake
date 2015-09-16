@@ -80,7 +80,8 @@ task :bundle do
                           --path=vendor/production/bundle
                           --local
                           --standalone
-                          --without=development)
+                          --without=development
+                          --jobs 4)
 
     sh_with_clean_env *%w(git checkout .bundle/config)
 

@@ -10,7 +10,7 @@ go_to_tmp_directory = "cd #{tmp_directory}"
 clone_repository = "git clone #{repo_url}"
 go_to_gem_root = 'cd hammer-gem'
 checkout_beta_branch = 'git checkout source-maps'
-install_dependencies = 'bundle install && rake bundle'
+install_dependencies = 'bundle install --jobs 4 && rake bundle'
 install_gem = 'bundle exec rake use'
 clean_up = "rm -rf #{tmp_directory}"
 
