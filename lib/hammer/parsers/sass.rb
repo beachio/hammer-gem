@@ -53,13 +53,11 @@ module Hammer
           FileUtils.mkdir_p(map_dir) unless File.directory?(map_dir)
 
           File.open(map_filepath, 'w') do |f| 
-            map_json = map.to_json(
-              css_path: @filename,
+            f.write map.to_json(
+              css_path: File.expand_path(@filename),
               sourcemap_path: map_filename,
               type: :inline
-            )
-    
-            f.write map_json.gsub("#{@input_directory}/", '')
+            ).gsub("#{@input_directory}/", '')
           end
         else
           text = engine.render()
@@ -173,7 +171,7 @@ module Hammer
         :quiet => true,
         # :source_encoding => Encoding::UTF_16, # This didn't work
         # :debug_info => !@production,
-        :filename => @filename,
+        :filename => "#{input_directory}/#{@filename}",
         :cache_location => @cache_directory,
         :sass => sass_options
       }
