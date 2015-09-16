@@ -44,15 +44,22 @@ module Hammer
       begin
         engine = Sass::Engine.new(text, options)
         if @filename
-          text, map = engine.render_with_sourcemap(@input_directory)
-          map_filepath = @output_directory + '/' + @filename.gsub(/sc?a?ss$/, 'css') + '.map'
+          map_filename = @filename.gsub(/sc?a?ss$/, 'css') + '.map'
+          map_filepath = @output_directory + '/' + map_filename
+
+          text, map = engine.render_with_sourcemap(File.basename(map_filename))
+
           map_dir = File.dirname(map_filepath)
           FileUtils.mkdir_p(map_dir) unless File.directory?(map_dir)
+
           File.open(map_filepath, 'w') do |f| 
-            f.write map.to_json(
-              css_path: "#{@input_directory}/#{@filename}",
-              sourcemap_path: "#{@input_directory}/#{@filename}.map"
-            ).gsub(/\.\.[\w\W\s]+?bourbon[^\/]+/, 'https://raw.githubusercontent.com/thoughtbot/bourbon/master')
+            map_json = map.to_json(
+              css_path: @filename,
+              sourcemap_path: map_filename,
+              type: :inline
+            )
+    
+            f.write map_json.gsub("#{@input_directory}/", '')
           end
         else
           text = engine.render()
@@ -173,7 +180,7 @@ module Hammer
     end
 
     def sass_options
-      { :quiet => true, :logger => nil, :sourcemap => :auto }
+      { :quiet => true, :logger => nil }
     end
   end
 end
