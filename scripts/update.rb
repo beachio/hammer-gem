@@ -37,7 +37,11 @@ preparation_result = system [
                               install_dependencies
                             ].join(' && ')
 if preparation_result
-  system install_gem
+  system [
+          go_to_tmp_directory,
+          go_to_gem_root,
+          install_gem
+         ].join(' && ')
   version = File.open("#{tmp_directory}/hammer-gem/VERSION").read
 else
   puts 'Error during gem install. Please fix errors and try again.'
