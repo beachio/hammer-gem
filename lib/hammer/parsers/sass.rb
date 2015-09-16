@@ -43,25 +43,7 @@ module Hammer
 
       begin
         engine = Sass::Engine.new(text, options)
-        if @filename
-          map_filename = @filename.gsub(/sc?a?ss$/, 'css') + '.map'
-          map_filepath = @output_directory + '/' + map_filename
-
-          text, map = engine.render_with_sourcemap(File.basename(map_filename))
-
-          map_dir = File.dirname(map_filepath)
-          FileUtils.mkdir_p(map_dir) unless File.directory?(map_dir)
-
-          File.open(map_filepath, 'w') do |f| 
-            f.write map.to_json(
-              css_path: File.expand_path(@filename),
-              sourcemap_path: map_filename,
-              type: :inline
-            ).gsub("#{@input_directory}/", '')
-          end
-        else
-          text = engine.render()
-        end
+        text = @filename ? render_with_sourcemap(engine) : engine.render
 
         dependencies = engine.dependencies.map {|dependency| dependency.options[:filename]}
         dependencies.each do |path|
@@ -158,6 +140,25 @@ module Hammer
 
     def escape_glob(s)
       s.gsub(/[\\\{\}\[\]\*\?]/) { |x| "\\"+x }
+    end
+
+    def render_with_sourcemap(engine)
+      map_filename = File.basename(@filename,File.extname(@filename)) + '.map'
+      map_filepath = @output_directory + '/' + map_filename
+
+      text, map = engine.render_with_sourcemap(File.basename(map_filename))
+
+      map_dir = File.dirname(map_filepath)
+      FileUtils.mkdir_p(map_dir) unless File.directory?(map_dir)
+
+      File.open(map_filepath, 'w') do |f| 
+        f.write map.to_json(
+          css_path: File.expand_path(@filename),
+          sourcemap_path: map_filename,
+          type: :inline
+        ).gsub("#{@input_directory}/", '')
+      end
+      text
     end
 
 
