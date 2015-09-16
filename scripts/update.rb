@@ -26,7 +26,7 @@ unless system(check_git)
   abort
 end
 
-puts "All is ok, lets rock it."
+puts "All is ok, lets rock it!"
 
 preparation_result = system [
                               make_tmp_directory,
