@@ -12,5 +12,13 @@ module Hammer
         text
       }.render(scope)
     end
+
+    def to_format(format)
+      if format == :slim
+        parse(@text)
+      else
+        @test
+      end
+    end
   end
 end
