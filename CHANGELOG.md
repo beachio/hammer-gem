@@ -1,3 +1,7 @@
+### 5.2.1
+
+  * Added sourcemaps for sass and coffee files
+  
 ### 5.1.5
 
 * Bug fixes (fix require paths)
