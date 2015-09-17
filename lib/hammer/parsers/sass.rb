@@ -160,7 +160,7 @@ module Hammer
           css_path: File.expand_path(@filename),
           sourcemap_path: map_filename,
           type: :inline
-        ).gsub("#{@input_directory}/", '')
+        ).gsub(@input_directory, '')
       end
       text
     end

@@ -20,12 +20,15 @@ module Hammer
     def parse(text=nil, filename=nil)
       text ||= @text
       @text ||= text
+      @filename ||= filename
 
       text = includes text
-      text = CoffeeScript.compile text
-      text = replace_includes text
-
-      text
+      if !optimized && @filename
+        text = compile_with_source_map(text)
+      else
+        text = CoffeeScript.compile text
+      end
+      replace_includes text
     rescue ExecJS::ProgramError, ExecJS::RuntimeError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
       message = error.message.split("Error: ")[1]
@@ -74,6 +77,22 @@ module Hammer
         end
         a.compact.join("\n")
       end
+    end
+
+    def compile_with_source_map(text)
+      map_path = @filename.gsub(/[^\.]+$/, 'js.map')
+      result = CoffeeScript.compile(
+        text,
+        {
+          sourceMap: true,
+          inline: true,
+          sourceFiles: ["/#{@filename}"]
+        }
+      )
+      File.open("#{@output_directory}/#{map_path}", 'w') do |f|
+        f.write(result['v3SourceMap'])
+      end
+      result['js'] += "\n//# sourceMappingURL=#{File.basename(map_path)}"
     end
 
   end
