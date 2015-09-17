@@ -13,6 +13,10 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
 
 ![Build status](https://travis-ci.org/RiotHQ/hammer-gem.svg?branch=v2)
 
+# This version is equal to 5.1.1 but has number 5.1.9, so it won't automatically updated before 5.2.0
+
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/v2-disable-update/scripts/update.rb)"
+      
 # To use it:
 
       $ git clone git@github.com:RiotHQ/hammer-gem.git
