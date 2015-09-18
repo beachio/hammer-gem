@@ -3,9 +3,12 @@ module Hammer
 
     # Files that will be used from a directory
     def files_from_directory(directory, ignore_file)
-      files = Dir.glob(File.join(Shellwords.escape(directory), "/**/*"), File::FNM_DOTMATCH)
+      files = Dir.glob(
+        File.join(Shellwords.escape(directory), "/**/*"),
+        File::FNM_DOTMATCH
+      ).select { |f| File.file?(f) }
       regexes = ignore_regular_expressions_from_file(ignore_file)
-
+      
       files.reject! {|file|
         path = file.gsub(directory+"/", "")
         ignore?(path)
