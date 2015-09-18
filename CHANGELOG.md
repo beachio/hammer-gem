@@ -1,3 +1,7 @@
+### 5.1.7
+ 
+ * Fix markdown parser.
+
 ### 5.1.5
 
 * Bug fixes (fix require paths)
