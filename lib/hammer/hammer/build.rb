@@ -4,6 +4,7 @@ require 'shellwords'
 require 'hammer/parser'
 require 'hammer/utils/ignore'
 require 'hammer/cacher'
+require 'parallel'
 
 module Hammer
 
@@ -33,11 +34,12 @@ module Hammer
       @cacher = Hammer::Cacher.new @input_directory, @cache_directory, @output_directory
 
       ignore_file   = File.join(@input_directory, '.hammer-ignore')
-      filenames     = files_from_directory(@input_directory, ignore_file)
+      @filenames    = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
-      filenames.each do |filename|
-        data = parse_file(filename)
+      Parallel.map(@filenames, in_processes: 4) do |filename|
+        parse_file(filename)
+      end.each do |data|
         @results[data[:output_filename]] = data
         @error = true if data[:error]
       end
@@ -81,6 +83,8 @@ module Hammer
       output_file = File.join(@output_directory, output_path)
       FileUtils.mkdir_p(File.dirname(output_file))
 
+      
+
       data = {:filename => path, :output_filename => output_path}
 
       if @cacher.cached? path
@@ -88,7 +92,7 @@ module Hammer
         data.merge! @cacher.data[path]
         data[:from_cache] = true
       else
-        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, file_data|
+        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized, @filenames) do |output, file_data|
           FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') { |f| f.write(output)} if output
           data.merge!(file_data) if data

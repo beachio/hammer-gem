@@ -32,6 +32,7 @@ GEM
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
     execjs (2.0.2)
+    htmlentities (4.3.4)
     i18n (0.7.0)
     json_pure (1.8.2)
     kramdown (1.8.0)
@@ -42,6 +43,7 @@ GEM
     neat (1.7.0)
       bourbon (>= 4.0)
       sass (>= 3.3)
+    parallel (1.6.1)
     plist (3.1.0)
     power_assert (0.2.4)
     rake (10.4.2)
@@ -77,10 +79,12 @@ DEPENDENCIES
   ejs
   execjs (= 2.0.2)
   haml!
+  htmlentities
   json_pure (~> 1.8.0)
   kramdown
   mocha (= 0.14.0)
   neat (= 1.7.0)
+  parallel
   plist
   rake
   sass
