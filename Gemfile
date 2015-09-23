@@ -19,6 +19,8 @@ gem 'uglifier', '2.1.2'
 gem 'execjs', '2.0.2'
 gem 'test-unit'
 gem 'rake'
+gem 'htmlentities'
+gem 'parallel'
 
 # Dependencies which dropped support for ruby 1.8.
 gem 'shoulda-matchers', '< 2.1.0'

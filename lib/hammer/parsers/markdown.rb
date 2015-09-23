@@ -1,6 +1,7 @@
 # require 'rdiscount'
 require 'kramdown'
 require 'parsers/html'
+require 'htmlentities'
 
 module Hammer
   class MarkdownParser < Parser
@@ -23,12 +24,15 @@ module Hammer
 
     def parse(text, filename=nil)
       @markdown = text
+      text = convert(text)
+      text = HTMLEntities.new.decode(text)
       parser = Hammer::HTMLParser.new(:path => @path)
       parser.directory = @directory
       text = parser.parse(text) # beforehand
-      text = convert(text)
+      
       text = text[0..-2] while text.end_with?("\n")
       text
+      
     end
 
     private

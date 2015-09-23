@@ -16,7 +16,7 @@ module Hammer
     attr_accessor :dependencies, :wildcard_dependencies
     attr_accessor :error_line, :error_file
     attr_accessor :path, :directory, :variables, :messages, :todos, :input_directory
-    attr_accessor :added_files
+    attr_accessor :added_files, :filenames
     include Replacement
     include Extensions
     include Variables
@@ -28,7 +28,7 @@ module Hammer
     def initialize(options={})
       @path ||= options[:path]
       @wildcard_dependencies = {}
-      @filenames = []
+      @filenames = options[:filenames] || []
       @variables = {}
       @directory = options[:directory] || Dir.mktmpdir()
     end
@@ -111,7 +111,7 @@ module Hammer
         block.call(text, data)
       end
 
-      def parse_file(directory, filename, output_directory, optimized, &block)
+      def parse_file(directory, filename, output_directory, optimized, filenames, &block)
 
         # We return a hash and some text!
         data    = {:filename => filename}
@@ -127,6 +127,7 @@ module Hammer
           parser.output_directory = output_directory
           parser.path             = Pathname.new(File.join(directory, filename)).relative_path_from(Pathname.new(directory)).to_s
           parser.optimized        = optimized
+          parser.filenames        = filenames
 
           begin
             text = parser.parse(text, filename)

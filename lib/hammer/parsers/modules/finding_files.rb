@@ -46,13 +46,18 @@ module Hammer
 
     # TODO: Pass filenames into find_files
     def find_files(query, extension=nil)
-
+      search_key = "#{query}.#{extension}"
+      $cached_findings ||= Hash.new([])
+      if $cached_findings[search_key].size > 0
+        return $cached_findings[search_key]
+      end
+    
       # TODO: Cache this method
       query = absolute_to_relative(query)
       query = query.gsub("../", "")
       regex = regex_for(query, extension)
 
-      matches = filenames.to_a.select { |filename|
+      matches = all_filenames.to_a.select { |filename|
         match = filename =~ regex
         (File.extname(filename) != "" || extension.nil?) && (match)
       }.sort_by {|filename|
@@ -74,11 +79,9 @@ module Hammer
         end
 
       }
-
+      $cached_findings[search_key] = matches
       # If we query with a *, return all results. Otherwise, first result only.
-      matches = matches[0..0] unless query.include?('*')
-
-      return matches
+      query.include?('*') ? $cached_findings[search_key] : $cached_findings[search_key][0..0]
     end
 
     def find_file(*args)
@@ -92,26 +95,25 @@ module Hammer
 
     end
 
-  private
 
     # Get all the filenames for the current build.
     # This involves @directory if we have one, or @filenames if we don't.
-    def filenames
+    def all_filenames
 
       # This checks for it being an array and not nil!
       # return @filenames if @filenames && !@filenames.empty?
 
       # This means we can add files to the output
+
+      return @filenames if @filenames && @filenames.size > 5 # I guess that small numbers are errors too
+
       if @directory
         @filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
           file.gsub(@directory+"/", "")
         }
       else
-        @filenames = []
+        []
       end
-
-      # @filenames
-
     end
 
     def absolute_to_relative(filename)

@@ -2,6 +2,16 @@
 
   * Added sourcemaps for sass and coffee files
   
+### 5.1.8
+ 
+ * Speed up building (cache file includes searching).
+ * Use parallel processing.
+ * Fix empty todo issue.
+ 
+### 5.1.7
+ 
+ * Fix markdown parser.
+
 ### 5.1.5
 
 * Bug fixes (fix require paths)

@@ -42,6 +42,7 @@ module Hammer
 
       text = replace(text, regex) do |message, line_number|
         message = message.scan(regex).flatten.first
+        next if message.nil?
         (results[line_number] ||= []) << message.strip
         message
       end
