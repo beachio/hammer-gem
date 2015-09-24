@@ -1,5 +1,4 @@
 #! /usr/bin/ruby
-
 repo_url = 'https://github.com/RiotHQ/hammer-gem.git'
 tmp_directory = "/tmp/hammer-gem-#{Time.now.to_i}"
 
@@ -9,11 +8,7 @@ make_tmp_directory = "mkdir #{tmp_directory}"
 go_to_tmp_directory = "cd #{tmp_directory}"
 clone_repository = "git clone #{repo_url}"
 go_to_gem_root = 'cd hammer-gem'
-<<<<<<< HEAD
 checkout_beta_branch = 'git checkout source-maps'
-=======
-checkout_beta_branch = 'git checkout latest'
->>>>>>> latest
 install_dependencies = 'bundle install --jobs 4 && rake bundle'
 install_gem = 'bundle exec rake use'
 clean_up = "rm -rf #{tmp_directory}"
@@ -30,11 +25,7 @@ unless system(check_git)
   abort
 end
 
-<<<<<<< HEAD
-puts "All is ok, lets rock it."
-=======
 puts "All is ok, lets rock it!"
->>>>>>> latest
 
 preparation_result = system [
                               make_tmp_directory,
