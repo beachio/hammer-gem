@@ -43,7 +43,7 @@ module Hammer
 
       begin
         engine = Sass::Engine.new(text, options)
-        text = if !optimized && @filename
+        text = if !optimized && @filename && Settings.sourcemaps
                  render_with_sourcemap(engine)
                else
                  engine.render

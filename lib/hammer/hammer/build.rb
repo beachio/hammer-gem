@@ -20,6 +20,7 @@ module Hammer
       @optimized        = options[:optimized] if options[:optimized]
 
       @input_directory  = clean_input(options.fetch(:input_directory))
+      Settings.input_directory = @input_directory
       @output_directory = clean_input(options.fetch(:output_directory)) || Dir.mktmpdir
       @cache_directory  = clean_input(options.fetch(:cache_directory))  || Dir.mktmpdir
 

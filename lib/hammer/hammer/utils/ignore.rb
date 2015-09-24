@@ -8,6 +8,7 @@ module Hammer
         File::FNM_DOTMATCH
       ).select { |f| File.file?(f) }
       regexes = ignore_regular_expressions_from_file(ignore_file)
+      regexes << 'hammer.json'
       
       files.reject! {|file|
         path = file.gsub(directory+"/", "")
