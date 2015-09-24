@@ -1,3 +1,16 @@
+### 5.2.2
+  * Added reading a project's setting from `hammer.json` file. `hammer.json` should be inside project root.
+  * Example file:
+
+        {
+          "sourcemaps": true,
+          "autoprefixer":
+          {
+            "enable":true,
+            "browsers":"> 1%"
+          }
+        }
+
 ### 5.2.1
 
   * Added sourcemaps for sass and coffee files
