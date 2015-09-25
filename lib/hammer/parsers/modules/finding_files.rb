@@ -100,17 +100,18 @@ module Hammer
     # This involves @directory if we have one, or @filenames if we don't.
     def all_filenames
 
+
       # This checks for it being an array and not nil!
       # return @filenames if @filenames && !@filenames.empty?
 
       # This means we can add files to the output
-
-      return @filenames if @filenames && @filenames.size > 5 # I guess that small numbers are errors too
-
+      return $filenames if $filenames && $filenames.size > 5 # I guess that small numbers are errors too
+      
       if @directory
-        @filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
+        $filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
+          next if @output_directory && file.start_with?(@output_directory)
           file.gsub(@directory+"/", "")
-        }
+        }.compact
       else
         []
       end
