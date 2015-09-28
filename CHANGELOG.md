@@ -1,3 +1,8 @@
+### 5.1.9
+
+ * Dump version in order to enable autoupdate
+ * Fixed `Is a directory @ io_fread` issue
+
 ### 5.1.8
  
  * Speed up building (cache file includes searching).
