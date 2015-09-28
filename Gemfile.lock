@@ -32,10 +32,9 @@ GEM
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
     execjs (2.0.2)
-    htmlentities (4.3.4)
     i18n (0.7.0)
     json_pure (1.8.2)
-    kramdown (1.8.0)
+    kramdown (1.3.1)
     metaclass (0.0.4)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
@@ -45,7 +44,6 @@ GEM
       sass (>= 3.3)
     parallel (1.6.1)
     plist (3.1.0)
-    power_assert (0.2.4)
     rake (10.4.2)
     sass (3.4.17)
     shoulda (3.5.0)
@@ -58,8 +56,7 @@ GEM
       temple (~> 0.7.3)
       tilt (>= 1.3.3, < 2.1)
     temple (0.7.6)
-    test-unit (3.1.3)
-      power_assert
+    test-unit (2.5.5)
     thor (0.19.1)
     tilt (2.0.1)
     uglifier (2.1.2)
@@ -79,9 +76,8 @@ DEPENDENCIES
   ejs
   execjs (= 2.0.2)
   haml!
-  htmlentities
   json_pure (~> 1.8.0)
-  kramdown
+  kramdown (= 1.3.1)
   mocha (= 0.14.0)
   neat (= 1.7.0)
   parallel
