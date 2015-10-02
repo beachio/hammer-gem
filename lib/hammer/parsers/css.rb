@@ -1,6 +1,7 @@
 require 'hammer/parser'
 require 'bourbon'
 require 'neat'
+require 'autoprefixer-rails'
 
 module Hammer
 
@@ -21,7 +22,9 @@ module Hammer
       text = clever_paths(text)
       text = url_paths(text)
       text = import_url_paths(text)
-      return text
+
+      return text unless Settings.autoprefixer
+      autoprefixer_process(text, (!optimized && Settings.sourcemaps))
     end
 
     register_as_default_for_extension :css
@@ -119,6 +122,30 @@ module Hammer
         a.compact.join("\n")
       end
     end
-  end
 
+    def autoprefixer_process(text, sourcemap = false)
+      result_filename = filename.gsub(/[^\.]+$/, 'css')
+      if sourcemap
+        sass_map_path = "#{output_directory}/#{result_filename}.map"
+        map_options = { inline: false }
+        if File.exist?(sass_map_path)
+          map_options.merge!(prev: File.read(sass_map_path))
+        end
+      else
+        map_options = false
+      end
+
+      result = AutoprefixerRails.process(
+        text,
+        Settings.autoprefixer.merge(
+          map: map_options,
+          from: filename,
+          to: result_filename
+        )
+      )
+      
+      File.open(sass_map_path, 'w') { |f| f.write(result_map) } if sourcemap
+      result.css
+    end
+  end
 end

@@ -20,6 +20,7 @@ gem 'execjs', '2.0.2'
 gem 'test-unit'
 gem 'rake'
 gem 'parallel'
+gem 'autoprefixer-rails'
 
 # Dependencies which dropped support for ruby 1.8.
 gem 'shoulda-matchers', '< 2.1.0'

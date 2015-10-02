@@ -9,21 +9,21 @@ module Hammer
       end
   
       def autoprefixer
-        config['autoprefixer']['enable'] if config['autoprefixer']
-      end
-
-      def autoprefixer_browsers
-        config['autoprefixer']['browsers'] if config['autoprefixer']
+        config['autoprefixer']
       end
 
       def config
         return @config if @config
         config_file = input_directory + '/hammer.json'
         if File.exist?(config_file)
-          @config = JSON.parse(File.read(config_file))
+          @config = JSON.parse(File.read(config_file)) rescue default_config
         else
-          { 'sourcemaps' => true, 'autoprefixer' => { 'enable' => false } }
+          default_config
         end
+      end
+
+      def default_config
+        { 'sourcemaps' => true, 'autoprefixer' => false }
       end
     end
   end
