@@ -14,11 +14,11 @@ class FindingFilesTest < Test::Unit::TestCase
 
   setup do
     @object = Thing.new
-    assert_equal @object.send(:filenames) , []
+    assert_equal @object.send(:all_filenames) , []
   end
 
   def test_find_files
-    @object.stubs(:filenames).returns(['index.html', 'index.js', '_include.html'])
+    @object.stubs(:all_filenames).returns(['index.html', 'index.js', '_include.html'])
     {
       ['index', 'html'] => ['index.html'],
       ['index', 'js'] => ['index.js'],

@@ -15,7 +15,7 @@ class TestMarkdown < Test::Unit::TestCase
     end
 
     should "markdown includes" do
-      input = "<!-- @include include -->"
+      input = "<!-- @include include.md -->"
       @parser.stubs(:find_file).returns(create_file 'include.md', 'Included', @parser.directory)
       @parser.parse(input)
       assert_equal input, @parser.to_format(:md)
