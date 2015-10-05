@@ -37,8 +37,8 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
 http://stackoverflow.com/questions/26434642/yosemite-upgrade-broke-ruby-h
 
 # Advanced configuration
-Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefixer](https://github.com/postcss/autoprefixer). In order to enable auto-prefixing for your styles you have to create a configuration file `hammer.json` in root of your project. This file must have next format:
-```
+Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefixer](https://github.com/postcss/autoprefixer). In order to enable auto-prefixer for your styles you have to create a configuration file `hammer.json` in root of your project. This file must have next format:
+```js
 {
   "sourcemaps": true,
   "autoprefixer":
@@ -47,8 +47,10 @@ Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefix
   }
 }
 ```
-As you see there are only 2 options for now. First, you can enable/disable sourcemaps generations and second is autoprefixer. If you want to disable autoprefixer, you should write: 
-```
-"autoprefixer": false
-``` 
-`hammer.json` is a JSON file, if you see that your configuration makes no effect, please check whether you formed correct JSON file [here](http://jsonlint.com/).
+There are only 2 options for now. 
+1. Sourcemaps - You can enable/disable sourcemaps generation with simple `true` or `false` 
+2. Autoprefixer. If you want to disable autoprefixer, you should write: `"autoprefixer": false`
+You can pass 4 different options to autoprefixer, see the [autoprefixer docs](https://github.com/postcss/autoprefixer#options) for information
+
+### Troubleshooting
+`hammer.json` is a JSON file. If you see that your configuration is having no effect, please check the formatof your JSON file [here](http://jsonlint.com/).
