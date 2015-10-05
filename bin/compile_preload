@@ -1,3 +1,0 @@
-#! /usr/bin/ruby
-PRELOAD = true
-load File.join($root_dir, 'bin', 'compile')

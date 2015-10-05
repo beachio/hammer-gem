@@ -1,7 +1,0 @@
-#! /usr/bin/ruby
-# encoding: utf-8
-$LANG = "UTF-8"
-
-require "#{$root_dir}/lib/hammer/hammer"
-require "#{$root_dir}/lib/hammer/hammer/build"
-require "#{$root_dir}/lib/hammer/hammer/invocation"

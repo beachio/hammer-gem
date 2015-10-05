@@ -1,3 +1,0 @@
-#! /usr/bin/ruby
-load File.join($root_dir, 'bin', '_setup')
-exit Hammer::Invocation.new(ARGV).compile()
