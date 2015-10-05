@@ -35,3 +35,20 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
       sudo ln -s ../universal-darwin13/ruby/config.h ./config.h
 ```
 http://stackoverflow.com/questions/26434642/yosemite-upgrade-broke-ruby-h
+
+# Advanced configuration
+Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefixer](https://github.com/postcss/autoprefixer). In order to enable auto-prefixing for your styles you have to create a configuration file `hammer.json` in root of your project. This file must have next format:
+```
+{
+  "sourcemaps": true,
+  "autoprefixer":
+  {
+    "browsers": ["last 2 versions", "ie 9"]
+  }
+}
+```
+As you see there are only 2 options for now. First, you can enable/disable sourcemaps generations and second is autoprefixer. If you want to disable autoprefixer, you should write: 
+```
+"autoprefixer": false
+``` 
+`hammer.json` is a JSON file, if you see that your configuration makes no effect, please check whether you formed correct JSON file [here](http://jsonlint.com/).
