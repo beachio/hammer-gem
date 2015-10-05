@@ -50,7 +50,7 @@ Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefix
 There are only 2 options for now. 
 
 1. Sourcemaps - You can enable/disable sourcemaps generation with simple `true` or `false` 
-2. Autoprefixer. If you want to disable autoprefixer, you should write: `"autoprefixer": false`
+2. Autoprefixer - If you want to disable autoprefixer, you should write: `"autoprefixer": false`
 You can pass 4 different options to autoprefixer, see the [autoprefixer docs](https://github.com/postcss/autoprefixer#options) for information
 
 ### Troubleshooting
