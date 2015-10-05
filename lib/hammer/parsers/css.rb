@@ -144,7 +144,7 @@ module Hammer
         )
       )
       
-      File.open(sass_map_path, 'w') { |f| f.write(result_map) } if sourcemap
+      File.open(sass_map_path, 'w') { |f| f.write(result.map) } if sourcemap
       result.css
     end
   end
