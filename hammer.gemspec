@@ -5,7 +5,7 @@ require 'hammer/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "hammer"
-  gem.version       = Hammer::VERSION
+  gem.version       = '5.3.0'
   gem.authors       = ["Elliott Kember", "Alexander Dikhtiarenko"]
   gem.email         = ["aleks.ewq@gmail.com"]
   gem.description   = "Hammer compilation gem"
