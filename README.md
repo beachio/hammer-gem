@@ -53,4 +53,4 @@ There are only 2 options for now.
 You can pass 4 different options to autoprefixer, see the [autoprefixer docs](https://github.com/postcss/autoprefixer#options) for information
 
 ### Troubleshooting
-`hammer.json` is a JSON file. If you see that your configuration is having no effect, please check the formatof your JSON file [here](http://jsonlint.com/).
+`hammer.json` is a JSON file. If you see that your configuration is having no effect, please check the format of your JSON file [here](http://jsonlint.com/).
