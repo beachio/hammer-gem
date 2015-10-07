@@ -26,6 +26,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'sass'
   gem.add_dependency 'uglifier', '>=2.1.2'
   gem.add_dependency 'execjs', '>=2.0.2'
-  gem.add_dependency 'parallel'
+  # gem.add_dependency 'parallel'
   gem.add_dependency 'autoprefixer-rails'
 end
