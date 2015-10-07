@@ -1,12 +1,9 @@
 require 'hammer/parser'
 require 'hammer/parsers/css'
-require 'hammer/parsers/sass'
 require 'bourbon'
-require 'fileutils'
 
 module Hammer
   class SASSParser < CSSParser
-
     accepts :sass, :scss
     returns :css
 
@@ -65,11 +62,11 @@ module Hammer
       rescue => e
         # Something's gone wrong. This is most likely to be a SASS error.
         # TODO: Rescue only a certain kind of error here and use finally/ensure!
-
+# 
         message = e.message
         # message = message.split("Load paths:\n")[0] if message.include? 'Load paths:'
         @error_line = e.sass_line if e.respond_to?(:sass_line)
-
+# 
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
           @error_file = e.sass_filename.gsub(@input_directory + "/", "")
           file = find_file_with_dependency(@error_file, ['css', 'scss', 'sass'])
@@ -123,7 +120,6 @@ module Hammer
     end
 
     def load_paths
-
       paths = []
 
       if @input_directory
@@ -135,10 +131,8 @@ module Hammer
         paths << File.dirname(escape_glob(File.join(@input_directory, @path)))
       end
 
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "bourbon-*", "app", "assets", "stylesheets")
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "neat-*", "app", "assets", "stylesheets")
-
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "assets", "bourbon")
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "assets", "neat")
       paths.compact
     end
 
