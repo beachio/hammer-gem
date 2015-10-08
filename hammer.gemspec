@@ -28,4 +28,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'execjs', '>=2.0.2'
   # gem.add_dependency 'parallel'
   gem.add_dependency 'autoprefixer-rails'
+  gem.add_dependency 'contentful'
 end
