@@ -20,9 +20,11 @@ root = Pathname.new(__FILE__).expand_path + '..' + '..' + '..'
 $LOAD_PATH.unshift root
 $LOAD_PATH.unshift root + 'lib'
 
-# # Development gems take precedence
+# Development gems take precedence
 $LOAD_PATH.unshift root + 'vendor' + 'bundle'
 $LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
 
-module Hammer; end
 require 'bundler/setup'
+require 'hammer/build'
+require 'content/content_proxy'
+require 'content/contentful_helper'

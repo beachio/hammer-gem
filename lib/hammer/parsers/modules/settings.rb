@@ -12,9 +12,13 @@ module Hammer
         config['autoprefixer']
       end
 
+      def contentful
+        config['contentful']
+      end
+
       def config
         return @config if @config
-        config_file = input_directory + '/hammer.json'
+        config_file = "#{input_directory}/hammer.json"
         if File.exist?(config_file)
           @config = JSON.parse(File.read(config_file)) rescue default_config
         else
@@ -23,7 +27,7 @@ module Hammer
       end
 
       def default_config
-        { 'sourcemaps' => true, 'autoprefixer' => false }
+        { 'sourcemaps' => true, 'autoprefixer' => false, 'contentful' => false }
       end
     end
   end

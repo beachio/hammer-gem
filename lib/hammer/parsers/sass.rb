@@ -1,6 +1,5 @@
 require 'hammer/parser'
 require 'hammer/parsers/css'
-require 'hammer/parsers/sass'
 require 'bourbon'
 require 'fileutils'
 
@@ -135,9 +134,9 @@ module Hammer
         paths << File.dirname(escape_glob(File.join(@input_directory, @path)))
       end
 
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "bourbon-*", "app", "assets", "stylesheets")
-      # paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "neat-*", "app", "assets", "stylesheets")
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "bourbon-*", "app", "assets", "stylesheets")
+      paths << File.join(File.dirname(__FILE__), "..", "..", "..", "vendor", "production", "bundle", "ruby", "2.0.0", "gems", "neat-*", "app", "assets", "stylesheets")
 
       paths.compact
     end

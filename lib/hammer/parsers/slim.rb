@@ -70,7 +70,7 @@ module Hammer
     def convert(text)
       Slim::Template.new {
         text
-      }.render({})
+      }.render(Hammer::ContentProxy.new)
     end
 
     def convert_comments(text)

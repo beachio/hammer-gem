@@ -313,6 +313,7 @@ module Hammer
     end
 
     def current_tags(text)
+      return text unless filename
       Amp.compile(text, File.basename(filename), 'current')
     end
 
