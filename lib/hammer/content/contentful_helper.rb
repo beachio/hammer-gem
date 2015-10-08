@@ -1,6 +1,5 @@
 require 'contentful'
 require 'ostruct'
-require 'pry'
 module Hammer
   class ContentfulHelper
     def initialize(config)
@@ -28,7 +27,6 @@ module Hammer
     def parse_entry(entry)
       pe = OpenStruct.new
       entry.fields.each do |field, content|
-        # binding.pry
         pe[field] = parse_content(content)
       end
       pe
