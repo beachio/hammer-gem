@@ -10,6 +10,7 @@ module Hammer
   class Build
     attr_accessor :error
     include Hammer::Ignore
+    include Parallel::ProcessorCount
 
     def initialize options = {}
       @results = {}
@@ -36,7 +37,7 @@ module Hammer
       filenames    = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
-      Parallel.map(filenames, in_processes: 4) do |filename|
+      Parallel.map(filenames, in_processes: processor_count) do |filename|
         parse_file(filename)
       end.each do |data|
         @results[data[:output_filename]] = data

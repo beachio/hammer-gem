@@ -26,7 +26,7 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
 
 # Auto-update script for this branch
 
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/source-maps/scripts/update.rb)"
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/contentful-gem/scripts/update.rb)"
 
 # If bundle install failed (could not find ruby/config.h)
 
@@ -44,6 +44,17 @@ Since version 5.2.2 you can use autoprefixer option. [Read more about Autoprefix
   "autoprefixer":
   {
     "browsers": ["last 2 versions", "ie 9"]
+  }
+  "contentful":
+  {
+    "apiKey": "123456789",
+    "spaces": 
+    {
+      "default":
+      {
+        "id": "987654321"
+      }
+    }
   }
 }
 ```

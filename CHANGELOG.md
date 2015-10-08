@@ -1,3 +1,9 @@
+### 5.4.0
+
+  * 5.3.x reserved for rails version
+  * Use real numbers of processors during parallel processing
+  * Added base contentfull helper (supports slim only)
+
 ### 5.2.3
 
   * Added autoprefixer
