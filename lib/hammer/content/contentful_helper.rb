@@ -72,9 +72,10 @@ module Hammer
 
     def content_type_id(name)
       return @content_type_ids[name] if @content_type_ids
-      @content_type_ids = @client.content_types.map do |content|
-        [content.properties[:name], content.id]
-      end.to_h
+      @content_type_ids = {}
+      @client.content_types.each do |content|
+        @content_type_ids[content.properties[:name]] = content.id
+      end
       @content_type_ids[name]
     end
   end
