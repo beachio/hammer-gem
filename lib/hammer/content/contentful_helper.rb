@@ -3,7 +3,7 @@ require 'ostruct'
 module Hammer
   class ContentfulHelper
     def initialize(config, space_name = 'default')
-      return unless config
+      return {} if config.nil? or config.empty?
       @config, @space = config, config['spaces'][space_name]
       @client = Contentful::Client.new(
         access_token: config['apiKey'],
@@ -37,7 +37,12 @@ module Hammer
         @helpers[key] ||= Hammer::ContentfulHelper.new(@config, key)
       # do we need a return entries of specific content type?
       elsif @space['contentTypes'].has_key? key
-        entries_by_content_type(@space['contentTypes'][key])
+        if @space['contentTypes'][key].is_a? String
+          content_type_name = @space['contentTypes'][key]
+        else
+          content_type_name = @space['contentTypes'][key]['name']
+        end
+        entries_by_content_type(content_type_name)
       else
         super
       end
@@ -50,11 +55,11 @@ module Hammer
     end
 
     def parse_entry(entry)
-      pe = OpenStruct.new
+      os = OpenStruct.new
       entry.fields.each do |field, content|
-        pe[field] = parse_content(content)
+        os[field] = parse_content(content)
       end
-      pe
+      os
     end
 
     def parse_content(content)
@@ -65,8 +70,7 @@ module Hammer
         then content.image_url
       when /Contentful::Entry/
         then parse_entry(content)
-      when /String|Fixnum|Float|Bignum|BigDecimal/
-        then content
+      else content
       end
     end
 
