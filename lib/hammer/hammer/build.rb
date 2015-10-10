@@ -45,6 +45,16 @@ module Hammer
         @error = true if data[:error]
       end
 
+      contentful_types = ContentfulPagesGenerator.autogenerate_content_types
+      # Parallel.each(contentful_types, in_threads: processor_count) do |type|
+      if contentful_types.count > 0
+        generator = ContentfulPagesGenerator.new(@input_directory, @output_directory)
+        contentful_types.each do |content_params|
+          data = generator.generate(content_params)
+          @results.merge! data
+        end
+      end
+
       @cacher.write_to_disk()
 
       added_files = @results.values.collect {|data| data[:added_files]}.flatten.compact

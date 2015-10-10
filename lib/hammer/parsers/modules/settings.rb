@@ -27,7 +27,7 @@ module Hammer
       end
 
       def default_config
-        { 'sourcemaps' => true, 'autoprefixer' => false, 'contentful' => false }
+        { 'sourcemaps' => true, 'autoprefixer' => false, 'contentful' => {} }
       end
     end
   end
