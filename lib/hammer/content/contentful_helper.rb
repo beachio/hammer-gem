@@ -9,6 +9,7 @@ module Hammer
         access_token: config['apiKey'],
         space: @space['id']
       )
+      @space_helpers = { space_name => self }
     end
 
     def entries(query = {})
@@ -18,7 +19,16 @@ module Hammer
     end
 
     def entries_by_content_type(name)
-      entries(content_type: content_type_id(name))
+      name = name.to_s
+      if @space['contentTypes'].has_key? name
+        if @space['contentTypes'][name].is_a? String
+          content_type_name = @space['contentTypes'][name]
+        else
+          content_type_name = @space['contentTypes'][name]['name']
+        end
+        return entries(content_type: content_type_id(content_type_name))
+      end
+      nil
     end
 
     private
@@ -28,24 +38,14 @@ module Hammer
     # contentful.articles -> method_missing...
     # contentful.my_awesome_space.posts -> method_missing...
     def method_missing(method_name, *arguments, &block)
-      key = method_name.to_s
-      # lets check what user needs.
-      # do we need to respond with different space?
-      if @config['spaces'].has_key? key
-        # return new instance of helper with different space
-        @helpers ||= {}
-        @helpers[key] ||= Hammer::ContentfulHelper.new(@config, key)
-      # do we need a return entries of specific content type?
-      elsif @space['contentTypes'].has_key? key
-        if @space['contentTypes'][key].is_a? String
-          content_type_name = @space['contentTypes'][key]
-        else
-          content_type_name = @space['contentTypes'][key]['name']
-        end
-        entries_by_content_type(content_type_name)
-      else
-        super
-      end
+      # if user tried to query existing space or content type, return it to him
+      switch_space(method_name) || entries_by_content_type(method_name) || super
+    end
+
+    def switch_space(space_name)
+      space_name = space_name.to_s
+      return unless @config['spaces'].has_key? space_name
+      @space_helpers[key] ||= Hammer::ContentfulHelper.new(@config, space_name)
     end
 
     def parse_entries(entries)
@@ -59,28 +59,39 @@ module Hammer
       entry.fields.each do |field, content|
         os[field] = parse_content(content)
       end
+      os['type'] = content_type_name(entry.sys[:contentType].sys[:id])
       os
     end
 
     def parse_content(content)
       case content.class.to_s
       when /Array/
-        then content.map { |x| parse_content(x) }
+        then content.map { |x| parse_content(x) }.compact
       when /Contentful::Asset/
         then content.image_url
       when /Contentful::Entry/
         then parse_entry(content)
+      when /Contentful::Link/
+        then parse_content(content.resolve) rescue nil
       else content
       end
     end
 
     def content_type_id(name)
-      return @content_type_ids[name] if @content_type_ids
+      content_type_ids[name]
+    end
+
+    def content_type_name(id)
+      content_type_ids.key(id)
+    end
+
+    def content_type_ids
+      return @content_type_ids if @content_type_ids
       @content_type_ids = {}
       @client.content_types.each do |content|
         @content_type_ids[content.properties[:name]] = content.id
       end
-      @content_type_ids[name]
+      @content_type_ids
     end
   end
 end
