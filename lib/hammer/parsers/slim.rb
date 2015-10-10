@@ -17,28 +17,29 @@ module Hammer
 
     def parse(text, filename=nil)
       @text = text
-      text = includes(text)
+      text = includes(text, filename)
       text = convert(text)
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
     end
 
-    def includes(text)
+    def includes(text, filename)
       lines = text.split("\n")
       line_number = 0
       # lines.each_with_index do |line, line_number|
       while line = lines[line_number]
-        if line.match /[\s-]*\/ @include (.*)/
+        if files_from_tag_in_line(line)
           number_of_indents_in_this_line = line[/\A[ |\t]*/].size
           next_line = lines[line_number+1]
           number_of_indents_in_the_next_line = next_line.to_s.number_of_tab_or_space_indents
           is_indented_after_this_line = number_of_indents_in_this_line < number_of_indents_in_the_next_line
 
-          tag = files_from_tag_in_line(line)[0] # line.gsub("/ @include ", "").strip.split(" ")[0]
+          tag = files_from_tag_in_line(line)[1] # line.gsub("/ @include ", "").strip.split(" ")[0]
+          raise "trying to include statement without file on
+                 #{filename} at line #{line_number + 1}" unless tag
 
-          file = find_file_with_dependency(tag, 'slim')
-
+          file = find_file_with_dependency(tag, 'slim') || find_file_with_dependency(tag)
           raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
 
           if file.end_with? ".slim"
@@ -55,9 +56,9 @@ module Hammer
             end
 
             lines = lines.flatten
-          else
+          elsif line.match /\A\s*\/!?\s*@include\s+([^\s]+)/
             # Insert it as normal. HTML will cover the include.
-            lines[line_number] = "<!-- @include #{tag} -->"
+            lines[line_number].gsub(/!?\s*@include\s+([^\s]+).*/, "<!-- @include #{tag} -->")
           end
         end
 
@@ -115,6 +116,11 @@ module Hammer
       end
 
       return lines
+    end
+
+    def files_from_tag_in_line(line)
+      line.match(/\A\s*\/!?\s*@include\s+([^\s]+)/) ||
+      line.match(/\A\s*<!-+\s+@include\s+([^\s]+)/)
     end
   end
 end
