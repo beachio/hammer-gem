@@ -67,9 +67,8 @@ module Hammer
         parser.directory        = @input_directory
         parser.input_directory  = @input_directory
         parser.output_directory = @output_directory
-        parser.path = 
-          Pathname.new(File.join(@input_directory, template_path))
-            .relative_path_from(Pathname.new(@input_directory)).to_s
+        parser.path = template_path.sub(@input_directory + '/', '')
+        #  Pathname.new(File.join(@input_directory, template_path)).relative_path_from(Pathname.new(@input_directory)).to_s
             
         text = parser.parse(text, template_path)
       end
