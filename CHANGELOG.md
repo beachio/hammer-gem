@@ -1,3 +1,45 @@
+### 5.3.1
+  
+  * Added contentful pages generator which allows generate multiple pages from single template.
+  * Extended `hammer.json` config, example config for pages generator may look like:
+```
+  {
+    "sourcemaps": true,
+    "autoprefixer":
+    {
+      "browsers": "last 2 versions"
+    },
+    "contentful":
+    {
+      "apiKey": "32123123",
+      "spaces": 
+      {
+        "default":
+        {
+          "id": "132",
+          "contentTypes":
+          {
+            "portfolio": "NU Portfolio",
+            "articles": "NU Portfolio Article",
+            "containers":
+            {
+              "name": "NU Container",
+              "template": "templates/_container.slim",
+              "urlAliasPrefix": "contentful",
+              "urlAliasSource": "slug",
+              "renderOnBuild": true
+            }
+          }
+        }
+      }
+    }
+  }
+```
+### 5.3.0
+
+  * Added rails support
+  * Disabled parallel processing (ActiveRecord conflict)
+  
 ### 5.2.3
 
   * Added autoprefixer
