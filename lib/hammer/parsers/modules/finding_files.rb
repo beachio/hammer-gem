@@ -85,14 +85,13 @@ module Hammer
     end
 
     def find_file(*args)
-      find_files(*args)[0]
+      find_files(*args)[0] || ContentProxy.find_file(args.first)
     end
 
     def self.included(base)
       # Dependency tree alert!
       # TODO: Figure out a way to bring FindingFiles and Extensions closer together, if possible.
       base.send :include, Hammer::Extensions
-
     end
 
 

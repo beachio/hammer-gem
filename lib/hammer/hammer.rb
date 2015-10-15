@@ -26,6 +26,4 @@ $LOAD_PATH.unshift root + 'vendor' + 'production' + 'bundle'
 
 require 'bundler/setup'
 require 'hammer/build'
-require 'content/content_proxy'
-require 'content/contentful_helper'
-require 'content/contentful_pages_generator'
+require 'hammer/content'
