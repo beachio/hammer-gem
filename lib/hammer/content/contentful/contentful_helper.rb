@@ -1,5 +1,4 @@
 require 'contentful'
-require 'ostruct'
 module Hammer
   class ContentfulHelper
     def initialize(config, space_name = 'default')
@@ -49,32 +48,10 @@ module Hammer
     end
 
     def parse_entries(entries)
+      content_parser = ContentfulEntryParser.new
       entries.map do |entry|
-        parse_entry(entry)
+        content_parser.parse(entry)
       end.compact
-    end
-
-    def parse_entry(entry)
-      os = OpenStruct.new
-      entry.fields.each do |field, content|
-        os[field] = parse_content(content)
-      end
-      os['type'] = content_type_name(entry.sys[:contentType].sys[:id])
-      os
-    end
-
-    def parse_content(content)
-      case content.class.to_s
-      when /Array/
-        then content.map { |x| parse_content(x) }.compact
-      when /Contentful::Asset/
-        then content.image_url
-      when /Contentful::Entry/
-        then parse_entry(content)
-      when /Contentful::Link/
-        then parse_content(content.resolve) rescue nil
-      else content
-      end
     end
 
     def content_type_id(name)

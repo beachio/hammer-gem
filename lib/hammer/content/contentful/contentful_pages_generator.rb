@@ -6,7 +6,7 @@ module Hammer
       @output_directory = output_directory
     end
 
-    def self.autogenerate_content_types
+    def self.autobuild_types
       return [] unless Settings.contentful['spaces'].is_a?(Hash)
       content_types = []
       Settings.contentful['spaces'].each do |space_name, space_params|
@@ -47,12 +47,22 @@ module Hammer
       data
     end
 
+    def get_paths(content_params)
+      @params = content_params
+      contents.map do |content|
+        content_path(content)
+      end
+    end
+
     def contents
+      cached = ContentCache.get('contents', @params)
+      return cached if cached
       cf = ContentfulHelper.new(
         Settings.contentful,
         @params['space_name']
       )
-      cf.send(@params['content_key'].to_sym)
+      result = cf.send(@params['content_key'].to_sym) || []
+      ContentCache.cache('contents', result, @params)
     end
 
     def content_variable_name
@@ -68,19 +78,21 @@ module Hammer
         parser.input_directory  = @input_directory
         parser.output_directory = @output_directory
         parser.path = template_path.sub(@input_directory + '/', '')
-        #  Pathname.new(File.join(@input_directory, template_path)).relative_path_from(Pathname.new(@input_directory)).to_s
-            
+
         text = parser.parse(text, template_path)
       end
       text
     end
 
     def write_file(text, content)
-      filepath = build_content_path(content)
+      filepath = @output_directory + '/' + content_path(content)
+      dir = File.dirname(filepath)
+      FileUtils.mkdir_p(dir) unless File.directory?(dir)
+
       File.open(filepath, 'w+') { |f| f.write(text) }
     end
 
-    def build_content_path(content)
+    def content_path(content)
       if @params['urlAliasValue']
         path = @params['urlAliasValue'].to_s
         unless path.ends_with?('.html') || path.ends_with?('.htm')
@@ -94,9 +106,6 @@ module Hammer
           path = "#{@params['urlAliasPrefix'].to_s}/#{path}"
         end
       end
-      path = "#{@output_directory}/#{path}"
-      dir = File.dirname(path)
-      FileUtils.mkdir_p(dir) unless File.directory?(dir)
       path
     end
   end
