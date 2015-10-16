@@ -1,3 +1,8 @@
+### 5.3.2
+
+  * Fix including '.slim' and '.scss' files into build folder
+  * Enable <!-- @path --> tag for auto-generated pages
+
 ### 5.3.1
   
   * Added contentful pages generator which allows generate multiple pages from single template.
