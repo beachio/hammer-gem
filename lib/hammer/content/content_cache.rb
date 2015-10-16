@@ -30,6 +30,11 @@ module Hammer
         $content_cache ||= ContentCache.new
         $content_cache.get_variable(key, *params)
       end
+
+      def flush!
+        $content_cache = nil
+        $content_cache = ContentCache.new
+      end
     end
   end
 end

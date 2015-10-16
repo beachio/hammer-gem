@@ -48,6 +48,7 @@ module Hammer
           @results.merge! data
         end
       end
+      ContentCache.flush!
 
       # Parallel.map(filenames, in_processes: processor_count) do |filename|
       filenames.map do |filename|
