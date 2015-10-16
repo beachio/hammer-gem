@@ -93,7 +93,9 @@ module Hammer
     end
 
     def content_path(content)
-      if !@params['urlAliasValue'].to_s.strip.empty?
+      if content.homePage
+        path = 'index.html'
+      elsif !@params['urlAliasValue'].to_s.strip.empty?
         path = @params['urlAliasValue'].to_s
         unless path.ends_with?('.html') || path.ends_with?('.htm')
           path += '.html'
