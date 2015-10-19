@@ -1,4 +1,8 @@
-### 5.3.2
+### 5.3.3
+  
+  * `Stack too deep` fixed. Limited level of parsing assotiations. 
+
+### 5.4.2
 
   * Fix including '.slim' and '.scss' files into build folder
   * Enable <!-- @path --> tag for auto-generated pages
