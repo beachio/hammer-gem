@@ -5,7 +5,7 @@ module Hammer
   class ContentfulEntryParser
     attr_accessor :max_level
 
-    def initialize(max_level = 3)
+    def initialize(max_level = 5)
       self.max_level = max_level
     end
 
