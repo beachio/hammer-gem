@@ -1,3 +1,7 @@
+### 5.4.3
+  
+  * `Stack too deep` fixed. Limited level of parsing assotiations. 
+
 ### 5.4.2
 
   * Fix including '.slim' and '.scss' files into build folder
