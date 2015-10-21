@@ -37,19 +37,10 @@ module Hammer
       filenames    = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
-      contentful_types = ContentfulPagesGenerator.autobuild_types
-      # Parallel.each(contentful_types, in_threads: processor_count) do |type|
-      if contentful_types.count > 0
-        generator = ContentfulPagesGenerator.new(@input_directory, @output_directory)
-        contentful_types.each do |content_params|
-          ContentProxy.add_paths(generator.get_paths(content_params))
-        end
-        contentful_types.each do |content_params|
-          data = generator.generate(content_params)
-          @results.merge! data
-        end
-      end
-      ContentCache.flush!
+      generated_results = ContentGenerator.new(
+        @input_directory,
+        @output_directory
+      ).process
 
       Parallel.map(filenames, in_threads: processor_count) do |filename|
         parse_file(filename)
@@ -72,6 +63,7 @@ module Hammer
         @results[ignored_file[:filename]] = ignored_file
       end
 
+      @results[:generated] = generated_results
       return @results
     end
 
