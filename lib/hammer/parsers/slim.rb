@@ -18,6 +18,7 @@ module Hammer
     def parse(text, filename=nil)
       @text = text
       text = includes(text, filename)
+      text = convert_tags(text)
       text = convert(text)
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
@@ -121,6 +122,20 @@ module Hammer
     def files_from_tag_in_line(line)
       line.match(/\A\s*\/!?\s*@include\s+([^\s]+)/) ||
       line.match(/\A\s*<!-+\s+@include\s+([^\s]+)/)
+    end
+
+    # convert rails-like helpers to hammer tags
+    # include "template" become <!-- @include _?template -->
+    def convert_tags(text)
+      tags = ['path', 'include', 'stylesheet', 'javascript',
+              'todo', 'placeholder']
+      regexp = /^(\s*)=\s*(#{tags.join('|')})\s+([^\n]+)/
+      text.gsub(regexp) do
+        space = Regexp.last_match[1]
+        tag = Regexp.last_match[2]
+        argument = Regexp.last_match[3].gsub(/[\'\"]/, '').strip
+        "#{space}<!-- @#{tag} #{argument} -->"
+      end
     end
   end
 end
