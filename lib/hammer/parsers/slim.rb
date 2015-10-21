@@ -25,7 +25,9 @@ module Hammer
       text
     end
 
-    def includes(text, filename)
+    def includes(text, filename, level = 0)
+      fail "Circular include: <b>#{h filename}</b> was included about 10 times!." if level > 10
+
       lines = text.split("\n")
       line_number = 0
       # lines.each_with_index do |line, line_number|
@@ -50,7 +52,7 @@ module Hammer
             # parse included includes
             include_text = read(file)
             include_text = convert_tags(include_text)
-            include_text = includes(include_text, file)
+            include_text = includes(include_text, file, level + 1)
 
             # Insert the text of this file as an array.
             lines[line_number] = include_text.array_of_lines_indented_by(line.indentation_string)
