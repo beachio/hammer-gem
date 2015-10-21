@@ -17,8 +17,8 @@ module Hammer
 
     def parse(text, filename=nil)
       @text = text
-      text = includes(text, filename)
       text = convert_tags(text)
+      text = includes(text, filename)
       text = convert(text)
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
@@ -47,13 +47,20 @@ module Hammer
 
             # file = File.join(@directory, file)
 
+            # parse included includes
+            include_text = read(file)
+            include_text = convert_tags(include_text)
+            include_text = includes(include_text, file)
+
             # Insert the text of this file as an array.
-            lines[line_number] = read(file).array_of_lines_indented_by(line.indentation_string)
+            lines[line_number] = include_text.array_of_lines_indented_by(line.indentation_string)
 
             # We only have to change stuff if the next line is indented.
+            
+
             if is_indented_after_this_line
-              last_line = read(file).lines.to_a.last
-              lines = indent_from_line(last_line, lines, line_number, read(file).indentation_in_last_line)
+              last_line = include_text.lines.to_a.last
+              lines = indent_from_line(last_line, lines, line_number, include_text.indentation_in_last_line)
             end
 
             lines = lines.flatten
@@ -111,7 +118,7 @@ module Hammer
 
         # Replace the line!
         # future_line = "#{letters_to_indent_by}#{future_line}"
-        lines[i] = letters_to_indent_by + lines[i]
+        lines[i] = convert_tags(letters_to_indent_by + lines[i])
 
         i += 1
       end
