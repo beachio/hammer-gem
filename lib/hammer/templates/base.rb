@@ -35,6 +35,8 @@ module Hammer
     def initialize(files, options={})
       @input_directory = options[:input_directory]
       @output_directory = options[:output_directory]
+      
+      @generated_files = files.delete(:generated)
 
       @files = sort_files(files) # ['index.html' => {}, ...]
       @files = @files.map {|path, data| data } # [{}, {}]
@@ -104,6 +106,10 @@ module Hammer
     def ignored_files
       # TODO: Ignored files in the template
       files.select {|file| file[:ignored]} || []
+    end
+
+    def contentful_files
+      @generated_files[:contentful] || []
     end
 
     def files_of_type(extension)

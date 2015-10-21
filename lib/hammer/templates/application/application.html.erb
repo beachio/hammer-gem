@@ -52,6 +52,15 @@
             <% end %>
           </div>
 
+          <% if contentful_files.any? %>
+            <div class="html set contentful">
+              <strong>Contentful Files</strong>
+              <% contentful_files.each do |html_file| %>
+                <%= line_for(html_file) %>
+              <% end %>
+            </div>
+          <% end %>
+
           <div class="html includes set">
             <strong>HTML includes</strong>
             <% if html_includes.any? %>

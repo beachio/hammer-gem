@@ -1,10 +1,7 @@
-<% isInclude = File.basename(filename).start_with?("_") %>
+<% isInclude = File.basename(filename).start_with?("_") && !generated %>
 <article class="<%= span_class %>" hammer-original-filename="<%= filename %>" <% if output_filename && !isInclude %>hammer-final-filename="<%= output_filename %>"<% end %>>
-
-  <span class="filename"><%= filename %></span>
-
-
-
+  
+  <span class="filename"><%= generated ? output_filename : filename %></span>
     <small class="<%= span_class %>">
       <% if ignored %>
         Ignored
@@ -17,6 +14,8 @@
         <% end %>
         <%= error.to_s.gsub("\n", "<br/>").gsub(" ", "&nbsp;") %>
         </span>
+      <% elsif generated %>
+        Compiled from <a target="_blank" href="<%= input_directory %>/<%= filename %>"><%= filename %></a>
       <% elsif isInclude %>
         Include only - not compiled
       <% elsif from_cache %>
@@ -42,8 +41,24 @@
       </span>
     <% end %>
 
-    <% if output_filename %><a target="blank" href="reveal://<%= output_directory %>/<%= output_filename %>" class="reveal" title="Reveal Built File">Reveal in Finder</a><% end %>
-    <% if !isInclude && output_filename.end_with?('html') %><a target="blank" href="<%= output_directory %>/<%= output_filename %>" class="browser" title="Open in Browser">Open in Browser</a><% end %>
+    <% if output_filename %>
+      <a target="blank"
+         href="reveal://<%= output_directory %>/<%= output_filename %>"
+         class="reveal"
+         title="Reveal Built File">
+        Reveal in Finder
+      </a>
+    <% end %>
+
+    <% if !isInclude && output_filename.end_with?('html') %>
+      <a target="blank"
+         href="<%= output_directory %>/<%= output_filename %>"
+         class="browser"
+         title="Open in Browser">
+        Open in Browser
+      </a>
+    <% end %>
+
     <% if ['.html', ".css", ".js", ".scss", ".sass", ".coffee", '.slim'].include?(File.extname(filename)) %>
       <% if !filenames %>
         <a target="blank" href="edit://<%= input_directory %>/<%= filename %>" class="edit" title="Edit Original">Edit Original</a>

@@ -1,50 +1,61 @@
 require 'active_support/inflector'
 module Hammer
-  class ContentfulPagesGenerator
-    def initialize(input_directory, output_directory)
-      @input_directory = input_directory
-      @output_directory = output_directory
-    end
+  class ContentfulPages < Hammer::ContentGenerator
+    register_content_source ContentfulPages
 
-    def self.autobuild_types
+    def autobuild_content_types
       return [] unless Settings.contentful['spaces'].is_a?(Hash)
-      content_types = []
+      return @content_types if @content_types
+      @content_types = []
       Settings.contentful['spaces'].each do |space_name, space_params|
         next unless space_params['contentTypes'].is_a?(Hash)
         space_params['contentTypes'].each do |content_key, params|
           next unless params.is_a?(Hash) && params['renderOnBuild']
-          content_types << params.merge(
+          @content_types << params.merge(
             'space_name' => space_name,
             'content_key' => content_key
           )
         end
       end
-      content_types
+      @content_types
     end
 
-    def generate(content_params)
-      @params = content_params
-      # example params
-      # {
-      #  "name"=>"NU Container",
-      #  "template"=>"templates/_container.slim",
-      #  "urlAliasSource"=>"title",
-      #  "renderOnBuild"=>true,
-      #  "space_name"=>"default",
-      #  "content_key"=>"containers"
-      # }
-      data = {}
-      contents.each do |content|
-        ContentProxy.register_variable(
-          content_variable_name,
-          content
-        )
-        text = parse_template("#{@input_directory}/#{@params['template']}")
-        write_file(text, content)
-        ContentProxy.unregister_variable(content_variable_name)
+    def register_file_paths
+      autobuild_content_types.each do |content_params|
+        @params = content_params
+        ContentProxy.add_paths(get_paths(content_params))
       end
+    end
 
-      data
+    def generate_pages
+      data = []
+      autobuild_content_types.each do |content_params|
+        @params = content_params
+        # example params
+        # {
+        #  "name"=>"NU Container",
+        #  "template"=>"templates/_container.slim",
+        #  "urlAliasSource"=>"title",
+        #  "renderOnBuild"=>true,
+        #  "space_name"=>"default",
+        #  "content_key"=>"containers"
+        # }
+        contents.each do |content|
+          ContentProxy.register_variable(
+            content_variable_name,
+            content
+          )
+          text = parse_template("#{@input_directory}/#{@params['template']}")
+          output_path = write_file(text, content)
+          ContentProxy.unregister_variable(content_variable_name)
+          data << {
+            filename: content_params['template'],
+            output_filename: output_path,
+            generated: true
+          }
+        end
+      end
+      { contentful: data }
     end
 
     def get_paths(content_params)
@@ -85,11 +96,13 @@ module Hammer
     end
 
     def write_file(text, content)
-      filepath = @output_directory + '/' + content_path(content)
+      output_path = content_path(content)
+      filepath = @output_directory + '/' + output_path
       dir = File.dirname(filepath)
       FileUtils.mkdir_p(dir) unless File.directory?(dir)
 
       File.open(filepath, 'w+') { |f| f.write(text) }
+      output_path
     end
 
     def content_path(content)
