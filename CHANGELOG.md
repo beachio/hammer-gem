@@ -1,6 +1,7 @@
 ### 5.4.3
   
-  * `Stack too deep` fixed. Limited level of parsing assotiations. 
+  * `Stack too deep` fixed. Limited level of parsing assotiations.
+  *  Allow to use `rails-like` helpers instead of hammer tags. `= path 'mac.png'` instead of `<!-- @path mac.png-->` 
 
 ### 5.4.2
 
