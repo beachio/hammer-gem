@@ -137,6 +137,9 @@ module Hammer
             # No, we don't raise this error here. We just put it in :data.
             # raise e
             # TODO: Maybe a DEBUG would help with this!
+
+            # skip all next parsers
+            break
           ensure
             data.merge!(parser.to_hash)
           end
