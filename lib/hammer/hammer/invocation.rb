@@ -1,6 +1,7 @@
 # The class called by the bin stubs. Handles everything to do with creating a new build given arguments.
 
 require 'hammer/templates/application'
+require 'hammer/templates/exception_template'
 require 'hammer/templates/commandline'
 
 module Hammer
@@ -38,6 +39,7 @@ module Hammer
         :output_directory => @output_directory,
         :optimized => @optimized
       }
+
       build = Hammer::Build.new(options)
       results = run(build)
 
@@ -46,7 +48,11 @@ module Hammer
       output = output.each_line.reject{|x| x.strip == ""}.join
       puts output unless ARGV.include? "-q"
     rescue => e
-      template = @template.new([], {})
+      if e.class.to_s =~ /Smart/
+        template = Hammer::ExceptionTemplate.new([], {})
+      else
+        template = @template.new([], {})
+      end
       template.error = e
       puts template
       @success = false

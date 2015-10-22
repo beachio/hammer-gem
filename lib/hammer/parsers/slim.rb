@@ -19,7 +19,7 @@ module Hammer
       @text = text
       text = convert_tags(text)
       text = includes(text, filename)
-      text = convert(text)
+      text = convert(text, filename)
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
@@ -78,10 +78,10 @@ module Hammer
       lines.join("\n")
     end
 
-    def convert(text)
+    def convert(text, filename = nil)
       Slim::Template.new {
         text
-      }.render(Hammer::ContentProxy.new)
+      }.render(Hammer::ContentProxy.new(@input_directory, filename))
     end
 
     def convert_comments(text)

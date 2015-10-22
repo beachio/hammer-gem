@@ -1,0 +1,84 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <link href="output.css" rel="stylesheet" />
+  <script src="jquery.min.js" type="text/javascript"></script>
+  <script src="tabs.js" type="text/javascript"></script>
+  <style>
+    .code > *{
+      display: block;
+      unicode-bidi: embed;
+      font-family: monospace;
+      white-space: pre;
+      margin: 0;
+    }
+    .code pre:nth-child(4){
+      background: #FFCCCB;
+    }
+    .noicon {
+      background-image: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class='build-error'>
+    <h1>Build error!</h1>
+    <p> <strong><%= error.message %></strong>
+    </p>
+  </div>
+  <section id="all">
+
+    
+    <div class="set">
+      <strong>Details</strong>
+      <article class="error could_not_compile error <%= error.extension %> selected">
+        <span class="filename"><%= error.relative_source_path %></span>
+        <% if error.description %>
+          <span class="error"> <b>Line <%= error.line %>:</b>
+            <%= CGI.unescapeHTML error.description.lines.join('<br>') %>
+          </span>
+        <% end %>
+      </article>
+      <% if error.description_list %>
+        <article class="noicon selected">
+          <ul>
+            <% error.description_list.each do |elem| %>
+              <li><%= elem %></li>
+            <% end %>
+          </ul>
+        </article>
+      <% end %>
+    </div>
+
+
+    <% if error.extracted_source %>
+      <div class="set">
+        <strong>Extracted Source</strong>
+        <article class="noicon selected code">
+          <% error.extracted_source.each do |number, line| %>
+            <pre><%= CGI.escapeHTML "#{number}: #{line}" %></pre>
+          <% end %>
+        </article>
+      </div>
+    <% end %>
+    
+    <div class="set">
+      <strong>Backtrace</strong>
+      <article class="noicon">
+        <% error.backtrace.each do |line| %>
+          <%= CGI.escapeHTML line %>
+          <br />
+        <% end %>
+      </article>
+    </div>
+  </section>
+
+  <div id="version">
+    <p>
+      Version
+      <%= Hammer.version %></p>
+  </div>
+
+</body>
+</html>
