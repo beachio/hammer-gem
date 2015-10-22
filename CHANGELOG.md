@@ -1,3 +1,7 @@
+### 5.3.4
+
+  * Added 'SmartExeption', show meaningful error if Contentful content type or space was not found
+
 ### 5.3.3
   
   * `Stack too deep` fixed. Limited level of parsing assotiations.

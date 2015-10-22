@@ -2,11 +2,15 @@ module Hammer
   class ContentProxy
     @@variables = { }
 
-    def initialize
+    def initialize(source_dir = nil, filename = nil)
+      @@variables[:current_parser_filename] = filename if filename
+      @@variables[:current_parser_source_dir] = source_dir if source_dir
     end
 
     def contentful
       @contentful ||= Hammer::ContentfulHelper.new(Settings.contentful)
+      @contentful.content_proxy ||= self
+      @contentful
     end
 
     def markdown(text)
@@ -16,6 +20,19 @@ module Hammer
     # hack to return "registered variables"
     def method_missing(method_name, *arguments, &block)
       @@variables[method_name] || super
+    end
+
+    def fill_exception(exeption)
+      exeption.source_path = current_parser_source_dir + '/' + current_parser_filename
+      exeption.line = find_file_in_slim_backtrace
+      exeption.input_directory = current_parser_source_dir
+      exeption
+    end
+
+    def find_file_in_slim_backtrace
+      line = Thread.current.backtrace.find{ |x| x =~ /TEMPLATE/ }
+      match = line.match(/:(\d+)/)
+      match ? match[1].to_i : nil
     end
 
     class << self
