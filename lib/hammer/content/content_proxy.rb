@@ -1,5 +1,6 @@
 module Hammer
   class ContentProxy
+    include Hammer::FindingFiles
     @@variables = { }
 
     def initialize(source_dir = nil, filename = nil)
@@ -15,6 +16,10 @@ module Hammer
 
     def markdown(text)
       Hammer::MarkdownParser.new.parse(text) if text
+    end
+
+    def path(file)
+      find_file(file)
     end
 
     # hack to return "registered variables"
