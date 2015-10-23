@@ -90,7 +90,7 @@ module Hammer
         parser.output_directory = @output_directory
         parser.path = template_path.sub(@input_directory + '/', '')
 
-        text = parser.parse(text, template_path)
+        text = parser.parse(text, template_path.sub(@input_directory + '/', ''))
       end
       text
     end
