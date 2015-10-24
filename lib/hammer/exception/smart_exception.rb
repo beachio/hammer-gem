@@ -16,15 +16,15 @@ module Hammer
     end
 
     def description_list
-      @description[:list]
+      @description[:list] || []
     end
 
     def relative_source_path
-      @source_path.sub("#{@input_directory}/", '')
+      @source_path.sub("#{@input_directory}/", '') if @source_path
     end
 
     def extension
-      File.extname(@source_path)[1..-1]
+      File.extname(@source_path)[1..-1] if @source_path
     end
 
     def extracted_source

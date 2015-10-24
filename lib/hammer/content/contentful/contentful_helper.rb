@@ -28,9 +28,36 @@ module Hammer
         else
           content_type_name = @space['contentTypes'][name]['name']
         end
-        return entries(content_type: content_type_id(content_type_name))
+        id, fields = content_type_id(content_type_name)
+        return entries(content_type: id)
       end
       nil
+    end
+
+    def parse_entries(entries)
+      content_parser = ContentfulEntryParser.new(self)
+      entries.map do |entry|
+        content_parser.parse(entry)
+      end.compact
+    end
+
+    def content_type_id(name)
+      content_types[:names][name]
+    end
+
+    def content_type_fields(id)
+      content_types[:fields][id]
+    end
+
+    def content_types
+      return @content_types if @content_types
+      @content_types = { names: {}, fields: {} }
+      @client.content_types.each do |content|
+        name = content.properties[:name]
+        @content_types[:names][name] = content.id
+        @content_types[:fields][content.id] = content.properties[:fields].map { |x| x.id }
+      end
+      @content_types
     end
 
     private
@@ -64,28 +91,8 @@ module Hammer
                                                            @content_proxy)
     end
 
-    def parse_entries(entries)
-      content_parser = ContentfulEntryParser.new
-      entries.map do |entry|
-        content_parser.parse(entry)
-      end.compact
-    end
-
     def content_type_id(name)
-      content_type_ids[name]
-    end
-
-    def content_type_name(id)
-      content_type_ids.key(id)
-    end
-
-    def content_type_ids
-      return @content_type_ids if @content_type_ids
-      @content_type_ids = {}
-      @client.content_types.each do |content|
-        @content_type_ids[content.properties[:name]] = content.id
-      end
-      @content_type_ids
+      [content_types[:names][name], content_types[:fields][name]]
     end
   end
 end

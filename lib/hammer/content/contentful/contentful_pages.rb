@@ -89,14 +89,15 @@ module Hammer
         parser.input_directory  = @input_directory
         parser.output_directory = @output_directory
         parser.path = template_path.sub(@input_directory + '/', '')
-
-        text = parser.parse(text, template_path.sub(@input_directory + '/', ''))
+        
+        text = parser.parse(text, parser.path)
       end
       text
     end
 
     def write_file(text, content)
       output_path = content_path(content)
+
       filepath = @output_directory + '/' + output_path
       dir = File.dirname(filepath)
       FileUtils.mkdir_p(dir) unless File.directory?(dir)
@@ -115,7 +116,7 @@ module Hammer
         end
       elsif @params['urlAliasSource']
         path_text = content[@params['urlAliasSource'].to_s]
-        path_text = (content.first || rand(100)) if path_text.nil?
+        path_text = content.first if path_text.nil?
         path = path_text.to_s.parameterize + '.html'
         if @params['urlAliasPrefix'].to_s != ''
           path = "#{@params['urlAliasPrefix'].to_s}/#{path}"
