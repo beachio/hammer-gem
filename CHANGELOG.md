@@ -1,6 +1,7 @@
 ### 5.4.4
 
   * Added 'SmartExeption', show meaningful error if Contentful content type or space was not found
+  * 'Smart' fields (will describe later...)
 
 ### 5.4.3
   

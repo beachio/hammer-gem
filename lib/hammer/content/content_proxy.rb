@@ -1,18 +1,19 @@
 module Hammer
   class ContentProxy
     include Hammer::FindingFiles
-    attr_accessor :current_parser_filename, :current_parser_source_dir
     @@variables = { }
 
     def initialize(source_dir = nil, filename = nil)
-      @current_parser_filename = filename if filename
-      @current_parser_source_dir = source_dir if source_dir
+      @@variables[:current_parser_filename] = filename if filename
+      @@variables[:current_parser_source_dir] = source_dir if source_dir
     end
 
     def contentful
-      @contentful ||= Hammer::ContentfulHelper.new(Settings.contentful)
-      @contentful.content_proxy ||= self
-      @contentful
+      @contentful ||= Hammer::ContentfulHelper.new(
+        Settings.contentful,
+        'default',
+        self
+      )
     end
 
     def markdown(text)
@@ -47,7 +48,7 @@ module Hammer
       exeption
     end
 
-    def find_file_in_slim_backtrace(point)
+    def find_file_in_backtrace(point)
       line = Thread.current.backtrace.find{ |x| x.match(point) }
       match = line.match(/:(\d+)/)
       match ? match[1].to_i : nil
