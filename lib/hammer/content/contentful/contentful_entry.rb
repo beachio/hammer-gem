@@ -116,6 +116,7 @@ module Hammer
 
       def self.create(content, field_name, parent_object)
         itself = self.new
+        return itself if content.nil?
         itself.field_name = field_name
         itself.parent_object = parent_object
         content.each do |element|
