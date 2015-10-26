@@ -191,6 +191,22 @@ module Hammer
         @parent = parent
       end
 
+      def present?
+        false
+      end
+
+      def any?
+        false
+      end
+
+      def empty?
+        true
+      end
+
+      def nil?
+        true
+      end
+
       def each(&block)
       end
 
