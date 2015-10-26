@@ -28,16 +28,14 @@ module Hammer
         else
           content_type_name = @space['contentTypes'][name]['name']
         end
-        id, fields = content_type_id(content_type_name)
-        return entries(content_type: id)
+        return entries(content_type: content_type_id(content_type_name))
       end
       nil
     end
 
     def parse_entries(entries)
-      content_parser = ContentfulEntryParser.new(self)
       entries.map do |entry|
-        content_parser.parse(entry)
+        ContentfulEntry.new(entry, content_types)
       end.compact
     end
 
@@ -45,9 +43,6 @@ module Hammer
       content_types[:names][name]
     end
 
-    def content_type_fields(id)
-      content_types[:fields][id]
-    end
 
     def content_types
       return @content_types if @content_types
@@ -55,7 +50,7 @@ module Hammer
       @client.content_types.each do |content|
         name = content.properties[:name]
         @content_types[:names][name] = content.id
-        @content_types[:fields][content.id] = content.properties[:fields].map { |x| x.id }
+        @content_types[:fields][content.id] = content.properties[:fields]
       end
       @content_types
     end
@@ -89,10 +84,6 @@ module Hammer
       @space_helpers[key] ||= Hammer::ContentfulHelper.new(@config,
                                                            space_name,
                                                            @content_proxy)
-    end
-
-    def content_type_id(name)
-      [content_types[:names][name], content_types[:fields][name]]
     end
   end
 end
