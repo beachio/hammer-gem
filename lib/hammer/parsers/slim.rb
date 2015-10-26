@@ -29,7 +29,7 @@ module Hammer
         e.input_directory = @input_directory
         raise e
       end
-      text = convert_comments(text)
+      # text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
     end
