@@ -41,8 +41,8 @@ module Hammer
         get_field(method_name.to_s)
       else
         ex = SmartException.new(
-          "(#{maybe_title}) You called '#{method_name}', but \
-          '#{method_name}' doesn't exist.",
+          "You called '#{method_name}', but \
+          '#{method_name}' doesn't exist. (#{maybe_title})",
           text: "No such field `#{method_name}`. See available fields below:",
           list: @fields.keys
         )
@@ -100,6 +100,7 @@ module Hammer
     class EntryText < String
       extend EntryBase
       include NotArray
+      attr_accessor :field_name, :parent_object
     end
 
     class EntryDate < Time
@@ -114,9 +115,10 @@ module Hammer
       attr_accessor :field_name, :parent_object
 
       def self.create(content, field_name, parent_object)
-        itself = self.new()
+        itself = self.new
+        itself.field_name = field_name
+        itself.parent_object = parent_object
         content.each do |element|
-          puts element.type
           entry_class = ContentfulEntry.identify(element.type)
           entry = entry_class.create(element, field_name, parent_object)
           itself << entry
@@ -124,16 +126,12 @@ module Hammer
         itself
       end
 
-      def initalize(base, field_name)
-        self.base = base
-        self.field_name = field_name
-      end
-
       def method_missing(method_name, *arguments, &block)
         ex = SmartException.new(
-          "(#{@base.try(:maybe_title)}) You wanted to load field '#{method_name}', but \
-          #{@field_name || 'parent field'} is array, not object. Most likely you should iterate \
-          it or take some value with [] parentless",
+          "You wanted to load field '#{method_name}', but \
+          #{@field_name || 'parent field'} is array, not object. Most likely \
+          you should iterate it or take some value with [] parentless. \
+          (#{@parent_object.maybe_title})",
           text: "You called `#{method_name}` on Array."
         )
         raise ex
@@ -200,8 +198,9 @@ module Hammer
           return EmptyEntry.new("#{@field_name}.#{method_name}", @parent)
         end
         ex = SmartException.new(
-          "(#{@parent.maybe_title}) You wanted to load field '#{method_name}' from '#{@field_name}', but \
-          #{@field_name} is emty, so '#{method_name}' doesn't exist.",
+          "You wanted to load field '#{method_name}' from '#{@field_name}', but \
+          #{@field_name} is emty, so '#{method_name}' doesn't exist. \
+          (#{@parent.maybe_title})",
           text: "You called `#{method_name}` on empty object."
         )
         raise ex

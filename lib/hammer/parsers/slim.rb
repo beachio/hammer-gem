@@ -18,70 +18,77 @@ module Hammer
     def parse(text, filename=nil)
       @text = text
       text = convert_tags(text)
-      text = includes(text, filename)
-      text = convert(text, filename)
+      text, map = includes(text, filename)
+      begin
+        text = convert(text, filename)
+      rescue Hammer::SmartException => e
+        trace_line = match_line_from_backtrace(e.backtrace)
+        file, line = real_source_and_line(map, trace_line)
+        e.source_path = @input_directory + '/' + file
+        e.line = line
+        e.input_directory = @input_directory
+        raise e
+      end
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
     end
 
-    def includes(text, filename, level = 0)
+    def includes(text, filename, level = 0, map = {}, offset = 0)
       fail "Circular include: <b>#{h filename}</b> was included about 10 times!." if level > 10
 
       lines = text.split("\n")
+      processed_lines = []
       line_number = 0
-      # lines.each_with_index do |line, line_number|
+      original_offset = offset
       while line = lines[line_number]
-        if files_from_tag_in_line(line)
-          number_of_indents_in_this_line = line[/\A[ |\t]*/].size
-          next_line = lines[line_number+1]
-          number_of_indents_in_the_next_line = next_line.to_s.number_of_tab_or_space_indents
-          is_indented_after_this_line = number_of_indents_in_this_line < number_of_indents_in_the_next_line
-
-          tag = files_from_tag_in_line(line)[1] # line.gsub("/ @include ", "").strip.split(" ")[0]
-          raise "trying to include statement without file on
-                 #{filename} at line #{line_number + 1}" unless tag
-
+        if include_match = file_from_tag_in_line(line)
+          indentation = include_match[1]
+          tag = include_match[2]
           file = find_file_with_dependency(tag, 'slim') || find_file_with_dependency(tag)
           raise "Includes: File <b>#{h tag}</b> couldn't be found." unless file
 
           if file.end_with? ".slim"
 
-            # file = File.join(@directory, file)
-
+            # update map
+            map[(last_position(map) + 1)..(offset + line_number - 1)] = {
+              file: filename
+            }
             # parse included includes
             include_text = read(file)
             include_text = convert_tags(include_text)
-            include_text = includes(include_text, file, level + 1)
+            include_text, map = includes(include_text, file,
+                                         level + 1, map,
+                                         line_number + offset)
 
             # Insert the text of this file as an array.
-            lines[line_number] = include_text.array_of_lines_indented_by(line.indentation_string)
-
-            # We only have to change stuff if the next line is indented.
-            
-
-            if is_indented_after_this_line
-              last_line = include_text.lines.to_a.last
-              lines = indent_from_line(last_line, lines, line_number, include_text.indentation_in_last_line)
+            indented_array = include_text.split("\n").map do |string|
+              "#{indentation}#{string}"
             end
 
-            lines = lines.flatten
-          elsif line.match /\A\s*\/!?\s*@include\s+([^\s]+)/
+            offset += indented_array.count - 1
+            processed_lines.concat(indented_array)
+          else
             # Insert it as normal. HTML will cover the include.
-            lines[line_number].gsub(/!?\s*@include\s+([^\s]+).*/, "<!-- @include #{tag} -->")
+            processed_lines << "#{indentation}<!-- @include #{tag} -->"
           end
+        else
+          processed_lines << line
         end
-
         line_number += 1
       end
 
-      lines.join("\n")
+      map[last_position(map) + 1..(original_offset + processed_lines.count - 1)] = {
+        file: filename,
+        offset: offset
+      }
+      [processed_lines.join("\n"), map]
     end
 
     def convert(text, filename = nil)
       Slim::Template.new {
         text
-      }.render(Hammer::ContentProxy.new(@input_directory, filename))
+      }.render(Hammer::ContentProxy.new())
     end
 
     def convert_comments(text)
@@ -90,47 +97,26 @@ module Hammer
 
     private
 
-    # This function takes an array of lines, and an original line that has been replaced with input.
-    # From there, it indents any line after the inserted line, by the same amount of indentation as
-    # the last line that was inserted.
-    def indent_from_line(line, lines, line_number, number_of_indents)
-
-      indents_at_this_line = line.to_s.number_of_tab_or_space_indents
-
-      # Here we have an include that's followed by an indented line.
-      # Since we're including HAML inside HAML, we have to shuffle everything downwards until things fit.
-      # So we skip forward until we find a line with the same number of indents,
-      # and indent these lines as we go.
-
-      i = line_number+1
-
-      while i < lines.length
-
-        future_line = lines[i]
-        indents_at_the_future_line = future_line.to_s.number_of_tab_or_space_indents
-
-        next_line_is_indented = indents_at_the_future_line > indents_at_this_line
-
-        break unless next_line_is_indented
-
-        # Tabs or spaces?
-        indent_character = future_line.indentation_character
-        # Indent the line by the
-        letters_to_indent_by = indent_character * number_of_indents
-
-        # Replace the line!
-        # future_line = "#{letters_to_indent_by}#{future_line}"
-        lines[i] = convert_tags(letters_to_indent_by + lines[i])
-
-        i += 1
-      end
-
-      return lines
+    def match_line_from_backtrace(backtrace)
+      line = backtrace.find{ |x| x.match('TEMPLATE') }
+      match = line.match(/:(\d+)/)
+      match ? match[1].to_i : nil
     end
 
-    def files_from_tag_in_line(line)
-      line.match(/\A\s*\/!?\s*@include\s+([^\s]+)/) ||
-      line.match(/\A\s*<!-+\s+@include\s+([^\s]+)/)
+    def real_source_and_line(map, line)
+      mapped = map.find{|k, v| k.include? line}
+      file = mapped[1][:file]
+      line = line - mapped[0].first
+      [file, line]
+    end
+
+    def last_position(map)
+      (map.keys.last || (-1..-1)).last
+    end
+
+    def file_from_tag_in_line(line)
+      line.match(/\A(\s*)\/!?\s*@include\s+([^\s]+)/) ||
+        line.match(/\A(\s*)<!-+\s+@include\s+([^\s]+)/)
     end
 
     # convert rails-like helpers to hammer tags

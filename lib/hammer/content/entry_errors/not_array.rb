@@ -2,20 +2,24 @@ module NotArray
   def self.included(base)
     base.class_eval do
       def each(&block)
-        raise "You tried iterate over not array!"
+        not_array_error "You tried to iterate over '#{@field_name}' but this \
+        variable is not array."
       end
     
       def [](key)
-        raise "It isn't array !"
-      end
-    
-      def first
-        raise "It isn't array !"
+        not_array_error
       end
 
-      alias_method :last, :first
-      alias_method :take, :first
-      alias_method :count, :first
+      def not_array_error(message = nil)
+        message ||= "You tried to access '#{@field_name}' but this variable is \
+        not array."
+        raise Hammer::SmartException.new(message, text: 'Variable is not array.')
+      end
+
+      alias_method :first, :not_array_error
+      alias_method :last, :not_array_error
+      alias_method :take, :not_array_error
+      alias_method :count, :not_array_error
     end
   end
 end
