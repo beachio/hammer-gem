@@ -30,7 +30,7 @@ module Hammer
     end
 
     def get_field(name)
-      return @ready_fields[name] if @ready_fields.key(name)
+      return @ready_fields[name] if @ready_fields.key?(name)
       field_class = ContentfulEntry.identify(@fields[name][:type])
       value = @raw_entry.fields[name.to_sym]
       @ready_fields[name] = field_class.create(value, name, self)
@@ -55,7 +55,7 @@ module Hammer
           "You called '#{method_name}', but \
           '#{method_name}' doesn't exist. (#{maybe_title})",
           text: "No such field `#{method_name}`. See available fields below:",
-          list: @fields.keys
+          list: entry_fields_list
         )
         raise ex
       end
@@ -63,6 +63,10 @@ module Hammer
 
     def [](field_name)
       send(field_name)
+    end
+
+    def entry_fields_list
+      @fields.keys
     end
 
     def maybe_title
@@ -133,10 +137,9 @@ module Hammer
         content.each do |element|
           element_type = element.respond_to?(:type) ? element.type : element.class.to_s
           entry_class = ContentfulEntry.identify(element_type)
-          if entry_class =! EmptyEntry
-            entry = entry_class.create(element, field_name, parent_object)
-            itself << entry
-          end
+          entry = entry_class.create(element, field_name, parent_object)
+          next if entry.class.to_s =~ /EmptyEntry/
+          itself << entry
         end
         itself
       end
@@ -151,6 +154,23 @@ module Hammer
         )
         raise ex
         # raise ContentProxy.new.fill_exception(ex)
+      end
+
+      def order(field, order = 'asc')
+        order = order.downcase
+        
+        raise SmartException.new("You tried to sort collection but used wrong \
+          order parameter '#{order}'. (Contentful Entry: \
+          #{parent_object.maybe_title})",
+          text: 'Wrong order parameter. Allowed parameters are:',
+          list: ['ASC', 'DESC']
+        ) if order != 'asc' && order != 'desc'
+
+        sorted = sort_by do |item|
+          value = item[field]
+          value.respond_to?(:downcase) ? value.downcase : value
+        end
+        order == 'asc' ? sorted : sorted.reverse
       end
     end
 
@@ -218,7 +238,6 @@ module Hammer
           text: "You called `#{method_name}` on empty object."
         )
         raise ex
-        # raise ContentProxy.new.fill_exception(ex)
       end
     end
   end
