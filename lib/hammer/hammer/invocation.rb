@@ -33,6 +33,7 @@ module Hammer
     end
 
     def compile
+      require 'pry' if ARGV.include? 'PRY'
       options = {
         :cache_directory => @cache_directory,
         :input_directory => @input_directory,
