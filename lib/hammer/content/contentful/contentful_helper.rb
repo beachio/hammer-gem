@@ -17,7 +17,7 @@ module Hammer
     def entries(query = {})
       @entries_raw ||= {}
       @entries_raw[query.hash] ||= @client.entries(query.merge(include: 2))
-      parse_entries(@entries_raw[query.hash])
+      Hammer::ContentfulEntry::EntryArray.new(parse_entries(@entries_raw[query.hash]))
     end
 
     def entries_by_content_type(name)
