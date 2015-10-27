@@ -36,9 +36,20 @@ module Hammer
       @ready_fields[name] = field_class.create(value, name, self)
     end
 
+    def field_exist?(name)
+      return false unless @fields.key?(name)
+      field = get_field(name)
+      return false if field.class.to_s =~ /EmptyEntry/
+      return !field.empty? if field.respond_to?(:empty?)
+      !!field
+    end
+
     def method_missing(method_name, *arguments, &block)
-      if @fields.key?(method_name.to_s)
-        get_field(method_name.to_s)
+      method_name = method_name.to_s
+      if method_name[-1..-1] == '?'
+        return field_exist?(method_name.sub('?', ''))
+      elsif @fields.key?(method_name)
+        get_field(method_name)
       else
         ex = SmartException.new(
           "You called '#{method_name}', but \
@@ -113,7 +124,6 @@ module Hammer
 
     class EntryArray < Array
       attr_accessor :field_name, :parent_object
-
       def self.create(content, field_name, parent_object)
         itself = self.new
         return itself if content.nil?
@@ -185,26 +195,9 @@ module Hammer
     end
 
     class EmptyEntry < String
-
       def initialize(field_name, parent)
         @field_name = field_name
         @parent = parent
-      end
-
-      def present?
-        false
-      end
-
-      def any?
-        false
-      end
-
-      def empty?
-        true
-      end
-
-      def nil?
-        true
       end
 
       def each(&block)
