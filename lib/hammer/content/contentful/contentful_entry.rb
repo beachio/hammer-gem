@@ -133,8 +133,10 @@ module Hammer
         content.each do |element|
           element_type = element.respond_to?(:type) ? element.type : element.class.to_s
           entry_class = ContentfulEntry.identify(element_type)
-          entry = entry_class.create(element, field_name, parent_object)
-          itself << entry
+          if entry_class =! EmptyEntry
+            entry = entry_class.create(element, field_name, parent_object)
+            itself << entry
+          end
         end
         itself
       end
