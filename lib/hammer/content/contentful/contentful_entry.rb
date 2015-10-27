@@ -80,6 +80,7 @@ module Hammer
         # TODO implement handlers for Number, Boolean, Object (JSON)
         {
           'Symbol'   => EntryText,
+          'String'   => EntryText,
           'Integer'  => EntryRaw,
           'Number'   => EntryRaw,
           'Date'     => EntryDate,
@@ -130,7 +131,8 @@ module Hammer
         itself.field_name = field_name
         itself.parent_object = parent_object
         content.each do |element|
-          entry_class = ContentfulEntry.identify(element.type)
+          element_type = element.respond_to?(:type) ? element.type : element.class.to_s
+          entry_class = ContentfulEntry.identify(element_type)
           entry = entry_class.create(element, field_name, parent_object)
           itself << entry
         end
