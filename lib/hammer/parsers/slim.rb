@@ -28,6 +28,16 @@ module Hammer
         e.line = line
         e.input_directory = @input_directory
         raise e
+      rescue Exception => e
+        raise e unless e.message.match('TEMPLATE')
+        message = e.message.sub(/\(__TEMPLATE__\):\d+:\s*/, '')
+        ex = SmartException.new(message, text: message)
+        trace_line = match_line_from_backtrace([e.message])
+        file, line = real_source_and_line(map, trace_line)
+        ex.source_path = @input_directory + '/' + file
+        ex.line = line
+        ex.input_directory = @input_directory
+        raise ex
       end
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
@@ -51,9 +61,9 @@ module Hammer
           if file.end_with? ".slim"
 
             # update map
-            map[(last_position(map) + 1)..(offset + line_number - 1)] = {
+            map[(last_position(map) + 1)..offset + line_number - 1] = {
               file: filename
-            }
+            } if offset + line_number > 0 # only if at least one line past
             # parse included includes
             include_text = read(file)
             include_text = convert_tags(include_text)
