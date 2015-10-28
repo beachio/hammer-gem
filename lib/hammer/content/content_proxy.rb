@@ -19,6 +19,10 @@ module Hammer
       find_file(file)
     end
 
+    def react_component(name, params)
+      "<!-- @react_component '#{name}', #{params.to_json} -->"
+    end
+
     # hack to return "registered variables" and "smart errors"
     def method_missing(method_name, *arguments, &block)
       @@variables[method_name] || error(method_name.to_s)
