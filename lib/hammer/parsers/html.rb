@@ -76,7 +76,6 @@ module Hammer
       text = current_tags(text)
       text = ensure_text_has_no_leading_blank_lines(text)
       text = parse_reactjs_components(text)
-
       text = text[0..-2] if text.end_with? "\n"
 
       return text
@@ -327,7 +326,7 @@ module Hammer
     end
 
     def parse_reactjs_components(html)
-      return text unless html.match('@react_component')
+      return html unless html.match('@react_component')
       # first, add base libraries
       js_file_paths = ["#{$root_dir}/assets/reactjs/react.js"]
       js_file_paths << "#{$root_dir}/assets/reactjs/react-server.js"
