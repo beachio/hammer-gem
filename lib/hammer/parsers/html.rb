@@ -344,7 +344,7 @@ module Hammer
       context = ExecJS.compile(GLOBAL_WRAPPER + js_file)
       
       # "<!-- @react_component 'Profile', { "name": "John" } -->"
-      html.gsub(/<!--\s+@react_component\s+[\'\"](\w+)[\'\"],?\s*(.*?)\s*-->/) do
+      html.gsub(/<!--\s+@react_component\s+[\'\"]([\w\.\d_]+)[\'\"],?\s*(.*?)\s*-->/) do
         component_name = Regexp.last_match[1]
         component_params =  Regexp.last_match[2]
         begin
@@ -357,13 +357,13 @@ module Hammer
           # insert parameters
           tag.sub(/<([^\s]+)/) do
             [
-              "<#{Regexp.last_match[1]} data-react-class=\"#{component_name}\" "
-              "data-react-props=\"#{CGI.escapeHTML(component_params)}\" "
+              "<#{Regexp.last_match[1]} data-react-class=\"#{component_name}\"",
+              " data-react-props=\"#{CGI.escapeHTML(component_params)}\" "
             ].join
           end
         rescue Exception => e
           [
-            Regexp.last_match[0][0..-4]
+            Regexp.last_match[0][0..-4],
             " Failed to render react component. Error: #{e.message} -->"
           ].join
         end

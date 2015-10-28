@@ -29,4 +29,5 @@ Gem::Specification.new do |gem|
   # gem.add_dependency 'parallel'
   gem.add_dependency 'autoprefixer-rails'
   gem.add_dependency 'contentful'
+  gem.add_dependency 'jsx'
 end
