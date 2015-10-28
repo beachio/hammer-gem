@@ -19,6 +19,7 @@ module Hammer
       @text = text
       text = convert_tags(text)
       text, map = includes(text, filename)
+      File.open('current.slim', 'w+'){ |f| f.write(text) }
       begin
         text = convert(text, filename)
       rescue Hammer::SmartException => e
@@ -114,7 +115,7 @@ module Hammer
     end
 
     def real_source_and_line(map, line)
-      mapped = map.find{|k, v| k.include? line}
+      mapped = map.find{|k, v| k.include?(line - 1)}
       file = mapped[1][:file]
       line = line - mapped[0].first
       [file, line]
