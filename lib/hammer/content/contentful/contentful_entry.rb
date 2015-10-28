@@ -70,7 +70,9 @@ module Hammer
     end
 
     def maybe_title
-      field_name = @fields.find { |k, _v| k =~ /name|title|slug/ }
+      field_name = @fields.find do |k, _v|
+        k =~ /name|title|slug/ && !@raw_entry.fields[k.to_sym].nil?
+      end
       field_name ? send(field_name[0]) : first
     end
 
