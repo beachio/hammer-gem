@@ -20,6 +20,30 @@ module Hammer
       @content_types
     end
 
+    def handle_exeption(e)
+      if e.class == Contentful::Unauthorized
+        file = File.read(Settings.config_file)
+        line = file.lines.find{ |x| x.match('"apiKey"\s*:') }
+        raise SmartException.new(
+          'Incorrect API key for Contentful',
+          { text: 'please review credentials in hammer.json' },
+          Settings.config_file,
+          file.lines.index(line) + 1,
+          @input_directory
+        )
+      elsif e.class == Contentful::NotFound
+        raise SmartException.new(
+          "Invalid space id for '#{@params['space_name']}' space. Contentful::NotFound error.",
+          { text: 'please review credentials in hammer.json' },
+          Settings.config_file,
+          nil,
+          @input_directory
+        )
+      else
+        raise e
+      end
+    end
+      
     def register_file_paths
       autobuild_content_types.each do |content_params|
         @params = content_params

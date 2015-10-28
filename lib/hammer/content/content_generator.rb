@@ -10,12 +10,20 @@ module Hammer
     def process
       results = {}
       @@sources.each do |generator_class|
-        generator = generator_class.new(@input_directory, @output_directory)
-        generator.register_file_paths
-        results.merge! generator.generate_pages # might be in parallel
+        begin
+          generator = generator_class.new(@input_directory, @output_directory)
+          generator.register_file_paths
+          results.merge! generator.generate_pages # might be in parallel
+        rescue Exception => e
+          generator.handle_exeption(e)
+        end
       end
       ContentCache.flush!
-      results
+      return results
+    end
+
+    def handle_exeption(e)
+      raise e
     end
 
     def register_file_paths
