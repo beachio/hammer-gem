@@ -332,14 +332,13 @@ module Hammer
       js_file_paths << "#{$root_dir}/assets/reactjs/react-server.js"
       html.scan(/<script src=[\'\"](.*?)[\'\"]/).each do |match|
         next if match.first.match(/jquery|react-dom|react.js|react.min.js|react-with-addons|bootstrap/i)
-        js_file_paths << "#{input_directory}/#{match.first}"
+        js_file_paths << "#{output_directory}/#{match.first}"
       end
       
       js_file_paths.uniq!
       js_file = js_file_paths.map { |path| File.read(path) }.join
 
       context = ExecJS.compile(GLOBAL_WRAPPER + js_file)
-
       
       html.gsub(/<!--\s+@react_component\s+[\'\"](\w+)[\'\"],?\s*(.*?)\s*-->/) do
         component_name = Regexp.last_match[1]
