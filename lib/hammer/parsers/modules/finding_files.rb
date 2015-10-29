@@ -109,6 +109,7 @@ module Hammer
       if @directory
         $filenames = Dir.glob(File.join(@directory, "**/*")).map {|file|
           next if @output_directory && file.start_with?(@output_directory)
+          next if File.directory?(file)
           file.gsub(@directory+"/", "")
         }.compact
       else
