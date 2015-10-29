@@ -22,7 +22,7 @@ module Hammer
 
     def parse(text, filename=nil)
       @markdown = text
-      parser = Hammer::HTMLParser.new(:path => @path)
+      parser = Hammer::HTMLParser.new(path: @path, variables: @variables)
       parser.directory = @directory
       text = parser.parse(text) # beforehand
       text = convert(text)
