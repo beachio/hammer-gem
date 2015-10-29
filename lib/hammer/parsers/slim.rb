@@ -29,7 +29,7 @@ module Hammer
         e.input_directory = @input_directory
         raise e
       rescue Exception => e
-        raise e unless e.message.match('TEMPLATE')
+        raise e unless e.message.match(/\(__TEMPLATE__\):\d+:/)
         message = e.message.sub(/\(__TEMPLATE__\):\d+:\s*/, '')
         ex = SmartException.new(message, text: message)
         trace_line = match_line_from_backtrace([e.message])
@@ -133,7 +133,7 @@ module Hammer
     # include "template" become <!-- @include _?template -->
     def convert_tags(text)
       tags = ['path', 'include', 'stylesheet', 'javascript',
-              'todo', 'placeholder']
+              'todo', 'placeholder', 'react_component']
       regexp = /^(\s*)=\s*(#{tags.join('|')})\s+([^\n]+)/
       text.gsub(regexp) do
         space = Regexp.last_match[1]

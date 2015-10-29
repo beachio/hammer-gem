@@ -75,7 +75,7 @@ module Hammer
       text = output_variables(text)
       text = current_tags(text)
       text = ensure_text_has_no_leading_blank_lines(text)
-
+      text = parse_reactjs_components(text)
       text = text[0..-2] if text.end_with? "\n"
 
       return text
@@ -325,5 +325,54 @@ module Hammer
       text
     end
 
+    def parse_reactjs_components(html)
+      return html unless html.match('@react_component')
+      # first, add base libraries
+      js_file_paths = ["#{$root_dir}/assets/reactjs/react.js"]
+      js_file_paths << "#{$root_dir}/assets/reactjs/react-server.js"
+      html.scan(/<script src=[\'\"](.*?)[\'\"]/).each do |match|
+        # we do not need jquery or react again (already added)
+        next if match.first.match(/jquery|react-dom|react.js|react.min.js|react-with-addons|bootstrap/i)
+        js_file_paths << "#{output_directory}/#{match.first}"
+      end
+      
+      js_file_paths.uniq!
+      # read all files into single string
+      js_file = js_file_paths.map { |path| File.read(path) }.join
+
+      context = ExecJS.compile(GLOBAL_WRAPPER + js_file)
+      
+      # "<!-- @react_component 'Profile', { "name": "John" } -->"
+      html.gsub(/<!--\s+@react_component\s+[\'\"]([\w\.\d_]+)[\'\"],?\s*(.*?)\s*-->/) do
+        component_name = Regexp.last_match[1]
+        component_params =  Regexp.last_match[2]
+        begin
+          # render component
+          tag = context.eval("(function () {\
+                  return ReactDOMServer.renderToStaticMarkup(\
+                    React.createElement(#{component_name}, #{component_params})\
+                  )\
+                })()")
+          # insert parameters
+          tag.sub(/<([^\s]+)/) do
+            [
+              "<#{Regexp.last_match[1]} data-react-class=\"#{component_name}\"",
+              " data-react-props=\"#{CGI.escapeHTML(component_params)}\" "
+            ].join
+          end
+        rescue Exception => e
+          [
+            Regexp.last_match[0][0..-4],
+            " Failed to render react component. Error: #{e.message} -->"
+          ].join
+        end
+      end
+    end
+
+    GLOBAL_WRAPPER = <<-JS
+      var global = global || this;
+      var self = self || this;
+      var window = window || this;
+    JS
   end
 end

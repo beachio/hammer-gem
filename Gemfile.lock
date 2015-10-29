@@ -4,14 +4,6 @@ GIT
   specs:
     amp (0.11)
 
-GIT
-  remote: https://github.com/haml/haml.git
-  revision: 99cf4e6a28b0c3bfa35f5e90db4242d0a147d952
-  branch: stable
-  specs:
-    haml (4.0.7)
-      tilt
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -42,6 +34,8 @@ GEM
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
     execjs (2.0.2)
+    haml (4.0.7)
+      tilt
     http (0.9.8)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -54,6 +48,10 @@ GEM
     i18n (0.7.0)
     json (1.8.3)
     json_pure (1.8.2)
+    jsx (0.0.1)
+      execjs
+      react-source (~> 0.13)
+      tilt
     kramdown (1.3.1)
     metaclass (0.0.4)
     method_source (0.8.2)
@@ -70,6 +68,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rake (10.4.2)
+    react-source (0.13.3)
     sass (3.4.17)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -106,8 +105,9 @@ DEPENDENCIES
   eco
   ejs
   execjs (= 2.0.2)
-  haml!
+  haml
   json_pure (~> 1.8.0)
+  jsx
   kramdown (= 1.3.1)
   mocha (= 0.14.0)
   neat (= 1.7.0)
