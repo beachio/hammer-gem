@@ -19,7 +19,6 @@ module Hammer
       @text = text
       text = convert_tags(text)
       text, map = includes(text, filename)
-      File.open('current.slim', 'w+'){ |f| f.write(text) }
       begin
         text = convert(text, filename)
       rescue Hammer::SmartException => e

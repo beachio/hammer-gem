@@ -328,8 +328,9 @@ module Hammer
     def parse_reactjs_components(html)
       return html unless html.match('@react_component')
       # first, add base libraries
-      js_file_paths = ["#{$root_dir}/assets/reactjs/react.js"]
-      js_file_paths << "#{$root_dir}/assets/reactjs/react-server.js"
+      root_dir = File.dirname(__FILE__).sub('/lib/hammer/parsers', '')
+      js_file_paths = ["#{root_dir}/assets/reactjs/react.js"]
+      js_file_paths << "#{root_dir}/assets/reactjs/react-server.js"
       html.scan(/<script src=[\'\"](.*?)[\'\"]/).each do |match|
         # we do not need jquery or react again (already added)
         next if match.first.match(/jquery|react-dom|react.js|react.min.js|react-with-addons|bootstrap/i)
@@ -354,7 +355,7 @@ module Hammer
                   )\
                 })()")
           # insert parameters
-          tag.sub(/<([^\s]+)/) do
+          tag.sub(/<([\w]+)/) do
             [
               "<#{Regexp.last_match[1]} data-react-class=\"#{component_name}\"",
               " data-react-props=\"#{CGI.escapeHTML(component_params)}\" "
