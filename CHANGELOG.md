@@ -1,3 +1,7 @@
+### 5.2.4
+
+  * Fixed varibles for markdown includes.
+
 ### 5.2.3
 
   * Added autoprefixer

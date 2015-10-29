@@ -28,7 +28,7 @@ module Hammer
     def initialize(options={})
       @path ||= options[:path]
       @wildcard_dependencies = {}
-      @variables = {}
+      @variables = options[:variables] || {}
       @directory = options[:directory] || Dir.mktmpdir()
     end
 
