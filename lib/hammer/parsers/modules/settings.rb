@@ -21,7 +21,7 @@ module Hammer
       end
 
       def config
-        return @config if @config
+        # return @config if @config
         if File.exist?(config_file)
           @config = JSON.parse(File.read(config_file)) rescue default_config
         else
