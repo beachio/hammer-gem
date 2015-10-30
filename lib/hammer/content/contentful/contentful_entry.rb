@@ -119,6 +119,9 @@ module Hammer
       extend EntryBase
       include NotArray
       attr_accessor :field_name, :parent_object
+      def initialize(val)
+        super(val.to_s)
+      end
     end
 
     class EntryDate < Time
