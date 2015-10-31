@@ -30,6 +30,10 @@ module Hammer
     end
 
     def compile
+      # flush cache of prevoius build
+      $cached_findings = {}
+      $filenames = []
+      #
       @results = {}
       @cacher = Hammer::Cacher.new @input_directory, @cache_directory, @output_directory
 
