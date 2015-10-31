@@ -31,7 +31,7 @@ module Hammer
 
     def compile
       # flush cache of prevoius build
-      $cached_findings = {}
+      $cached_findings = Hash.new([])
       $filenames = []
       #
       @results = {}
