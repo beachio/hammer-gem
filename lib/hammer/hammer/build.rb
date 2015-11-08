@@ -37,12 +37,27 @@ module Hammer
       filenames    = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
+      # first we parse assets, because we need assets to be done when we parse pages
+      # allowed pages formats are %{html htm md slim haml}
+      # then we generate content pages (it will also register file paths)
+      # finally we parse existing pages
+      pages_filenames, assets_filenames = filenames.partition do |f|
+        %w{.html .htm .md .slim .haml}.include?(File.extname(f).downcase)
+      end
+
+      Parallel.map(assets_filenames, in_threads: processor_count) do |filename|
+        parse_file(filename)
+      end.each do |data|
+        @results[data[:output_filename]] = data
+        @error = true if data[:error]
+      end
+
       generated_results = ContentGenerator.new(
         @input_directory,
         @output_directory
       ).process
 
-      Parallel.map(filenames, in_threads: processor_count) do |filename|
+      Parallel.map(pages_filenames, in_threads: processor_count) do |filename|
         parse_file(filename)
       end.each do |data|
         @results[data[:output_filename]] = data
