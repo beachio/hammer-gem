@@ -354,7 +354,7 @@ module Hammer
                   )\
                 })()")
           # insert parameters
-          tag.sub(/<([^\s]+)/) do
+          tag.sub(/<([\w]+)/) do
             [
               "<#{Regexp.last_match[1]} data-react-class=\"#{component_name}\"",
               " data-react-props=\"#{CGI.escapeHTML(component_params)}\" "
