@@ -30,6 +30,10 @@ module Hammer
     end
 
     def compile
+      # flush cached information of prevoius build
+      $cached_findings = Hash.new([])
+      $filenames = []
+      #
       @results = {}
       @cacher = Hammer::Cacher.new @input_directory, @cache_directory, @output_directory
 
@@ -37,7 +41,21 @@ module Hammer
       filenames    = files_from_directory(@input_directory, ignore_file)
       ignored_files = ignored_files_from_directory(@input_directory, ignore_file)
 
-      Parallel.map(filenames, in_threads: processor_count) do |filename|
+      # first we parse assets, because we need assets to be done when we parse pages
+      # allowed pages formats are %{html htm md slim haml}
+      # finally we parse existing pages
+      pages_filenames, assets_filenames = filenames.partition do |f|
+        %w{.html .htm .md .slim .haml}.include?(File.extname(f).downcase)
+      end
+
+      Parallel.map(assets_filenames, in_threads: processor_count) do |filename|
+        parse_file(filename)
+      end.each do |data|
+        @results[data[:output_filename]] = data
+        @error = true if data[:error]
+      end
+
+      Parallel.map(pages_filenames, in_threads: processor_count) do |filename|
         parse_file(filename)
       end.each do |data|
         @results[data[:output_filename]] = data
