@@ -76,7 +76,16 @@ module Hammer
         @results[ignored_file[:filename]] = ignored_file
       end
 
-      return @results
+      if @optimized
+        # remove empty directories
+        # since we joined css and js into single files and moved them to assets
+        # directory, some directories may be empty
+        Dir[@output_directory + '/**/'].reverse_each do |d|
+          Dir.rmdir d if Dir.entries(d).size == 2
+        end
+      end
+
+      @results
     end
 
   private
