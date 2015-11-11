@@ -1,4 +1,5 @@
-require "amp"
+require 'amp'
+require 'uglifier'
 
 module Hammer
   class HTMLParser < Parser
@@ -33,6 +34,7 @@ module Hammer
       "
     end
     @@cached_files = {}
+    @@minified_files = []
 
     #This was the old way we called .to_html - just doing the get_variables and includes. This means the includes are done and the includes with variables as input are all done recursively.
     #The downside of not doing this recursively is that we will probably have some problems with relative paths.
@@ -78,6 +80,7 @@ module Hammer
       text = parse_reactjs_components(text)
       text = text[0..-2] if text.end_with? "\n"
 
+      clean_uncompressed_assets() if optimized
       return text
     end
 
@@ -86,6 +89,14 @@ module Hammer
     end
 
   private
+
+    def clean_uncompressed_assets
+      @@minified_files.each do |file|
+        filepath = "#{output_directory}/#{file}"
+        FileUtils.rm(filepath) if File.exist?(filepath)
+      end
+      @@minified_files = []
+    end
 
     def placeholders(text)
       text = replace(text, /<!-- @placeholder (.*?) -->/) do |tag, line_number|
@@ -235,6 +246,7 @@ module Hammer
     # Take a bunch of CSS or JS files and combine them into one 10981cd72e39481a723.js digest file.
     def add_file_from_files(files, format)
       return false if files == []
+      @@minified_files.concat files
       # return false if files.collect(&:error) != []
       contents = []
 
@@ -250,8 +262,16 @@ module Hammer
         end
       end
       contents = contents.join("\n\n\n\n")
+      if format == :css
+        engine = Sass::Engine.new(contents, syntax: :scss, style: :compressed)
+        contents = engine.render
+      elsif format == :js
+        contents = Uglifier.compile(contents, mangle: false)
+      end
       filename = Digest::MD5.hexdigest(contents)
-      file = add_file("#{filename}.#{format}", contents, files)
+      assets_directory = "#{output_directory}/assets"
+      Dir.mkdir(assets_directory) unless Dir.exist?(assets_directory)
+      file = add_file("assets/#{filename}.#{format}", contents, files)
       # file.source_files = files # TODO
 
       @@cached_files[key] = file

@@ -79,6 +79,15 @@ module Hammer
       end
 
       @results[:generated] = generated_results
+
+      if @optimized
+        # remove empty directories
+        # since we joined css and js into single files and moved them to assets
+        # directory, some directories may be empty
+        Dir[@output_directory + '/**/'].reverse_each do |d|
+          Dir.rmdir d if Dir.entries(d).size == 2
+        end
+      end
       return @results
     end
 
