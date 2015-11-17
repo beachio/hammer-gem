@@ -5,11 +5,23 @@ module Hammer
       attr_accessor :input_directory
 
       def sourcemaps
-        config['sourcemaps']
+        config['sourcemaps'] || false
       end
   
       def autoprefixer
-        config['autoprefixer']
+        config['autoprefixer'] || false
+      end
+
+      def contentful
+        config['contentful'] || {}
+      end
+
+      def output_dir
+        config['buildDir']
+      end
+
+      def config_file
+        "#{input_directory}/hammer.json"
       end
 
       def config
@@ -23,7 +35,7 @@ module Hammer
       end
 
       def default_config
-        { 'sourcemaps' => true, 'autoprefixer' => false }
+        { 'sourcemaps' => false, 'autoprefixer' => false, 'contentful' => {} }
       end
     end
   end
