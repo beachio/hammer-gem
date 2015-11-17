@@ -69,7 +69,10 @@ module Hammer
             content_variable_name,
             content
           )
-          text = parse_template("#{@input_directory}/#{@params['template']}")
+          text = parse_template(
+            "#{@input_directory}/#{@params['template']}",
+            content_path(content)
+          )
           output_path = write_file(text, content)
           ContentProxy.unregister_variable(content_variable_name)
           data << {
@@ -104,7 +107,7 @@ module Hammer
       @params['content_key'].singularize.to_sym
     end
 
-    def parse_template(template_path)
+    def parse_template(template_path, filename)
       parsers = Hammer::Parser.for_filename(template_path)
       text = File.read(template_path)
       parsers.each do |parser_class|
@@ -112,7 +115,8 @@ module Hammer
         parser.directory        = @input_directory
         parser.input_directory  = @input_directory
         parser.output_directory = @output_directory
-        parser.path = template_path.sub(@input_directory + '/', '')
+        # parser.path = template_path.sub(@input_directory + '/', '')
+        parser.path = Pathname.new(File.join(@input_directory, filename)).relative_path_from(Pathname.new(@input_directory)).to_s
         
         text = parser.parse(text, parser.path)
       end
