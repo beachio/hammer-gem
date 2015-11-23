@@ -78,6 +78,8 @@ module Hammer
       text = current_tags(text)
       text = ensure_text_has_no_leading_blank_lines(text)
       text = parse_reactjs_components(text)
+      text = uncomment_hammer_tags(text)
+
       text = text[0..-2] if text.end_with? "\n"
 
       clean_uncompressed_assets() if optimized
@@ -183,7 +185,7 @@ module Hammer
 
             file = find_file(query, 'html')
             add_dependency(file)
-
+            
             raise "Includes: File <b>#{h query}</b> couldn't be found." unless file
 
             parse_file(file, :html)
@@ -394,5 +396,9 @@ module Hammer
       var self = self || this;
       var window = window || this;
     JS
+
+    def uncomment_hammer_tags(text)
+      text.gsub(/<!--\s @@/, '<!-- @').gsub(/<!--\s $$/, '<!-- $')
+    end
   end
 end
