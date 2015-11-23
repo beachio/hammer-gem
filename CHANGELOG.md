@@ -1,6 +1,19 @@
+### 5.2.5
+  * Allow to change location if build folder. Parameter should be set in hammer.json and looks like:
+
+        {
+          "buildDir": "myFolderInsideSource"
+        }
+
+    or
+
+        {
+          "buildDir": "/home/users/me/my_project"
+        }
 ### 5.2.4
 
   * Fixed varibles for markdown includes.
+  
 
 ### 5.2.3
 
