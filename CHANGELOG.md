@@ -1,3 +1,21 @@
+### 5.4.6
+  * Allow to change location if build folder. Parameter should be set in hammer.json and looks like:
+
+        {
+          "buildDir": "myFolderInsideSource"
+        }
+
+    or
+
+        {
+          "buildDir": "/home/users/me/my_project"
+        }
+
+### 5.4.5
+  
+  * Added jsx support
+  * Added react helpers
+
 ### 5.4.4
 
   * Added 'SmartExeption', show meaningful error if Contentful content type or space was not found
