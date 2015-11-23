@@ -1,4 +1,5 @@
 ### 5.4.6
+  * Allow to use hammer tags as plain text, should be used as `<!-- @@include _head -->` or `<!-- $$value -->`
   * Allow to change location if build folder. Parameter should be set in hammer.json and looks like:
 
         {
