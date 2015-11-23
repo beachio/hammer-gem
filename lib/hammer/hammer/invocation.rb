@@ -15,18 +15,18 @@ module Hammer
 
     def initialize(arguments)
       @success = nil
-      if arguments.length > 1
+      if arguments.length > 2
         @cache_directory, @input_directory, @output_directory = arguments
       else
         @input_directory = arguments[0]
         @cache_directory = Dir.mktmpdir
         @output_directory = File.join @input_directory, "Build"
-      end
-      Settings.input_directory = @input_directory
-      if Settings.output_dir
-        @output_directory = Settings.output_dir
-        if @output_directory[0] != '/'
-          @output_directory = @input_directory + '/' + @output_directory
+        Settings.input_directory = @input_directory
+        if Settings.output_dir
+          @output_directory = Settings.output_dir
+          if @output_directory[0] != '/'
+            @output_directory = File.join @input_directory, Settings.output_dir
+          end
         end
       end
       @optimized = arguments.include?('PRODUCTION')
