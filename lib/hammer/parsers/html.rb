@@ -186,7 +186,8 @@ module Hammer
             add_dependency(file)
             
             raise "Includes: File <b>#{h query}</b> couldn't be found." unless file
-
+            # get variables which were defined before include only
+            get_variables(text.lines[0..line_number - 1].join)
             parse_file(file, :html)
           end.compact.join("\n")
         end
