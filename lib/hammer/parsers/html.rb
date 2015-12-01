@@ -335,7 +335,10 @@ module Hammer
     end
 
     def current_tags(text)
-      Amp.compile(text, File.basename(filename), 'current')
+      return text unless filename
+      extname = File.extname(filename)
+      filepath = File.basename(filename).sub(/#{extname}$/, '.html')
+      Amp.compile(text, filepath, 'current')
     end
 
     def ensure_text_has_no_leading_blank_lines(text)
