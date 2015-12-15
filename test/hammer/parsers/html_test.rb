@@ -110,6 +110,10 @@ class TestHtmlParser < Test::Unit::TestCase
     should "work with Clever Paths" do
       image = create_file 'assets/logo.png', '(image)', @parser.directory
       @parser.path = "index.html"
+      # drop the cache
+      $filenames = []
+      $cached_findings ||= Hash.new([])
+
       test_parse "<!-- $variable logo.png --><!-- @path $variable -->", "assets/logo.png"
     end
 
