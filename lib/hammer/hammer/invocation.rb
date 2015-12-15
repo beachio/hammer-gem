@@ -20,13 +20,13 @@ module Hammer
       else
         @input_directory = arguments[0]
         @cache_directory = Dir.mktmpdir
-        @output_directory = File.join @input_directory, "Build"
-        Settings.input_directory = @input_directory
-        if Settings.output_dir
-          @output_directory = Settings.output_dir
-          if @output_directory[0] != '/'
-            @output_directory = File.join @input_directory, Settings.output_dir
-          end
+        @output_directory = File.join @input_directory, 'Build'
+      end
+      Settings.input_directory = @input_directory
+      if Settings.output_dir && !arguments.include?('ONLINE')
+        @output_directory = Settings.output_dir
+        if @output_directory[0] != '/'
+          @output_directory = File.join @input_directory, Settings.output_dir
         end
       end
       @optimized = arguments.include?('PRODUCTION')
