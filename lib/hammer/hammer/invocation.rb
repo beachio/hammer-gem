@@ -23,10 +23,7 @@ module Hammer
       end
       Settings.input_directory = @input_directory
       if Settings.output_dir && !arguments.include?('ONLINE')
-        @output_directory = Settings.output_dir
-        if @output_directory[0] != '/'
-          @output_directory = File.join @input_directory, Settings.output_dir
-        end
+        @output_directory = File.expand_path(Settings.output_dir)
       end
       @optimized = arguments.include?('PRODUCTION')
 
