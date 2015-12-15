@@ -18,7 +18,7 @@ class TestSCSS < Test::Unit::TestCase
           @parser.parse("a { background: red;")
         end
         assert error.message.include? 'ground: red'
-        assert_equal 1, @parser.error_line
+        assert_equal 2, @parser.error_line
       end
     end
 
@@ -112,7 +112,7 @@ class TestSCSS < Test::Unit::TestCase
       error = assert_raises do
         @parser.parse("@import 'does-not-exist.scss';")
       end
-      assert_equal 1, @parser.error_line
+      assert_equal 2, @parser.error_line
       assert error.message.include? 'does-not-exist'
     end
 

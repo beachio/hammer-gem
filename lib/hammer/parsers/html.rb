@@ -337,7 +337,11 @@ module Hammer
     def current_tags(text)
       return text unless filename
       extname = File.extname(filename)
-      filepath = File.basename(filename).sub(/#{extname}$/, '.html')
+      if extname == '.php'
+        filepath = File.basename(filename)
+      else
+        filepath = File.basename(filename).sub(/#{extname}$/, '.html')
+      end
       Amp.compile(text, filepath, 'current')
     end
 

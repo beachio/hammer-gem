@@ -71,7 +71,7 @@ module Hammer
         @error_line = e.sass_line if e.respond_to?(:sass_line)
 
         if e.respond_to?(:sass_filename) and e.sass_filename and e.sass_filename != self.filename # && @input_directory
-          @error_file = e.sass_filename.gsub(@input_directory + "/", "")
+          @error_file = e.sass_filename.gsub(@input_directory.to_s + "/", "")
           file = find_file_with_dependency(@error_file, ['css', 'scss', 'sass'])
           raise "Error in #{@error_file}: #{e.message}" unless file
           @error_file = file

@@ -41,7 +41,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
         include ::Hammer::Extensions
         accepts :a
         returns :b
-        def parse(text)
+        def parse(text, filename = nil)
           text.gsub('One', 'Two')
         end
       end
@@ -50,7 +50,7 @@ class HammerParserChainParseTest < Test::Unit::TestCase
         include ::Hammer::Extensions
         accepts :b
         returns :c
-        def parse(text)
+        def parse(text, filename = nil)
           text.gsub('Two', 'Three')
         end
       end
