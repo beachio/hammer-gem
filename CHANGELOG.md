@@ -1,3 +1,6 @@
+### 5.2.7
+  * Fix conflict with html includes inside md files
+  
 ### 5.2.6
   * Allow to re-define variables.
   * Fix using `buildDir` parameter.
