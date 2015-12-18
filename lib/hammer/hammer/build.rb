@@ -43,10 +43,7 @@ module Hammer
 
       # first we parse assets, because we need assets to be done when we parse pages
       # allowed pages formats are %{html htm md slim haml}
-<<<<<<< HEAD
       # then we generate content pages (it will also register file paths)
-=======
->>>>>>> hammer-gem-ui
       # finally we parse existing pages
       pages_filenames, assets_filenames = filenames.partition do |f|
         %w{.html .htm .md .slim .haml}.include?(File.extname(f).downcase)
@@ -59,14 +56,11 @@ module Hammer
         @error = true if data[:error]
       end
 
-<<<<<<< HEAD
       generated_results = ContentGenerator.new(
         @input_directory,
         @output_directory
       ).process
 
-=======
->>>>>>> hammer-gem-ui
       Parallel.map(pages_filenames, in_threads: processor_count) do |filename|
         parse_file(filename)
       end.each do |data|
@@ -88,11 +82,8 @@ module Hammer
         @results[ignored_file[:filename]] = ignored_file
       end
 
-<<<<<<< HEAD
       @results[:generated] = generated_results
 
-=======
->>>>>>> hammer-gem-ui
       if @optimized
         # remove empty directories
         # since we joined css and js into single files and moved them to assets
@@ -101,12 +92,7 @@ module Hammer
           Dir.rmdir d if Dir.entries(d).size == 2
         end
       end
-<<<<<<< HEAD
       return @results
-=======
-
-      @results
->>>>>>> hammer-gem-ui
     end
 
   private

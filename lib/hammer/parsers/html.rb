@@ -77,10 +77,7 @@ module Hammer
       text = output_variables(text)
       text = current_tags(text)
       text = ensure_text_has_no_leading_blank_lines(text)
-<<<<<<< HEAD
       text = parse_reactjs_components(text)
-=======
->>>>>>> hammer-gem-ui
       text = uncomment_hammer_tags(text)
 
       text = text[0..-2] if text.end_with? "\n"
@@ -353,7 +350,6 @@ module Hammer
       text
     end
 
-<<<<<<< HEAD
     def parse_reactjs_components(html)
       return html unless html.match('@react_component')
       # first, add base libraries
@@ -403,9 +399,6 @@ module Hammer
       var self = self || this;
       var window = window || this;
     JS
-
-=======
->>>>>>> hammer-gem-ui
     def uncomment_hammer_tags(text)
       text.gsub(/<!--\s @@/, '<!-- @').gsub(/<!--\s $$/, '<!-- $')
     end
