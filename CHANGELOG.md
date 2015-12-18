@@ -72,11 +72,17 @@
     }
   }
 ```
+
 ### 5.4.0
 
   * 5.3.x reserved for rails version
   * Use real numbers of processors during parallel processing
   * Added base contentfull helper (supports slim only)
+
+### 5.2.4
+
+  * Fixed varibles for markdown includes.
+  
 
 ### 5.2.3
 

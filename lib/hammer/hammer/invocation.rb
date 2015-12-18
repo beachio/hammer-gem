@@ -29,6 +29,13 @@ module Hammer
           end
         end
       end
+      Settings.input_directory = @input_directory
+      if Settings.output_dir
+        @output_directory = Settings.output_dir
+        if @output_directory[0] != '/'
+          @output_directory = @input_directory + '/' + @output_directory
+        end
+      end
       @optimized = arguments.include?('PRODUCTION')
 
       @template = Hammer::ApplicationTemplate
