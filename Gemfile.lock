@@ -115,6 +115,7 @@ DEPENDENCIES
   plist
   pry
   rake
+  react-source
   sass
   shoulda
   shoulda-matchers (< 2.1.0)
