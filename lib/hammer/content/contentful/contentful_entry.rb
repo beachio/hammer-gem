@@ -127,8 +127,12 @@ module Hammer
     class EntryDate < Time
       include NotArray
       attr_accessor :field_name, :parent_object
-      def initialize(value)
-        self.class.parse(value)
+
+      def self.create(value, field_name, parent)
+        instance = self.parse(value)
+        instance.field_name = field_name if instance.respond_to?(:field_name)
+        instance.parent_object = parent if instance.respond_to?(:parent_object)
+        instance
       end
     end
 
