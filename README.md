@@ -28,6 +28,7 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
 
       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/contentful-gem/scripts/update.rb)"
 
+
 # If bundle install failed (could not find ruby/config.h)
 
 ```

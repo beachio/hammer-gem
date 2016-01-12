@@ -399,7 +399,6 @@ module Hammer
       var self = self || this;
       var window = window || this;
     JS
-
     def uncomment_hammer_tags(text)
       text.gsub(/<!--\s @@/, '<!-- @').gsub(/<!--\s $$/, '<!-- $')
     end
