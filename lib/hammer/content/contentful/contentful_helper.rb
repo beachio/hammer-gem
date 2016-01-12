@@ -75,7 +75,7 @@ module Hammer
         type or space. See below list of available content types.",
         list: @space['contentTypes'].keys
       )
-      fail content_proxy.fill_exception(ex)
+      fail ex
     end
 
     def switch_space(space_name)
