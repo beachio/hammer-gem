@@ -27,7 +27,12 @@ module Hammer
       def config
         return @config if @config
         if File.exist?(config_file)
-          @config = JSON.parse(File.read(config_file)) rescue default_config
+          begin
+            @config = JSON.parse(File.read(config_file))
+          rescue Exception => e
+            fail('Exception during reading hammer.json file. Please validate ' +
+                  ' json by any validation tool.')
+          end
         else
           default_config
         end
