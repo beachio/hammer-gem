@@ -25,13 +25,12 @@ class SlimParserTest < Test::Unit::TestCase
       test '/!  @path include ', '<!-- @path include -->'
     end
 
-    should "indent_from_line" do
-      lines = "this\n  is\n  a\n  line".split("\n")
-      assert_equal ["this", "  is", "  a", "  line"], @parser.send(:indent_from_line, "    My line", lines, 2, 5)
-
-      lines = "this\n         is\n          a\n       line".split("\n")
-      assert_equal ["this", "         is", "          a", "            line"], @parser.send(:indent_from_line, "    My line", lines, 2, 5)
-    end
+    # should "indent_from_line" do
+    #   lines = "this\n  is\n  a\n  line".split("\n")
+    #   assert_equal ["this", "  is", "  a", "  line"], @parser.send(:indent_from_line, "    My line", lines, 2, 5)
+    #   lines = "this\n         is\n          a\n       line".split("\n")
+    #   assert_equal ["this", "         is", "          a", "            line"], @parser.send(:indent_from_line, "    My line", lines, 2, 5)
+    # end
   end
 
   context "A SLIM file in a project" do

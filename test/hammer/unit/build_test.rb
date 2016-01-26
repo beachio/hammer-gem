@@ -29,7 +29,7 @@ class BuildTest < Test::Unit::TestCase
     end
 
     should "return a hash of filename => data" do
-      assert_equal ['index.html'], @build.compile.keys
+      assert_equal ['index.html', :generated], @build.compile.keys
     end
 
     should "not print ANYTHING when compiling!" do
