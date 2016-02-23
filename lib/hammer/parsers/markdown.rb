@@ -22,13 +22,9 @@ module Hammer
 
     def parse(text, filename=nil)
       @markdown = text
-      parser = Hammer::HTMLParser.new(path: @path, variables: @variables)
-      parser.directory = @directory
-      text = parser.parse(text) # beforehand
       text = convert(text)
       text = text[0..-2] while text.end_with?("\n")
       text
-      
     end
 
     private
@@ -36,6 +32,5 @@ module Hammer
     def convert(markdown)
       Kramdown::Document.new(markdown, options).to_html
     end
-
   end
 end

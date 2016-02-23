@@ -1,4 +1,15 @@
+### 5.4.6.05
+
+  * Fix conflict with html includes inside md files
+
 ### 5.4.6
+
+  * Allow to re-define variables.
+  * Fix using `buildDir` parameter.
+  * Allow to use `~` in buildDir path
+
+### 5.4.5
+
   * Allow to use hammer tags as plain text, should be used as `<!-- @@include _head -->` or `<!-- $$value -->`
   * Allow to change location if build folder. Parameter should be set in hammer.json and looks like:
 
