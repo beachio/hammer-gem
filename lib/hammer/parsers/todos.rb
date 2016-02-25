@@ -10,6 +10,7 @@ module Hammer
       COFFEE_REGEX = /# @(?:todo|TODO) (.*)/
       JST_JS_REGEX = /\/* @(?:todo|TODO) (.*?) \*\/|\/\/ @(?:todo|TODO) (.*)/
       HAML_REGEX = /\/ @(?:todo|TODO) (.*)/
+      SLIM_REGEX = /\/!? @(?:todo|TODO) (.*)/
     end
 
     def regex
@@ -26,6 +27,8 @@ module Hammer
         JST_JS_REGEX
       when 'haml'
         HAML_REGEX
+      when 'slim'
+        SLIM_REGEX
       end
     end
 
