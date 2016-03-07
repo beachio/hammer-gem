@@ -404,7 +404,9 @@ module Hammer
       var window = window || this;
     JS
     def uncomment_hammer_tags(text)
-      text.gsub(/<!--\s @@/, '<!-- @').gsub(/<!--\s $$/, '<!-- $')
+      text.gsub(/(<!--\s)(@@|\$\$)([^-]+)(-->)/) do
+        CGI.escapeHTML(Regexp.last_match[0].sub(/@|$/, ''))
+      end
     end
   end
 end
