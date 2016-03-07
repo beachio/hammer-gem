@@ -79,6 +79,7 @@ module Hammer
       text = ensure_text_has_no_leading_blank_lines(text)
       text = parse_reactjs_components(text)
       text = uncomment_hammer_tags(text)
+      text = comment_code_tags(text)
 
       text = text[0..-2] if text.end_with? "\n"
 
@@ -403,9 +404,17 @@ module Hammer
       var self = self || this;
       var window = window || this;
     JS
+
     def uncomment_hammer_tags(text)
       text.gsub(/(<!--\s)(@@|\$\$)([^-]+)(-->)/) do
         CGI.escapeHTML(Regexp.last_match[0].sub(/@|$/, ''))
+      end
+    end
+
+    def comment_code_tags(text)
+      text.gsub(/<code([^>]+)>([.\s\w\W]*?)<\/code>/mi) do
+        "<code#{Regexp.last_match[1]}>" +
+          "#{CGI.escapeHTML(CGI.unescapeHTML(Regexp.last_match[2]))}</code>"
       end
     end
   end
