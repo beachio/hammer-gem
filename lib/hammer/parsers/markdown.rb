@@ -21,10 +21,10 @@ module Hammer
     end
 
     def parse(text, filename=nil)
-      text = text.gsub(/<!--[^-]+-->/m) do
+      @markdown = text
+      text = text.gsub(/<!--\s+(@|\$)[^-]+-->/m) do
         CGI.escapeHTML Regexp.last_match[0]
       end
-      @markdown = text
       text = convert(text)
       text = text[0..-2] while text.end_with?("\n")
       CGI.unescapeHTML(text)
