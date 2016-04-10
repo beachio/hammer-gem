@@ -1,3 +1,16 @@
+### 5.4.6.08
+
+  * Added cache for contentful. Enable it by adding key "cache" into "contentful" section. For example:
+
+        "contentful": {
+          "cache": "~/projects/hammer-gem/cache"
+        }
+  or
+
+        "contentful": {
+          "cache": true
+        }
+
 ### 5.4.6.05
 
   * Fix conflict with html includes inside md files

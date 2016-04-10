@@ -1,4 +1,3 @@
-require 'contentful'
 module Hammer
   class ContentfulHelper
     attr_accessor :content_proxy

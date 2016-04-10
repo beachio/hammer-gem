@@ -1,4 +1,7 @@
 # require content modules
+require 'contentful'
+require 'hammer/content/contentful/contentful_cache'
+
 if $root_dir
   modules_path = File.join($root_dir, 'lib', 'hammer', 'content', '*.rb')
   submodules_path = File.join($root_dir, 'lib', 'hammer', 'content', '**/*.rb')
