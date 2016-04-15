@@ -11,6 +11,10 @@ module Hammer
       )
     end
 
+    def cockpit
+      @cockpit ||= Hammer::CockpitHelper.new(Settings.cockpit)
+    end
+
     def markdown(text)
       Hammer::MarkdownParser.new.parse(text) if text
     end

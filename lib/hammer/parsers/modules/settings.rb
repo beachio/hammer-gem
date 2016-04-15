@@ -16,6 +16,10 @@ module Hammer
         config['contentful'] || {}
       end
 
+      def cockpit
+        config['cockpit'] || {}
+      end
+
       def output_dir
         config['buildDir']
       end
