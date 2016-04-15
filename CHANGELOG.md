@@ -1,3 +1,16 @@
+### 5.4.6.10
+  * Added base cockpit support. Example config (hammer.json):
+
+        {
+          "cockpit": {
+            "apiUrl": "http://cockpit.xxx.xx",
+            "apiKey": "xxxxxxx",
+            "contentTypes": {
+              "articles": "Article"
+            }
+          }
+        }
+        
 ### 5.4.6.08
 
   * Added cache for contentful. Enable it by adding key "cache" into "contentful" section. For example:
