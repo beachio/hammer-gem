@@ -1,3 +1,6 @@
+### 5.4.7.1
+  * Allow to order cockpit collection using helper `aricles.order('Title', 'desc')`
+
 ### 5.4.7
   * Finished cockpit support, added page generator. It works by the same way as contentful, example config (hammer.json) may look as:
 
