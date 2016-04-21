@@ -19,9 +19,10 @@ module Hammer
     def collections_of(type)
       return @collections[type] if @collections[type]
       endpoint = "#{url}/api/collections/get/#{type}"
-      @collections[type] = JSON.parse(HTTP.get(endpoint, params: { token: token })).map do |raw|
+      collection = JSON.parse(HTTP.get(endpoint, params: { token: token })).map do |raw|
         Hammer::CockpitEntry.new(raw, @url, type)
       end
+      @collections[type] = Hammer::CockpitCollection.new(collection)
     end
   end
 end
