@@ -112,6 +112,10 @@ module Hammer
       @generated_files[:contentful] || []
     end
 
+    def cockpit_files
+      @generated_files[:cockpit] || []
+    end
+
     def files_of_type(extension)
       extensions = [*extension]
       @files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact - ignored_files

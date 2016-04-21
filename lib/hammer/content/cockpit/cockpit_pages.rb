@@ -56,7 +56,7 @@ module Hammer
           }
         end
       end
-      { contentful: data }
+      { cockpit: data }
     end
 
     def contents(params)

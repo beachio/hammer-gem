@@ -61,6 +61,15 @@
             </div>
           <% end %>
 
+          <% if cockpit_files.any? %>
+            <div class="html set cockpit">
+              <strong>Cockpit Files</strong>
+              <% cockpit_files.each do |html_file| %>
+                <%= line_for(html_file) %>
+              <% end %>
+            </div>
+          <% end %>
+
           <div class="html includes set">
             <strong>HTML includes</strong>
             <% if html_includes.any? %>
