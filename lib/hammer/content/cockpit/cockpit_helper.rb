@@ -8,6 +8,7 @@ module Hammer
       @url = settings['apiUrl']
       @token = settings['apiKey']
       settings['contentTypes'].each do |key, type|
+        type = type['name'] if type.class.to_s =~ /Hash/i
         self.class.send(:define_method, key) do
           collections_of(type)
         end
