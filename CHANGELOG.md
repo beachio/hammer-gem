@@ -1,3 +1,22 @@
+### 5.4.7
+  * Finished cockpit support, added page generator. It works by the same way as contentful, example config (hammer.json) may look as:
+
+        {
+          "cockpit": {
+            "apiUrl": "http://cockpit.xxx.xx",
+            "apiKey": "xxxxxxx",
+            "contentTypes": {
+              "articles": {
+                "name": "Article",
+                "template": "_article.slim",
+                "urlAliasPrefix": "posts",
+                "urlAliasSource": "Title",
+                "renderOnBuild": true
+              }
+            }
+          }
+        }
+
 ### 5.4.6.10
   * Added base cockpit support. Example config (hammer.json):
 
