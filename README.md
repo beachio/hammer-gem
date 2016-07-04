@@ -1,6 +1,8 @@
 # Hammer.rb
 
-Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the latest.
+Hammer.rb is the hammer compilation gem. Check out the "Latest" branch for the latest development version of the the compiler.
+
+Release versions are captured in branches named after the release e.g. "5.2"
 
 # How it works
 
@@ -26,7 +28,7 @@ Hammer.rb is the hammer compilation gem. Check out the "v2" branch for the lates
 
 # Auto-update script for this branch
 
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/contentful-gem/scripts/update.rb)"
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/RiotHQ/hammer-gem/latest/scripts/update.rb)"
 
 
 # If bundle install failed (could not find ruby/config.h)
