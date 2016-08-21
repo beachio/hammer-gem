@@ -15,6 +15,10 @@ module Hammer
       @cockpit ||= Hammer::CockpitHelper.new(Settings.cockpit)
     end
 
+    def chizel
+      @chizel ||= Hammer::ChizelHelper.new(Settings.chizel)
+    end
+
     def markdown(text)
       Hammer::MarkdownParser.new.parse(text) if text
     end

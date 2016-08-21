@@ -20,6 +20,10 @@ module Hammer
         config['cockpit'] || {}
       end
 
+      def chizel
+        config['chizel'] || {}
+      end
+
       def output_dir
         config['buildDir']
       end
@@ -34,8 +38,8 @@ module Hammer
           begin
             @config = JSON.parse(File.read(config_file))
           rescue Exception => e
-            fail('Exception during reading hammer.json file. Please validate ' +
-                  ' json by any validation tool.')
+            fail('There was an error reading hammer.json file. Please validate ' +
+                  ' json using a validation tool.')
           end
         else
           default_config
@@ -43,7 +47,7 @@ module Hammer
       end
 
       def default_config
-        { 'sourcemaps' => false, 'autoprefixer' => false, 'contentful' => {} }
+        { 'sourcemaps' => false, 'autoprefixer' => false, 'contentful' => {}, 'cockpit' => {}. 'chizel' => {} }
       end
     end
   end
