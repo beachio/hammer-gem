@@ -16,6 +16,10 @@ module Hammer
         config['contentful'] || {}
       end
 
+      def chisel
+        config['chisel'] || {}
+      end
+
       def cockpit
         config['cockpit'] || {}
       end
