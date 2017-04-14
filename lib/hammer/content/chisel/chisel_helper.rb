@@ -5,6 +5,7 @@ module Hammer
     def initialize(settings)
       @site_id = settings['site_id']
       @collections = get_content_for_site(@site_id)
+
       if @collections
         @models = ensure_models_content(@collections)
       end
@@ -18,11 +19,7 @@ module Hammer
     end
 
     def collections_of type
-      if @models[type]
-        return @models[type]['data']
-      else
-        error(type)
-      end
+      @models[type] ? Hammer::ChiselCollection.new(@models[type]['data']) : error(type)
     end
 
     private
