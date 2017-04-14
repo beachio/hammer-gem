@@ -2,14 +2,16 @@ module Hammer
   class ChiselContentLoader
     attr_accessor :site_id, :collections, :models, :content_types
 
-    def get_content_for_site
-      collections = request_combiner('Model?where={"site":{"$in": [{"__type":"Pointer","className":"Site","objectId":"'+ @site_id +'"}]}}')
+    def get_content_for_site(site_id)
+      if site_id
+      collections = request_combiner('Model?where={"site":{"$in": [{"__type":"Pointer","className":"Site","objectId":"'+ site_id +'"}]}}')
       collections
+      end
     end
 
-    def ensure_models_content
+    def ensure_models_content collection
       models = {}
-      @collections.each do |model|
+      collection.each do |model|
         field = get_model_content(model['objectId'], model['tableName'])
         models[model['name']] = { 'objectId' => model['objectId'], 'tableName' => model['tableName'], 'data' => field }
       end
