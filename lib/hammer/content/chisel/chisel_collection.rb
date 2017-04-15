@@ -2,7 +2,7 @@ module Hammer
   class ChiselCollection < Array
 
     def order field, direction
-      raise SmartException.new("You tried to sort cockpit collection but used wrong \
+      raise SmartException.new("You tried to sort chisel collection but used wrong \
         order parameter '#{direction}'.",
                                text: 'Wrong order parameter. Allowed parameters are:',
                                list: ['ASC', 'DESC']

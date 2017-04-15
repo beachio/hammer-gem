@@ -52,36 +52,18 @@ module Hammer
     end
 
     def generate_pages
-      data = []
-      autobuild_content_types.each do |content_params|
-        @params = content_params
-        # example params
-        # {
-        #  "name"=>"NU Container",
-        #  "template"=>"templates/_container.slim",
-        #  "urlAliasSource"=>"title",
-        #  "renderOnBuild"=>true,
-        #  "space_name"=>"default",
-        #  "content_key"=>"containers"
-        # }
-        contents.each do |content|
-          ContentProxy.register_variable(
-            content_variable_name,
-            content
-          )
-          text = parse_template(
-            "#{@input_directory}/#{@params['template']}",
-            content_path(content)
-          )
-          output_path = write_file(text, content)
-          ContentProxy.unregister_variable(content_variable_name)
-          data << {
-            filename: content_params['template'],
-            output_filename: output_path,
-            generated: true
-          }
-        end
-      end
+      # example params
+      # {
+      #  "name"=>"NU Container",
+      #  "template"=>"templates/_container.slim",
+      #  "urlAliasSource"=>"title",
+      #  "renderOnBuild"=>true,
+      #  "space_name"=>"default",
+      #  "content_key"=>"containers"
+      # }
+
+      data = check_contentful_settings
+
       { contentful: data }
     end
 
@@ -103,54 +85,17 @@ module Hammer
       ContentCache.cache('contents', result, @params)
     end
 
-    def content_variable_name
-      @params['content_key'].singularize.to_sym
-    end
-
-    def parse_template(template_path, filename)
-      parsers = Hammer::Parser.for_filename(template_path)
-      text = File.read(template_path)
-      parsers.each do |parser_class|
-        parser = parser_class.new
-        parser.directory        = @input_directory
-        parser.input_directory  = @input_directory
-        parser.output_directory = @output_directory
-        # parser.path = template_path.sub(@input_directory + '/', '')
-        parser.path = Pathname.new(File.join(@input_directory, filename)).relative_path_from(Pathname.new(@input_directory)).to_s
-        
-        text = parser.parse(text, parser.path)
-      end
-      text
-    end
-
-    def write_file(text, content)
-      output_path = content_path(content)
-
-      filepath = @output_directory + '/' + output_path
-      dir = File.dirname(filepath)
-      FileUtils.mkdir_p(dir) unless File.directory?(dir)
-
-      File.open(filepath, 'w+') { |f| f.write(text) }
-      output_path
-    end
-
     def content_path(content)
-      if content.homePage
-        path = 'index.html'
-      elsif !@params['urlAliasValue'].to_s.strip.empty?
-        path = @params['urlAliasValue'].to_s
-        unless path.ends_with?('.html') || path.ends_with?('.htm')
-          path += '.html'
-        end
-      elsif @params['urlAliasSource']
-        path_text = content[@params['urlAliasSource'].to_s]
-        path_text = content.first if path_text.nil?
-        path = path_text.to_s.parameterize + '.html'
-        if @params['urlAliasPrefix'].to_s != ''
-          path = "#{@params['urlAliasPrefix'].to_s}/#{path}"
-        end
-      end
+      path = content.homePage ? 'index.html' : ContentPages.new.content_path_concern(content, @params, 'contentful')
       path
+    end
+
+    def check_contentful_settings
+      if autobuild_content_types.empty?
+        []
+      else
+        ContentPages.new.building_contents(autobuild_content_types, contents, @input_directory, @output_directory, 'contentful')
+      end
     end
   end
 end

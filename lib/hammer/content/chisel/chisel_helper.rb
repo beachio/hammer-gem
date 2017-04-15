@@ -3,6 +3,7 @@ module Hammer
     attr_accessor :site_id, :collections, :models, :content_types, :content
 
     def initialize(settings)
+      return {} if settings.nil? || settings.empty?
       @site_id = settings['site_id']
       @collections = get_content_for_site(@site_id)
 
