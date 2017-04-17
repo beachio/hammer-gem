@@ -16,17 +16,7 @@ module Hammer
     end
 
     def register_file_paths
-      autobuild_content_types.each do |content_params|
-        @params = content_params
-        ContentProxy.add_paths(get_paths(content_params))
-      end
-    end
-
-    def get_paths(content_params)
-      @params = content_params
-      contents.map do |content|
-        content_path(content)
-      end
+      @params = ContentPages.new.register_content_file_path(autobuild_content_types, 'chisel')
     end
 
     def generate_pages
@@ -42,24 +32,11 @@ module Hammer
       { chisel: data }
     end
 
-
-    def contents
-      cached = ContentCache.get('contents', @params)
-      return cached if cached
-      ch = ChiselHelper.new(Settings.chisel)
-      result = ch.send(@params['content_key'].to_sym) || []
-      ContentCache.cache('contents', result, @params)
-    end
-
-    def content_path content
-      ContentPages.new.content_path_concern(content, @params, 'chisel')
-    end
-
     def check_chisel_settings
       if autobuild_content_types.empty?
         []
       else
-        ContentPages.new.building_contents(autobuild_content_types, contents, @input_directory, @output_directory, 'chisel')
+        ContentPages.new.building_contents(autobuild_content_types, @input_directory, @output_directory, 'chisel')
       end
     end
 

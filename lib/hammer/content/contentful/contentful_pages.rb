@@ -45,10 +45,7 @@ module Hammer
     end
       
     def register_file_paths
-      autobuild_content_types.each do |content_params|
-        @params = content_params
-        ContentProxy.add_paths(get_paths(content_params))
-      end
+      @params = ContentPages.new.register_content_file_path(autobuild_content_types, 'contentful')
     end
 
     def generate_pages
@@ -67,34 +64,11 @@ module Hammer
       { contentful: data }
     end
 
-    def get_paths(content_params)
-      @params = content_params
-      contents.map do |content|
-        content_path(content)
-      end
-    end
-
-    def contents
-      cached = ContentCache.get('contents', @params)
-      return cached if cached
-      cf = ContentfulHelper.new(
-        Settings.contentful,
-        @params['space_name']
-      )
-      result = cf.send(@params['content_key'].to_sym) || []
-      ContentCache.cache('contents', result, @params)
-    end
-
-    def content_path(content)
-      path = content.homePage ? 'index.html' : ContentPages.new.content_path_concern(content, @params, 'contentful')
-      path
-    end
-
     def check_contentful_settings
       if autobuild_content_types.empty?
         []
       else
-        ContentPages.new.building_contents(autobuild_content_types, contents, @input_directory, @output_directory, 'contentful')
+        ContentPages.new.building_contents(autobuild_content_types, @input_directory, @output_directory, 'contentful')
       end
     end
   end
