@@ -76,8 +76,8 @@ module Hammer
 
     def request_combiner parse_class, query='', results = true
       query = URI.encode(query)
-      headers = { 'X-Parse-Application-Id' => 'd5701a37cf242d5ee398005d997e4229' }
-      res = JSON.parse(HTTP[headers].get("http://localhost:1337/parse/classes/#{parse_class}#{query}"))
+      headers = { 'X-Parse-Application-Id' => application_keys('id') }
+      res = JSON.parse(HTTP[headers].get("#{application_keys('url')}/classes/#{parse_class}#{query}"))
 
       if results
         return res['results']
@@ -101,6 +101,14 @@ module Hammer
         complected_media << Hammer::ChiselMedia.new(m['file'], m['type'])
       end
       complected_media
+    end
+
+    def application_keys key
+      if key == 'url'
+        Settings.chisel['parse_server_url'] ? Settings.chisel['parse_server_url'] : 'http://localhost:1337/parse'
+      elsif key == 'id'
+        Settings.chisel['parse_app_id'] ? Settings.chisel['parse_app_id'] : 'd5701a37cf242d5ee398005d997e4229'
+      end
     end
 
   end

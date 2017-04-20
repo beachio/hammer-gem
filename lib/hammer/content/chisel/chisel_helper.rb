@@ -20,7 +20,15 @@ module Hammer
     end
 
     def collections_of type
-      @models[type] ? Hammer::ChiselCollection.new(@models[type]['data']) : error(type)
+      if @models
+        @models[type] ? Hammer::ChiselCollection.new(@models[type]['data']) : error(type)
+      else
+        ex = SmartException.new(
+            "'#{type}' not found",
+            text: "Perhaps you incorrectly specified 'parse_server_url' or 'parse_app_id'. Please check it and try again."
+        )
+        fail ex
+      end
     end
 
     private
