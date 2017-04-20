@@ -8,7 +8,12 @@ module Hammer
                                list: ['ASC', 'DESC']
       ) unless direction =~ /asc|desc/i
 
-      self.sort_by! { |elem| elem.send(field).downcase}
+      self.sort_by! do |elem|
+        element = elem.send(field)
+        element = element.is_a?(Integer) ? element : element.downcase
+        element
+      end
+
       self.reverse! if direction == 'desc'
       self
     end

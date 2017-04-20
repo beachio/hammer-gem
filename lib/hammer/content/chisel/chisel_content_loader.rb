@@ -1,10 +1,13 @@
+require 'http'
+require 'uri'
+
 module Hammer
   class ChiselContentLoader
     attr_accessor :site_id, :collections, :models, :content_types
 
     def get_content_for_site(site_id)
       if site_id
-      collections = request_combiner('Model?where={"site":{"$in": [{"__type":"Pointer","className":"Site","objectId":"'+ site_id +'"}]}}')
+      collections = request_combiner('Model?where=','{"site":{"$in": [{"__type":"Pointer","className":"Site","objectId":"'+ site_id +'"}]}}')
       collections
       end
     end
@@ -19,7 +22,7 @@ module Hammer
     end
 
     def get_model_content model_id, table_url
-      model_content = request_combiner('ModelField?where={"model":{"$in": [{"__type":"Pointer","className":"Model", "objectId":"'+ model_id +'"}]}}')
+      model_content = request_combiner('ModelField?where=','{"model":{"$in": [{"__type":"Pointer","className":"Model", "objectId":"'+ model_id +'"}]}}')
 
       return ensure_table_fields(model_content, table_url)
     end
@@ -71,23 +74,20 @@ module Hammer
       fields_content
     end
 
-    def request_combiner url, results = true
-      uri = URI("http://localhost:1337/parse/classes/#{url}")
-      req = Net::HTTP::Get.new(uri)
-      req['X-Parse-Application-Id'] = "d5701a37cf242d5ee398005d997e4229"
+    def request_combiner parse_class, query='', results = true
+      query = URI.encode(query)
+      headers = { 'X-Parse-Application-Id' => 'd5701a37cf242d5ee398005d997e4229' }
+      res = JSON.parse(HTTP[headers].get("http://localhost:1337/parse/classes/#{parse_class}#{query}"))
 
-      res = Net::HTTP.start(uri.hostname, uri.port) {|http|
-        http.request(req)
-      }
       if results
-        return JSON.parse(res.body)['results']
+        return res['results']
       else
-        return JSON.parse(res.body)
+        return res
       end
     end
 
     def get_media_content objectId
-      media = request_combiner("MediaItem/#{objectId}", false)
+      media = request_combiner("MediaItem/#{objectId}", '', false)
       Hammer::ChiselMedia.new(media['file'], media['type'])
     end
 
@@ -95,7 +95,7 @@ module Hammer
       media = []
       complected_media = []
       objects.each do |obj|
-        media << request_combiner("MediaItem/#{obj['objectId']}", false)
+        media << request_combiner("MediaItem/#{obj['objectId']}",'', false)
       end
       media.each do |m|
         complected_media << Hammer::ChiselMedia.new(m['file'], m['type'])

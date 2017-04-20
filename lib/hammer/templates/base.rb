@@ -116,6 +116,10 @@ module Hammer
       @generated_files[:cockpit] || []
     end
 
+    def chisel_files
+      @generated_files[:chisel] || []
+    end
+
     def files_of_type(extension)
       extensions = [*extension]
       @files.select {|file| extensions.include? File.extname(file[:output_filename])}.compact - ignored_files
