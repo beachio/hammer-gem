@@ -17,6 +17,7 @@ module Hammer
 
     def parse(text, filename=nil)
       @text = text
+      text = convert_environments(text)
       text = convert_tags(text)
       text, map = includes(text, filename)
       begin
@@ -39,6 +40,7 @@ module Hammer
         ex.input_directory = @input_directory
         raise ex
       end
+
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
@@ -94,12 +96,17 @@ module Hammer
       }
       [processed_lines.join("\n"), map]
     end
-
     def convert(text, filename = nil)
       Slim::Template.new {
         text
       }.render(Hammer::ContentProxy.new())
     end
+
+    def convert_environments(text)
+      text = EnvironmentParser.pars(text, "slim")
+      text
+    end
+
 
     def convert_comments(text)
       text.gsub("&lt;!--", "<!--").gsub("--&gt;", "-->")

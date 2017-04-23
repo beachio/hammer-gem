@@ -66,6 +66,8 @@ module Hammer
       text = includes(text)
 
       get_variables(text)
+      text = environment(text)
+      get_variables(text)
       text = placeholders(text)
 
       get_variables(text)
@@ -171,6 +173,11 @@ module Hammer
           raise "Variable <b>#{h variable_name}</b> wasn't set!"
         end
       end
+    end
+
+    def environment(text)
+      text = EnvironmentParser.pars(text, "html")
+      text
     end
 
     def includes(text)

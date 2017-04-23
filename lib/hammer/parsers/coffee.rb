@@ -21,7 +21,7 @@ module Hammer
       text ||= @text
       @text ||= text
       @filename ||= filename
-
+      text = environment_variables(text)
       text = includes text
       if !optimized && @filename
         text = compile_with_source_map(text)
@@ -77,6 +77,11 @@ module Hammer
         end
         a.compact.join("\n")
       end
+    end
+
+    def environment_variables(text)
+      text = EnvironmentParser.pars(text, "js")
+      text
     end
 
     def compile_with_source_map(text)

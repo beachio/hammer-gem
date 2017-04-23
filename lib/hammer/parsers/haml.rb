@@ -102,6 +102,7 @@ module Hammer
       @text = text
       text = includes(text)
       text = convert(text)
+      text = parse_environment(text)
       text = convert_comments(text)
       text = text[0..-2] if text.end_with?("\n")
       text
@@ -157,6 +158,11 @@ module Hammer
 
     def convert(text)
       Haml::Engine.new(text).to_html
+    end
+
+    def parse_environment(text)
+      text = EnvironmentParser.pars(text, "html")
+      text
     end
 
     def convert_comments(text)

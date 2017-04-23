@@ -2,7 +2,7 @@ require 'json'
 module Hammer
   class Settings
     class << self
-      attr_accessor :input_directory
+      attr_accessor :input_directory, :environment
 
       def sourcemaps
         config['sourcemaps'] || false
@@ -15,6 +15,10 @@ module Hammer
       def contentful
         config['contentful'] || {}
       end
+
+      # def environment
+      #   config['environmentVariables']||{}
+      # end
 
       def cockpit
         config['cockpit'] || {}

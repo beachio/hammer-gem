@@ -18,7 +18,7 @@ module Hammer
 
     def parse(text, filename=nil)
       @text = text
-
+      text = environment_variables(text)
       text = includes(text)
       text
     end
@@ -40,6 +40,11 @@ module Hammer
         end
         a.compact.join("\n")
       end
+    end
+
+    def environment_variables(text)
+      text = EnvironmentParser.pars(text, "js")
+      text
     end
 
   end

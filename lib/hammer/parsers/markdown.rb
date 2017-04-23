@@ -22,6 +22,7 @@ module Hammer
 
     def parse(text, filename=nil)
       @markdown = text
+      text = parse_environment(text)
       text = text.gsub(/<!--\s+(@|\$)[^-]+-->/m) do
         CGI.escapeHTML Regexp.last_match[0]
       end
@@ -31,6 +32,11 @@ module Hammer
     end
 
     private
+
+    def parse_environment(text)
+      text = EnvironmentParser.pars(text, "html")
+      text
+    end
 
     def convert(markdown)
       Kramdown::Document.new(markdown, options).to_html

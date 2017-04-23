@@ -9,3 +9,4 @@ coverage
 .bundle
 .rake_tasks
 tmp*
+.idea/*

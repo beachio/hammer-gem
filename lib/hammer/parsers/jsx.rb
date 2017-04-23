@@ -18,6 +18,7 @@ module Hammer
     end
 
     def parse(text, filename = nil)
+      text = environment_variables(text)
       JSX.transform(text, strip_types: true, harmony: true)
     rescue ExecJS::ProgramError, ExecJS::RuntimeError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil
@@ -26,5 +27,11 @@ module Hammer
       # TODO: Do something with line!
       raise message
     end
+
+    def environment_variables(text)
+      text = EnvironmentParser.pars(text, "js")
+      text
+    end
+
   end
 end

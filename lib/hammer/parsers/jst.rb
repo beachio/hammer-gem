@@ -16,9 +16,16 @@ module Hammer
     
     def parse(text, filename=nil)
       @text ||= text
+      text = environment_variables(text)
       text = EJS.compile(text)
       name = File.basename(@path, '.*')
       "if(undefined==window.JST){window.JST={};} window.JST[\"#{name}\"] = #{text}"
     end
+
+    def environment_variables(text)
+      text = EnvironmentParser.pars(text, "js")
+      text
+    end
+
   end
 end
