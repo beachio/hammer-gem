@@ -1,3 +1,4 @@
+require_relative 'chisel_content_loader'
 module Hammer
   class ChiselHelper < ChiselContentLoader
     attr_accessor :site_id, :collections, :models, :content_types, :content
@@ -5,17 +6,27 @@ module Hammer
     def initialize(settings)
       return {} if settings.nil? || settings.empty?
       @site_id = settings['site_id']
-      @collections = get_content_for_site(@site_id)
+      @session_token = login(settings['login'], settings['password'])
+      if @session_token != nil
+        Settings.sessionToken = @session_token
+        @collections = get_content_for_site(@site_id)
 
-      if @collections
-        @models = ensure_models_content(@collections)
-      end
-
-      settings['contentTypes'].each do |key, type|
-        type = type['name'] if type.class.to_s =~ /Hash/i
-        self.class.send(:define_method, key) do
-          collections_of(type)
+        if @collections
+          @models = ensure_models_content(@collections)
         end
+
+        settings['contentTypes'].each do |key, type|
+          type = type['name'] if type.class.to_s =~ /Hash/i
+          self.class.send(:define_method, key) do
+            collections_of(type)
+          end
+        end
+      else
+        ex = SmartException.new(
+            "Invalid username/password",
+            text: "Your username or password is incorrect. Please check and fix it."
+        )
+        fail ex
       end
     end
 

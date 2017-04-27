@@ -2,7 +2,7 @@ require 'json'
 module Hammer
   class Settings
     class << self
-      attr_accessor :input_directory
+      attr_accessor :input_directory, :sessionToken
 
       def sourcemaps
         config['sourcemaps'] || false

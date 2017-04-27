@@ -1,6 +1,6 @@
 require 'http'
 require 'uri'
-
+require 'net/http'
 module Hammer
   class ChiselContentLoader
     attr_accessor :site_id, :collections, :models, :content_types
@@ -76,9 +76,8 @@ module Hammer
 
     def request_combiner parse_class, query='', results = true
       query = URI.encode(query)
-      headers = { 'X-Parse-Application-Id' => application_keys('id') }
+      headers = { 'X-Parse-Application-Id' => application_keys('id'), 'X-Parse-Session-Token' => Settings.sessionToken }
       res = JSON.parse(HTTP[headers].get("#{application_keys('url')}/classes/#{parse_class}#{query}"))
-
       if results
         return res['results']
       else
@@ -111,5 +110,23 @@ module Hammer
       end
     end
 
+    def login (login, password)
+      query = 'username='+ login +'&password='+ password +''
+      query = URI.encode(query)
+      headers = { 'X-Parse-Application-Id' => application_keys('id') }
+      res = JSON.parse(HTTP[headers].get("#{application_keys('url')}/login?#{query}"))
+      if res["sessionToken"]
+        return res["sessionToken"]
+      end
+      return
+    end
+
+    def logout(sessionTok)
+      uri = URI.parse("#{application_keys('url')}/logout")
+      http = Net::HTTP.new(uri.host, uri.port)
+      headers = { 'X-Parse-Application-Id' => application_keys('id'), 'X-Parse-Session-Token' => sessionTok }
+      request = Net::HTTP::Post.new(uri.request_uri, headers)
+      response = http.request request
+    end
   end
 end
