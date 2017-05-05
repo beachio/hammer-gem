@@ -6,25 +6,40 @@ module Hammer
     def initialize(settings)
       return {} if settings.nil? || settings.empty?
       @site_id = settings['site_id']
-      @session_token = login(settings['login'], settings['password'])
-      if @session_token != nil
-        Settings.sessionToken = @session_token
-        @collections = get_content_for_site(@site_id)
-
-        if @collections
-          @models = ensure_models_content(@collections)
-        end
-
-        settings['contentTypes'].each do |key, type|
-          type = type['name'] if type.class.to_s =~ /Hash/i
-          self.class.send(:define_method, key) do
-            collections_of(type)
+      if((settings['login'] != nil and settings['password'] != nil) and
+          settings['login'].length != 0 and settings['password'].length != 0)
+        @session_token = login(settings['login'], settings['password'])
+        if @session_token != nil
+          Settings.session_token = @session_token
+          if access(@site_id)
+            @collections = get_content_for_site(@site_id)
+            if @collections
+              @models = ensure_models_content(@collections)
+            end
+            settings['contentTypes'].each do |key, type|
+              type = type['name'] if type.class.to_s =~ /Hash/i
+              self.class.send(:define_method, key) do
+                collections_of(type)
+              end
+            end
+          else
+            ex = SmartException.new(
+                "Access denied",
+                text: "You should be owner or collaborator. Or your model is empty"
+            )
+            fail ex
           end
+        else
+          ex = SmartException.new(
+              "Invalid username/password",
+              text: "Your username or password is incorrect. Please check and fix it."
+          )
+          fail ex
         end
       else
         ex = SmartException.new(
-            "Invalid username/password",
-            text: "Your username or password is incorrect. Please check and fix it."
+            "Empty username/password",
+            text: "Your username or password is empty. Please check and fix it."
         )
         fail ex
       end

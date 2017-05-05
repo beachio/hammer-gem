@@ -76,7 +76,7 @@ module Hammer
 
     def request_combiner parse_class, query='', results = true
       query = URI.encode(query)
-      headers = { 'X-Parse-Application-Id' => application_keys('id'), 'X-Parse-Session-Token' => Settings.sessionToken }
+      headers = { 'X-Parse-Application-Id' => application_keys('id'), 'X-Parse-Session-Token' => Settings.session_token }
       res = JSON.parse(HTTP[headers].get("#{application_keys('url')}/classes/#{parse_class}#{query}"))
       if results
         return res['results']
@@ -119,6 +119,15 @@ module Hammer
         return res["sessionToken"]
       end
       return
+    end
+
+    def access(site_id)
+      rights = get_content_for_site(site_id)
+      if rights.length > 0
+        return true
+      else
+        false
+      end
     end
 
     def logout(sessionTok)
