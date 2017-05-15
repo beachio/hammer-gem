@@ -16,8 +16,12 @@ module Hammer
       end
     end
 
+    def quotes
+      ["apos", "apos", "quot", "quot"]
+    end
+
     def options
-      {:auto_ids => false}
+      {:auto_ids => false, :smart_quotes => quotes}
     end
 
     def parse(text, filename=nil)
@@ -33,7 +37,12 @@ module Hammer
     private
 
     def convert(markdown)
-      Kramdown::Document.new(markdown, options).to_html
+      meta = markdown.match(/<\s*meta.*\scharset/)
+      header = ""
+      if meta.nil?
+        header = "<meta charset=\"utf-8\">"
+      end
+      header + Kramdown::Document.new(markdown, options).to_html
     end
   end
 end
