@@ -33,7 +33,12 @@ module Hammer
     private
 
     def convert(markdown)
-      Kramdown::Document.new(markdown, options).to_html
+      meta = markdown.match(/<\s*meta.*\scharset/)
+      header = ""
+      if meta.nil?
+        header = "<meta charset=\"utf-8\">"
+      end
+      header + Kramdown::Document.new(markdown, options).to_html
     end
   end
 end
