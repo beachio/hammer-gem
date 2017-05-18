@@ -24,7 +24,8 @@ gem 'autoprefixer-rails'
 gem 'contentful'
 gem 'react-source'
 gem 'jsx'
-
+gem 'image_optim'
+gem 'image_optim_pack'
 # Dependencies which dropped support for ruby 1.8.
 gem 'shoulda-matchers', '< 2.1.0'
 gem 'activesupport',    '< 4.0.0'  # Dependency of shoulda-matchers

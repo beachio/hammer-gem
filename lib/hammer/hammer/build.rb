@@ -5,13 +5,13 @@ require 'hammer/parser'
 require 'hammer/utils/ignore'
 require 'hammer/cacher'
 require 'parallel'
-
+require './lib/image_optimizer/image_optimizer'
+require 'image_optim'
 module Hammer
   class Build
     attr_accessor :error
     include Hammer::Ignore
     include Parallel::ProcessorCount
-
     def initialize options = {}
       @results = {}
       @error = false
@@ -123,6 +123,14 @@ module Hammer
         @cacher.copy_to output_path, @output_directory, path
         data.merge! @cacher.data[path]
         data[:from_cache] = true
+      elsif check_extensions(filename)
+        if filename.end_with?(".png")
+          ImageOptimizer.new(filename, output_file).optimize
+        else
+          image_optim =  ImageOptim.new(:pngout => true)
+          FileUtils.cp filename, output_file
+          image_optim.optimize_image!(output_file)
+        end
       else
         Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, file_data|
           FileUtils.mkdir_p(File.dirname(output_file))
@@ -135,6 +143,13 @@ module Hammer
       # Now touch the output file to the same time as the input file. Nice.
       FileUtils.touch(output_file, :mtime => File.mtime(input_file)) if File.exist? output_file
       return data
+    end
+
+    def check_extensions(filename)
+      if filename.end_with?(".png") or filename.end_with?(".jpg") or
+          filename.end_with?(".gif")
+          return true
+      end
     end
   end
 end
