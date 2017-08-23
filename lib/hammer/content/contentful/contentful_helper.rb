@@ -47,9 +47,9 @@ module Hammer
       return @content_types if @content_types
       @content_types = { names: {}, fields: {} }
       @client.content_types.each do |content|
-        name = content.properties[:name]
+        name = content.name
         @content_types[:names][name] = content.id
-        @content_types[:fields][content.id] = content.properties[:fields]
+        @content_types[:fields][content.id] = content.fields
       end
       @content_types
     end

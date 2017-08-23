@@ -15,15 +15,14 @@ module Hammer
 
       # format array of fields [ { id: 'title', type: 'Text' }, ... ] to
       # { 'title' => { id: 'title', type: 'Text' }, ... }
-      content_type_id = @raw_entry.sys[:contentType].id
+      content_type_id = @raw_entry.sys[:contentType].nil? ?  @raw_entry.sys[:content_type].id  : @raw_entry.sys[:contentType].id
       @fields = {}
       content_types[:fields][content_type_id].each do |field|
-        @fields[field.properties[:id]] = field.properties
+        @fields[field.id] = field.properties
       end
-
-      # we parse field only if it was requested. store already parsed fields
       @ready_fields = {}
     end
+
 
     def homePage
       @fields.key?('homePage') ? !!@raw_entry.fields[:homePage] : false
