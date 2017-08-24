@@ -11,20 +11,18 @@ module Hammer
       @template = template
     end
 
-    attr_accessor :cache_directory, :input_directory, :output_directory, :template, :environment
+    attr_accessor :cache_directory, :input_directory, :output_directory, :template
 
     def initialize(arguments)
       @success = nil
       if arguments.length > 2
-        arguments = ensure_env_variables(arguments)
         @cache_directory, @input_directory, @output_directory = arguments
       else
-        arguments = ensure_env_variables(arguments)
         @input_directory = arguments[0]
         @cache_directory = Dir.mktmpdir
         @output_directory = File.join @input_directory, 'Build'
       end
-      Settings.environment = @environment
+      Settings.environment = get_environment
       Settings.input_directory = @input_directory
       if Settings.output_dir && !arguments.include?('ONLINE')
         @output_directory = Settings.output_dir
@@ -84,30 +82,18 @@ module Hammer
       # sleep(0.5 - runtime) if runtime < 0.5
     end
 
-    def ensure_env_variables arguments
-      index = check_arguments_for_env(arguments)
-      arguments.delete(arguments[index]) if index
-      arguments
-    end
-
-    def check_arguments_for_env arguments
-      env_index = nil
-      arguments.each_with_index do |arg, i|
-        parameter = format_conversion(arg)
-        if parameter.is_a?(Hash)
-          @environment = parameter
-          env_index = i
+    def get_environment
+      environment = File.exist?("#{@input_directory}/.env") ? File.open("#{@input_directory}/.env").read : nil
+      if environment
+        json = {}
+        env_parse = environment.gsub("{","").gsub("}","").gsub("=>","=").gsub("\"","").split(",")
+        env_parse.each do |env|
+          variables = env.split("=")
+          json[variables[0].strip] = variables[1].strip
         end
-      end
-      @environment = nil unless env_index
-      env_index
-    end
-
-    def format_conversion arg
-      begin
-      JSON.parse(arg.gsub("'","\"").gsub('=>',':'))
-      rescue Exception => e
-        return ''
+        json
+      else
+        nil
       end
     end
 
