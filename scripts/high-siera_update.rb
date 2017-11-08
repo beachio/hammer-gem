@@ -13,7 +13,7 @@ def update_hammer(main_path)
   go_to_tmp_directory = "cd #{tmp_directory}"
   clone_repository = "git clone #{repo_url}"
   go_to_gem_root = 'cd hammer-gem'
-  checkout_beta_branch = 'git checkout latest'
+  checkout_beta_branch = 'git checkout merged_latest_chisel'
   install_dependencies = 'bundle install --jobs 4 && rake bundle'
   install_gem = 'bundle exec rake use'
   clean_up = "rm -rf #{tmp_directory}"
