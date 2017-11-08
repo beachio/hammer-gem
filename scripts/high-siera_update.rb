@@ -82,9 +82,7 @@ def print_command(command)
   end
 end
 
-
-unless ARGV.empty?
-  path = ARGV[0]
+def script_start(path)
   if path[-1] != '/'
     path += '/'
   end
@@ -96,6 +94,15 @@ unless ARGV.empty?
     end
   else
     p "Path that you indicate is wrong please indicate right path"
+  end
+end
+
+unless ARGV.empty?
+  path = ARGV[0]
+  script_start(path)
+else
+  unless path.nil?
+    script_start(path)
   end
 end
 
