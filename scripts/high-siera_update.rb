@@ -3,7 +3,7 @@ require 'fileutils'
 require 'tmpdir'
 require 'open3'
 
-def update_hammer(main_path)
+def update_hammer(main_path, branch)
   repo_url = 'https://github.com/RiotHQ/hammer-gem.git'
   tmp_directory = "/tmp/hammer-gem-#{Time.now.to_i}"
 
@@ -13,9 +13,8 @@ def update_hammer(main_path)
   go_to_tmp_directory = "cd #{tmp_directory}"
   clone_repository = "git clone #{repo_url}"
   go_to_gem_root = 'cd hammer-gem'
-  checkout_beta_branch = 'git checkout merged_latest_chisel'
+  checkout_beta_branch = branch.nil? ? 'git checkout latest' :  "git checkout #{branch}"
   install_dependencies = 'bundle install --jobs 4 && rake bundle'
-  install_gem = 'bundle exec rake use'
   clean_up = "rm -rf #{tmp_directory}"
 
   puts "Check requirements..."
@@ -82,7 +81,7 @@ def print_command(command)
   end
 end
 
-def script_start(path)
+unless path.nil?
   if path[-1] != '/'
     path += '/'
   end
@@ -90,19 +89,16 @@ def script_start(path)
     if Dir["#{path}*"][0] != "#{path}Contents"
       p "Path that you indicate is wrong please indicate right path"
     else
-      update_hammer(path)
+      branch = defined?(branch) ? branch :  nil
+      update_hammer(path, branch)
     end
   else
     p "Path that you indicate is wrong please indicate right path"
   end
+else
+  p 'Please indicate full path to Hammer.app'
 end
 
-unless ARGV.empty?
-  path = ARGV[0]
-  script_start(path)
-else
-  unless path.nil?
-    script_start(path)
-  end
-end
+
+
 
