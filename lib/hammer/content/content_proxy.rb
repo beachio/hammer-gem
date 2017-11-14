@@ -19,6 +19,11 @@ module Hammer
       @chisel ||= Hammer::ChiselHelper.new(Settings.chisel)
     end
 
+    def check_variable(variable)
+      variable = variable.parameterize.underscore.to_sym
+      !@@variables[variable].nil?
+    end
+
     def markdown(text)
       Hammer::MarkdownParser.new.parse(text) if text
     end
