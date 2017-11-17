@@ -31,7 +31,7 @@ module Hammer
       fields_name = []
 
       fields.each do |field|
-        fields_name << {'column' => field['name'], 'type' => field['type'] }
+        fields_name << {'column' => field['nameId'], 'type' => field['type'] }
       end
 
       content = ensure_fields_content(table_url, fields_name, fields)
