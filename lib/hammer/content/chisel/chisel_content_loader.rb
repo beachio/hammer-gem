@@ -64,9 +64,42 @@ module Hammer
         else
           Hammer::ChiselMedia.new({}, '')
         end
+      elsif field['type'] == 'Reference'
+        if table_content[field['column']]
+          if table_content[field['column']].class == Array
+            if !table_content[field['column']].empty?
+              if table_content[field['column']][0]["__type"] == 'Pointer'
+                table_content[field['column']] = get_pointers_content table_content[field['column']][0]
+              end
+            else
+              table_content[field['column']] = Hammer::ChiselEntry.new({})
+            end
+          end
+        end
       else
         table_content[field['column']]
       end
+    end
+
+    def get_pointers_content content
+      parse_pointers_content(content)
+    end
+
+    def parse_pointers_content content
+      coll = request_combiner("#{content['className']}?where=",'{"objectId":"'+ content['objectId'] +'"}')
+      ["objectId", "t__status","t__color","t__model","createdAt", "updatedAt"].each {|k| coll[0].delete(k)}
+      coll[0].keys.each do |key|
+        if coll[0][key].class == Array
+          if !coll[0][key].empty?
+            if coll[0][key][0]["__type"] == 'Pointer'
+              coll[0][key] = parse_pointers_content(coll[0][key][0])
+            end
+          else
+            coll[0][key] = Hammer::ChiselEntry.new({})
+          end
+        end
+      end
+      Hammer::ChiselEntry.new(coll[0])
     end
 
     def get_fields_content table_url
