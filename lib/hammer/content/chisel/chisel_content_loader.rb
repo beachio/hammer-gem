@@ -31,7 +31,7 @@ module Hammer
       fields_name = []
 
       fields.each do |field|
-        fields_name << {'column' => field['nameId'], 'type' => field['type'] }
+        fields_name << {'column' => field['nameId'], 'type' => field['type'], 'list' => field['isList'] }
       end
 
       content = ensure_fields_content(table_url, fields_name, fields)
@@ -68,8 +68,12 @@ module Hammer
         if table_content[field['column']]
           if table_content[field['column']].class == Array
             if !table_content[field['column']].empty?
-              if table_content[field['column']][0]["__type"] == 'Pointer'
-                table_content[field['column']] = get_pointers_content table_content[field['column']][0]
+              if field['list']
+                table_content[field['column']] = get_list_pointers_content table_content[field['column']]
+              else
+                if table_content[field['column']][0]["__type"] == 'Pointer'
+                  table_content[field['column']] = get_pointers_content table_content[field['column']][0]
+                end
               end
             else
               table_content[field['column']] = Hammer::ChiselEntry.new({})
@@ -81,8 +85,16 @@ module Hammer
       end
     end
 
-    def get_pointers_content content
-      parse_pointers_content(content)
+    def get_pointers_content pointers
+      parse_pointers_content(pointers)
+    end
+
+    def get_list_pointers_content list_pointers
+      pointers = []
+      list_pointers.each do |pointer|
+        pointers << parse_pointers_content(pointer)
+      end
+      Hammer::ChiselCollection.new(pointers)
     end
 
     def parse_pointers_content content

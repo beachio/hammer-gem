@@ -14,7 +14,7 @@ module Hammer
         element
       end
 
-      self.reverse! if direction == 'desc'
+      self.reverse! if direction =~ /desc/i
       self
     end
   end
