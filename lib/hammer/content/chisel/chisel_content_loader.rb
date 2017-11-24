@@ -116,7 +116,7 @@ module Hammer
 
     def get_fields_content table_url
       fields_content = request_combiner(table_url)
-      fields_content
+      fields_content.delete_if { |h| h['t__status'] != 'Published' }
     end
 
     def request_combiner parse_class, query='', results = true
