@@ -48,7 +48,7 @@ module Hammer
       pages_filenames, assets_filenames = filenames.partition do |f|
         %w{.html .htm .md .slim .haml}.include?(File.extname(f).downcase)
       end
-
+      @test = Hammer::ContentProxy.new()
       Parallel.map(assets_filenames, in_threads: processor_count) do |filename|
         parse_file(filename)
       end.each do |data|
@@ -124,7 +124,7 @@ module Hammer
         data.merge! @cacher.data[path]
         data[:from_cache] = true
       else
-        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @optimized) do |output, file_data|
+        Hammer::Parser.parse_file(@input_directory, path, @output_directory, @test, @optimized) do |output, file_data|
           FileUtils.mkdir_p(File.dirname(output_file))
           File.open(output_file, 'w') { |f| f.write(output)} if output
           data.merge!(file_data) if data

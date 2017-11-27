@@ -98,7 +98,7 @@ module Hammer
       lines.join("\n")
     end
 
-    def parse(text, filename=nil)
+    def parse(text, filename=nil,test=nil)
       @text = text
       text = includes(text)
       text = convert(text)

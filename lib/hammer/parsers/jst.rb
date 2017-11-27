@@ -14,7 +14,7 @@ module Hammer
       end
     end
     
-    def parse(text, filename=nil)
+    def parse(text, filename=nil,test=nil)
       @text ||= text
       text = EJS.compile(text)
       name = File.basename(@path, '.*')

@@ -17,7 +17,7 @@ module Hammer
       end
     end
 
-    def parse(text=nil, filename=nil)
+    def parse(text=nil, filename=nil,test=nil)
       text ||= @text
       @text ||= text
       @filename ||= filename

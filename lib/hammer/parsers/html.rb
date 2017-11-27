@@ -56,7 +56,7 @@ module Hammer
       # Second way: #{parse(@text)}
     end
 
-    def parse(text, filename=nil)
+    def parse(text, filename=nil,test=nil)
 
       @text ||= text
       get_variables(text)

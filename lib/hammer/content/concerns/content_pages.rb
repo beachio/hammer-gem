@@ -3,6 +3,7 @@ module Hammer
 
     def building_contents content_types, input_dir, output_dir, service
       data = []
+      @test = Hammer::ContentProxy.new()
       content_types.each do |content_params|
         @params = content_params
 
@@ -75,7 +76,7 @@ module Hammer
 
         parser.path = Pathname.new(File.join(input_dir, filename)).relative_path_from(Pathname.new(input_dir)).to_s
 
-        text = parser.parse(text, parser.path)
+        text = parser.parse(text, parser.path, @test)
       end
       text
     end

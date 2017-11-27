@@ -11,12 +11,14 @@ module Hammer
       if format == :slim
         @text # Variables?
       else
-        parse(@text)
+        test = Hammer::ContentProxy.new()
+        parse(@text,nil, test)
       end
     end
 
-    def parse(text, filename=nil)
+    def parse(text, filename=nil,test=nil)
       @text = text
+      @test = test
       text = convert_tags(text)
       text, map = includes(text, filename)
       begin
@@ -96,9 +98,16 @@ module Hammer
     end
 
     def convert(text, filename = nil)
-      Slim::Template.new {
-        text
-      }.render(Hammer::ContentProxy.new())
+      if @test
+        Slim::Template.new {
+          text
+        }.render(@test)
+      else
+        Slim::Template.new {
+          text
+        }.render(Hammer::ContentProxy.new())
+      end
+
     end
 
     def convert_comments(text)

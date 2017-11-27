@@ -17,7 +17,7 @@ module Hammer
       end
     end
 
-    def parse(text, filename = nil)
+    def parse(text, filename = nil,test=nil)
       JSX.transform(text, strip_types: true, harmony: true)
     rescue ExecJS::ProgramError, ExecJS::RuntimeError => error
       line = error.message.scan(/on line ([0-9]*)/).flatten.first.to_s rescue nil

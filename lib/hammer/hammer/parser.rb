@@ -110,7 +110,7 @@ module Hammer
         block.call(text, data)
       end
 
-      def parse_file(directory, filename, output_directory, optimized, &block)
+      def parse_file(directory, filename, output_directory, test,optimized, &block)
         # We return a hash and some text!
         data    = {:filename => filename}
         text    = File.open(File.join(directory, filename), 'r').read()

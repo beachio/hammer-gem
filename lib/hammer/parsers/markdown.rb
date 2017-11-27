@@ -24,7 +24,7 @@ module Hammer
       {:auto_ids => false, :smart_quotes => quotes}
     end
 
-    def parse(text, filename=nil)
+    def parse(text, filename=nil,test=nil)
       @markdown = text
       text = text.gsub(/<!--\s+(@|\$)[^-]+-->/m) do
         CGI.escapeHTML Regexp.last_match[0]
