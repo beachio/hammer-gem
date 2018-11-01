@@ -84,7 +84,7 @@ module Hammer
       text = text[0..-2] if text.end_with? "\n"
 
       clean_uncompressed_assets() if optimized
-      return text
+      return CGI.unescapeHTML(text)
     end
 
     def variables
