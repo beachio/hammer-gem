@@ -109,9 +109,11 @@ module Hammer
           else
             coll[0][key] = Hammer::ChiselEntry.new({})
           end
+        elsif coll[0][key].class == Hash && coll[0][key]['__type'] == 'Pointer'
+          coll[0][key] = parse_pointers_content(coll[0][key])
         end
       end
-      Hammer::ChiselEntry.new(coll[0])
+      content['className'] == 'MediaItem' ? Hammer::ChiselMedia.new(coll[0]['file'], coll[0]['type']) : Hammer::ChiselEntry.new(coll[0])
     end
 
     def get_fields_content table_url
