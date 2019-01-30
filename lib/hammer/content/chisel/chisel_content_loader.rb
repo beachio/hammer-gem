@@ -1,6 +1,7 @@
 require 'http'
 require 'uri'
 require 'net/http'
+require 'yaml'
 module Hammer
   class ChiselContentLoader
     attr_accessor :site_id, :collections, :models, :content_types
@@ -124,7 +125,16 @@ module Hammer
     def request_combiner parse_class, query='', results = true
       query = URI.encode(query)
       headers = { 'X-Parse-Application-Id' => application_keys('id'), 'X-Parse-Session-Token' => Settings.session_token }
+      if Hammer::Settings.chisel['cache']
+        cache_headers =  { 'X-Parse-Application-Id' => application_keys('id')}
+        cache_key = Digest::MD5.hexdigest({ p: parse_class, q: query, ch: cache_headers }.to_s)
+        cache = Hammer::ChiselCache.new(cache_key)
+        return cache.results if cache.results
+      end
       res = JSON.parse(HTTP[headers].get("#{application_keys('url')}/classes/#{parse_class}#{query}"))
+      if Hammer::Settings.chisel['cache']
+        cache.results= results ? res['results'] : res
+      end
       if results
         return res['results']
       else

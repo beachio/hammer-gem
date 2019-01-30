@@ -1,3 +1,46 @@
+### 5.4.7.4
+  * Added chisel cache option. Enable it by adding key "cache" into "chisel" section. For example:
+
+
+        "chisel": {
+          "cache": "~/projects/hammer-gem/cache"
+        }
+    or
+
+        "chisel": {
+          "cache": true
+        }
+
+### 5.4.7.3
+  * Fixed bug with pointers on MediaItems
+### 5.4.7.2
+  * Added chisel support, added page generator. It works by the same way as cockpit and contentful, example config (hammer.json) may look as:
+
+        {
+          "chisel": {
+            "site_id":"p0AYmQ9LvZ",
+            "parse_app_id":"xxxxxx",
+            "parse_server_url":"http://parse-server.xxx/parse",
+            "login":"xxxxx",
+            "password":"xxxxx",
+            "contentTypes":{
+              "pages":{
+                 "name":"Page",
+                 "renderOnBuild":true,
+                 "template":"templates/_page.slim",
+                 "urlAliasSource":"Slug",
+                 "urlAliasPrefix":"pages"
+              },
+              "teamPages":{
+                "name":"TeamPage",
+                "renderOnBuild":true,
+                "template":"templates/_teampage.slim",
+                "urlAliasSource":"Slug"
+              }
+            }
+          }
+        }
+
 ### 5.4.7.1
   * Allow to order cockpit collection using helper `aricles.order('Title', 'desc')`
 
