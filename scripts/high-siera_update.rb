@@ -6,7 +6,7 @@ require 'open3'
 def update_hammer(main_path, branch)
   repo_url = 'https://github.com/RiotHQ/hammer-gem.git'
   tmp_directory = "/tmp/hammer-gem-#{Time.now.to_i}"
-
+  ruby_for_catalina = %x[ruby -v].match?('2.6.3')
   check_bundler = 'which bundle'
   check_git = 'which git'
   make_tmp_directory = "mkdir #{tmp_directory}"
@@ -37,20 +37,39 @@ def update_hammer(main_path, branch)
                                   clone_repository,
                                   go_to_gem_root,
                                   checkout_beta_branch,
-                                  install_dependencies
                               ].join(' && ')
   if preparation_result
-    system [
+    add_fix_for_catalina(tmp_directory,go_to_tmp_directory,go_to_gem_root) if ruby_for_catalina
+    if system [
                go_to_tmp_directory,
-               go_to_gem_root
-           ].join(' && ')
-    copy_to_hammer_app(tmp_directory, main_path)
+               go_to_gem_root,
+               install_dependencies
+              ].join(' && ')
+      copy_to_hammer_app(tmp_directory, main_path)
     version = File.open("#{tmp_directory}/hammer-gem/VERSION").read
+    else
+      puts 'Error during gem install. Please fix errors and try again.'
+    end
   else
-    puts 'Error during gem install. Please fix errors and try again.'
+    puts 'Error git repository install. Please fix errors and try again.'
   end
-
   system clean_up
+end
+
+def add_fix_for_catalina(tmp_directory,tmp,hammer)
+  remove_gem_lock = "rm Gemfile.lock"
+  add_json = "gem 'json', '2.2.0'"
+  path_to_cache = "lib/hammer/parsers"
+  sys_array = [tmp, hammer]
+  unless File.open("#{tmp_directory}/hammer-gem/Gemfile",'r').read.match?(add_json)
+    sys_array << "echo 'gem \"json\", \"2.2.0\"' >> Gemfile"
+    sys_array << remove_gem_lock
+  end
+  File.open("#{tmp_directory}/hammer-gem/lib/hammer/parsers/cache-path",'w') do |f|
+    f.puts("~/.hammer-gem")
+    f.close
+    end
+  system sys_array.join(" && ")
 end
 
 def copy_to_hammer_app(dev_path, hammer_path)
@@ -80,7 +99,10 @@ def print_command(command)
     end
   end
 end
-
+unless ARGV.empty?
+  path = ARGV[0]
+  branch = ARGV[1]
+end
 unless path.nil?
   if path[-1] != '/'
     path += '/'

@@ -166,7 +166,17 @@ module Hammer
 
 
     def options
+      if File.exist?(__dir__+'/cache-path')
+        main_path = File.open(__dir__+'/cache-path','r').read
+        dir_path = File.expand_path(main_path)
+        unless Dir.exist?(dir_path)
+          Dir.mkdir(dir_path)
+        end
+        cache_directory = File.expand_path("sass-cache_#{Time.now.to_i}",dir_path)
+        Dir.mkdir(cache_directory)
+      else
       cache_directory = @cache_directory rescue Dir.mktmpdir
+      end
       {
         :disable_warnings => true,
         :syntax => format,
@@ -176,7 +186,7 @@ module Hammer
         # :source_encoding => Encoding::UTF_16, # This didn't work
         # :debug_info => !@production,
         :filename => "#{input_directory}/#{@filename}",
-        :cache_location => @cache_directory,
+        :cache_location => cache_directory,
         :sass => sass_options
       }
     end
