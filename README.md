@@ -1,6 +1,6 @@
 # Hammer.rb
 
-Hammer.rb is the hammer compilation gem. Check out the "Latest" branch for the latest development version of the the compiler.
+Hammer.rb is the hammer compilation gem. Check out the "Latest" branch for the latest development version of the compiler.
 
 Release versions are captured in branches named after the release e.g. "5.2"
 
