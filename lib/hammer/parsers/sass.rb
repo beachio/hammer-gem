@@ -172,7 +172,7 @@ module Hammer
         unless Dir.exist?(dir_path)
           Dir.mkdir(dir_path)
         end
-        cache_directory = File.expand_path("sass-cache_#{Time.now.to_i}",dir_path)
+        cache_directory = File.expand_path("sass-cache_#{Time.now.to_i}_#{rand(10000)}",dir_path)
         Dir.mkdir(cache_directory)
       else
       cache_directory = @cache_directory rescue Dir.mktmpdir

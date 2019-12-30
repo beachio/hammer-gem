@@ -21,7 +21,7 @@ gem 'test-unit'
 gem 'rake'
 gem 'parallel'
 gem 'autoprefixer-rails'
-gem 'contentful'
+gem 'contentful', '0.5.0'
 gem 'react-source'
 gem 'jsx'
 
